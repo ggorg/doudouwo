@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>登录页面</title>
+
+    <link rel="stylesheet" href="/sysframe2/css/style.default.css" type="text/css" />
+    <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+<!--[if IE 9]>
+    <link rel="stylesheet" media="screen" href="/sysframe2/css/style.ie9.css"/>
+<![endif]-->
+<!--[if IE 8]>
+    <link rel="stylesheet" media="screen" href="/sysframe2/css/style.ie8.css"/>
+<![endif]-->
+<!--[if lt IE 9]>
+	<script src="/sysframe2/js/plugins/css3-mediaqueries.js"></script>
+
+<![endif]-->
+</head>
+
+<body class="loginpage">
+	<div class="loginbox">
+    	<div class="loginboxinner">
+        	
+            <div class="logo">
+            	<h1 class="logo">翼.<span>支付</span></h1>
+				<span class="slogan">后台管理系统</span>
+            </div><!--logo-->
+            
+            <br clear="all" />
+            <form class="layui-form">
+            	
+                <div class="username">
+                	<div class="usernameinner">
+
+                        <input type="text" name="uName" required="required"  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" />
+
+
+                    </div>
+                </div>
+                
+                <div class="password">
+                	<div class="passwordinner">
+                        <input type="password" name="uPassword" required="required"  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input" />
+                    </div>
+                </div>
+                
+                <button lay-submit="lay-submit " lay-filter="formDemo">登录</button>
+
+            </form>
+            
+        </div><!--loginboxinner-->
+    </div><!--loginbox-->
+    <script type="text/javascript">
+        initForm("do-login",".layui-form")
+
+    </script>
+
+</body>
+</html>

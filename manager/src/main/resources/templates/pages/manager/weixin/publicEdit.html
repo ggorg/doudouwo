@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="UTF-8" />
+<link type="text/css" rel="stylesheet" href="/layui/css/layui.css"/>
+  <script type="text/javascript" src="/sysframe2/js/plugins/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+</head>
+<body style="padding:40px 60px 10px 10px">
+<form class="layui-form" >
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="name" required="required"  lay-verify="required" th:value="${pubweixin?.name}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">AppID</label>
+    <div class="layui-input-block">
+      <input type="text" name="appid" required="required"  lay-verify="required" th:value="${pubweixin?.appid}" th:readonly="${pubweixin?.appid!=null}" placeholder="请输入AppID" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">AppSecret</label>
+    <div class="layui-input-block">
+      <input type="text" name="appsecret" required="required"  lay-verify="required" th:value="${pubweixin?.appsecret}" placeholder="请输入AppSecret" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">原始ID</label>
+    <div class="layui-input-block">
+      <input type="text" name="openid" required="required"  lay-verify="required" th:value="${pubweixin?.openid}" placeholder="请输入原始ID" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+layui.use('form', function(){
+  var form = layui.form;
+    $(".layui-form").submit(function(){
+        $.post("save",$(".layui-form").serializeArray(),function(data){
+            layer.msg(data.reMsg);
+            if(data.reCode==1){
+                window.setTimeout(function(){
+                    top.location.href=window.parent.location.href;
+                },500)
+            }
+
+        });
+        return false;
+    });
+  //各种基于事件的操作，下面会有进一步介绍
+});
+</script>
+</body>
+</html>

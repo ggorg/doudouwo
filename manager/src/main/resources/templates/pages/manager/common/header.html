@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body th:fragment="sysheader">
+<div class="topheader" th:if="${#TdTool.isLogin()}">
+	<div class="left" >
+		<h1 class="logo"><span>翼.</span>支付</h1>
+		<span class="slogan">后台管理系统</span>
+
+		<div class="search">
+			<form action="" >
+				<input type="text" name="keyword" id="keyword" value="Enter keyword(s)" />
+				<button class="submitbutton"></button>
+			</form>
+		</div><!--search-->
+
+		<br clear="all" />
+
+	</div><!--left-->
+
+	<div class="right" >
+		<!--<div class="notification">
+            <a class="count" href="notifications.html"><span>9</span></a>
+        </div>
+        -->
+		<div class="userinfo">
+			<i class="fa fa-user-circle-o fa-2x" ></i>
+			<span th:text="${session?.user[uName]}">Juan Dela Cruz</span>
+		</div><!--userinfo-->
+
+		<div class="userinfodrop">
+			<div class="avatar">
+				<i class="fa fa-user-circle fa-5x" style="margin:15px;0px;0px;10px"></i>
+
+			</div><!--avatar-->
+			<div class="userdata">
+				<h4 th:text="${session?.user[uName]}">Juan Dela Cruz</h4>
+				<ul>
+					<li><a href="javascript:void(0)" onclick="openDialog('400px','330px','修改密码','/sys/user/to-modify-pwd')">修改密码</a></li>
+					<li><a href="/sys/to-logout">退出</a></li>
+				</ul>
+			</div><!--userdata-->
+		</div><!--userinfodrop-->
+	</div><!--right-->
+</div>
+</body>
+</html>

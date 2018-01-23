@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" th:w>
+<head>
+<meta charset="UTF-8" />
+  <link type="text/css" rel="stylesheet" href="/font-awesome/css/font-awesome.min.css"/>
+  <link type="text/css" rel="stylesheet" href="/css/common.css"/>
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+</head>
+<body style="padding:30px 60px 10px 10px">
+<form class="layui-form" >
+  <input type="hidden" th:if="${menuObject!=null}" name="id" th:value="${menuObject?.id}" />
+  <input type="hidden" th:if="${appid!=null}" name="appid" th:value="${appid}" />
+  <div class="layui-form-item">
+    <label class="layui-form-label">菜单名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="name" required="required" th:value="${menuObject?.name}" lay-verify="required" placeholder="请输入菜单名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">上级菜单ID</label>
+    <div class="layui-input-block">
+      <input type="text" name="parent_id" readonly="readonly" th:value="${menuObject!=null?menuObject?.parent_id:#httpServletRequest.getParameter('parent_id')}" required="required"  lay-verify="required|number" placeholder="请输入上级菜单ID" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-inline">
+    <label class="layui-form-label">类型</label>
+    <div class="layui-input-inline">
+      <select name="type" id="type" lay-filter="type">
+        <option value="view" th:selected="${menuObject?.type == 'view'}">view</option>
+        <option value="click" th:selected="${menuObject?.type == 'click'}">click</option>
+      </select>
+    </div>
+  </div>
+    <div class="layui-form-item" style="margin-top: 15px">
+        <label class="layui-form-label">网页链接</label>
+        <div class="layui-input-block">
+            <input type="text" name="url" required="required" th:value="${menuObject?.url}" lay-verify="required" placeholder="网页链接" autocomplete="off" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-top: 15px;display: none">
+        <label class="layui-form-label">菜单KEY值</label>
+        <div class="layui-input-block">
+            <input type="text" name="key" required="required" th:value="${menuObject?.key}" lay-verify="required" placeholder="菜单KEY值" autocomplete="off" class="layui-input" />
+        </div>
+    </div>
+  <div class="layui-form-item" style="margin-top: 15px">
+    <label class="layui-form-label">排序</label>
+    <div class="layui-input-block">
+      <input type="text" name="sort" required="required" th:value="${menuObject?.sort}" lay-verify="required|number" placeholder="排序" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    jQuery(function(){
+        if(jQuery("[name='type']").val()=='click'){
+            jQuery("[name='key']").parent().parent().show();
+            jQuery("[name='url']").val("");
+            jQuery("[name='url']").parent().parent().hide();
+            jQuery("[name='key']").attr("required","required").attr("lay-verify","required");
+            jQuery("[name='url']").removeAttr("required").removeAttr("lay-verify");
+        }else if(jQuery("[name='type']").val()=='view'){
+            jQuery("[name='key']").parent().parent().hide();
+            jQuery("[name='key']").val("");
+            jQuery("[name='url']").parent().parent().show();
+            jQuery("[name='key']").removeAttr("required").removeAttr("lay-verify");
+            jQuery("[name='url']").attr("required","required").attr("lay-verify","required");
+        }
+    })
+
+    layui.use('form', function(){
+        var form = layui.form;
+        form.on('select(type)', function(data){
+            if(data.value=='click'){
+                jQuery("[name='key']").parent().parent().show();
+                jQuery("[name='url']").val("");
+                jQuery("[name='url']").parent().parent().hide();
+                jQuery("[name='key']").attr("required","required").attr("lay-verify","required");
+                jQuery("[name='url']").removeAttr("required").removeAttr("lay-verify");
+            }else if(data.value=='view'){
+                jQuery("[name='key']").parent().parent().hide();
+                jQuery("[name='key']").val("");
+                jQuery("[name='url']").parent().parent().show();
+                jQuery("[name='key']").removeAttr("required").removeAttr("lay-verify");
+                jQuery("[name='url']").attr("required","required").attr("lay-verify","required");
+            }
+        });
+    })
+
+
+  initForm("save",".layui-form")
+</script>
+</body>
+</html>

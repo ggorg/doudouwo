@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+           initPage(/*[[${userPage!=null?userPage.total:0}]]*/ );
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>用户列表</h3>
+                </div><!--contenttitle-->
+                <form class="layui-form" th:action="list">
+                    <div class="tableoptions">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label" >公众号</label>
+                                <div class="layui-input-inline">
+                                    <select name="appid" id="appid" lay-filter="appid">
+                                        <option th:each="pubweixin:${pubweixinList}" th:value="${pubweixin?.appid}" th:text="${pubweixin?.name}" th:selected="${appid eq pubweixin?.appid}"> 公众号名称</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label" >标签</label>
+                                <div class="layui-input-inline">
+                                    <select name="tagid_list" lay-filter="tagid_list">
+                                        <option value="">请选择</option>
+                                        <option th:each="tags:${tagsList}" th:value="${tags?.id}" th:text="${tags?.name}" th:selected="${tags?.id+'' == userInfo?.tagid_list}">标签</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">关注</label>
+                                <div class="layui-input-inline">
+                                    <select name="subscribe">
+                                        <option value="">请选择</option>
+                                        <option value="1" th:selected="${userInfo?.subscribe == '1'}">关注</option>
+                                        <option value="0" th:selected="${userInfo?.subscribe == '0'}">未关注</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="radius3" type="button" id="syncUser" lay-filter="formDemo">刷新用户数据</button> &nbsp;
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">昵称</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="nickname" placeholder="请输入昵称" th:value="${userInfo?.nickname}" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline" class="layui-hide">
+                                <label class="layui-form-label">openid</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="openid" placeholder="请输入openid" th:value="${userInfo?.openid}" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">省份</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="province" placeholder="请输入省份" th:value="${userInfo?.province}" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">城市</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="city" placeholder="请输入城市" th:value="${userInfo?.city}" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline" class="layui-hide">
+                                <label class="layui-form-label">性别</label>
+                                <div class="layui-input-inline">
+                                    <select name="sex" >
+                                        <option value="">请选择</option>
+                                        <option value="1" th:selected="${userInfo?.sex == '1'}">男性</option>
+                                        <option value="2" th:selected="${userInfo?.sex == '2'}">女性</option>
+                                        <option value="0" th:selected="${userInfo?.sex == '0'}">未知</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn_search radius50" lay-submit="lay-submit" lay-filter="formDemo">Search</button> &nbsp;
+                        </div>
+                    </div><!--tableoptions-->
+                </form>
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" lay-filter="demo" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con1" />
+                        <col class="con0" style="width: 10%"/>
+                        <col class="con1" style="width: 10%"/>
+                        <col class="con0" style="width: 10%"/>
+                        <col class="con1" style="width: 10%"/>
+                        <col class="con0" style="width: 10%"/>
+                        <col class="con1" style="width: 10%"/>
+                        <col class="con0" style="width: 10%"/>
+                        <col class="con1" style="width: 10%"/>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th class="head1">头像</th>
+                        <th class="head0">昵称</th>
+                        <th class="head1">
+                            <div class="layui-btn-group">
+                                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'340px\',\'标签\',\'edit?batch=1\')'"  >修改标签</button>
+                            </div>
+                        </th>
+                        <th class="head0">关注状态</th>
+                        <th class="head1">性别</th>
+                        <th class="head0">国家</th>
+                        <th class="head1">省份</th>
+                        <th class="head0">城市</th>
+                        <th class="head1">关注日期</th>
+                        <th class="head0">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${userPage?.result}">
+                       
+                        <td><img th:attr="src=${obj['headimgurl']}" th:width="40px" th:height="40px"></td>
+                        <td th:text="${obj['nickname']}">Internet Explorer 4.0</td>
+                        <td th:text="${#TdTool.showTags(obj['tagid_list'],tagsList)}">Win 95+</td>
+                        <td th:switch="${obj['subscribe']}">
+                            <span th:case="1">关注</span>
+                            <span th:case="*">未关注</span>
+                        </td>
+                        <td th:switch="${obj['sex']}">
+                            <span th:case="1">男性</span>
+                            <span th:case="2">女性</span>
+                            <span th:case="*">未知</span>
+                        </td>
+                        <td th:text="${obj['country']}">Win 95+</td>
+                        <td th:text="${obj['province']}">Win 95+</td>
+                        <td th:text="${obj['city']}">Win 95+</td>
+                        <td th:text="${obj['subscribe_time']!=null ? #dates.format(obj['subscribe_time'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
+                        <td class="center">
+                            <div class="layui-btn-group">
+                                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'340px\',\'修改标签\',\'edit?openid='+${obj['openid']}+'&appid='+${obj['appid']}+'\')'"  >修改标签</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        layui.use('form', function(){
+            var form = layui.form;
+            jQuery(".layui-form").submit(function(data){
+                console.log(data);
+            });
+        });
+
+        //立即同步微信用户资料
+        jQuery("#syncUser").click(function(){
+            layer.msg("同步微信用户资料中,数据较多的情况同步可能会比较缓慢,可过几分钟后再看");
+            jQuery.getJSON("/weixin/user/alluser", {appid:jQuery("[name='appid']").val()}, function(data){
+                layer.msg(data.retMsg);
+                window.setTimeout(function(){
+                    top.location.href=window.parent.location.href;
+                },800)
+            });
+        });
+
+    </script>
+	</body>
+	
+</html>

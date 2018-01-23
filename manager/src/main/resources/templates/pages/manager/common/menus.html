@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body th:fragment="sysmenus">
+<div class="header">
+	<ul class="headermenu">
+
+		<li th:each="menu:${#TdTool.getUserPowerMenu()}" th:if="${menu.mParentId==-1}" th:inline="text" th:with="currentPage=${#httpServletRequest.getRequestURI() eq menu.mUrl or #httpServletRequest.getParameter('currentPid')== menu.id.toString() ?#TdTool.setParentSession(menu.id):false}" th:class="${currentPage?'current':''}"  >
+
+			<a th:href="${menu.mUrl}"><span  th:class="'icon fa fa-3x '+${menu.mIcon}" ></span>[[${menu.mName}]]</a>
+		</li>
+
+	</ul>
+
+
+</div><!--header-->
+
+<div class="vernav2 iconmenu ">
+	<ul>
+		<li th:each="menu:${#TdTool.getUserPowerMenu()}" th:inline="text" th:if="${#TdTool?.getParentId()==menu.mParentId}" th:class="${#httpServletRequest.getServletPath() eq menu.mUrl?'current':''}" >
+			<a th:href="${menu.mUrl+'?currentPid='+menu.mParentId}" ><span  th:class="'icon fa fa-1x style1 '+${menu.mIcon}" ></span>[[${menu.mName}]]</a>
+		</li>
+
+	</ul>
+
+	<a class="togglemenu"></a>
+	<br /><br />
+</div>
+</body>
+</html>

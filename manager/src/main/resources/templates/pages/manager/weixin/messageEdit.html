@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" th:w>
+<head>
+<meta charset="UTF-8" />
+  <link type="text/css" rel="stylesheet" href="/font-awesome/css/font-awesome.min.css"/>
+  <link type="text/css" rel="stylesheet" href="/css/common.css"/>
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+</head>
+<body style="padding:30px 60px 10px 10px">
+<form class="layui-form" >
+  <input type="hidden" th:if="${messageObject!=null}" name="id" th:value="${messageObject?.id}" />
+  <input type="hidden" th:if="${appid!=null}" name="appid" th:value="${appid}" />
+  <div class="layui-form-item">
+    <label class="layui-form-label">标题</label>
+    <div class="layui-input-block">
+      <input type="text" name="title" required="required" th:value="${messageObject?.title}" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">上级图文ID</label>
+    <div class="layui-input-block">
+      <input type="text" name="parent_id" readonly="readonly" th:value="${messageObject!=null?messageObject?.parent_id:#httpServletRequest.getParameter('parent_id')}" required="required"  lay-verify="required|number" placeholder="请输入上级图文ID" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+    <div class="layui-form-item" style="margin-top: 15px">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <input type="text" name="sort" required="required" th:value="${messageObject?.sort}" lay-verify="required|number" placeholder="排序" autocomplete="off" class="layui-input" />
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="margin-top: 15px">
+    <label class="layui-form-label">跳转URL</label>
+    <div class="layui-input-block">
+      <input type="text" name="url" required="required" th:value="${messageObject?.url}" lay-verify="required" placeholder="跳转URL" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+    <div class="layui-upload">
+        <button type="button" class="layui-btn" id="test1" name="file">上传图片</button>
+        <div class="layui-upload-list" id="img">
+            <img class="layui-upload-img" style="width:200px;height: 200px" id="demo1" th:src="${messageObject?.picurl}">
+            <p id="demoText"></p>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-top: 15px">
+    <label class="layui-form-label">图片URL</label>
+    <div class="layui-input-block">
+      <input type="text" name="picurl" required="required" th:value="${messageObject?.picurl}" lay-verify="required" placeholder="图片URL" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+    <div class="layui-form-item" style="margin-top: 15px">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-block">
+            <input type="text" name="description" required="required" th:value="${messageObject?.description}" lay-verify="required" placeholder="描述" autocomplete="off" class="layui-input" />
+        </div>
+    </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+
+</form>
+<script type="text/javascript">
+  initForm("save",".layui-form")
+  if(jQuery("[name='picurl']").val() == ""){
+      $("#img").addClass("layui-hide");
+  }
+
+  layui.use('upload', function(){
+      var $ = layui.jquery
+              ,upload = layui.upload;
+
+      //普通图片上传
+      var uploadInst = upload.render({
+          elem: '#test1'
+          ,url: 'upload/'
+          ,before: function(obj){
+              //预读本地文件示例，不支持ie8
+              obj.preview(function(index, file, result){
+                  $('#demo1').attr('src', result); //图片链接（base64）
+              });
+          }
+          ,done: function(res){
+              //上传成功
+              if(res.reCode == 1){
+                  var localObj = window.location;
+                  jQuery("[name='picurl']").val(localObj.protocol+"//"+localObj.host+'/rs/'+res.data);
+                  $("#img").removeClass("layui-hide");
+              }
+              return layer.msg(res.reMsg);
+          }
+      });
+  });
+
+</script>
+</body>
+</html>

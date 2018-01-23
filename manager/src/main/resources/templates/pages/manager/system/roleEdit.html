@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+</head>
+<body style="padding:30px 60px 10px 10px">
+<form class="layui-form" >
+  <input th:if="${roleObject!=null and roleObject.id!=null}" type="hidden" name="id" th:value="${roleObject.id}"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">角色名</label>
+    <div class="layui-input-block">
+      <input type="text" name="rName" required="required" th:value="${roleObject?.rName}"  lay-verify="required" placeholder="请输入角色名" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">角色别称</label>
+    <div class="layui-input-block">
+      <input type="text" name="rByname" required="required" th:value="${roleObject?.rByname}"  lay-verify="required" placeholder="角色别称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">选择用户</label>
+
+      <div class="layui-input-block" style="overflow-y: auto;height: 200px;border: 1px #E6E6E6 solid;padding-left: 10px">
+
+        <input type="checkbox" name="uId"  th:each="obj:${userList}" th:value="${obj['id']}" th:checked="${obj['isThisRole']}"  th:title="${obj['uName']}">
+
+
+      </div>
+
+
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    initForm("do-edit-role",".layui-form")
+</script>
+</body>
+</html>

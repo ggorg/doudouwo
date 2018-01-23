@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" th:w>
+<head>
+<meta charset="UTF-8" />
+  <link type="text/css" rel="stylesheet" href="/font-awesome/css/font-awesome.min.css"/>
+  <link type="text/css" rel="stylesheet" href="/css/common.css"/>
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+</head>
+<body style="padding:30px 60px 10px 10px">
+<form class="layui-form" >
+  <input type="hidden" th:if="${eventKeyObject!=null}" name="id" th:value="${eventKeyObject?.id}" />
+  <input type="hidden" th:if="${appid!=null}" name="appid" th:value="${appid}" />
+  <div class="layui-form-item">
+    <label class="layui-form-label">关键字</label>
+    <div class="layui-input-block">
+      <input type="text" name="key" required="required" th:value="${eventKeyObject?.key}" lay-verify="required" placeholder="请输入关键字" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+    <div class="layui-inline">
+    <label class="layui-form-label">回复规则</label>
+    <div class="layui-input-inline">
+      <select name="rule_id" id="rule_id" lay-filter="type">
+          <option th:each="eventRule:${eventRuleList}" th:value="${eventRule?.id}" th:text="${eventRule?.title}" th:selected="${eventKeyObject?.rule_id eq eventRule?.id}"> 回复规则</option>
+      </select>
+    </div>
+  </div>
+  <div class="layui-inline">
+    <label class="layui-form-label">匹配</label>
+    <div class="layui-input-block">
+      <input type="radio" name="match" value="1" title="完全匹配" th:checked="${eventKeyObject?.match == 1 || eventKeyObject?.match == null}">
+      <input type="radio" name="match" value="0" title="模糊匹配" th:checked="${eventKeyObject?.match == 0}">
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+  initForm("save",".layui-form")
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" th:w>
+<head>
+<meta charset="UTF-8" />
+  <link type="text/css" rel="stylesheet" href="/font-awesome/css/font-awesome.min.css"/>
+  <link type="text/css" rel="stylesheet" href="/css/common.css"/>
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+</head>
+<body style="padding:30px 60px 10px 10px">
+<form class="layui-form" >
+  <input type="hidden" th:if="${id!=null}" name="id" th:value="${id}" />
+  <input type="hidden" th:if="${appid!=null}" name="appid" th:value="${appid}" />
+    <div class="layui-form-item" style="margin-top: 15px">
+        <label class="layui-form-label">回复内容</label>
+        <div class="layui-input-block">
+            <textarea name="content" placeholder="回复内容" autocomplete="off" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+  initForm("sendMsg",".layui-form")
+</script>
+</body>
+</html>

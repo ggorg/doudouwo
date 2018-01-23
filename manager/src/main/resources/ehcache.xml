@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+    <!--切换为ehcache 缓存时使用-->
+    <cache name="allMenu" maxElementsInMemory="1" />
+    <cache name="commonCache" maxElementsInMemory="300" />
+    <cache name="validCodeCache" maxElementsInMemory="300" timeToLiveSeconds="60" />
+    <cache name="bindInfoCache" maxElementsInMemory="1000" timeToLiveSeconds="1800" />
+</ehcache>

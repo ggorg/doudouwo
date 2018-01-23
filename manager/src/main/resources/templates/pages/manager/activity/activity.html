@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+            initPage(/*[[${menuPage!=null?menuPage.total:0}]]*/ );
+
+            function pullActiveity(){
+                layer.confirm("是否获取最新活动？有可能会更新现有活动的金额或者有效时间","",function(){
+                    jQuery.post("do-pull-activity",null,function(data){
+                        layer.msg(data.reMsg);
+                        if(data.retCode==1){
+                            window.setTimeout(function(){
+                                top.location.href= location.href;
+                            },1000)
+
+                            // openDialog('500px','470px','新建活动红包','to-edit?pid=-1')
+                        }
+
+                    },"JSON")
+                })
+
+
+            }
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>活动列表</h3>
+                </div><!--contenttitle-->
+                <div class="tableoptions">
+                    <button class="radius3" id="createBtn" title="table2" onclick="pullActiveity()">获取最新活动</button> &nbsp;
+                    <!-- <select class="radius3">
+                         <option value="">Show All</option>
+                         <option value="">Rendering Engine</option>
+                         <option value="">Platform</option>
+                     </select> &nbsp;
+                     <button class="radius3">Apply Filter</button>
+                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+                </div><!--tableoptions-->
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con1" />
+                    </colgroup>
+                    <thead>
+                    <tr>
+                       
+                        <th class="head1">活动名称</th>
+                        <th class="head0">活动总金额(分)</th>
+                        <th class="head0">已用金额(分)</th>
+                        <th class="head1">有效时间</th>
+                        <th class="head0">红包数量</th>
+                        <th class="head0">区间值(分)</th>
+                        <th class="head1">状态</th>
+                        <th class="head1">更新时间</th>
+                        <th class="head0">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${actPage?.result}">
+
+                        <td th:text="${obj['taName']}">Internet Explorer 4.0</td>
+                        <td th:text="${obj['taAmount']}">Internet Explorer 4.0</td>
+                        <td th:text="${obj['taUsed']==null?0:obj['taUsed']}">Internet Explorer 4.0</td>
+                        <td th:text="${#dates.format(obj['taBeginDate'],'yyyy-MM-dd HH:mm:ss')+'~'+#dates.format(obj['taEndDate'],'yyyy-MM-dd HH:mm:ss')}">Win 95+</td>
+                        <td th:text="${obj['taNumber']==null?'未设置':obj['taNumber']}"></td>
+                        <td th:text="${(obj['taMinCost']==null or obj['taMaxCost']==null)?'未设置':obj['taMinCost']+'~'+obj['taMaxCost']}">Win 95+</td>
+                        <td th:text="${obj['taDisabled']==1?'己发布':'未发布'}">Win 95+</td>
+                        <td th:text="${#dates.format(obj['updateTime'],'yyyy-MM-dd HH:mm:ss')}">Win 95+</td>
+
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'520px\',\'设置红包额度\',\'to-activity?idStr='+${#TdTool.encrypt(obj['id']+'')}+'\')'"  >设 置</button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'270px\',\'绑定推送图文\',\'to-push-info?idStr='+${#TdTool.encrypt(obj['id']+'')}+'\')'"  >绑定图文</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+
+	</body>
+	
+</html>

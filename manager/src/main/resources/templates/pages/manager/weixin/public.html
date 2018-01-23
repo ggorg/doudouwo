@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+           initPage(/*[[${pubPage!=null?pubPage.total:0}]]*/ );
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>公众号列表</h3>
+                </div><!--contenttitle-->
+                <div class="tableoptions">
+                    <button class="radius3" id="createBtn" onclick="openDialog('400px','380px','创建公众号','edit')" title="table2">新建</button> &nbsp;
+                </div><!--tableoptions-->
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" lay-filter="demo" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th class="head1">名称</th>
+                        <th class="head0">AppID</th>
+                        <th class="head1">AppSecret</th>
+                        <th class="head0">原始ID</th>
+                        <th class="head1">创建时间</th>
+                        <th class="head0">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${pubPage?.result}">
+                       
+                        <td th:text="${obj['name']}">Trident</td>
+                        <td th:text="${obj['appid']}">Internet Explorer 4.0</td>
+                        <td th:text="${obj['appsecret']}">Win 95+</td>
+                        <td th:text="${obj['openid']}">Win 95+</td>
+                        <td th:text="${#dates.format(obj['update_date'], 'yyyy-MM-dd HH:mm:ss')}">Win 95+</td>
+
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'400px\',\'380px\',\'修改公众号\',\'edit?appid='+${obj['appid']}+'\')'" >修 改</button>
+                            <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['appid']}+'\')'" >删除</button>
+                            </div>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        function del(obj){
+            layer.confirm('确定删除?',{icon:2,title:'删除'}, function(index){
+                layer.close(index);
+                //向服务端发送删除指令
+                jQuery.post("delete",{appid:obj},function(data){
+                    if(data.reCode==1){
+                        layer.msg(data.reMsg);
+                        window.setTimeout(function(){
+                            top.location.href=window.parent.location.href;
+                        },500)
+                    }
+                });
+            });
+        }
+
+    </script>
+	</body>
+	
+</html>

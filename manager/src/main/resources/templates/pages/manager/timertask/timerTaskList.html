@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+           initPage(/*[[${timerTaskPage!=null?timerTaskPage.total:0}]]*/ );
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>定时任务列表</h3>
+
+                </div><!--contenttitle-->
+
+
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con1" />
+
+                        <col class="con0" />
+                    </colgroup>
+                    <thead>
+
+                    <tr>
+                       
+                        <th class="head1">定时任务名称</th>
+                        <th class="head0">定时规则</th>
+                        <th class="head1">定时规则说明</th>
+                        <th class="head1">状态</th>
+                        <th class="head0">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${timerTaskPage?.result}">
+                       
+                        <td th:text="${obj['taskName']}">Trident</td>
+                        <td th:text="${obj['cron']}">Internet Explorer 4.0</td>
+                        <td th:text="${obj['cronDsc']}">Win 95+</td>
+                        <td >运行中</td>
+
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm" th:onclick="'confirmDisabled('+${obj['id']}+','+${!(obj['disabled']>0)}+')'"  >执行</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+        function confirmDisabled(id){
+            layer.confirm("定时器已经在运行了，是否执行？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQuery.post("/manager/to-pull-red-packet",{id:id},function(data){
+                        layer.msg(data.reMsg);
+                        if(data.reCode==1){
+
+                            window.setTimeout(function(){
+                                top.location.href=window.parent.location.href;
+                            },500)
+                        }
+
+                    });
+                }
+                //layer.close(index);
+            });
+        }
+        layui.use('form', function(){
+            var form = layui.form;
+
+        })
+
+    </script>
+	</body>
+
+</html>

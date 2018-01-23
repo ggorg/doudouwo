@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+            initPage(/*[[${pushPage!=null?pushPage.total:0}]]*/ );
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+        <div class="centercontent tables">
+
+            <!-- <div class="pageheader notab">
+            <h1 class="pagetitle">Tables</h1>
+            <span class="pagedesc">This is a sample description of a page</span>
+
+        </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>推送策略列表</h3>
+                </div><!--contenttitle-->
+                <div class="tableoptions">
+                    <form class="layui-form">
+                        <div class="layui-form-item2 layui-form-item" style="float: left;">
+                            <div class="float-left-div" >
+                                <label class="layui-form-label" >公众号</label>
+                                <div class="layui-input-inline" >
+                                    <select name="appid" id="appid" lay-filter="appid">
+                                        <option th:each="pubweixin:${pubweixinList}" th:value="${pubweixin?.appid}" th:text="${pubweixin?.name}" th:selected="${appid eq pubweixin?.appid}"> 公众号名称</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <button class="radius3" id="createBtn" title="新建策略" onclick="openDialog('440px','440px','新建策略','push/edit?id=-1&appid='+jQuery('#appid').val())">新建策略</button> &nbsp;
+                </div><!--tableoptions-->
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th class="head0">主键</th>
+                        <th class="head1">标题</th>
+                        <th class="head0">推送类型</th>
+                        <th class="head1">推送内容</th>
+                        <th class="head0">推送时间</th>
+                        <th class="head1">标签</th>
+                        <th class="head0">创建时间</th>
+                        <th class="head1">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${pushPage?.result}">
+                        <td th:text="${obj['id']}">Trident</td>
+                        <td th:text="${obj['title']}">Internet Explorer 4.0</td>
+                        <td th:switch="${obj['push_type']}">
+                            <span th:case="1">文字</span>
+                            <span th:case="2">图文</span>
+                            <span th:case="3">模板</span>
+                        </td>
+                        <td th:switch="${obj['push_type']}">
+                            <span th:case="1" th:text="${obj['push_content']}">文字</span>
+                            <span th:case="2" th:text="${obj['message']['title']}">图文</span>
+                            <span th:case="3">模板</span>
+                        </td>
+                        <td th:text="${obj['push_time']!=null ? #dates.format(obj['push_time'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
+                        <td th:switch="${obj['tags']}">
+                            <span th:case="null" th:text="全部">全部</span>
+                            <span th:case="0" th:text="全部">全部</span>
+                            <span th:case="*" th:text="${obj['tags']['name']}">模板</span>
+                        </td>
+                        <td th:text="${obj['create_date']!=null ? #dates.format(obj['create_date'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
+                        <td class="center">
+                            <div class="layui-btn-group">
+                                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'440px\',\'440px\',\'修改策略\',\'push/edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                                <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        layui.use('form', function(){
+            var form = layui.form;
+            form.on('select(appid)', function(data){
+                jQuery.post("list",{appid:data.value},function(){
+                    var currentUrl=window.parent.location.href;
+                    if(currentUrl.indexOf("?")==-1){
+                        top.location.href=currentUrl+"?appid="+data.value;
+                        return ;
+                    }else{
+                        if(currentUrl.indexOf("appid")==-1){
+                            top.location.href=currentUrl+"&appid="+data.value;
+                        }else{
+                            top.location.href=currentUrl.replace(/appid=[^&]+/,"appid="+data.value);
+                        }
+                    }
+                });
+            });
+        })
+
+        function del(obj) {
+            //删除回复规则
+            jQuery.post("push/delete",{id:obj},function(data){
+                layer.msg(data.reMsg);
+                window.setTimeout(function(){
+                    top.location.href=window.parent.location.href;
+                },500)
+            });
+        }
+    </script>
+	</body>
+	
+</html>

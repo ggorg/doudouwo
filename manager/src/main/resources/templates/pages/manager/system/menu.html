@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>菜单列表</h3>
+                </div><!--contenttitle-->
+                <div class="tableoptions">
+                    <button class="radius3" id="createBtn" title="table2" onclick="openDialog('500px','470px','新建顶级菜单','to-edit?pid=-1')">新建顶级菜单</button> &nbsp;
+                    <!-- <select class="radius3">
+                         <option value="">Show All</option>
+                         <option value="">Rendering Engine</option>
+                         <option value="">Platform</option>
+                     </select> &nbsp;
+                     <button class="radius3">Apply Filter</button>
+                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+                </div><!--tableoptions-->
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                    </colgroup>
+                    <thead>
+                    <tr>
+                       
+                        <th class="head1">菜单名称</th>
+                        <th class="head0">菜单主键</th>
+                        <th class="head1">菜单父主键</th>
+                        <th class="head0">排序</th>
+                        <th class="head1">地址</th>
+                        <th class="head0">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${menuPage}" th:attr="parentId=${obj['mParentId']},currentId=${obj['id']}" >
+                        <td   th:inline="text" show="true"  style="cursor: pointer"  th:onclick="${obj['mParentId']==-1?'showChid(this)':''}"><i th:text="${obj['mParentId']==-1?'&#xe625;':'&nbsp;&nbsp;&nbsp;&nbsp;'}" class="layui-icon"></i> [[${obj['mParentId']>-1?'&nbsp;&nbsp;&nbsp;':''}]]<span  th:class="'icon fa fa-1x '+${obj['mIcon']}" ></span> <span th:text="${obj['mName']}">Trident</span></td>
+
+
+                        <td th:text="${obj['id']}">Internet Explorer 4.0</td>
+                        <td th:text="${obj['mParentId']}">Win 95+</td>
+                        <td th:text="${obj['mSort']}">Win 95+</td>
+                        <td th:text="${obj['mUrl']}">Win 95+</td>
+
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'470px\',\'修改菜单\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                            <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${#TdTool.encrypt(obj['id'])}+'\')'"  >删 除</button>
+                                <th:block th:if="${obj['mParentId']==-1}">
+                                    <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'470px\',\'创建下级菜单\',\'to-edit?pid='+${obj['id']}+'&pName='+${obj['mName']}+'\')'"  >创建下级菜单</button>
+
+
+                                </th:block>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        var layer=null;
+        layui.use(['laypage', 'layer'],function() {
+            layer = layui.layer;
+        })
+        function del(val) {
+            //删除菜单
+            layer.confirm('确定删除?',{icon:2,title:'删除'}, function(index){
+               // layer.close(index);
+                //向服务端发送删除指令
+                jQueryCommonSubmit("do-del-menu",null,{midStr:val});
+
+            });
+        }
+        function showChid(obj){
+            if(obj.getAttribute("show")=="true"){
+                jQuery(obj).find("i").replaceWith("<i class='layui-icon'>&#xe623;</i>");
+                obj.setAttribute("show","false");
+            }else{
+                jQuery(obj).find("i").replaceWith("<i class='layui-icon'>&#xe625;</i>");
+                obj.setAttribute("show","true");
+            }
+
+
+           jQuery("[parentId='"+jQuery(obj).parent().attr("currentId")+"']").toggle();
+        }
+    </script>
+	</body>
+	
+</html>
