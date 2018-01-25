@@ -1,9 +1,8 @@
-package com.gen.framework.util;
+package com.gen.common.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;

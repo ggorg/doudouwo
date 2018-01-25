@@ -2,10 +2,10 @@ package com.gen.framework.controller;
 
 
 
+import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
+import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.ResponseVO;
-import com.gen.framework.config.MainGlobals;
-import com.gen.framework.util.UploadFileMoveUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

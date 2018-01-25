@@ -13,6 +13,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.4.0.RELEASE</version>
         <relativePath /> <!-- lookup parent from repository -->
+
     </parent>
 
     <properties>
@@ -130,11 +131,11 @@
         <!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-security</artifactId>
             </dependency> -->
 
-       <!-- <dependency>
+       <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
