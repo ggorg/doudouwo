@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-@PropertySource(ignoreResourceNotFound = true, value = {"classpath:bootstrap.properties"})
+@PropertySource(ignoreResourceNotFound = true, value = {"classpath:bootstrap.properties","classpath:application-abc.properties"})
 public class SpringContextConfig {
 
     @Autowired
@@ -35,11 +35,11 @@ public class SpringContextConfig {
         props.put("url", env.getProperty("mybatis.jdbc.url"));
         props.put("username", env.getProperty("mybatis.jdbc.username"));
         props.put("password", env.getProperty("mybatis.jdbc.password"));
-       props.put("initialSize", env.getProperty("mybatis.jdbc.initialSize"));
-         props.put("maxActive", env.getProperty("mybatis.jdbc.maxActive"));
+        props.put("initialSize", env.getProperty("mybatis.jdbc.initialSize"));
+        props.put("maxActive", env.getProperty("mybatis.jdbc.maxActive"));
         props.put("maxWait", env.getProperty("mybatis.jdbc.maxWait"));
-         props.put("timeBetweenEvictionRunsMillis", env.getProperty("mybatis.jdbc.timeBetweenEvictionRunsMillis"));
-         props.put("minEvictableIdleTimeMillis", env.getProperty("mybatis.jdbc.minEvictableIdleTimeMillis"));
+        props.put("timeBetweenEvictionRunsMillis", env.getProperty("mybatis.jdbc.timeBetweenEvictionRunsMillis"));
+        props.put("minEvictableIdleTimeMillis", env.getProperty("mybatis.jdbc.minEvictableIdleTimeMillis"));
         props.put("validationQuery", env.getProperty("mybatis.jdbc.validationQuery"));
         props.put("testWhileIdle", env.getProperty("mybatis.jdbc.testWhileIdle"));
         props.put("testOnBorrow", env.getProperty("mybatis.jdbc.testOnBorrow"));

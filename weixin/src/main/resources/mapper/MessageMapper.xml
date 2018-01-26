@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.dao.MessageMapper">
+
+    <resultMap id="BaseResultMap" type="com.weixin.entity.Message">
+        <id property="id" column="id"/>
+        <result property="appid" column="appid"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="url" column="url"/>
+        <result property="picurl" column="picurl"/>
+        <result property="parent_id" column="parent_id"/>
+        <result property="sort" column="sort"/>
+        <result property="create_date" column="create_date"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        appid,
+        title,
+        description,
+        url,
+        picurl,
+        parent_id,
+        sort,
+        create_date
+    </sql>
+
+    <insert id="insert" parameterType="com.weixin.entity.Message">
+        insert into weixin_message
+        (appid,title,description,url,picurl,parent_id,sort,create_date)
+        values(
+        #{appid, jdbcType=VARCHAR},
+        #{title, jdbcType=VARCHAR},
+        #{description, jdbcType=VARCHAR},
+        #{url, jdbcType=VARCHAR},
+        #{picurl, jdbcType=VARCHAR},
+        #{parent_id, jdbcType=INTEGER},
+        #{sort, jdbcType=INTEGER},
+        now()
+        )
+    </insert>
+
+    <update id="update" parameterType="com.weixin.entity.Message">
+        update weixin_message
+         <set >
+		      <if test="title != null" >
+                  title=#{title, jdbcType=VARCHAR},
+		      </if>
+		      <if test="description != null" >
+                  description=#{description, jdbcType=VARCHAR},
+		      </if>
+		      <if test="url != null" >
+                  url=#{url, jdbcType=VARCHAR},
+              </if>
+             <if test="picurl != null" >
+                 picurl=#{picurl, jdbcType=VARCHAR},
+             </if>
+             <if test="parent_id != null" >
+                  parent_id=#{parent_id, jdbcType=INTEGER},
+		      </if>
+		      <if test="sort != null" >
+                  sort=#{sort, jdbcType=INTEGER},
+		      </if>
+		    </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        delete from weixin_message
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="findListAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weixin_message
+        where appid = #{appid,jdbcType=VARCHAR}
+        order by sort asc
+    </select>
+
+    <select id="findList" resultMap="BaseResultMap"  parameterType="com.gen.common.util.Page">
+        select
+        <include refid="Base_Column_List"/>
+        from weixin_message
+        where appid = #{appid,jdbcType=VARCHAR}
+        order by sort asc
+        <!-- 数据范围过滤 -->
+        <choose>
+            <when test="page !=null">
+                limit  #{page.startRow, jdbcType=INTEGER},#{page.endRow, jdbcType=INTEGER}
+            </when>
+        </choose>
+    </select>
+
+    <select id="findListCount" resultType="int">
+        select
+        count(*)
+        from weixin_message
+        where appid = #{appid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findListById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weixin_message
+        where parent_id = #{id,jdbcType=INTEGER}
+        order by sort asc
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="int">
+        select
+        <include refid="Base_Column_List"/>
+        from weixin_message
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+</mapper>

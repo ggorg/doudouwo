@@ -19,6 +19,7 @@ public class ThymeleafConfig {
 
 	@Value("${gen.thymeleaf.extTagFun}")
 	private String extTagFun;
+
 	/**
 	 * 添加自定义函数
 	 * 
@@ -33,6 +34,7 @@ public class ThymeleafConfig {
 		Map<String, Object> objects=new HashMap();
 		objects.put("TdTool", new Tools());
 		objects.put("TdEnum", new Enums());
+
 		try {
 			if(StringUtils.isNotBlank(extTagFun)){
 				String[] exts=extTagFun.split(",");

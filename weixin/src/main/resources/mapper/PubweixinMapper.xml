@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.dao.PubweixinMapper">
+
+	<resultMap id="BaseResultMap" type="com.weixin.entity.Pubweixin">
+	  <id property="id" column="id" />
+	  <result property="name" column="name"/>
+	  <result property="appid" column="appid"/>
+	  <result property="appsecret" column="appsecret"/>
+	  <result property="openid" column="openid" />
+	  <result property="usable" column="usable" />
+	  <result property="create_by" column="create_by" />
+	  <result property="create_date" column="create_date" />
+	  <result property="update_by" column="update_by" />
+	  <result property="update_date" column="update_date" />
+	  <result property="remarks" column="remark" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+	    id, name, appid, appsecret, openid, usable, create_by, create_date, update_by,update_date,
+	    remarks
+  	</sql>
+  
+	<select id="selectByAppid" resultMap="BaseResultMap" parameterType="com.weixin.entity.Pubweixin" >
+	    select
+	    <include refid="Base_Column_List" />
+	    from weixin_public
+	    where appid = #{appid,jdbcType=VARCHAR}
+	</select>
+	<select id="selectByOpenid" resultMap="BaseResultMap" parameterType="com.weixin.entity.Pubweixin" >
+	    select
+	    <include refid="Base_Column_List" />
+	    from weixin_public
+	   where openid = #{openid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="select" resultMap="BaseResultMap" parameterType="com.weixin.entity.Pubweixin" >
+	    select
+	    <include refid="Base_Column_List" />
+	    from weixin_public
+	</select>
+
+	<insert id="insert" parameterType="com.weixin.entity.Pubweixin">
+		insert into weixin_public
+			<trim prefix="(" suffix=")" suffixOverrides="," >
+		      <if test="id != null" >
+		        id,
+		      </if>
+		      <if test="name != null" >
+		        name,
+		      </if>
+		      <if test="appid != null" >
+		        appid,
+		      </if>
+		      <if test="appsecret != null" >
+		        appsecret,
+		      </if>
+		      <if test="openid != null" >
+		        openid,
+		      </if>
+		      <if test="usable != null" >
+		        usable,
+		      </if>
+		      <if test="create_by != null" >
+		        create_by,
+		      </if>
+		      <if test="create_date != null" >
+		        create_date,
+		      </if>
+		      <if test="update_by != null" >
+		        update_by,
+		      </if>
+		      <if test="update_date != null" >
+		        update_date,
+		      </if>
+		      <if test="remarks != null" >
+		        remarks,
+		      </if>
+		      </trim>
+		    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		      <if test="id != null" >
+		        #{id,jdbcType=INTEGER},
+		      </if>
+		      <if test="name != null" >
+		       #{name, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="appid != null" >
+		        #{appid, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="appsecret != null" >
+		        #{appsecret, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="openid != null" >
+		        #{openid, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="usable != null" >
+		        #{usable, jdbcType=INTEGER}, 
+		      </if>
+		      <if test="create_by != null" >
+		        #{create_by, jdbcType=INTEGER}, 
+		      </if>
+		      <if test="create_date != null" >
+		        #{create_by, jdbcType=TIMESTAMP}, 
+		      </if>
+		      <if test="update_by != null" >
+		        #{update_by, jdbcType=INTEGER}, 
+		      </if>
+		      <if test="update_date != null" >
+		         #{update_date, jdbcType=TIMESTAMP}, 
+		      </if>
+		      <if test="remarks != null" >
+		        #{remarks, jdbcType=VARCHAR}, 
+		      </if>
+		    </trim>
+	</insert>
+	
+	<update id="update" parameterType="com.weixin.entity.Pubweixin">
+		update weixin_public
+		    <set >
+		      <if test="name != null" >
+		       name=#{name, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="appid != null" >
+		        appid=#{appid, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="appsecret != null" >
+		        appsecret=#{appsecret, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="openid != null" >
+		        openid=#{openid, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="usable != null" >
+		        usable=#{usable, jdbcType=INTEGER}, 
+		      </if>
+		      <if test="update_by != null" >
+		        update_by=#{update_by, jdbcType=INTEGER}, 
+		      </if>
+		      <if test="update_date != null" >
+		        update_date=now(), 
+		      </if>
+		      <if test="remarks != null" >
+		        remarks=#{remarks, jdbcType=VARCHAR}, 
+		      </if>
+		    </set>
+		    where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="delete" parameterType="com.weixin.entity.Pubweixin">
+		delete from weixin_public
+		where appid = #{appid, jdbcType=VARCHAR}
+	</delete>
+	
+	<!-- 分页查询公众号信息 -->
+    <select id="findList" parameterType="com.gen.common.util.Page" resultType="com.weixin.entity.Pubweixin">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM weixin_public a
+        <!-- 数据范围过滤 -->
+        <choose>
+            <when test="page !=null">
+                limit  #{page.startRow, jdbcType=INTEGER},#{page.endRow, jdbcType=INTEGER}
+            </when>
+            <otherwise>
+                ORDER BY a.update_date
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 查询公众号总数 -->
+    <select id="findListCount" resultType="int">
+        SELECT
+        count(*)
+        FROM weixin_public a
+    </select>
+
+	<!-- 不分页查询公众号信息 -->
+    <select id="findListAll" resultType="com.weixin.entity.Pubweixin">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM weixin_public a
+    </select>
+</mapper>

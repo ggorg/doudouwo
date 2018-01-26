@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.dao.RedPackMapper">
+
+    <resultMap id="BaseResultMap" type="com.weixin.entity.RedPack">
+        <id property="id" column="id"/>
+        <result property="wxappid" column="appid"/>
+        <result property="mch_id" column="mch_id"/>
+        <result property="mch_key" column="mch_key"/>
+        <result property="client_ip" column="client_ip"/>
+        <result property="certificate_path" column="certificate_path"/>
+        <result property="create_date" column="create_date"/>
+        <result property="update_by" column="update_by" />
+	    <result property="update_date" column="update_date" />
+	  	<result property="remarks" column="remarks" />
+	  	<result property="del_flag" column="del_flag" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        appid,
+        mch_id,
+        mch_key,
+        client_ip,
+        certificate_path,
+        create_date, 
+        update_by, 
+        update_date, 
+	    remarks, 
+	    del_flag
+    </sql>
+
+    <select id="selectByappid" resultMap="BaseResultMap" parameterType="com.weixin.entity.RedPack">
+        select
+        <include refid="Base_Column_List"/>
+        from weixin_redpack 
+        where appid = #{appid,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

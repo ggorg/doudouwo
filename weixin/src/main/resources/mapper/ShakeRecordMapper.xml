@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.dao.ShakeRecordMapper">
+
+	<resultMap id="BaseResultMap" type="com.weixin.entity.ShakeRecord">
+	  <id property="id" column="id" />
+	  <result property="openid" column="openid"/>
+	  <result property="name" column="name"/>
+	  <result property="src" column="src"/>
+	  <result property="shop" column="shop"/>
+	  <result property="create_date" column="create_date"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+	    id, openid, name, src, shop, create_date
+  	</sql>
+	
+	<insert id="insert" parameterType="com.weixin.entity.ShakeRecord">
+		insert into weixin_act_shake_record
+			<trim prefix="(" suffix=")" suffixOverrides="," >
+		      <if test="id != null" >
+		        id,
+		      </if>
+		      <if test="openid != null" >
+		        openid,
+		      </if>
+		      <if test="name != null" >
+		        name,
+		      </if>
+		      <if test="src != null" >
+		        src,
+		      </if>
+		      <if test="shop != null" >
+		        shop,
+		      </if>
+		      <if test="create_date != null" >
+		        create_date,
+		      </if>
+		      </trim>
+		    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		      <if test="id != null" >
+		        #{id,jdbcType=INTEGER},
+		      </if>
+              <if test="openid != null" >
+                #{openid, jdbcType=VARCHAR}, 
+              </if>
+		      <if test="name != null" >
+		       #{name, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="src != null" >
+		        #{src, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="shop != null" >
+		        #{shop, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="create_date != null" >
+		        #{create_date, jdbcType=TIMESTAMP}, 
+		      </if>
+		    </trim>
+	</insert>
+</mapper>

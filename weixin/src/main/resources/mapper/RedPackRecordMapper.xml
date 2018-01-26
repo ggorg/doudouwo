@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.dao.RedPackRecordMapper">
+
+	<resultMap id="BaseResultMap" type="com.weixin.entity.RedPackRecord">
+	  <id property="id" column="id" />
+	  <result property="appid" column="appid"/>
+	  <result property="mchId" column="mch_id"/>
+	  <result property="mchBillno" column="mch_billno" />
+	  <result property="totalAmount" column="total_amount" />
+	  <result property="reOpenid" column="re_openid" />
+	  <result property="errCode" column="err_code" />
+	  <result property="returnMsg" column="return_msg" />
+	  <result property="resultCode" column="result_code" />
+	  <result property="errCodeDes" column="err_code_des" />
+	  <result property="returnCode" column="return_code" />
+	  <result property="createDate" column="create_date" />
+	  <result property="sendTime" column="send_time" />
+	  <result property="sendListid" column="send_listid" />
+	  <result property="sendName" column="send_name" />
+	  <result property="wishing" column="wishing" />
+	  <result property="actName" column="act_name" />
+	  <result property="remark" column="remark" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+	    id, appid,mch_id,mch_billno,total_amount,re_openid,err_code,
+	    return_msg,result_code,err_code_des,return_code,create_date,
+	    send_time,send_listid,send_name,wishing,act_name,remark
+  	</sql>
+	
+	<insert id="insert" parameterType="com.weixin.entity.RedPackRecord" useGeneratedKeys="true" keyProperty="id">
+		insert into weixin_redpack_record
+			<trim prefix="(" suffix=")" suffixOverrides="," >
+		      <if test="appid != null" >
+		        appid,
+		      </if>
+		      <if test="mchId != null" >
+		        mch_id,
+		      </if>
+		      <if test="mchBillno != null" >
+		        mch_billno,
+		      </if>
+		      <if test="totalAmount != null" >
+		        total_amount,
+		      </if>
+		      <if test="reOpenid != null" >
+		        re_openid,
+		      </if>
+		      <if test="errCode != null" >
+		        err_code,
+		      </if>
+		      <if test="returnMsg != null" >
+		        return_msg,
+		      </if>
+		      <if test="resultCode != null" >
+		        result_code,
+		      </if>
+		      <if test="errCodeDes != null" >
+		        err_code_des,
+		      </if>
+		      <if test="returnCode != null" >
+		        return_code,
+		      </if>
+		      <if test="createDate != null" >
+		        create_date,
+		      </if>
+		      <if test="sendTime != null" >
+		        send_time,
+		      </if>
+		      <if test="sendListid != null" >
+		        send_listid,
+		      </if>
+		      <if test="sendName != null" >
+		        send_name,
+		      </if>
+		      <if test="wishing != null" >
+		        wishing,
+		      </if>
+		      <if test="actName != null" >
+		        act_name,
+		      </if>
+		      <if test="remark != null" >
+		        remark,
+		      </if>
+		      </trim>
+		    <trim prefix="values (" suffix=")" suffixOverrides="," >
+		      <if test="appid != null" >
+		        #{appid,jdbcType=VARCHAR},
+		      </if>
+		      <if test="mchId != null" >
+		       #{mchId, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="mchBillno != null" >
+		        #{mchBillno, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="totalAmount != null" >
+		        #{totalAmount, jdbcType=INTEGER}, 
+		      </if>
+		      <if test="reOpenid != null" >
+		        #{reOpenid, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="errCode != null" >
+		        #{errCode, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="returnMsg != null" >
+		        #{returnMsg, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="resultCode != null" >
+		        #{resultCode, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="errCodeDes != null" >
+		        #{errCodeDes, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="returnCode != null" >
+		         #{returnCode, jdbcType=TIMESTAMP}, 
+		      </if>
+		      <if test="createDate != null" >
+		        #{createDate, jdbcType=TIMESTAMP}, 
+		      </if>
+		      <if test="sendTime != null" >
+		        #{sendTime, jdbcType=INTEGER}, 
+		      </if>
+		      <if test="sendListid != null" >
+		        #{sendListid, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="sendName != null" >
+		        #{sendName, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="wishing != null" >
+		        #{wishing, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="actName != null" >
+		        #{actName, jdbcType=VARCHAR}, 
+		      </if>
+		      <if test="remark != null" >
+		        #{remark, jdbcType=VARCHAR}, 
+		      </if>
+		    </trim>
+	</insert>
+</mapper>

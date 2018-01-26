@@ -6,6 +6,7 @@ import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
 import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.ResponseVO;
+import com.weixin.controller.DemoController;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,7 @@ public class MainController {
     private final Logger logger = Logger.getLogger(MainController.class);
     @Autowired
     private MainGlobals mainGlobals;
+
 
     @GetMapping("/404")
     public String to404(){

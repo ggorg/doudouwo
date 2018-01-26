@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.dao.UserAnalysisMapper">
+
+    <resultMap id="BaseResultMap" type="com.weixin.entity.UserAnalysis">
+        <id property="id" column="id"/>
+        <result property="appid" column="appid"/>
+        <result property="newUser" column="new_user"/>
+        <result property="cancelUser" column="cancel_user"/>
+        <result property="netgainUser" column="netgain_user"/>
+        <result property="userSource" column="user_source"/>
+        <result property="cumulateUser" column="cumulate_user"/>
+        <result property="refDate" column="ref_date"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        appid,
+        new_user,
+        cancel_user,
+        netgain_user,
+        user_source,
+        cumulate_user,
+        ref_date
+    </sql>
+
+    <insert id="insert" parameterType="com.weixin.entity.UserAnalysis">
+        insert into weixin_user_analysis
+        (appid,new_user,cancel_user,netgain_user,user_source,cumulate_user,ref_date)
+        values(
+        #{appid, jdbcType=VARCHAR},
+        #{newUser, jdbcType=INTEGER},
+        #{cancelUser, jdbcType=INTEGER},
+        #{netgainUser, jdbcType=INTEGER},
+        #{userSource, jdbcType=INTEGER},
+        #{cumulateUser, jdbcType=INTEGER},
+        #{refDate, jdbcType=DATE}
+        )
+    </insert>
+
+    <!-- 分页查询用户信息 -->
+    <select id="findList" resultType="com.weixin.entity.UserAnalysis">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM weixin_user_analysis
+        WHERE 1=1 
+        <!-- 数据范围过滤 -->
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY ref_date desc
+            </otherwise>
+        </choose>
+    </select>
+</mapper>
