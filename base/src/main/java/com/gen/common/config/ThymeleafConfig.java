@@ -5,7 +5,11 @@ import com.gen.common.util.Tools;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.thymeleaf.context.IProcessingContext;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.dialect.SpringStandardDialect;
@@ -20,6 +24,15 @@ public class ThymeleafConfig {
 	@Value("${gen.thymeleaf.extTagFun}")
 	private String extTagFun;
 
+	@Value("${a}")
+	private String a;
+
+	@Value("${b}")
+	private String b;
+
+
+
+
 	/**
 	 * 添加自定义函数
 	 * 
@@ -31,6 +44,7 @@ public class ThymeleafConfig {
 		// final Set<IDialect> additionalDialects = new HashSet<>();
 		// additionalDialects.add(menuDialect());
 		// springTemplateEngine.setAdditionalDialects(additionalDialects);
+		System.out.println(a+","+b);
 		Map<String, Object> objects=new HashMap();
 		objects.put("TdTool", new Tools());
 		objects.put("TdEnum", new Enums());

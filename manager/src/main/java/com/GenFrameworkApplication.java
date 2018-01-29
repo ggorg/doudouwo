@@ -7,9 +7,11 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
+
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
+
 //@EnableAspectJAutoProxy
 public class GenFrameworkApplication {
 
@@ -18,7 +20,7 @@ public class GenFrameworkApplication {
 
 
         SpringApplication.run(new Object[]{GenFrameworkApplication.class}, args);
-		
+
 		
 	}
 }

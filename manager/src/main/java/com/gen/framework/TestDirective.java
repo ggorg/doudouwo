@@ -14,7 +14,7 @@ public class TestDirective implements TemplateDirectiveModel{
 		Object paramValue = params.get("myid"); //这里模版页面传进来的参数叫做articleId   
 	    int id=0;  
 	    if (paramValue instanceof TemplateNumberModel) {  
-	        id = ((TemplateNumberModel) paramValue).getAsNumber().intValue();  
+	        id = ((TemplateNumberModel) paramValue).getAsNumber().intValue();
 	    }                                                                                                                                 
 
 

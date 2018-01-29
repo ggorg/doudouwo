@@ -14,7 +14,13 @@
         <module>service-api</module>
         <module>weixin</module>
     </modules>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.4.0.RELEASE</version>
+        <relativePath /> <!-- lookup parent from repository -->
 
+    </parent>
 
     <build>
         <plugins>

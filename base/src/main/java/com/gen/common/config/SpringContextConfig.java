@@ -2,6 +2,7 @@ package com.gen.common.config;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.gen.common.interceptor.MybatisInterceptor;
+import com.gen.common.util.GenPropertySourceFactory;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -18,11 +19,13 @@ import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-@PropertySource(ignoreResourceNotFound = true, value = {"classpath:bootstrap.properties","classpath:application-abc.properties"})
+
+@PropertySource(ignoreResourceNotFound = true, value = {"classpath:bootstrap.properties","classpath:application-*.properties"},factory = GenPropertySourceFactory.class)
 public class SpringContextConfig {
 
     @Autowired
     private Environment env;
+
 
     /**
      * 创建数据源(数据源的名称：方法名可以取为XXXDataSource(),XXX为数据库名称,该名称也就是数据源的名称)
