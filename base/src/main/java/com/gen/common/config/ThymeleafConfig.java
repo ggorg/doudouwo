@@ -21,14 +21,9 @@ import java.util.Map;
 @Configuration
 public class ThymeleafConfig {
 
-	@Value("${gen.thymeleaf.extTagFun}")
+	@Value("${gen.thymeleaf.extTagFun:}")
 	private String extTagFun;
 
-	@Value("${a}")
-	private String a;
-
-	@Value("${b}")
-	private String b;
 
 
 
@@ -44,7 +39,7 @@ public class ThymeleafConfig {
 		// final Set<IDialect> additionalDialects = new HashSet<>();
 		// additionalDialects.add(menuDialect());
 		// springTemplateEngine.setAdditionalDialects(additionalDialects);
-		System.out.println(a+","+b);
+
 		Map<String, Object> objects=new HashMap();
 		objects.put("TdTool", new Tools());
 		objects.put("TdEnum", new Enums());

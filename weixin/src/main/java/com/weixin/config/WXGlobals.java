@@ -10,15 +10,16 @@ import java.util.Map;
 public class WXGlobals {
 
 
-    @Value("${ty.msg.default.picUrl:http://gen.51ftt.com/wap/images/rp-bg.png}")
+    @Value("${wx.msg.default.picUrl:http://gen.51ftt.com/wap/images/rp-bg.png}")
     private String defaultPicUrl;
 
-    @Value("${ty.test.openid:}")
+    @Value("${wx.test.openid:}")
     private String testOpenid;
 
-    @Value("${ty.oauth.redirectUri:http://gen.51ftt.com/weixin/oauth}")
+    @Value("${wx.oauth.redirectUri:http://gen.51ftt.com/weixin/oauth}")
     private String redirectUri;
 
+    @Value("${wx.oauth.jump.url}")
     private String oauthJumUrl;
 
     public String getDefaultPicUrl() {

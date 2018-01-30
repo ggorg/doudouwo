@@ -5,20 +5,20 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
-
 //@EnableAspectJAutoProxy
-public class GenFrameworkApplication {
+@EnableSwagger2
+public class ApiApplication {
 
 	public static void main(String[] args) {
 
 
-        SpringApplication.run(new Object[]{GenFrameworkApplication.class}, args);
+        SpringApplication.run(new Object[]{ApiApplication.class}, args);
 
 		
 	}

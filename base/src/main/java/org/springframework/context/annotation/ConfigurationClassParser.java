@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 
 import org.apache.commons.logging.Log;
@@ -362,32 +363,25 @@ class ConfigurationClassParser {
                 String resolvedLocation = this.environment.resolveRequiredPlaceholders(location);
                 Resource resource = this.resourceLoader.getResource(resolvedLocation);
                 if(resource.getFilename().equals("application-*.properties")){
-
-
-                   // DefaultResourceLoader defaultResourceLoader=new DefaultResourceLoader();
-                    final String applicationX=resource.getFilename();
-                    File file=new File(this.resourceLoader.getClassLoader().getResource("").getPath());
-                    System.out.println("a:path:"+this.resourceLoader.getResource("application-a.properties").getFile().getPath());
-                    System.out.println("b:path:"+this.resourceLoader.getResource("application-b.properties").getFile().getPath());
-                    //System.out.println("c:path:"+this.resourceLoader.getResource("application-c.properties").getFile().getPath());
-                    //this.resourceLoader.getClassLoader().
-                    String[] files=file.list(new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String name) {
-                            if(name.matches("^application-.+[.]properties$")){
-                                return true;
-                            }
-                            return false;
+                    String en="qwertyuiopasdfghjklzxcvbnm";
+                    String[] ens=en.split("");
+                    URL url=null;
+                    StringBuilder appFileName=null;
+                    for(String e:ens){
+                        appFileName=new StringBuilder();
+                        appFileName.append("application-");
+                        appFileName.append(e);
+                        appFileName.append(".properties");
+                        url=this.resourceLoader.getClassLoader().getResource(appFileName.toString());
+                        if(url!=null){
+                            System.out.println("加载："+appFileName);
+                            EncodedResource erb=new EncodedResource(this.resourceLoader.getResource(appFileName.toString()),"UTF-8");
+                            addPropertySource(factory.createPropertySource(name,erb));
                         }
-                    });
-                    System.out.println("---------"+file+"------------------"+ Arrays.asList(files));
-                    EncodedResource er=new EncodedResource(this.resourceLoader.getResource("application-a.properties"),"UTF-8");
+                    }
 
-                    addPropertySource(factory.createPropertySource(name,er));
-                    EncodedResource erb=new EncodedResource(this.resourceLoader.getResource("application-b.properties"),"UTF-8");
-                    addPropertySource(factory.createPropertySource(name,erb));
                 }else{
-
+                    System.out.println("加载："+resource.getFilename());
                     addPropertySource(factory.createPropertySource(name,new EncodedResource(resource, encoding)));
                 }
 

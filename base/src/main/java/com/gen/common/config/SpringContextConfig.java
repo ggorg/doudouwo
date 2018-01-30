@@ -20,7 +20,7 @@ import java.util.Properties;
 
 @Configuration
 
-@PropertySource(ignoreResourceNotFound = true, value = {"classpath:bootstrap.properties","classpath:application-*.properties"},factory = GenPropertySourceFactory.class)
+@PropertySource(ignoreResourceNotFound = true, value = {"classpath:bootstrap.properties","classpath:application-*.properties"})
 public class SpringContextConfig {
 
     @Autowired
@@ -33,7 +33,7 @@ public class SpringContextConfig {
  @Bean(destroyMethod="close",name="mainDbDataSource")
     public DataSource mainDbDataSource() throws Exception {
         Properties props = new Properties();
-        
+
         props.put("driverClassName", env.getProperty("mybatis.jdbc.driverClassName"));
         props.put("url", env.getProperty("mybatis.jdbc.url"));
         props.put("username", env.getProperty("mybatis.jdbc.username"));
