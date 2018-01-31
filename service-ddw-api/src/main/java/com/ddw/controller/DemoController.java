@@ -1,6 +1,6 @@
-package com.gen.api.controller;
+package com.ddw.controller;
 
-import com.gen.api.vo.DemoVo;
+import com.ddw.vo.DemoVo;
 import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

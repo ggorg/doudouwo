@@ -1,4 +1,4 @@
-package com.gen.api.vo;
+package com.ddw.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

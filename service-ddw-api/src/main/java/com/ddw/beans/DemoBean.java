@@ -1,6 +1,4 @@
-package com.gen.api.beans;
-
-import com.gen.api.vo.BaseVo;
+package com.ddw.beans;
 
 public class DemoBean {
     private String name;
