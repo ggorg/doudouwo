@@ -1,5 +1,6 @@
 package com.gen.common.util;
 
+import com.gen.common.vo.FileInfoVo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -10,9 +11,10 @@ import java.io.FileOutputStream;
 
 public class UploadFileMoveUtil {
     private static final Logger logger = Logger.getLogger(UploadFileMoveUtil.class);
-    public static boolean move(MultipartFile file,String rsDir,String fileName){
+    public static FileInfoVo move(MultipartFile file,String rsDir,String fileName){
         FileOutputStream fos=null;
         try{
+            FileInfoVo fileInfoVo=new FileInfoVo();
             File rsDirFile=new File(rsDir);
             if(!rsDirFile.exists()){
                 rsDirFile.mkdirs();
@@ -20,14 +22,22 @@ public class UploadFileMoveUtil {
             File destFile=new File(rsDirFile, StringUtils.isNotBlank(fileName)?fileName:file.getOriginalFilename());
             fos=new FileOutputStream(destFile);
             IOUtils.write(file.getBytes(),fos);
-            return true;
+            fileInfoVo.setBaseName(file.getOriginalFilename());
+            fileInfoVo.setRandomName(destFile.getName());
+            if(rsDir.matches("(.*)(/rs/.*)")){
+                fileInfoVo.setUrlPath(rsDir.replaceAll("(.*)(/rs/.*)","$2")+destFile.getName());
+            }
+            fileInfoVo.setFileSize(file.getSize());
+          //  fileInfoVo.setUrlPath(+"/rs/"+destFile.getName());
+            return fileInfoVo;
         }catch (Exception e){
 
             logger.error("UploadFileMoveUtil->move",e);
         }finally {
             if(fos!=null)IOUtils.closeQuietly(fos);
         }
-        return false;
+        return null;
 
     }
+
 }

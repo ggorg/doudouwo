@@ -5,6 +5,7 @@ package com.gen.framework.controller;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
 import com.gen.common.util.UploadFileMoveUtil;
+import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,9 +37,9 @@ public class MainController {
     @ResponseBody
     public ResponseVO doUpload(MultipartFile file){
 
-        boolean flag= UploadFileMoveUtil.move(file,mainGlobals.getRsDir(), null);
-        if(flag){
-            return new ResponseVO(1,"上传成功",null);
+        FileInfoVo fileInfoVo= UploadFileMoveUtil.move(file,mainGlobals.getRsDir(), null);
+        if(fileInfoVo!=null){
+            return new ResponseVO(1,"上传成功",fileInfoVo);
         }else{
             return new ResponseVO(-2,"上传失败",null);
         }

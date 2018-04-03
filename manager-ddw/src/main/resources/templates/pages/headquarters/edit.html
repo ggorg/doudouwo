@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+  <script type="text/javascript" src="/wangEditor/wangEditor.min.js"></script>
+  <style type="text/css">
+    .topimg{z-index:10;width: 353px;height: 93.83px;position:absolute;top:0;left:0}
+    .actimg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane" >
+  <input th:if="${dm!=null and dm['id']!=null}" th:name="id" th:value="${dm['id']}" type="hidden"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">材料名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="dmName" required="required" title="材料名称"  lay-verify="required|max20" th:value="${dm!=null? dm['dmName']:''}" placeholder="材料名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">净含量</label>
+    <div class="layui-input-block">
+      <input type="text" name="dmUnit" required="required" title="净含量"  lay-verify="required" th:value="${dm!=null? dm['dmUnit']:''}" placeholder="请输入净含量" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">成本价格</label>
+    <div class="layui-input-block">
+      <input type="text" name="dmCost" required="required" title="成本价格"  lay-verify="required|number" th:value="${dm!=null? dm['dmCost']:''}" placeholder="请输入成本价格" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">销售价格</label>
+    <div class="layui-input-block">
+      <input type="text" name="dmCost" required="required" title="销售价格"  lay-verify="required|number" th:value="${dm!=null? dm['dmSales']:''}" placeholder="请输入销售价格" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">材料图片</label>
+    <div class="layui-input-block">
+      <button type="button" class="layui-btn myupload1"  style="width: 353px;height: 93.83px;" >
+        <span  style="z-index: 1000;position: relative">上传图片</span>
+        <img th:if="${dm!=null and dm['dmIcoImgPath']!=null}" th:src="${pro['dmIcoImgPath']}" class="dmImg" />
+        <input th:if="${dm!=null and dm['id']!=null}" type="hidden" name="isUpdateImg" value="dmImgFile"/>
+      </button>
+    </div>
+  </div>
+  <div class="layui-form-item ">
+    <label class="layui-form-label">详情描述</label>
+    <div class="layui-input-block">
+      <div id="dmContent">
+
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    //initForm("do-edit-user",".layui-form")
+    var E = window.wangEditor
+    var editor = new E('#dmContent')
+
+    editor.customConfig.uploadImgServer = '/rs/do-upload'
+    editor.customConfig.uploadImgTimeout = 60*1000
+    editor.customConfig.uploadFileName = "file";
+    editor.customConfig.uploadImgHooks ={
+        customInsert: function (insertImg, result, editor) {
+            if(result.reCode==1){
+                insertImg(result.data.urlPath);
+            }
+             }
+    }
+
+    editor.create()
+    layui.use(['upload','form','layer'], function(){
+        var upload = layui.upload;
+        layer=layui.layer;
+        initProForm(layui);
+
+        //执行实例
+        var uploadInst1 = upload.render(initUpload(".myupload1","dmImgFile","dmImg"));
+
+
+    });
+    function initProForm(layui){
+        var form = layui.form;
+        form.verify({
+            required:function(value,item){
+                var msg=item.getAttribute("placeholder");
+                if(value!=null && value.replace(/[ ]/g,"")==""){
+                    return msg==null?"请输入必填项":msg;
+                }else{
+                    return false;
+                }
+                return msg==null?"请输入必填项":msg;
+            },
+            max20:function(value,item){
+                if(value.length>20){
+                    return '标题至多得20个字符啊';
+                }
+            },
+            max200:function(value,item){
+                if(value.length>200){
+                    return '活动描述至多得200个字符啊';
+                }
+            }
+        })
+        $(".layui-form").submit(function(){
+            $.ajax(commonAjaxFunction("/manager/activity/do-eidt-propagate",new FormData($('form')[0]),true));
+            //return  commonSubmit(url,formObject);
+            return false;
+        })
+    }
+    function initUpload(classname,filename,imgcn){
+        return {
+            elem: classname, //绑定元素
+            url: '/upload/', //上传接口
+            accept:'images',
+            auto:false,
+            field:filename,
+            choose:function(obj){
+
+                obj.preview(function(index, file, result){
+                    $(classname).find("."+imgcn).remove()
+                    $(classname).find("[name='isUpdateImg']").remove();
+                    $(classname).append("<img src=\""+result+"\" class=\""+imgcn+"\"/>")
+                });
+            },
+            done: function(res){
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        }
+    }
+</script>
+</body>
+</html>

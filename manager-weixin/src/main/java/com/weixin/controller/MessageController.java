@@ -5,6 +5,7 @@ import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.Page;
 import com.gen.common.util.UploadFileMoveUtil;
+import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,8 +123,8 @@ public class MessageController {
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
         // 时间戳文件名
         fileName = new Date().getTime() + suffixName;
-        boolean flag= UploadFileMoveUtil.move(file,mainGlobals.getRsDir(), fileName);
-        if(flag){
+        FileInfoVo flag= UploadFileMoveUtil.move(file,mainGlobals.getRsDir(), fileName);
+        if(flag!=null){
             return new ResponseVO(1,"上传成功",fileName);
         }else{
             return new ResponseVO(-2,"上传失败",null);
