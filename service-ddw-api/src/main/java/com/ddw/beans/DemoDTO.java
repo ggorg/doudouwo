@@ -1,10 +1,10 @@
-package com.ddw.vo;
+package com.ddw.beans;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value="用例对像",description="用例对像DemoVo")
-public class DemoVo extends BaseVo {
+public class DemoDTO extends BaseDTO {
 
     @ApiModelProperty(name="name",value="姓名",example="某某某")
     private String name;
@@ -30,7 +30,7 @@ public class DemoVo extends BaseVo {
 
     @Override
     public String toString() {
-        return "DemoVo{" +
+        return "DemoDTO{" +
                 "name='" + name + '\'' +
                 ", id=" + id +
                 '}';
