@@ -7,8 +7,8 @@
   <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
   <script type="text/javascript" src="/wangEditor/wangEditor.min.js"></script>
   <style type="text/css">
-    .topimg{z-index:10;width: 353px;height: 93.83px;position:absolute;top:0;left:0}
-    .actimg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
+    .dmImge{z-index:10;width: 353px;height: 93.83px;position:absolute;top:0;left:0}
+    .dmImg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
 
   </style>
 </head>
@@ -28,23 +28,30 @@
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">成本价格</label>
+    <label class="layui-form-label">成本价格(分)</label>
     <div class="layui-input-block">
       <input type="text" name="dmCost" required="required" title="成本价格"  lay-verify="required|number" th:value="${dm!=null? dm['dmCost']:''}" placeholder="请输入成本价格" autocomplete="off" class="layui-input" />
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">销售价格</label>
+    <label class="layui-form-label">销售价格(分)</label>
     <div class="layui-input-block">
-      <input type="text" name="dmCost" required="required" title="销售价格"  lay-verify="required|number" th:value="${dm!=null? dm['dmSales']:''}" placeholder="请输入销售价格" autocomplete="off" class="layui-input" />
+      <input type="text" name="dmSales" required="required" title="销售价格"  lay-verify="required|number" th:value="${dm!=null? dm['dmSales']:''}" placeholder="请输入销售价格" autocomplete="off" class="layui-input" />
     </div>
   </div>
   <div class="layui-form-item">
+    <label class="layui-form-label">排序号</label>
+    <div class="layui-input-block">
+      <input type="text" name="dmSort" required="required" title="排序号"  lay-verify="number" th:value="${dm!=null? dm['dmSort']:''}" placeholder="请输入排序号" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
     <label class="layui-form-label">材料图片</label>
     <div class="layui-input-block">
-      <button type="button" class="layui-btn myupload1"  style="width: 353px;height: 93.83px;" >
+      <button type="button" class="layui-btn myupload1"  style="width: 143.52px;height: 93.83px;" >
         <span  style="z-index: 1000;position: relative">上传图片</span>
-        <img th:if="${dm!=null and dm['dmIcoImgPath']!=null}" th:src="${pro['dmIcoImgPath']}" class="dmImg" />
+        <img th:if="${dm!=null and dm['dmIcoImgPath']!=null}" th:src="${dm['dmIcoImgPath']}" class="dmImg" />
         <input th:if="${dm!=null and dm['id']!=null}" type="hidden" name="isUpdateImg" value="dmImgFile"/>
       </button>
     </div>
@@ -52,11 +59,11 @@
   <div class="layui-form-item ">
     <label class="layui-form-label">详情描述</label>
     <div class="layui-input-block">
-      <div id="dmContent">
+      <div id="dmContent" th:utext="${dm!=null?dm['dmContent']:''}">
 
 
       </div>
-
+      <textarea id="hidTextArea" style="display: none" name="dmContent" th:utext="${dm!=null?dm['dmContent']:''}"></textarea>
     </div>
   </div>
 
@@ -82,8 +89,13 @@
             }
              }
     }
+    editor.customConfig.onchange = function (html) {
 
+        // 监控变化，同步更新到 textarea
+        $("#hidTextArea").val(html)
+    }
     editor.create()
+
     layui.use(['upload','form','layer'], function(){
         var upload = layui.upload;
         layer=layui.layer;
@@ -118,7 +130,11 @@
             }
         })
         $(".layui-form").submit(function(){
-            $.ajax(commonAjaxFunction("/manager/activity/do-eidt-propagate",new FormData($('form')[0]),true));
+            editor.change();
+            window.setTimeout(function(){
+                $.ajax( commonAjaxFunction("do-edit",new FormData($('form')[0]),true));
+            },300)
+
             //return  commonSubmit(url,formObject);
             return false;
         })

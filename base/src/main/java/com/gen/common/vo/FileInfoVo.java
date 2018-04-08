@@ -6,6 +6,15 @@ public class FileInfoVo {
     private String urlPath;
     private long fileSize;
     private String suffixName;
+    private String fileSrc;
+
+    public String getFileSrc() {
+        return fileSrc;
+    }
+
+    public void setFileSrc(String fileSrc) {
+        this.fileSrc = fileSrc;
+    }
 
     public String getSuffixName() {
         return suffixName;

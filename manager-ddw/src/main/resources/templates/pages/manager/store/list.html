@@ -4,7 +4,7 @@
         <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
         <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
         <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${page!=null?page.total:0}]]*/ );
+           initPage(/*[[${sPage!=null?sPage.total:0}]]*/ );
         </script>
 	</head>
     <body class="withvernav">
@@ -22,7 +22,7 @@
 
             <div id="contentwrapper" class="contentwrapper">
                 <div class="contenttitle2">
-                    <h3>原材料列表</h3>
+                    <h3>门店列表</h3>
 
                 </div><!--contenttitle-->
 
@@ -51,7 +51,7 @@
                 </div><!--tableoptions-->
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('850px','480px','新增材料','to-edit-page')" title="table2">新增材料</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('650px','530px','新增门店','to-edit')" title="table2">新增门店</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -60,14 +60,21 @@
                         <col class="con1" />
                         <col class="con0" />
                         <col class="con1" />
+                        <col class="con1" />
+                        <col class="con1" />
+                        <col class="con1" />
 
                         <col class="con0" />
                     </colgroup>
                     <thead>
 
                     <tr>
-                       
-                        <th class="head1">用户名</th>
+                        <th class="head0">门店名称</th>
+                        <th class="head1">联系人</th>
+                        <th class="head0">联系方式</th>
+                        <th class="head0">企业名称</th>
+                        <th class="head0">地区</th>
+                        <th class="head0">经纬度</th>
                         <th class="head0">状态</th>
                         <th class="head1">创建时间</th>
 
@@ -76,16 +83,22 @@
                     </thead>
 
                     <tbody>
-                    <tr th:each="obj:${userPage?.result}">
-                       
-                        <td th:text="${obj['uName']}">Trident</td>
-                        <td th:text="${obj['disabled']>0?'已禁用':'已启用'}">Internet Explorer 4.0</td>
+                    <tr th:each="obj:${sPage?.result}">
+                        <td th:text="${obj['dsName']}"></td>
+                        <td th:text="${obj['dsLeaderName']}">Trident</td>
+                        <td th:text="${obj['dsLeaderTelNo']}">Trident</td>
+                        <td th:text="${obj['dsCompanyName']}">Trident</td>
+                        <td th:text="${obj['dsCity']}">Trident</td>
+                        <td th:text="${obj['dsLongitude']+','+obj['dsLatitude']}">Trident</td>
+                        <td th:text="${obj['dsStatus']==0||obj['dsStatus']==null?'已启用':'已禁用'}">Trident</td>
+
                         <td th:text="${obj['createTime']}">Win 95+</td>
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'400px\',\'280px\',\'修改用户\',\'to-edit?uId='+${obj['id']}+'\')'"  >修 改</button>
-                            <button  th:class="'layui-btn layui-btn-sm '+${obj['disabled']>0?'':'layui-btn-danger'}" th:onclick="'confirmDisabled('+${obj['id']}+','+${!(obj['disabled']>0)}+')'" th:text="${obj['disabled']>0?'启 用':'禁 用'}"></button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改门店\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'340px\',\'关联系统用户\',\'to-relate-sysuser?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >关联系统用户</button>
+                            <button  th:class="'layui-btn layui-btn-sm '+${obj['dmStatus']==2?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dmStatus']==1?0:1}+',\''+${obj['dmStatus']==1?'是否启用':'是否禁用'}+'\')'" th:text="${obj['dmStatus']==1?'启 用':'禁 用'}"></button>
                             </div>
                         </td>
                     </tr>
@@ -101,10 +114,10 @@
     </div>
     <script type="text/javascript">
 
-        function confirmDisabled(id,isDisabled){
-            layer.confirm(isDisabled?"是否禁用":"是否启用", {icon: 3, title:'提示'}, function(index){
+        function confirmDisabled(id,status,msg){
+            layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
                 if(index>0){
-                    jQueryCommonSubmit("do-disabled-user",null,{id:id,disabled:isDisabled});
+                    jQueryCommonSubmit("do-update-status",null,{idStr:id,status:status});
 
                 }
                 //layer.close(index);

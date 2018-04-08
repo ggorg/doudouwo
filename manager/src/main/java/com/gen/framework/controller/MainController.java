@@ -4,6 +4,7 @@ package com.gen.framework.controller;
 
 import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
+import com.gen.common.services.FileService;
 import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
@@ -27,6 +28,9 @@ public class MainController {
     @Autowired
     private MainGlobals mainGlobals;
 
+    @Autowired
+    private FileService fileService;
+
 
     @GetMapping("/404")
     public String to404(){
@@ -39,6 +43,7 @@ public class MainController {
 
         FileInfoVo fileInfoVo= UploadFileMoveUtil.move(file,mainGlobals.getRsDir(), null);
         if(fileInfoVo!=null){
+            fileService.saveFile(fileService.createCommonBeanFiles(fileInfoVo));
             return new ResponseVO(1,"上传成功",fileInfoVo);
         }else{
             return new ResponseVO(-2,"上传失败",null);

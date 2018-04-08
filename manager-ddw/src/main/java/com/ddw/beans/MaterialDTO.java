@@ -1,9 +1,12 @@
-package com.ddw.beans.headquarters;
+package com.ddw.beans;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 
+/**
+ * 原材料输入参数
+ */
 public class MaterialDTO {
     private Integer id;
     private String dmName;
@@ -14,6 +17,15 @@ public class MaterialDTO {
     private MultipartFile dmImgFile;
     private String dmContent;
     private ArrayList isUpdateImg;
+    private Integer dmSort;
+
+    public Integer getDmSort() {
+        return dmSort;
+    }
+
+    public void setDmSort(Integer dmSort) {
+        this.dmSort = dmSort;
+    }
 
     public ArrayList getIsUpdateImg() {
         return isUpdateImg;

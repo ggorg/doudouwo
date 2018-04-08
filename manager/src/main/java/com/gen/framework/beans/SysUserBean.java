@@ -3,8 +3,17 @@ package com.gen.framework.beans;
 public class SysUserBean {
     private Integer id;
     private String uName;
+    private String uNickName;
     private String uPassword;
     private Boolean disabled;
+
+    public String getuNickName() {
+        return uNickName;
+    }
+
+    public void setuNickName(String uNickName) {
+        this.uNickName = uNickName;
+    }
 
     public String getuName() {
         return uName;

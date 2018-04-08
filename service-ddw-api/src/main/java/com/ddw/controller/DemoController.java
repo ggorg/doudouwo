@@ -2,6 +2,7 @@ package com.ddw.controller;
 
 import com.ddw.beans.DemoDTO;
 import com.gen.common.vo.ResponseVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/demo")
+@Api(description="demo用例")
 public class DemoController {
 
     @ApiOperation(value = "demo用例")

@@ -17,11 +17,11 @@ public abstract class CommonService {
     @Autowired
     private CommonMapper commonMapper;
 
-    public ResponseVO commonInsert(String tableName, Object bean){
+    protected ResponseVO commonInsert(String tableName, Object bean){
         Map params= BeanToMapUtil.beanToMap(bean);
         return commonInsertMap(tableName,params);
     }
-    public ResponseVO commonInsertMap(String tableName, Map params){
+    protected ResponseVO commonInsertMap(String tableName, Map params){
         ResponseVO vo=new ResponseVO();
         CommonInsertBean cib=new CommonInsertBean(tableName,params);
         int n=this.commonMapper.insertObject(cib);
@@ -36,7 +36,7 @@ public abstract class CommonService {
 
         return vo;
     }
-    public List commonList(String tableName,String ordername,Integer pageNum,Integer pageSize,Map<String,Object> searchCondition){
+    protected List commonList(String tableName,String ordername,Integer pageNum,Integer pageSize,Map<String,Object> searchCondition){
         Page page=null;
         if(pageNum!=null && pageSize!=null){
             page=new Page(pageNum,pageSize);
@@ -44,22 +44,22 @@ public abstract class CommonService {
         CommonSearchBean csb=new CommonSearchBean(tableName,ordername,null, page==null?null:page.getStartRow(),page==null?null:page.getEndRow(),searchCondition);
         return this.commonMapper.selectObjects(csb);
     }
-    public long commonCountBySingleParam(String tableName,String paramName,Object paramValue){
+    protected long commonCountBySingleParam(String tableName,String paramName,Object paramValue){
         Map<String,Object> searchCondition=new HashMap<>();
         searchCondition.put(paramName+",=",paramValue);
         return this.commonMapper.selectCount( new CommonCountBean(tableName,searchCondition));
     }
-    public List commonObjectsBySingleParam(String tableName,String paramName,Object paramValue)throws Exception{
+    protected List commonObjectsBySingleParam(String tableName,String paramName,Object paramValue)throws Exception{
         Map<String,Object> condition=new HashMap<>();
         condition.put(paramName+",=",paramValue);
         List<Map> list=this.commonMapper.selectObjects(new CommonSearchBean(tableName,condition));
         return list;
     }
-    public long commonCountBySearchCondition(String tableName,Map<String,Object> searchCondition){
+    protected long commonCountBySearchCondition(String tableName,Map<String,Object> searchCondition){
 
         return this.commonMapper.selectCount( new CommonCountBean(tableName,searchCondition));
     }
-    public <T> T commonObjectBySingleParam(String tableName,String paramName,Object paramValue,Class<T> clazz)throws Exception{
+    protected <T> T commonObjectBySingleParam(String tableName,String paramName,Object paramValue,Class<T> clazz)throws Exception{
         Map map=commonObjectBySingleParam(tableName, paramName, paramValue);
 
         if(map!=null){
@@ -70,7 +70,7 @@ public abstract class CommonService {
         }
         return null;
     }
-    public Map commonObjectBySingleParam(String tableName,String paramName,Object paramValue)throws Exception{
+    protected Map commonObjectBySingleParam(String tableName,String paramName,Object paramValue)throws Exception{
         Map<String,Object> condition=new HashMap<>();
         condition.put(paramName+",=",paramValue);
         List<Map> list=this.commonMapper.selectObjects(new CommonSearchBean(tableName,condition));
@@ -81,7 +81,7 @@ public abstract class CommonService {
         }
         return null;
     }
-    public ResponseVO commonUpdateBySingleSearchParam(String tableName, Map setParams, String searchParamName, Object searchParamValue){
+    protected ResponseVO commonUpdateBySingleSearchParam(String tableName, Map setParams, String searchParamName, Object searchParamValue){
         ResponseVO vo=new ResponseVO();
         Map searchCondition=new HashMap();
         searchCondition.put(searchParamName,searchParamValue);
@@ -96,7 +96,21 @@ public abstract class CommonService {
         }
         return vo;
     }
-    public Page commonPage(String tableName, String ordername, Integer pageNum, Integer pageSize, Map<String,Object> searchCondition)throws Exception{
+    protected ResponseVO commonUpdateByParams(String tableName, Map setParams,Map searchCondition){
+        ResponseVO vo=new ResponseVO();
+
+        CommonUpdateBean cub=new CommonUpdateBean(tableName,setParams,searchCondition);
+        int n=this.commonMapper.updateObject(cub);
+        if(n>0){
+            vo.setReCode(1);
+            vo.setReMsg("修改成功");
+        }else{
+            vo.setReCode(-2);
+            vo.setReMsg("修改失败");
+        }
+        return vo;
+    }
+    protected Page commonPage(String tableName, String ordername, Integer pageNum, Integer pageSize, Map<String,Object> searchCondition)throws Exception{
         Page page=new Page(pageNum,pageSize);
 
         CommonSearchBean csb=new CommonSearchBean(tableName,ordername,null, page.getStartRow(),page.getEndRow(),searchCondition);
@@ -112,12 +126,12 @@ public abstract class CommonService {
 
         return page;
     }
-    public int commonDelete(String tableName,String paramName,Object paramValue){
+    protected int commonDelete(String tableName,String paramName,Object paramValue){
         Map searchCondition=new HashMap();
         searchCondition.put(paramName,paramValue);
         return this.commonMapper.deleteObject(new CommonDeleteBean(tableName,searchCondition));
     }
-    public CommonMapper getCommonMapper(){
+    protected CommonMapper getCommonMapper(){
         return this.commonMapper;
     }
 }

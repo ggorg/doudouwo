@@ -1,6 +1,7 @@
 package com.gen.common.util;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.Calendar;
@@ -17,6 +18,7 @@ public class MyEncryptUtil {
 		return getDateBase64Encrypt()+builder.reverse().toString();
 	}
 	public static String getRealValue(String input){
+		if(StringUtils.isBlank(input))return null;
 		String dbeStr=getDateBase64Encrypt();
 		if(input.startsWith(dbeStr)){
 			StringBuilder builderUsername=new StringBuilder();

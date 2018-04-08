@@ -45,7 +45,7 @@ function initPage(count,callBackFun){
 }
 function initForm(url,formObject){
     layui.use('form', function(){
-            var form = layui.form;
+        var form = layui.form;
         form.verify({
             required:function(value,item){
                 var msg=item.getAttribute("placeholder");
@@ -58,7 +58,7 @@ function initForm(url,formObject){
             }
         })
         $(formObject==undefined?".layui-form":formObject).submit(function(){
-           return  commonSubmit(url,formObject);
+            return  commonSubmit(url,formObject);
         })
         //各种基于事件的操作，下面会有进一步介绍
     });
@@ -68,22 +68,23 @@ function jQueryCommonSubmit(url,formObject,reqData){
     return false;
 }
 var index =null;
-function commonAjaxFunction(url,data){
-
+function commonAjaxFunction(url,data,isUpload){
     return {
-        timeout: 20 * 1000,
-            url: url,
+        timeout: isUpload==undefined?20 * 1000:120*1000,
+        url: url,
         type: "post",
         data:data,
         dataType: "JSON",
-        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        processData: isUpload==undefined?true:false,
+        contentType: isUpload==undefined?'application/x-www-form-urlencoded; charset=UTF-8':false,
         beforeSend: function(xhr, settings) {
-        // xhr.setRequestHeader("If-Modified-Since", "0");
-        index= layer.load();
+            // xhr.setRequestHeader("If-Modified-Since", "0");
+            index= layer.load();
 
-    },
+        },
         success: function(data, textStatus, jqXHR) {
             layer.msg(data.reMsg);
+
             if(data.reCode==1){
 
                 window.setTimeout(function(){
@@ -109,9 +110,9 @@ function commonSubmit(url,formObject,reqData){
     //alert(url+","+$("div").length);
 
 
-        $.ajax(commonAjaxFunction(url,reqData==undefined?($(formObject==undefined?".layui-form":formObject).serializeArray()):reqData))
+    $.ajax(commonAjaxFunction(url,reqData==undefined?($(formObject==undefined?".layui-form":formObject).serializeArray()):reqData))
 
-        return false;
+    return false;
 
 }
 function openDialog(width,height,title,url){

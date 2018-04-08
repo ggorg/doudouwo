@@ -53,6 +53,7 @@ public class SysManagerService extends CommonService {
 
             userBean.setId((Integer) map.get("id"));
             userBean.setuName((String)map.get("uName"));
+            userBean.setuNickName((String)map.get("uNickName"));
             Integer disabled=(Integer)map.get("disabled");
             userBean.setDisabled(disabled==null || disabled==1?false:true);
             userBean.setuPassword((String)map.get("uPassword"));

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+  <style type="text/css">
+    .dmImge{z-index:10;width: 353px;height: 93.83px;position:absolute;top:0;left:0}
+    .dmImg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane" >
+  <input th:if="${ds!=null and ds['id']!=null}" th:name="id" th:value="${ds['id']}" type="hidden"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">门店名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsName" required="required" title="门店名称"  lay-verify="required|max20" th:value="${ds!=null? ds['dsName']:''}" placeholder="请输入门店名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">联系人</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsLeaderName" required="required" title="联系人"  lay-verify="required" th:value="${ds!=null? ds['dsLeaderName']:''}" placeholder="请输入联系人" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">电话</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsLeaderTelNo" required="required" title="电话"  lay-verify="required" th:value="${ds!=null? ds['dsLeaderTelNo']:''}" placeholder="请输入电话" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">公司名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsCompanyName" required="required" title="公司名称"  lay-verify="required" th:value="${ds!=null? ds['dsCompanyName']:''}" placeholder="请输入公司名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">营业执照</label>
+    <div class="layui-input-block">
+      <button type="button" class="layui-btn myupload1"  style="width: 143.52px;height: 93.83px;" >
+        <span  style="z-index: 1000;position: relative">上传图片</span>
+        <img th:if="${ds!=null and ds['dsBusinessCodePath']!=null}" th:src="${ds['dsBusinessCodePath']}" class="dmImg" />
+        <input th:if="${ds!=null and ds['id']!=null}" type="hidden" name="isUpdateImg" value="dsImgFile"/>
+      </button>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">银行卡号</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsBankCardCode" required="required" title="银行卡号"  lay-verify="required" th:value="${ds!=null? ds['dsBankCardCode']:''}" placeholder="请输入银行卡号" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">城市</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsCity" required="required" title="城市"   th:value="${ds!=null? ds['dsCity']:''}" placeholder="请输入城市" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">地址</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsAddress" title="地址"   th:value="${ds!=null? ds['dsAddress']:''}" placeholder="请输入地址" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">经纬度坐标</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsLngLat" required="required" title="经纬度坐标"   th:value="${ds!=null? ds['dsLongitude']+','+ds['dsLatitude']:''}" placeholder="请输入经纬度坐标" autocomplete="off" class="layui-input" />
+      <a  href="http://api.map.baidu.com/lbsapi/getpoint/index.html" target="_blank">前往百度拾取坐标系统</a>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">排序号</label>
+    <div class="layui-input-block">
+      <input type="text" name="dsSort" required="required" title="排序号"  lay-verify="number" th:value="${ds!=null? ds['dsSort']:''}" placeholder="请输入排序号" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item ">
+    <label class="layui-form-label">描述</label>
+    <div class="layui-input-block">
+
+      <textarea name="dsDesc" th:text="${ds!=null?ds['dsDesc']:''}"  class="layui-textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    //initForm("do-edit-user",".layui-form")
+
+
+    layui.use(['upload','form','layer'], function(){
+        var upload = layui.upload;
+        layer=layui.layer;
+        initProForm(layui);
+
+        //执行实例
+        var uploadInst1 = upload.render(initUpload(".myupload1","dsImgFile","dmImg"));
+
+
+    });
+    function initProForm(layui){
+        var form = layui.form;
+        form.verify({
+            required:function(value,item){
+                var msg=item.getAttribute("placeholder");
+                if(value!=null && value.replace(/[ ]/g,"")==""){
+                    return msg==null?"请输入必填项":msg;
+                }else{
+                    return false;
+                }
+                return msg==null?"请输入必填项":msg;
+            },
+            max20:function(value,item){
+                if(value.length>20){
+                    return '标题至多得20个字符啊';
+                }
+            },
+            max200:function(value,item){
+                if(value.length>200){
+                    return '活动描述至多得200个字符啊';
+                }
+            }
+        })
+        $(".layui-form").submit(function(){
+
+            $.ajax( commonAjaxFunction("do-edit",new FormData($('form')[0]),true));
+
+
+            //return  commonSubmit(url,formObject);
+            return false;
+        })
+    }
+    function initUpload(classname,filename,imgcn){
+        return {
+            elem: classname, //绑定元素
+            url: '/upload/', //上传接口
+            accept:'images',
+            auto:false,
+            field:filename,
+            choose:function(obj){
+
+                obj.preview(function(index, file, result){
+                    $(classname).find("."+imgcn).remove()
+                    $(classname).find("[name='isUpdateImg']").remove();
+                    $(classname).append("<img src=\""+result+"\" class=\""+imgcn+"\"/>")
+                });
+            },
+            done: function(res){
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        }
+    }
+</script>
+</body>
+</html>

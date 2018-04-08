@@ -1,7 +1,10 @@
-package com.ddw.beans.headquarters;
+package com.ddw.beans;
 
 import java.util.Date;
 
+/**
+ * 原材料持久化参数
+ */
 public class MaterialPO {
     private Integer id;
     private String dmName;
@@ -15,6 +18,42 @@ public class MaterialPO {
     private String dmCode;
     private String dmImgPath;
     private String dmIcoImgPath;
+    private Integer dmCurrentCount;
+    private Integer dmVersion;
+    private Integer dmStatus;
+    private Integer dmSort;
+
+    public Integer getDmSort() {
+        return dmSort;
+    }
+
+    public void setDmSort(Integer dmSort) {
+        this.dmSort = dmSort;
+    }
+
+    public Integer getDmStatus() {
+        return dmStatus;
+    }
+
+    public void setDmStatus(Integer dmStatus) {
+        this.dmStatus = dmStatus;
+    }
+
+    public Integer getDmVersion() {
+        return dmVersion;
+    }
+
+    public void setDmVersion(Integer dmVersion) {
+        this.dmVersion = dmVersion;
+    }
+
+    public Integer getDmCurrentCount() {
+        return dmCurrentCount;
+    }
+
+    public void setDmCurrentCount(Integer dmCurrentCount) {
+        this.dmCurrentCount = dmCurrentCount;
+    }
 
     public Date getCreateTime() {
         return createTime;
