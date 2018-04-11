@@ -20,6 +20,10 @@ public class TokenUtil {
         cs.set(tokenStr,userobj);
         return tokenStr;
     }
+    public static void deleteToken(String token){
+        CacheService cs=getCacheService();
+        cs.delete(token);
+    }
     public static boolean hasToken(String token){
         CacheService cs=getCacheService();
         if(cs.get(token)!=null){
