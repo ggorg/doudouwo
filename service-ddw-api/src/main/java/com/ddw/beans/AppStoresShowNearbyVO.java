@@ -4,10 +4,10 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * 展示附件门店请求
+ * 展示附近门店响应
  */
-@ApiModel(description="用例对像DemoVo")
-public class ShowNearbyStoresVO {
+@ApiModel
+public class AppStoresShowNearbyVO {
     @ApiModelProperty(name="name",value="门店名称",example="xxx门店")
     private String dsName;
     @ApiModelProperty(name="distance",value="距离，单位：米",example="1001")
