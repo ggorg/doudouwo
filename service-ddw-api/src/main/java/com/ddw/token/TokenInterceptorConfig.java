@@ -46,9 +46,10 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                 HandlerMethod method = (HandlerMethod) handler;
                 if(method.hasMethodAnnotation(Token.class)){
                    Map<String,String> map=(Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-                   String msg=null;
+
                    if(map==null || !map.containsKey("token")){
-                       msg="请求失败";
+                       toWriteResponseVo(response,-1000,"参数异常");
+                       return false;
                    }
                    String token=map.get("token");
                     if(!token.matches("^([0-9]{10})([0-9]{8})([0-9]{10})([0-9]{4})$")){
