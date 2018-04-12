@@ -14,14 +14,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ddwapp/index")
-@Api(description="首页")
+@Api(description="首页",tags = "首页")
 public class AppIndexController {
 
     @PostMapping("/{token}")
     @ApiOperation(value = "首页",produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Token
-    public ResponseVO<AppIndexVO> toIndex(@PathVariable String token,@RequestBody @ApiParam(name="参数",value="传入json格式",required=true)AppIndexDTO args){
+    public ResponseVO<AppIndexVO> toIndex(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)AppIndexDTO args){
 
         List array=new ArrayList();
 
