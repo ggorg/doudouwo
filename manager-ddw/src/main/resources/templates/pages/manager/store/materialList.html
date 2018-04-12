@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+           initPage(/*[[${mPage!=null?mPage.total:0}]]*/ );
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>原材料列表</h3>
+
+                </div><!--contenttitle-->
+
+                <div class="tableoptions">
+
+                    <form class="layui-form" >
+                        <div class="layui-form-item2 layui-form-item">
+                        <div class="float-left-div" >
+
+                            <label class="layui-form-label" >名称</label>
+                            <div class="layui-input-inline" >
+                                <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
+                            </div>
+                        </div>
+                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
+
+                    </div>
+                    </form>
+                    <!-- <select class="radius3">
+                         <option value="">Show All</option>
+                         <option value="">Rendering Engine</option>
+                         <option value="">Platform</option>
+                     </select> &nbsp;
+                     <button class="radius3">Apply Filter</button>
+                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+                </div><!--tableoptions-->
+                <div class="tableoptions">
+
+                    <button class="radius3" id="createBtn" onclick="openDialog('850px','530px','新增材料','to-edit')" title="table2">新增材料</button> &nbsp;
+
+                </div>
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con1" />
+                        <col class="con1" />
+                        <col class="con1" />
+
+                        <col class="con0" />
+                    </colgroup>
+                    <thead>
+
+                    <tr>
+                        <th class="head0">材料图</th>
+                        <th class="head1">材料名称</th>
+                        <th class="head0">零售价格(分)</th>
+                        <th class="head0">净含量</th>
+                        <th class="head0">库存数</th>
+                        <th class="head1">创建时间</th>
+
+                        <th class="head0">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${mPage?.result}">
+                        <td ><img th:src="${obj['dmIcoImgPath']}" style="width:70px;height:60px" /></td>
+                        <td th:text="${obj['dmName']}">Trident</td>
+                        <td th:text="${obj['dmSales']}">Trident</td>
+                        <td th:text="${obj['dmUnit']}">Trident</td>
+                        <td th:text="${obj['dmCurrentCount']}">Trident</td>
+
+                        <td th:text="${obj['createTime']}">Win 95+</td>
+
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'850px\',\'530px\',\'查看\',\'to-material-info?id='+${obj['id']}+'\')'"  >查 看</button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'450px\',\'230px\',\'加入购物车\',\'to-inbound?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >加入购物车</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+        function confirmDisabled(id,status,msg){
+            layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-update-status",null,{idStr:id,status:status});
+
+                }
+                //layer.close(index);
+            });
+        }
+        layui.use('form', function(){
+            var form = layui.form;
+
+        })
+
+    </script>
+	</body>
+
+</html>

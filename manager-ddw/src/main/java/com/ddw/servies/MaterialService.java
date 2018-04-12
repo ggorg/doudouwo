@@ -46,6 +46,7 @@ public class MaterialService  extends CommonService {
         condtion.put("dmStatus",dmStatus);
         return this.commonPage("ddw_material","dmSort asc,updateTime desc",pageNo,10,condtion);
     }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateStatus(String idstr,Integer status)throws Exception{
         if(StringUtils.isBlank(idstr)){

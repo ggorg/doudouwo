@@ -33,6 +33,26 @@ public class MaterialController {
         }
         return "pages/manager/headquarters/list";
     }
+    @GetMapping("to-show-to-store")
+    public String toShowToStore(@RequestParam(defaultValue = "1") Integer pageNo, Model model){
+        try {
+            model.addAttribute("mPage",materialService.findPage(pageNo,1));
+        }catch (Exception e){
+            logger.error("MaterialController->toShowToStore",e);
+
+        }
+        return "pages/manager/store/materialList";
+    }
+    @GetMapping("to-material-info")
+    public String toMaterialInfo(Integer id,Model model){
+        try {
+            model.addAttribute("dm",this.materialService.getById(id));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "pages/manager/store/materialInfo";
+    }
+
     @GetMapping("to-edit")
     public String toEdtitPage(Integer id,Model model){
         try {
