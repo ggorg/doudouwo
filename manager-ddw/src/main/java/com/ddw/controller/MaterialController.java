@@ -1,7 +1,11 @@
 package com.ddw.controller;
 
+import com.ddw.Toolsddw;
 import com.ddw.beans.MaterialDTO;
+import com.ddw.beans.StorePO;
 import com.ddw.servies.MaterialService;
+import com.ddw.servies.StoreService;
+import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
@@ -23,6 +27,9 @@ public class MaterialController {
 
     @Autowired
     private MaterialService materialService;
+
+    @Autowired
+    private StoreService storeService;
 
     @GetMapping("to-paging-{dmStatus}")
     public String toPaging(@RequestParam(defaultValue = "1") Integer pageNo,@PathVariable Integer dmStatus, Model model){
@@ -47,10 +54,37 @@ public class MaterialController {
     public String toMaterialInfo(Integer id,Model model){
         try {
             model.addAttribute("dm",this.materialService.getById(id));
+            model.addAttribute("id", MyEncryptUtil.encry(""+id));
         }catch (Exception e){
             e.printStackTrace();
         }
         return "pages/manager/store/materialInfo";
+    }
+    @PostMapping("do-add-material-to-shoppingcart")
+    @ResponseBody
+    public ResponseVO doAddMaterialToShoppingCart(String idStr,Integer num){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                return this.materialService.addMaterialToCache(idStr,spo.getId(),num);
+            }
+        }catch (Exception e){
+            logger.error("MaterialController->doAddMaterialToShoppingCart",e);
+        }
+        return new ResponseVO(-2,"购入失败",null);
+    }
+    @GetMapping("to-pcshoppingcart-list")
+    public String toPcshoppingcartList(Model model){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                model.addAttribute("mPage",this.materialService.getMaterialByCache(spo.getId()));
+
+            }
+        }catch (Exception e){
+            logger.error("MaterialController->toPcshoppingcartList",e);
+        }
+        return "pages/manager/store/shoppingcart";
     }
 
     @GetMapping("to-edit")

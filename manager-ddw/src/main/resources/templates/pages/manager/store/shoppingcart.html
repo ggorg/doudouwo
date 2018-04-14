@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>原材料列表</h3>
+
+                </div><!--contenttitle-->
+
+                <div class="tableoptions">
+
+                    <button class="radius3" id="createBtn" onclick="openDialog('850px','530px','新增材料','to-edit')" title="table2">确认订购</button> &nbsp;
+
+                </div>
+                <form class="layui-form" id="form1">
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con1" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con1" />
+                        <col class="con1" />
+                        <col class="con1" />
+
+                        <col class="con0" />
+                    </colgroup>
+                    <thead>
+
+                    <tr>
+                        <th class="head0" width="20px"><input lay-skin="primary" type="checkbox" lay-filter="allChoose" /></th>
+                        <th class="head0">材料图</th>
+                        <th class="head1">材料名称</th>
+                        <th class="head0">价格</th>
+                        <th class="head0">数量</th>
+                        <th class="head0">购入时间</th>
+
+
+                        <th class="head0">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${mPage}">
+                        <td><input lay-skin="primary"  name="id" type="checkbox"/></td>
+                        <td ><img th:src="${obj['dmIcoImgPath']}" style="width:70px;height:60px" /></td>
+                        <td th:text="${obj['name']}">Trident</td>
+                        <td th:text="${obj['allCost']}">Trident</td>
+                        <td th:text="${obj['num']}">Trident</td>
+                        <td th:text="${obj['time']}">Trident</td>
+
+
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+                </form>
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+        function confirmBuy(){
+            layer.confirm("是否确认订购", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+
+                    jQueryCommonSubmit("do-update-status",null, $("#form1").serializeArray());
+
+                }
+                //layer.close(index);
+            });
+        }
+        layui.use('form', function(){
+            var form = layui.form;
+            form.on('checkbox(allChoose)', function (data) {
+                var child = jQuery(data.elem).parents('table').find('tbody input[type="checkbox"]');
+                child.each(function (index, item) {
+                    item.checked = data.elem.checked;
+                });
+                form.render('checkbox');
+            });
+
+        })
+
+    </script>
+	</body>
+
+</html>

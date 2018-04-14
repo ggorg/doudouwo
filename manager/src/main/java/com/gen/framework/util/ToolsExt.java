@@ -26,6 +26,13 @@ public class ToolsExt extends Tools {
         List<SysMenuBean> smList=cm.getPowerMenu(uid);
         return smList;
     }
+    public static Integer getCurrentUserId(){
+        Map usermap=(Map)getSession("user");
+        if(usermap!=null){
+            return (Integer)usermap.get("id");
+        }
+        return null;
+    }
     public static List getUserPowerMenu(){
         ServletRequestAttributes attrs =  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 

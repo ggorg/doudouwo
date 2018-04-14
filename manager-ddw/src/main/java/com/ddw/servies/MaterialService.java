@@ -19,14 +19,19 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static javafx.scene.input.KeyCode.L;
 
 /**
  * 原材料
@@ -38,6 +43,9 @@ public class MaterialService  extends CommonService {
     private FileService fileService;
     @Autowired
     private MainGlobals mainGlobals;
+
+    @Autowired
+    private CacheManager cacheManager;
 
 
     public Page findPage(Integer pageNo,Integer dmStatus)throws Exception{
@@ -224,6 +232,64 @@ public class MaterialService  extends CommonService {
             materialPO.setDmVersion(1);
             return this.commonInsert("ddw_material",materialPO);
         }
+    }
+    @Cacheable(value ="pcShoppingCart",key="'storeId-'+#storeId" )
+    public List getMaterialByCache(Integer storeId){
+        return new ArrayList();
+    }
+    public ResponseVO addMaterialToCache(String ids,Integer storeId,Integer num)throws Exception{
+        String id=MyEncryptUtil.getRealValue(ids);
+        if(id==null){
+            return new ResponseVO(-2,"参数异常",null);
+        }
+        Map mMap=this.getById(Integer.parseInt(id));
+        if(mMap==null || mMap.isEmpty()){
+            return new ResponseVO(-2,"材料不存在",null);
+
+        }
+        MaterialPO mPO=new MaterialPO();
+        PropertyUtils.copyProperties(mPO,mMap);
+
+        Cache cache=cacheManager.getCache("pcShoppingCart");
+
+        List<Map> listData=cache.get("storeId-"+storeId,List.class);
+        boolean flag=true;
+        if(listData==null){
+            listData=new ArrayList();
+        }else{
+            Integer mNum=null;
+
+            for(Map m:listData){
+                if(m.containsKey("id") && m.get("id")!=null){
+                    mNum=(Integer) m.get("num");
+                    m.put("num",mNum+num);
+                    m.put("name",mPO.getDmName());
+                    m.put("allCost",mPO.getDmSales()*(mNum+num));
+                    m.put("dmIcoImgPath", mPO.getDmImgPath());
+                    m.put("time",DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm"));
+                    flag=false;
+                    break;
+                }
+            }
+        }
+        if(flag){
+            Map data=new HashMap();
+            data.put("id",mPO.getId());
+            data.put("num",num);
+            data.put("name",mPO.getDmName());
+            data.put("allCost",mPO.getDmSales()*num);
+            data.put("dmIcoImgPath", mPO.getDmImgPath());
+            data.put("time",DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm"));
+            listData.add(data);
+        }
+        cache.put("storeId-"+storeId,listData);
+        return new ResponseVO(1,"添加进购物车成功,24小内有效",null);
+        /*if(mPO.getDmCurrentCount()<num){
+            return new ResponseVO(-2,"抱歉，材料库存不足，库存只剩",null);
+
+        }*/
+
+
     }
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_material","id",id);
