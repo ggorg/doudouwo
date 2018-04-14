@@ -18,10 +18,10 @@
 	<!--按天生成日志-->
 	<appender name="logFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<Prudent>true</Prudent>
-		<file>/data/log/${springAppName}/gen.log</file>
+		<file>/Users/Jacky/logs/data/log/${springAppName}/gen.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<FileNamePattern>
-				/data/log/${springAppName}/%d{yyyy-MM-dd}/%d{yyyy-MM-dd}.log
+				/Users/Jacky/logs/data/log/${springAppName}/%d{yyyy-MM-dd}/%d{yyyy-MM-dd}.log
 			</FileNamePattern>
 		</rollingPolicy>
 		<layout class="ch.qos.logback.classic.PatternLayout">
