@@ -24,6 +24,8 @@ public class UserInfoService extends CommonService {
     public ResponseVO save(UserInfoDTO userInfoDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
         PropertyUtils.copyProperties(userInfoPO,userInfoDTO);
+        userInfoPO.setCreateTime(new Date());
+        userInfoPO.setUpdateTime(new Date());
         return this.commonInsert("ddw_userinfo",userInfoPO);
     }
 
@@ -38,5 +40,9 @@ public class UserInfoService extends CommonService {
 
     public Map query(String username)throws Exception{
         return this.commonObjectBySingleParam("ddw_userinfo","userName",username);
+    }
+
+    public Map queryByOpenid(String openid)throws Exception{
+        return this.commonObjectBySingleParam("ddw_userinfo","userName",openid);
     }
 }

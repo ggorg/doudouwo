@@ -32,7 +32,12 @@ public class UserController {
     @PostMapping("/save")
     public ResponseVO save(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserInfoDTO userInfoDTO){
         try {
-            return userInfoService.save(userInfoDTO);
+            Map userMap = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
+            if(userMap == null || userMap.isEmpty()){
+                return userInfoService.save(userInfoDTO);
+            }else{
+                return new ResponseVO(-2,"账号已存在",null);
+            }
         }catch (Exception e){
             logger.error("UserController->save",e);
             return new ResponseVO(-1,"提交失败",null);
