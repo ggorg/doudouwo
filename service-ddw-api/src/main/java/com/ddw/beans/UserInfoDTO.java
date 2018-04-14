@@ -25,7 +25,7 @@ public class UserInfoDTO{
     private String signature;
     @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
     private Integer sex;
-    @ApiModelProperty(name="registerType",value="注册类型,1 手机注册,2 微信注册,3 QQ注册",example="2")
+    @ApiModelProperty(name="registerType",value="注册类型1 微信注册,2 QQ注册",example="1")
     private Integer registerType;
     @ApiModelProperty(name="createTime",value="创建时间",example="2018-04-03 15:58:32")
     private Date createTime;

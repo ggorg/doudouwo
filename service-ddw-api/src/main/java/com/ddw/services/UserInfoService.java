@@ -1,4 +1,4 @@
-package com.ddw.servies;
+package com.ddw.services;
 
 import com.ddw.beans.UserInfoDTO;
 import com.ddw.beans.UserInfoPO;
