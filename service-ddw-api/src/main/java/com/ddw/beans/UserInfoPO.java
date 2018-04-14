@@ -9,13 +9,14 @@ public class UserInfoPO {
     private String nickName;
     private String headImgUrl;
     private String phone;
+    private Integer gradeId;
+    private String inviteCode;
     private String label;
     private String signature;
     private Integer sex;
     private Integer registerType;
     private Date createTime;
     private Date updateTime;
-
     private Integer id;
 
     public Date getCreateTime() {
@@ -120,6 +121,22 @@ public class UserInfoPO {
 
     public void setUserPwd(String userPwd) {
         this.userPwd = userPwd;
+    }
+
+    public Integer getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(Integer gradeId) {
+        this.gradeId = gradeId;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
     }
 
     @Override
