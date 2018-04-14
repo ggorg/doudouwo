@@ -1,8 +1,9 @@
 package com.ddw.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class OrderMaterialPO {
+public class OrderMaterialPO implements Serializable {
     private Integer id;
     /**
      * 订单ID
@@ -37,4 +38,84 @@ public class OrderMaterialPO {
     private Integer materialBuyNumber;
     private Date createTime;
     private Date updateTime;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public Integer getMaterialId() {
+        return materialId;
+    }
+
+    public void setMaterialId(Integer materialId) {
+        this.materialId = materialId;
+    }
+
+    public String getMaterialName() {
+        return materialName;
+    }
+
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
+    }
+
+    public Integer getMaterialCountPrice() {
+        return materialCountPrice;
+    }
+
+    public void setMaterialCountPrice(Integer materialCountPrice) {
+        this.materialCountPrice = materialCountPrice;
+    }
+
+    public Integer getMaterialUnitPrice() {
+        return materialUnitPrice;
+    }
+
+    public void setMaterialUnitPrice(Integer materialUnitPrice) {
+        this.materialUnitPrice = materialUnitPrice;
+    }
+
+    public Integer getMaterialBuyNumber() {
+        return materialBuyNumber;
+    }
+
+    public void setMaterialBuyNumber(Integer materialBuyNumber) {
+        this.materialBuyNumber = materialBuyNumber;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 }

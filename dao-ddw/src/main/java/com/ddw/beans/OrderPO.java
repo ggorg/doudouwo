@@ -1,16 +1,18 @@
 package com.ddw.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class OrderPO {
+
+public class OrderPO implements Serializable {
     private Integer id;
     private Date createTime;
     private Date updateTime;
 
     /**
-     * 所属用户
+     * 消费者用户
      */
-    private Integer doUserId;
+    private Integer doCustomerUserId;
 
     /**
      * 付款状态，未付款：0，已付款：1，退款：2
@@ -43,9 +45,9 @@ public class OrderPO {
     private Integer doPayType;
 
     /**
-     * 门店ID，此处是材料用户标识的，app订单统一是-1，其余是门店ID
+     * 消费者-门店ID，此处是材料用户标识的，app订单统一是-1，其余是门店ID
      */
-    private Integer doStoreId;
+    private Integer doCustomerStoreId;
 
     /**
      * 卖家角色，总部：-1，门店：id号
@@ -58,9 +60,9 @@ public class OrderPO {
     private String doCouponNo;
 
     /**
-     * 用户类型 ,普通会员：0，女神会员：1，代练会员：2，服务员：3，门店：1
+     * 用户类型 ,普通会员：0，女神会员：1，代练会员：2，服务员：3，门店：4
      */
-    private Integer doUserType;
+    private Integer doCustomerType;
 
     @Override
     public String toString() {
@@ -68,17 +70,17 @@ public class OrderPO {
                 "id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                ", doUserId=" + doUserId +
+                ", doCustomerUserId=" + doCustomerUserId +
                 ", doPayStatus=" + doPayStatus +
                 ", doType=" + doType +
                 ", doEndTime=" + doEndTime +
                 ", doShipStatus=" + doShipStatus +
                 ", doOrderDate='" + doOrderDate + '\'' +
                 ", doPayType=" + doPayType +
-                ", doStoreId=" + doStoreId +
+                ", doCustomerStoreId=" + doCustomerStoreId +
                 ", doSellerId=" + doSellerId +
                 ", doCouponNo='" + doCouponNo + '\'' +
-                ", doUserType=" + doUserType +
+                ", doCustomerType=" + doCustomerType +
                 '}';
     }
 
@@ -106,12 +108,12 @@ public class OrderPO {
         this.updateTime = updateTime;
     }
 
-    public Integer getDoUserId() {
-        return doUserId;
+    public Integer getDoCustomerUserId() {
+        return doCustomerUserId;
     }
 
-    public void setDoUserId(Integer doUserId) {
-        this.doUserId = doUserId;
+    public void setDoCustomerUserId(Integer doCustomerUserId) {
+        this.doCustomerUserId = doCustomerUserId;
     }
 
     public Integer getDoPayStatus() {
@@ -162,12 +164,12 @@ public class OrderPO {
         this.doPayType = doPayType;
     }
 
-    public Integer getDoStoreId() {
-        return doStoreId;
+    public Integer getDoCustomerStoreId() {
+        return doCustomerStoreId;
     }
 
-    public void setDoStoreId(Integer doStoreId) {
-        this.doStoreId = doStoreId;
+    public void setDoCustomerStoreId(Integer doCustomerStoreId) {
+        this.doCustomerStoreId = doCustomerStoreId;
     }
 
     public Integer getDoSellerId() {
@@ -186,11 +188,11 @@ public class OrderPO {
         this.doCouponNo = doCouponNo;
     }
 
-    public Integer getDoUserType() {
-        return doUserType;
+    public Integer getDoCustomerType() {
+        return doCustomerType;
     }
 
-    public void setDoUserType(Integer doUserType) {
-        this.doUserType = doUserType;
+    public void setDoCustomerType(Integer doCustomerType) {
+        this.doCustomerType = doCustomerType;
     }
 }

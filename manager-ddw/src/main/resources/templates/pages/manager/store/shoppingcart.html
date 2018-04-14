@@ -26,7 +26,7 @@
 
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('850px','530px','新增材料','to-edit')" title="table2">确认订购</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="confirmBuy()" title="table2">确认订购</button> &nbsp;
 
                 </div>
                 <form class="layui-form" id="form1">
@@ -60,7 +60,7 @@
 
                     <tbody>
                     <tr th:each="obj:${mPage}">
-                        <td><input lay-skin="primary"  name="id" type="checkbox"/></td>
+                        <td><input lay-skin="primary"  name="mid" th:value="${obj['id']}" type="checkbox"/></td>
                         <td ><img th:src="${obj['dmIcoImgPath']}" style="width:70px;height:60px" /></td>
                         <td th:text="${obj['name']}">Trident</td>
                         <td th:text="${obj['allCost']}">Trident</td>
@@ -89,7 +89,7 @@
             layer.confirm("是否确认订购", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
 
-                    jQueryCommonSubmit("do-update-status",null, $("#form1").serializeArray());
+                    jQueryCommonSubmit("/manager/order/do-prestore-order",null, jQuery("#form1").serializeArray());
 
                 }
                 //layer.close(index);

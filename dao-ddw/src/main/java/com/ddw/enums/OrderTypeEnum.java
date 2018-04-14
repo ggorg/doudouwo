@@ -1,0 +1,45 @@
+package com.ddw.enums;
+
+/**
+ * 订单类型
+ */
+public enum OrderTypeEnum {
+    //商品:1,原材料：2
+    OrderType1("商品",1),
+    OrderType2("原材料",2);
+
+
+    private String name;
+    private Integer code;
+
+    private OrderTypeEnum(String name, Integer code) {
+        this.name = name;
+        this.code = code;
+    }
+
+    // 普通方法
+    public static String getName(Integer code) {
+        for (OrderTypeEnum c : OrderTypeEnum.values()) {
+            if (c.getCode() == code) {
+                return c.name;
+            }
+        }
+        return null;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+}

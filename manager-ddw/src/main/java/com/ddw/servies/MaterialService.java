@@ -21,6 +21,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.cache.annotation.EnableCaching;
@@ -237,6 +238,7 @@ public class MaterialService  extends CommonService {
     public List getMaterialByCache(Integer storeId){
         return new ArrayList();
     }
+
     public ResponseVO addMaterialToCache(String ids,Integer storeId,Integer num)throws Exception{
         String id=MyEncryptUtil.getRealValue(ids);
         if(id==null){
@@ -246,6 +248,9 @@ public class MaterialService  extends CommonService {
         if(mMap==null || mMap.isEmpty()){
             return new ResponseVO(-2,"材料不存在",null);
 
+        }
+        if(num==null || num<1){
+            return new ResponseVO(-2,"购入数量不能为空",null);
         }
         MaterialPO mPO=new MaterialPO();
         PropertyUtils.copyProperties(mPO,mMap);
