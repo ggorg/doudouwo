@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache>
+    <diskStore path="/data/cache" />
     <!--切换为ehcache 缓存时使用-->
     <cache name="allMenu" maxElementsInMemory="1" />
     <cache name="commonCache" maxElementsInMemory="300" />
     <cache name="validCodeCache" maxElementsInMemory="300" timeToLiveSeconds="60" />
     <cache name="bindInfoCache" maxElementsInMemory="1000" timeToLiveSeconds="1800" />
+    <cache name="pcShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="86400" diskPersistent="true" />
+    <cache name="appShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="7200" diskPersistent="true" />
 </ehcache>

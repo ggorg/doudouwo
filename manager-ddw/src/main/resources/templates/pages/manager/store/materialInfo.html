@@ -5,6 +5,7 @@
 <head>
   <meta charset="UTF-8" />
   <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
   <style type="text/css">
     .mystyle1{
       line-height: 35px;
@@ -12,9 +13,9 @@
   </style>
 </head>
 <body style="padding:10px 10px 10px 10px">
-<form class=" ">
+<form class="layui-form">
 
-
+    <input name="idStr" th:value="${id}"/>
     <div style="float: left;width:330px;padding-right:15px">
       <img th:if="${dm!=null and dm['dmIcoImgPath']!=null}" th:src="${dm['dmIcoImgPath']}" style="width:100%" />
     </div>
@@ -45,21 +46,15 @@
           <div class="layui-input mystyle1" th:text="${dm!=null? dm['dmCurrentCount']:''}" ></div>
         </div>
       </div>
-      <div class="layui-form-item">
-        <label class="layui-form-label">购买数量</label>
-        <div class="layui-input-block">
 
-
-
-            <input style="background-color: peachpuff;" class="layui-input" type="number" th:onchange="'if(this.value<1){this.value=1;}else if(this.value>'+${dm['dmCurrentCount']}+') {this.value='+${dm['dmCurrentCount']}+'}'" />
-
-        </div>
-      </div>
       <div class="layui-form-item">
         <label class="layui-form-label">操作</label>
         <div class="layui-input-block">
-          <div class="layui-input mystyle1 layui-btn-group"  >
-            <button  class="layui-btn layui-btn-sm layui-btn-danger" >购　入</button>
+          <div class="layui-input mystyle1"  >
+            <div class=" layui-btn-group">
+              <button  class="layui-btn layui-btn-sm layui-btn-danger"  lay-submit="lay-submit" >购　入</button>
+            </div>
+            <input style="background-color: peachpuff;width:50px;border:none;height: 80%" name="num" type="number" th:onchange="'if(this.value<1){this.value=1;}else if(this.value>'+${dm['dmCurrentCount']}+') {this.value='+${dm['dmCurrentCount']}+'}'" />
 
 
           </div>
@@ -69,7 +64,7 @@
 
 
 
-  <div class="layui-form-pane" style="width:809px;;float:left;">
+  <div class="layui-form-pane" style="width:809px;;float:left;margin-top: 15px">
     <div class="layui-form-item layui-form-text">
       <label class="layui-form-label">描述</label>
       <div class="layui-input-block" >
@@ -83,4 +78,7 @@
 
 </form>
 </body>
+<script type="text/javascript">
+    initForm("do-add-material-to-shoppingcart",".layui-form")
+</script>
 </html>

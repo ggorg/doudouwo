@@ -3,6 +3,8 @@ package com.ddw.servies;
 import com.ddw.beans.StoreDTO;
 import com.ddw.beans.StorePO;
 import com.gen.common.beans.CommonBeanFiles;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
@@ -140,6 +142,19 @@ public class StoreService extends CommonService{
             }
         }
         return userList;
+    }
+    public StorePO getStoreBySysUserid(Integer id)throws Exception{
+        Map conditon=new HashMap();
+        conditon.put("sysUserId",id);
+
+        CommonSearchBean csb=new CommonSearchBean("ddw_store",null,new CommonChildBean("ddw_store_sysuser","storeId","id",conditon));
+        List list=this.getCommonMapper().selectObjects(csb);
+        if(list!=null && list.size()>0){
+            StorePO spo=new StorePO();
+            PropertyUtils.copyProperties(spo,list.get(0));
+            return spo;
+        }
+        return null;
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO saveRelateSysUsers(String idStr,Integer[] sysusers)throws Exception{
