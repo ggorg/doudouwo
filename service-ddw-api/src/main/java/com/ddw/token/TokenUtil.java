@@ -25,6 +25,10 @@ public class TokenUtil {
         CacheService cs=getCacheService();
         cs.delete(token);
     }
+    public static String getBaseToken(String base64Token){
+        String token=new String(Base64Utils.decodeFromString(base64Token));
+        return token;
+    }
     public static boolean hasToken(String token){
         CacheService cs=getCacheService();
         if(cs.get(token)!=null){
@@ -67,6 +71,6 @@ public class TokenUtil {
 
     public static void main(String[] args) {
         //55498704702018041150605650631754
-        System.out.println(isOverTime("55498704702018041150605650631754",24));
+        System.out.println(new String(Base64Utils.decodeFromString(Base64Utils.encodeToString("123456".getBytes()))));
     }
 }

@@ -51,7 +51,8 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                        toWriteResponseVo(response,-1000,"参数异常");
                        return false;
                    }
-                   String token=map.get("token");
+
+                   String token=TokenUtil.getBaseToken(map.get("token"));
                     if(!token.matches("^([0-9]{10})([0-9]{8})([0-9]{10})([0-9]{4})$")){
                         toWriteResponseVo(response,-1000,"token异常");
                         return false;
