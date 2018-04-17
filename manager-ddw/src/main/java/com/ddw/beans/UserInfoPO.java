@@ -1,5 +1,7 @@
 package com.ddw.beans;
 
+import java.util.Date;
+
 public class UserInfoPO {
     private String userName;
     private String userPwd;
@@ -11,16 +13,16 @@ public class UserInfoPO {
     private String signature;
     private Integer sex;
     private Integer registerType;
-    private String createTime;
-    private String updateTime;
+    private Date createTime;
+    private Date updateTime;
 
     private Integer id;
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
@@ -96,11 +98,11 @@ public class UserInfoPO {
         this.signature = signature;
     }
 
-    public String getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(String updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
