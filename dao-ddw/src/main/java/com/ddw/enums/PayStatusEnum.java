@@ -1,9 +1,11 @@
 package com.ddw.enums;
 
+import com.gen.common.dict.Dictionary;
+
 /**
  * 付款状态
  */
-public enum PayStatusEnum {
+public enum PayStatusEnum implements Dictionary {
     PayStatus0("未付款",0),
     PayStatus1("已付款",1),
     PayStatus2("退款",2);

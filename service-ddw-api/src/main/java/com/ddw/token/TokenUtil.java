@@ -4,6 +4,7 @@ import com.gen.common.services.CacheService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -16,9 +17,9 @@ public class TokenUtil {
     public static String createToken(Object userobj){
         CacheService cs=getCacheService();
         String tokenStr= DateFormatUtils.format(new Date(),RandomStringUtils.randomNumeric(10)+"yyyyMMdd"+ RandomStringUtils.randomNumeric(10)+"HHmm");
-
-        cs.set(tokenStr,userobj);
-        return tokenStr;
+        String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
+        cs.set(base64Token,userobj);
+        return base64Token;
     }
     public static void deleteToken(String token){
         CacheService cs=getCacheService();
@@ -35,7 +36,8 @@ public class TokenUtil {
         CacheService cs=getCacheService();
         return cs.get(token);
     }
-    public static String  getTimeByToken(String token){
+    public static String  getTimeByToken(String base64Token){
+        String token=new String(Base64Utils.decodeFromString(base64Token));
         if(token.length()==32){
             return token.replaceAll("^([0-9]{10})([0-9]{8})([0-9]{10})([0-9]{4})$","$2$4");
         }
@@ -43,7 +45,8 @@ public class TokenUtil {
 
     }
 
-    public static boolean isOverTime(String token,Integer hour){
+    public static boolean isOverTime(String base64Token,Integer hour){
+        String token=new String(Base64Utils.decodeFromString(base64Token));
         String timeStr=getTimeByToken(token);
         if(timeStr!=null){
             try {

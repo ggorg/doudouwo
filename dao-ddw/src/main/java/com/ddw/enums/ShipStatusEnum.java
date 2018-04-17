@@ -1,9 +1,11 @@
 package com.ddw.enums;
 
+import com.gen.common.dict.Dictionary;
+
 /**
  * 发货状态
  */
-public enum ShipStatusEnum {
+public enum ShipStatusEnum implements Dictionary {
     //发货状态，未发货：0，已接单：1，已发货：2，确认签收：3，退货：4，完成：5
     ShipStatus0("未发货",0),
     ShipStatus1("已接单",1),

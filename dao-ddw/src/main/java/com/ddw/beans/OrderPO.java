@@ -30,7 +30,7 @@ public class OrderPO implements Serializable {
     private Date doEndTime;
 
     /**
-     * 发货状态，未发货：0，已发货：1，确认签收：2，退货：3，完成：4
+     * 货品状态，未发货：0，已发货：1，确认签收：2，退货：3，完成：4
      */
     private Integer doShipStatus;
 
@@ -64,6 +64,24 @@ public class OrderPO implements Serializable {
      */
     private Integer doCustomerType;
 
+    /**
+     * 金额
+     */
+    private Integer doCost;
+
+    /**
+     * 提交订单的人名字
+     */
+    private String creater;
+
+    public String getCreater() {
+        return creater;
+    }
+
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
     @Override
     public String toString() {
         return "OrderPO{" +
@@ -82,6 +100,14 @@ public class OrderPO implements Serializable {
                 ", doCouponNo='" + doCouponNo + '\'' +
                 ", doCustomerType=" + doCustomerType +
                 '}';
+    }
+
+    public Integer getDoCost() {
+        return doCost;
+    }
+
+    public void setDoCost(Integer doCost) {
+        this.doCost = doCost;
     }
 
     public Integer getId() {

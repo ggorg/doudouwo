@@ -1,6 +1,6 @@
 package com.ddw.controller;
 
-import com.ddw.Toolsddw;
+import com.ddw.util.Toolsddw;
 import com.ddw.beans.MaterialDTO;
 import com.ddw.beans.StorePO;
 import com.ddw.servies.MaterialService;

@@ -1,4 +1,4 @@
-package com.ddw;
+package com.ddw.util;
 
 import com.gen.common.util.Tools;
 
@@ -11,5 +11,16 @@ public class Toolsddw extends Tools {
             return (Integer)usermap.get("id");
         }
         return null;
+    }
+
+    /**
+     * key=id,
+     * key=uName,
+     * key=uNickName
+     * @return
+     */
+    public static Map getUserMap(){
+        return (Map)getSession("user");
+
     }
 }

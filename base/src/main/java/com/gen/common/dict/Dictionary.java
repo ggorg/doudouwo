@@ -6,7 +6,7 @@ public interface Dictionary {
 	 * 
 	 * @return
 	 */
-	String getText();
+	String getName();
 
 	/**
 	 * 状态码

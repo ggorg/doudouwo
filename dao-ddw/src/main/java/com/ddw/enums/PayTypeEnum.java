@@ -1,9 +1,11 @@
 package com.ddw.enums;
 
+import com.gen.common.dict.Dictionary;
+
 /**
  * 支付类型
  */
-public enum PayTypeEnum {
+public enum PayTypeEnum implements Dictionary {
     PayType1("微信",1),
     PayType2("支付宝",2),
     PayType3("线下",3);

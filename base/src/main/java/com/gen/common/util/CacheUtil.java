@@ -19,11 +19,13 @@ public class CacheUtil {
     }
     public static void delete(String cacheName,Object key){
         Cache cache=createCache(cacheName);
+
         cache.remove(key);
        // cache.flush();
     }
     private static Cache createCache(String cacheName){
         CacheManager cacheManager=CacheManager.create();
+
         Cache cache=cacheManager.getCache(cacheName);
         return cache;
     }

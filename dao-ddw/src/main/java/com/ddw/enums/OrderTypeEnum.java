@@ -1,9 +1,11 @@
 package com.ddw.enums;
 
+import com.gen.common.dict.Dictionary;
+
 /**
  * 订单类型
  */
-public enum OrderTypeEnum {
+public enum OrderTypeEnum  implements Dictionary {
     //商品:1,原材料：2
     OrderType1("商品",1),
     OrderType2("原材料",2);

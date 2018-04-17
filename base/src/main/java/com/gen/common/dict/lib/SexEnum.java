@@ -21,16 +21,16 @@ public enum SexEnum implements Dictionary {
 	
 
 	private Integer code;
-	private String text;
+	private String name;
 
-	private SexEnum(Integer code, String text) {
+	private SexEnum(Integer code, String name) {
 		this.code = code;
-		this.text = text;
+		this.name = name;
 	}
 
 	@Override
-	public String getText() {
-		return text;
+	public String getName() {
+		return name;
 	}
 
 	@Override

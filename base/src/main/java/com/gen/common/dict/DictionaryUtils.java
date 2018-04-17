@@ -69,7 +69,7 @@ public class DictionaryUtils {
 	 */
 	public static Class<?> getDictClass(String className) {
 		try {
-			return Class.forName(getDictCompleteClassName(className));
+			return Class.forName(className);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			return null;

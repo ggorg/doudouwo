@@ -40,7 +40,7 @@ public class OrderService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO prestoreOrder(Integer userid,Integer storeid,Integer[] mids)throws Exception{
+    public ResponseVO prestoreOrder(Map userMap,Integer storeid,Integer[] mids)throws Exception{
         if(mids==null){
             return new ResponseVO(-2,"请选择要订购的材料",null);
         }
@@ -57,13 +57,14 @@ public class OrderService extends CommonService {
         orderPO.setDoEndTime(DateUtils.addHours(new Date(),24));
         orderPO.setDoOrderDate(DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
         orderPO.setDoPayStatus(PayStatusEnum.PayStatus0.getCode());
-        orderPO.setDoCustomerUserId(userid);
+        orderPO.setDoCustomerUserId((Integer) userMap.get("id"));
         orderPO.setDoSellerId(-1);
         orderPO.setDoCustomerStoreId(storeid);
         orderPO.setDoPayType(PayTypeEnum.PayType3.getCode());
         orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus0.getCode());
         orderPO.setDoCustomerType(OrderCustomerTypeEnum.OrderCustomerType4.getCode());
         orderPO.setDoType(OrderTypeEnum.OrderType2.getCode());
+        orderPO.setCreater((String)userMap.get("creater"));
         ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
         if(insertResponseVO.getReCode()!=1){
             throw new  GenException("订单生成失败");
@@ -87,6 +88,7 @@ public class OrderService extends CommonService {
         cacheMap.put("orderNo",orderNo);
         List morder=new ArrayList();
         cacheMap.put("list",morder);
+        Integer cp=0;
         for(Map m:mList){
             id=(Integer) m.get("id");
             num=(Integer) m.get("num");
@@ -106,6 +108,7 @@ public class OrderService extends CommonService {
             orderMaterialPO.setMaterialCountPrice(mpo.getDmSales()*num);
             orderMaterialPO.setOrderId(insertResponseVO.getData());
             orderMaterialPO.setOrderNo(orderNo);
+            cp=cp+mpo.getDmSales()*num;
             orderMaterialRes=this.commonInsert("ddw_order_material",orderMaterialPO);
             if(orderMaterialRes.getReCode()!=1){
                 throw new  GenException("订单生成失败");
@@ -114,12 +117,12 @@ public class OrderService extends CommonService {
 
 
         }
-
+        cacheMap.put("countPrice",cp);
         CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"storeId-"+storeid);
         CacheUtil.put(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo.toString(),cacheMap);
         return new ResponseVO(1,"订单生成成功",orderNo.toString());
     }
-    @Cacheable(value ="pcShoppingCart",key="'store-order-'+#storeId+'-'+#orderNo" )
+    @Cacheable(value ="pcShoppingCart",key="'store-order-'+#storeid+'-'+#orderNo" )
     public Map getOrderByStoreAndOrderNo(Integer storeid,String orderNo)throws Exception{
         Integer orderid=OrderUtil.getOrderId(orderNo);
         String orderTime=OrderUtil.getOrderTime(orderNo);
@@ -134,11 +137,14 @@ public class OrderService extends CommonService {
         cacheMap.put("list",morder);
         List<Map> list=this.commonObjectsBySingleParam("ddw_order_material","orderNo",orderNo);
         OrderMaterialPO orderMaterialPO=null;
+        Integer countPrice=0;
         for(Map map:list){
             orderMaterialPO=new OrderMaterialPO();
             PropertyUtils.copyProperties(orderMaterialPO,map);
             morder.add(orderMaterialPO);
+            countPrice=countPrice+orderMaterialPO.getMaterialCountPrice();
         }
+        cacheMap.put("countPrice",countPrice);
         return cacheMap;
     }
     /**

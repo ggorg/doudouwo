@@ -12,10 +12,8 @@ public class OrderUtil {
         orderNo.append(orderDate);//时间
         orderNo.append("0").append(orderType);//订单类型
         orderNo.append("0").append(payType);//支付类型
-        System.out.println(32-(orderNo.length()+id.toString().length()));
         int length=32-(orderNo.length()+id.toString().length());
         for(int i=0;i<length;i++){
-            System.out.println(i);
             orderNo.append("0");
         }
         orderNo.append(id);//订单id号

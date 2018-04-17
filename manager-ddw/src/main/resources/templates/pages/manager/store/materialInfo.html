@@ -15,7 +15,7 @@
 <body style="padding:10px 10px 10px 10px">
 <form class="layui-form">
 
-    <input name="idStr" th:value="${id}"/>
+    <input type="hidden" name="idStr" th:value="${id}"/>
     <div style="float: left;width:330px;padding-right:15px">
       <img th:if="${dm!=null and dm['dmIcoImgPath']!=null}" th:src="${dm['dmIcoImgPath']}" style="width:100%" />
     </div>

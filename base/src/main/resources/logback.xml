@@ -1,41 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration scan="true" scanPeriod="60 seconds" debug="false">
+<configuration scan="true" scanPeriod="60 seconds" debug="true">
 
 	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+
 	<springProperty scope="context" name="springAppName" source="spring.application.name"/>
-	<contextName>logback</contextName>
-	<!--输出到控制台-->
-	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<!-- Minimum logging level to be presented in the console logs-->
-			<level>DEBUG</level>
-		</filter>
-		<encoder>
-			<pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
-		</encoder>
-	</appender>
 
-	<!--按天生成日志-->
-	<appender name="logFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<Prudent>true</Prudent>
-		<file>/Users/Jacky/logs/data/log/${springAppName}/gen.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<FileNamePattern>
-				/Users/Jacky/logs/data/log/${springAppName}/%d{yyyy-MM-dd}/%d{yyyy-MM-dd}.log
-			</FileNamePattern>
-		</rollingPolicy>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>
-				%d{yyyy-MM-dd HH:mm:ss} -%msg%n
-			</Pattern>
-		</layout>
-	</appender>
 
-	<logger name="org.springframework.web" level="ERROR" />
+			<contextName>logback</contextName>
+			<!--输出到控制台-->
+			<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+				<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+					<!-- Minimum logging level to be presented in the console logs-->
+					<level>DEBUG</level>
+				</filter>
+				<encoder>
+					<pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+				</encoder>
+			</appender>
 
-	<root level="INFO">
+			<!--按天生成日志-->
+			<appender name="logFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<Prudent>true</Prudent>
+				<file>/data/log/${springAppName}/gen.log</file>
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<FileNamePattern>
+						/data/log/${springAppName}/%d{yyyy-MM-dd}/%d{yyyy-MM-dd}.log
+					</FileNamePattern>
+				</rollingPolicy>
+				<layout class="ch.qos.logback.classic.PatternLayout">
+					<Pattern>
+						%d{yyyy-MM-dd HH:mm:ss} -%msg%n
+					</Pattern>
+				</layout>
+			</appender>
 
-		<appender-ref ref="logFile"/>
-	</root>
+			<logger name="org.springframework.web" level="ERROR" />
+
+			<root level="INFO">
+
+				<appender-ref ref="logFile"/>
+			</root>
+
+
 
 </configuration>	

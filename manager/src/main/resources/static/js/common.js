@@ -63,23 +63,32 @@ function initForm(url,formObject){
         //各种基于事件的操作，下面会有进一步介绍
     });
 }
-function jQueryCommonSubmit(url,formObject,reqData){
-    jQuery.ajax(commonAjaxFunction(url,reqData==undefined?($(formObject==undefined?".layui-form":formObject).serializeArray()):reqData));
+function jQueryCommonSubmitCallback(url,formObject,callback){
+    jQueryCommonSubmit(url,formObject,null,callback);
+}
+var j
+function jQueryCommonSubmit(url,formObject,reqData,callback){
+
+    j=(isFunction(jQuery)?jQuery:$);
+    j.ajax(commonAjaxFunction(url,reqData==undefined?(j(formObject==undefined?".layui-form":formObject).serializeArray()):reqData,null,callback));
     return false;
 }
 var index =null;
-function commonAjaxFunction(url,data,isUpload){
+function commonAjaxFunction(url,params,isUpload,callback){
+    j=(isFunction(jQuery)?jQuery:$);
     return {
-        timeout: isUpload==undefined?20 * 1000:120*1000,
+        timeout: isUpload==undefined || isUpload==null?20 * 1000:120*1000,
         url: url,
         type: "post",
-        data:data,
+        data:params,
         dataType: "JSON",
-        processData: isUpload==undefined?true:false,
-        contentType: isUpload==undefined?'application/x-www-form-urlencoded; charset=UTF-8':false,
+        processData: isUpload==undefined || isUpload==null?true:false,
+        contentType: isUpload==undefined || isUpload==null?'application/x-www-form-urlencoded; charset=UTF-8':false,
         beforeSend: function(xhr, settings) {
             // xhr.setRequestHeader("If-Modified-Since", "0");
+
             index= layer.load();
+            j(".layui-btn,#btn").attr("disabled",true);
 
         },
         success: function(data, textStatus, jqXHR) {
@@ -88,13 +97,17 @@ function commonAjaxFunction(url,data,isUpload){
             if(data.reCode==1){
 
                 window.setTimeout(function(){
-
-                    if(data.data!=null && data.data.jumpUrl!=undefined){
-                        top.location.href= data.data.jumpUrl;
+                    if(callback!=undefined && isFunction(callback)){
+                        callback(data);
                     }else{
-                        top.location.href=window.parent.location.href;
+                        if(data.data!=null && data.data.jumpUrl!=undefined){
+                            top.location.href= data.data.jumpUrl;
+                        }else{
+                            top.location.href=window.parent.location.href;
 
+                        }
                     }
+
                 },500)
             }
         },
@@ -103,7 +116,7 @@ function commonAjaxFunction(url,data,isUpload){
         },
         complete: function(xhr, status) {
             layer.close(index);
-
+            j(".layui-btn,#btn").removeAttr("disabled");
         }}
 }
 function commonSubmit(url,formObject,reqData){
@@ -122,4 +135,7 @@ function openDialog(width,height,title,url){
         title:title,
         content:url //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
     });
+}
+function isFunction(fn) {
+    return Object.prototype.toString.call(fn)=== '[object Function]';
 }

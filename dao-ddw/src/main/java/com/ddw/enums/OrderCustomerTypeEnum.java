@@ -1,9 +1,11 @@
 package com.ddw.enums;
 
+import com.gen.common.dict.Dictionary;
+
 /**
  * 订单用户类型
  */
-public enum OrderCustomerTypeEnum {
+public enum OrderCustomerTypeEnum implements Dictionary {
     //用户类型 ,普通会员：0，女神会员：1，代练会员：2，服务员：3，门店：4
     OrderCustomerType0("普通会员",0),
     OrderCustomerType1("女神会员",1),

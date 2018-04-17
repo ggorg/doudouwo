@@ -26,10 +26,10 @@
 
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="confirmBuy()" title="table2">确认订购</button> &nbsp;
+                    <button class="radius3" id="btn" onclick="confirmBuy()" title="table2">确认订购</button> &nbsp;
 
                 </div>
-                <form class="layui-form" id="form1">
+                <form class="layui-form" >
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
                     <colgroup>
                         <!--<col class="con0" style="width: 4%" />-->
@@ -88,8 +88,10 @@
         function confirmBuy(){
             layer.confirm("是否确认订购", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
+                    jQueryCommonSubmitCallback("/manager/order/do-prestore-order",'.layui-form',function(data){
+                        openDialog('850px','320px','创建系统用户','/manager/order/to-order-info?orderNo='+data.data);
+                    })
 
-                    jQueryCommonSubmit("/manager/order/do-prestore-order",null, jQuery("#form1").serializeArray());
 
                 }
                 //layer.close(index);

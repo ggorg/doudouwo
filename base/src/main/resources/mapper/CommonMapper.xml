@@ -56,7 +56,7 @@
 				</when>
 				<otherwise>
 				<choose>
-					<when test="key.indexOf('(')>-1 or key.indexOf(')')>-1 or key.matches('[)] or [(]') or key.matches('or.*') or key.matches('and.*')">
+					<when test="key.indexOf('(')>-1 or key.indexOf(')')>-1 or key.matches('[)] or [(]') or key.matches('^or($| +)') or key.matches('^and($| +)')">
 						${key}
 					</when>
 					<otherwise>
@@ -131,11 +131,11 @@
 					<if test="auto">
 					and 
 					</if>
-					t1.${key} = #{value} 
+					t1.${key} = #{value}
 				</when>
 				<otherwise>
 				<choose>
-					<when test="key.indexOf('(')>-1 or key.indexOf(')')>-1 or key.matches('[)] or [(]') or key.matches('or.*') or key.matches('and.*')">
+					<when test="key.indexOf('(')>-1 or key.indexOf(')')>-1 or key.matches('[)] or [(]') or key.matches('^or($| +)') or key.matches('^and($| +)')">
 						${key}
 					</when>
 					<otherwise>

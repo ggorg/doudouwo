@@ -26,13 +26,13 @@ public final class Enums {
 		Dictionary[] dictionaries = DictionaryUtils.getDictionaries(className);
 		for (Dictionary dictionary : dictionaries) {
 			if (dictionary.getCode() == code) {
-				return dictionary.getText();
+				return dictionary.getName();
 			} else if (dictionary.getCode() == Integer.MIN_VALUE) {
 				unknownDic = dictionary;
 			}
 		}
 		if (null != unknownDic) {
-			return unknownDic.getText();
+			return unknownDic.getName();
 		}
 		return "";
 	}
@@ -42,7 +42,7 @@ public final class Enums {
 		builder.append("<option value=''>不限</option>");
 		for (Dictionary dictionary : dictionaries) {
 			builder.append("<option value='").append(dictionary.getCode()).append("'").append(dictionary.getCode()==code?"selected='selected'":"").append(" >");
-			builder.append(dictionary.getText()).append("</option>");
+			builder.append(dictionary.getName()).append("</option>");
 		}
 		return builder.toString();
 	}
