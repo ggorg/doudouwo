@@ -51,19 +51,19 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                        toWriteResponseVo(response,-1000,"参数异常");
                        return false;
                    }
-
-                   String token=TokenUtil.getBaseToken(map.get("token"));
-                    if(!token.matches("^([0-9]{10})([0-9]{8})([0-9]{10})([0-9]{4})$")){
+                   String base64Token=map.get("token");
+                   String baseToken=TokenUtil.getBaseToken(base64Token);
+                    if(!TokenUtil.validToken(baseToken)){
                         toWriteResponseVo(response,-1000,"token异常");
                         return false;
                     }
                     if(tokenLiveHour>-1){
-                       if(TokenUtil.isOverTime(token,tokenLiveHour)){
+                       if(TokenUtil.isOverTime(baseToken,tokenLiveHour)){
                            toWriteResponseVo(response,-1000,"token超时");
                            return false;
                        }
                     }
-                    if(!TokenUtil.hasToken(token)){
+                    if(!TokenUtil.hasToken(base64Token)){
                         toWriteResponseVo(response,-1000,"token失效");
                         return false;
                     }

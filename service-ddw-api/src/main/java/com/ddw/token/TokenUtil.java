@@ -29,29 +29,31 @@ public class TokenUtil {
         String token=new String(Base64Utils.decodeFromString(base64Token));
         return token;
     }
-    public static boolean hasToken(String token){
+    public static boolean hasToken(String base64Token){
         CacheService cs=getCacheService();
-        if(cs.get(token)!=null){
+        if(cs.get(base64Token)!=null){
             return true;
         }
         return false;
     }
-    public static Object getObjByToken(String token){
-        CacheService cs=getCacheService();
-        return cs.get(token);
+    public static boolean validToken(String baseToken){
+        return baseToken.matches("^([0-9]{10})([0-9]{8})([0-9]{10})([0-9]{4})$");
     }
-    public static String  getTimeByToken(String base64Token){
-        String token=new String(Base64Utils.decodeFromString(base64Token));
-        if(token.length()==32){
-            return token.replaceAll("^([0-9]{10})([0-9]{8})([0-9]{10})([0-9]{4})$","$2$4");
+    public static Object getObjByToken(String base64Token){
+        CacheService cs=getCacheService();
+        return cs.get(base64Token);
+    }
+    public static String  getTimeByToken(String baseToken){
+
+        if(baseToken.length()==32){
+            return baseToken.replaceAll("^([0-9]{10})([0-9]{8})([0-9]{10})([0-9]{4})$","$2$4");
         }
         return null;
 
     }
 
-    public static boolean isOverTime(String base64Token,Integer hour){
-        String token=new String(Base64Utils.decodeFromString(base64Token));
-        String timeStr=getTimeByToken(token);
+    public static boolean isOverTime(String baseToken,Integer hour){
+        String timeStr=getTimeByToken(baseToken);
         if(timeStr!=null){
             try {
                 Date newDate=DateUtils.addHours(DateUtils.parseDate(timeStr,"yyyyMMddHHmm"),hour);
