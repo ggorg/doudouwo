@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * 访问地址：/swagger-ui.html
  */
-@Api(value = "会员用户用例",description = "会员用户用例")
+@Api(value = "会员用户用例",description = "会员用户用例",tags = {"会员用户用例"})
 @RestController
 @RequestMapping("/ddwapp/user")
 public class UserController {
