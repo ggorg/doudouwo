@@ -24,6 +24,7 @@ public class UserInfoService extends CommonService {
     public ResponseVO save(UserInfoDTO userInfoDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
         PropertyUtils.copyProperties(userInfoPO,userInfoDTO);
+        userInfoPO.setId(null);
         userInfoPO.setGradeId(1);
         //TODO 生成邀请码
         userInfoPO.setInviteCode("");
