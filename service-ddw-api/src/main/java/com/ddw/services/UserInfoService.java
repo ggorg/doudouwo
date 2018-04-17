@@ -46,6 +46,6 @@ public class UserInfoService extends CommonService {
     }
 
     public Map queryByOpenid(String openid)throws Exception{
-        return this.commonObjectBySingleParam("ddw_userinfo","userName",openid);
+        return this.commonObjectBySingleParam("ddw_userinfo","openid",openid);
     }
 }
