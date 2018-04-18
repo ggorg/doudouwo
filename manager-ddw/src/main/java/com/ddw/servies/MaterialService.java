@@ -7,10 +7,7 @@ import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
-import com.gen.common.util.BeanToMapUtil;
-import com.gen.common.util.MyEncryptUtil;
-import com.gen.common.util.Page;
-import com.gen.common.util.UploadFileMoveUtil;
+import com.gen.common.util.*;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import net.coobird.thumbnailator.Thumbnails;
@@ -31,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static javafx.scene.input.KeyCode.L;
 
@@ -231,26 +230,63 @@ public class MaterialService  extends CommonService {
             materialPO.setCreateTime(new Date());
             materialPO.setDmCurrentCount(0);
             materialPO.setDmVersion(1);
+            materialPO.setDmStatus(0);
             return this.commonInsert("ddw_material",materialPO);
         }
     }
+
+    public Map getMaterialCacheById(Integer storeId,Integer mid){
+        List<Map> objVal= (List<Map>) CacheUtil.get("pcShoppingCart","storeId-"+storeId);
+       if(objVal!=null){
+           return objVal.stream().filter(a->a.containsKey("id")&& ((Integer)a.get("id")==mid || ((Integer)a.get("id")).equals(mid)) ).collect(Collectors.toList()).get(0);
+       }
+       return new HashMap();
+    }
+    public ResponseVO updateMaterialNumCacheById(Integer storeId,Integer mid,Integer num){
+        List<Map> objVal= (List<Map>) CacheUtil.get("pcShoppingCart","storeId-"+storeId);
+        Integer id=null;
+        for(Map m:objVal){
+            id=(Integer)m.get("id");
+            if(id==mid || id.equals(mid)){
+                m.put("num",num);
+                CacheUtil.put("pcShoppingCart","storeId-"+storeId,objVal);
+                return new ResponseVO(1,"修改成功",null);
+
+            }
+        }
+
+        return new ResponseVO(-2,"修改失败",null);
+    }
+    public ResponseVO cancelMaterialCacheById(Integer storeId,Integer mid){
+        List<Map> objVal= (List<Map>) CacheUtil.get("pcShoppingCart","storeId-"+mid);
+        if(objVal!=null){
+            objVal.stream().filter(a->!a.containsKey(mid)).collect(Collectors.toList());
+            CacheUtil.put("pcShoppingCart","storeId-"+mid,objVal);
+            return new ResponseVO(1,"删除成功",null);
+        }
+        return new ResponseVO(-2,"删除失败",null);
+
+    }
+    //public Resppon
     @Cacheable(value ="pcShoppingCart",key="'storeId-'+#storeId" )
     public List getMaterialByCache(Integer storeId){
+        //return (List)CacheUtil.get("pcShoppingCart","storeId-"+storeId);
         return new ArrayList();
     }
 
     public ResponseVO addMaterialToCache(String ids,Integer storeId,Integer num)throws Exception{
-        String id=MyEncryptUtil.getRealValue(ids);
-        if(id==null){
+            String idStr=MyEncryptUtil.getRealValue(ids);
+        if(idStr==null){
             return new ResponseVO(-2,"参数异常",null);
         }
-        Map mMap=this.getById(Integer.parseInt(id));
+        Integer id=Integer.parseInt(idStr);
+        Map mMap=this.getById(id);
         if(mMap==null || mMap.isEmpty()){
             return new ResponseVO(-2,"材料不存在",null);
 
         }
         if(num==null || num<1){
-            return new ResponseVO(-2,"购入数量不能为空",null);
+            return new ResponseVO(-2,"购入数量异常",null);
         }
         MaterialPO mPO=new MaterialPO();
         PropertyUtils.copyProperties(mPO,mMap);
@@ -265,7 +301,7 @@ public class MaterialService  extends CommonService {
             Integer mNum=null;
 
             for(Map m:listData){
-                if(m.containsKey("id") && m.get("id")!=null){
+                if(m.containsKey("id") && ((Integer)m.get("id")==id || ((Integer)m.get("id")).equals(id))){
                     mNum=(Integer) m.get("num");
                     m.put("num",mNum+num);
                     m.put("name",mPO.getDmName());

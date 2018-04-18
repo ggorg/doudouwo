@@ -59,7 +59,7 @@
                     </thead>
 
                     <tbody>
-                    <tr th:each="obj:${mPage}">
+                    <tr th:each="obj:${mPage}" >
                         <td><input lay-skin="primary"  name="mid" th:value="${obj['id']}" type="checkbox"/></td>
                         <td ><img th:src="${obj['dmIcoImgPath']}" style="width:70px;height:60px" /></td>
                         <td th:text="${obj['name']}">Trident</td>
@@ -70,6 +70,8 @@
 
                         <td class="center">
                             <div class="layui-btn-group">
+                                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'350px\',\'280px\',\'更改数量\',\'to-update-material-num?mid='+${obj['id']}+'\');return false;'"  >更改数量</button>
+
                             </div>
                         </td>
                     </tr>
@@ -89,7 +91,8 @@
             layer.confirm("是否确认订购", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
                     jQueryCommonSubmitCallback("/manager/order/do-prestore-order",'.layui-form',function(data){
-                        openDialog('850px','320px','创建系统用户','/manager/order/to-order-info?orderNo='+data.data);
+                        jQuery(".layui-form-checked").parent("td").parent().remove();
+                        openDialog('650px','580px','订单详情','/manager/order/to-order-info?orderNo='+data.data);
                     })
 
 
@@ -97,6 +100,7 @@
                 //layer.close(index);
             });
         }
+
         layui.use('form', function(){
             var form = layui.form;
             form.on('checkbox(allChoose)', function (data) {
@@ -105,6 +109,7 @@
                     item.checked = data.elem.checked;
                 });
                 form.render('checkbox');
+
             });
 
         })

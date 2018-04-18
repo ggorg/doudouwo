@@ -5,6 +5,9 @@ import com.ddw.beans.OrderMaterialPO;
 import com.ddw.beans.OrderPO;
 import com.ddw.enums.*;
 import com.ddw.util.Constant;
+import com.ddw.util.Toolsddw;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
@@ -33,7 +36,7 @@ public class OrderService extends CommonService {
 
     /**
      * 确认订购
-     * @param userid
+     * @param userMap
      * @param storeid
      * @param mids
      * @return
@@ -89,12 +92,16 @@ public class OrderService extends CommonService {
         List morder=new ArrayList();
         cacheMap.put("list",morder);
         Integer cp=0;
+        //获取订单预存的材料数量
+        List orderMlist=this.getOrderMaterialByPayStatusAndShipStatus(PayStatusEnum.PayStatus0.getCode(),ShipStatusEnum.ShipStatus0.getCode());
+        Integer pm=null;
         for(Map m:mList){
             id=(Integer) m.get("id");
             num=(Integer) m.get("num");
+            pm=Toolsddw.getPrestoreByM(id,orderMlist);
             mpo=new MaterialPO();
             PropertyUtils.copyProperties(mpo,this.materialService.getById(id));
-            if(mpo.getDmCurrentCount()<num){
+            if((mpo.getDmCurrentCount()-pm)<num){
                 return new ResponseVO(-2,"抱歉，所选的材料["+mpo.getDmName()+"]库存只剩:+"+mpo.getDmCurrentCount()+",请重新购选",null);
 
             }
@@ -121,6 +128,40 @@ public class OrderService extends CommonService {
         CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"storeId-"+storeid);
         CacheUtil.put(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo.toString(),cacheMap);
         return new ResponseVO(1,"订单生成成功",orderNo.toString());
+    }
+    /**
+     * 获取订单材料
+     * @param payStatus 支付状态
+     * @param shipStatus 货品状态
+
+     * @return
+     */
+    public List getOrderMaterialByPayStatusAndShipStatus(Integer payStatus,Integer shipStatus){
+        return getOrderMaterialByPayStatusAndShipStatusAndMid(payStatus,shipStatus,null);
+
+    }
+
+    /**
+     * 获取指定订单材料
+     * @param payStatus 支付状态
+     * @param shipStatus 货品状态
+     * @param mid 材料id
+     * @return
+     */
+    public List getOrderMaterialByPayStatusAndShipStatusAndMid(Integer payStatus,Integer shipStatus,Integer mid){
+
+        Map condition=new HashMap();
+        if(mid!=null){
+            condition.put("materialId",mid);
+        }
+        Map childCondition=new HashMap();
+        childCondition.put("doPayStatus",payStatus);
+        childCondition.put("doEndTime,>=",new Date());
+        childCondition.put("doShipStatus",shipStatus);
+        CommonChildBean ccb=new CommonChildBean("ddw_order","id","orderId",childCondition);
+        CommonSearchBean csb=new CommonSearchBean("ddw_order_material",null,"t1.*",null,null,condition,ccb);
+        return this.getCommonMapper().selectObjects(csb);
+
     }
     @Cacheable(value ="pcShoppingCart",key="'store-order-'+#storeid+'-'+#orderNo" )
     public Map getOrderByStoreAndOrderNo(Integer storeid,String orderNo)throws Exception{

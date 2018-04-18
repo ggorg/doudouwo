@@ -17,12 +17,20 @@ import org.thymeleaf.spring4.expression.SpelVariableExpressionEvaluator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Configuration
 public class ThymeleafConfig {
 
 	@Value("${gen.thymeleaf.extTagFun:}")
 	private String extTagFun;
+
+
+	@ConfigurationProperties(prefix ="gen.thymeleaf.tagFun")
+	@Bean
+	public Map getFun(){
+	return new HashMap();
+	}
 
 
 
@@ -44,17 +52,18 @@ public class ThymeleafConfig {
 		objects.put("TdTool", new Tools());
 		objects.put("TdEnum", new Enums());
 
+
 		try {
-			if(StringUtils.isNotBlank(extTagFun)){
-				String[] exts=extTagFun.split(",");
-				if(exts!=null && exts.length>0){
-					for(String e:exts){
-						String[] eKey=e.split(":");
-						Class clas=Class.forName(eKey[1].trim());
-						objects.put(eKey[0], clas.newInstance());
-					}
+			Map<String,String> extMap=getFun();
+			if(extMap!=null){
+				Set<String> keys=extMap.keySet();
+				for(String k:keys){
+					Class clas=Class.forName(extMap.get(k).trim());
+					objects.put(k, clas.newInstance());
 				}
+
 			}
+
 		}catch (Exception e){
 			e.printStackTrace();
 		}

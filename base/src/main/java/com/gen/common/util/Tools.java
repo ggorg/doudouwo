@@ -2,8 +2,10 @@ package com.gen.common.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ import java.util.Date;
  */
 public class Tools {
 	private static ThreadLocal<String> openid=new ThreadLocal();
+	private static WebApplicationContext wa;
 
 	/**
 	 * 分析值，为空或错误时使用默认值
@@ -356,5 +359,13 @@ public class Tools {
 			return false;
 		}
 		return NumberUtils.isNumber(input.replaceAll("(?i)[a-z]", ""));
+	}
+	public static WebApplicationContext getWebapplication(){
+		if(wa==null){
+			ServletRequestAttributes attrs =  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+			wa= WebApplicationContextUtils.getWebApplicationContext(attrs.getRequest().getServletContext());
+		}
+		return wa;
+
 	}
 }

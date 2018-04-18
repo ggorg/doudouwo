@@ -64,6 +64,7 @@
                         <col class="con1" />
                         <col class="con1" />
                         <col class="con1" />
+                        <col class="con1" />
 
                         <col class="con0" />
                     </colgroup>
@@ -77,6 +78,7 @@
                         <th class="head0">零售价格(分)</th>
                         <th class="head0">净含量</th>
                         <th class="head0">库存数</th>
+                        <th class="head0">被预存的数量</th>
                         <th class="head0">状态</th>
                         <th class="head1">创建时间</th>
 
@@ -93,6 +95,7 @@
                         <td th:text="${obj['dmSales']}">Trident</td>
                         <td th:text="${obj['dmUnit']}">Trident</td>
                         <td th:text="${obj['dmCurrentCount']}">Trident</td>
+                        <td th:text="${#toolsddw.getPrestoreByM(obj['id'],om)}">Trident</td>
                         <td th:text="${obj['dmStatus']==0||obj['dmStatus']==null?'未发布':obj['dmStatus']==1?'已发布':'禁用'}">Trident</td>
 
                         <td th:text="${obj['createTime']}">Win 95+</td>
