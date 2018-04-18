@@ -7,14 +7,17 @@ import com.ddw.enums.*;
 import com.ddw.util.Constant;
 import com.ddw.util.Toolsddw;
 import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonDeleteBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,7 +105,7 @@ public class OrderService extends CommonService {
             mpo=new MaterialPO();
             PropertyUtils.copyProperties(mpo,this.materialService.getById(id));
             if((mpo.getDmCurrentCount()-pm)<num){
-                return new ResponseVO(-2,"抱歉，所选的材料["+mpo.getDmName()+"]库存只剩:+"+mpo.getDmCurrentCount()+",请重新购选",null);
+                return new ResponseVO(-2,"抱歉，所选的材料【"+mpo.getDmName()+"】库存只剩："+(mpo.getDmCurrentCount()-pm)+"，请重新购选",null);
 
             }
             orderMaterialPO=new OrderMaterialPO();
@@ -126,8 +129,19 @@ public class OrderService extends CommonService {
         }
         cacheMap.put("countPrice",cp);
         CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"storeId-"+storeid);
-        CacheUtil.put(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo.toString(),cacheMap);
+       // CacheUtil.put(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo.toString(),cacheMap);
         return new ResponseVO(1,"订单生成成功",orderNo.toString());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO submitOrder(Integer storeId,String orderNoEncypt)throws Exception{
+        ResponseVO res=this.updateOrderStatus(PayStatusEnum.PayStatus1.getCode(),null,storeId,orderNoEncypt);
+       if(res.getReCode()==1){
+          // this.materialService.
+          // CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo);
+       }
+       return null;
+
     }
     /**
      * 获取订单材料
@@ -163,7 +177,7 @@ public class OrderService extends CommonService {
         return this.getCommonMapper().selectObjects(csb);
 
     }
-    @Cacheable(value ="pcShoppingCart",key="'store-order-'+#storeid+'-'+#orderNo" )
+    //@Cacheable(value ="pcShoppingCart",key="'store-order-'+#storeid+'-'+#orderNo" )
     public Map getOrderByStoreAndOrderNo(Integer storeid,String orderNo)throws Exception{
         Integer orderid=OrderUtil.getOrderId(orderNo);
         String orderTime=OrderUtil.getOrderTime(orderNo);
@@ -248,6 +262,70 @@ public class OrderService extends CommonService {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO deleteOrder(Integer storeid,String orderNoEncrypt)throws Exception{
+        if(StringUtils.isBlank(orderNoEncrypt)){
+            return new ResponseVO(-2,"订单号是空",null);
 
+        }
+        String orderNo=MyEncryptUtil.getRealValue(orderNoEncrypt);
+        if(StringUtils.isBlank(orderNo)){
+            return new ResponseVO(-2,"订单号异常",null);
+
+        }
+        Integer orderid=OrderUtil.getOrderId(orderNo);
+        Map condition=new HashMap();
+        condition.put("doPayStatus",PayStatusEnum.PayStatus0.getCode());
+        condition.put("doCustomerStoreId",storeid);
+        condition.put("id",orderid);
+        int n=this.getCommonMapper().deleteObject(new CommonDeleteBean("ddw_order",condition));
+        if(n>0){
+            this.commonDelete("ddw_order_material","orderNo",orderNo);
+            //CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo.toString());
+        }else{
+            return new ResponseVO(-2,"删除订单失败",null);
+        }
+        return new ResponseVO(1,"删除订单成功",null);
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updateOrderStatus(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
+        if(StringUtils.isBlank(orderNoEncypt)){
+            return new ResponseVO(-2,"订单号异常",null);
+        }
+        if(payStatus==null && shipStatus==null){
+            return new ResponseVO(-2,"状态参数为空",null);
+
+        }
+        if(payStatus!=null && PayStatusEnum.getName(payStatus)==null){
+            return new ResponseVO(-2,"付款状态值异常",null);
+
+        }
+        if(shipStatus!=null && ShipStatusEnum.getName(shipStatus)==null){
+            return new ResponseVO(-2,"货品状态值异常",null);
+
+        }
+        String orderNo=MyEncryptUtil.getRealValue(orderNoEncypt);
+        if(StringUtils.isBlank(orderNo)){
+            return new ResponseVO(-2,"订单号异常",null);
+
+        }
+        Integer orderid=OrderUtil.getOrderId(orderNo);
+        Map params=new HashMap();
+        if(payStatus!=null){
+            params.put("doPayStatus",payStatus);
+        }
+        if(shipStatus!=null){
+            params.put("doShipStatus",shipStatus);
+        }
+        if(storeId!=null){
+            params.put("doCustomerStoreId",storeId);
+        }
+        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
+        if(res.getReCode()!=1){
+            return new ResponseVO(-2,"操作失败",null);
+        }
+        return new ResponseVO(1,"操作成功",null);
+
+    }
 
 }

@@ -99,7 +99,8 @@
                         <td class="center">
                             <div class="layui-btn-group">
                             <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${orderNo}+'\')'"  >查 看</button>
-                            <button class="layui-btn layui-btn-sm"   >修 改</button>
+                            <th:block th:utext="${#toolsddw.getBtnMsg(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}"></th:block>
+
                             </div>
                         </td>
                     </tr>
@@ -114,6 +115,42 @@
 
     </div>
     <script type="text/javascript">
+        function toDelete(orderNo){
+            layer.confirm("是否删除订单？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-delete-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
+        function toCancel(orderNo){
+            layer.confirm("是否发起取消订单？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-cancel-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
+        function toMakeSure(orderNo){
+            layer.confirm("是否确证签收？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-makesure-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
+        function toExchange(orderNo){
+            layer.confirm("是否发起退换？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-exchange-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
 
         function confirmDisabled(id,status,msg){
             layer.confirm(msg, {icon: 3, title:'提示'}, function(index){

@@ -12,7 +12,8 @@ public enum ShipStatusEnum implements Dictionary {
     ShipStatus2("已发货",2),
     ShipStatus3("确认签收",3),
     ShipStatus4("退货",4),
-    ShipStatus5("完成",5);
+    ShipStatus5("完成",5),
+    ShipStatus6("关闭",6);
 
     private String name;
     private Integer code;
