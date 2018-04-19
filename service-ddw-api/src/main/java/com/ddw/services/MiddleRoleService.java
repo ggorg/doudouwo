@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,9 +28,15 @@ public class MiddleRoleService extends CommonService {
         return this.commonInsert("ddw_middle_role",middleRolePO);
     }
 
-    public Map query(String id)throws Exception {
-        return this.commonObjectBySingleParam("ddw_middle_role", "id", id);
+    public Map query(String userId)throws Exception {
+        return this.commonObjectBySingleParam("ddw_middle_role", "userId", userId);
     }
 
+    public MiddleRolePO verify(int userId,String roleName)throws Exception {
+        Map map = new HashMap<>();
+        map.put("userId",userId);
+        map.put("roleName",roleName);
+        return this.commonObjectBySearchCondition("ddw_middle_role",map,new MiddleRolePO().getClass());
+    }
 
 }
