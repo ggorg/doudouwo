@@ -19,13 +19,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
-@Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }),
+/*@Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }),
 		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
-				RowBounds.class, ResultHandler.class }) })
+				RowBounds.class, ResultHandler.class }) })*/
 public class MybatisInterceptor implements Interceptor {
 	private static final Logger logger = LoggerFactory.getLogger(MybatisInterceptor.class);
 
 	public Object intercept(Invocation invocation) throws Throwable {
+
 		MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
 		Object parameter = null;
 		if (invocation.getArgs().length > 1) {

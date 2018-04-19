@@ -2,6 +2,7 @@ package com.gen.common.config;
 
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.gen.common.interceptor.MybatisInterceptor;
+import com.gen.common.interceptor.ResultTypeInterceptor;
 import com.gen.common.util.GenPropertySourceFactory;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -98,9 +99,10 @@ public class SpringContextConfig {
         //fb.setTypeAliasesPackage(env.getProperty("mybatis.typeAliasesPackage"));// 指定基包
         fb.setMapperLocations( new PathMatchingResourcePatternResolver().getResources(env.getProperty("mybatis.mapperLocations")));//
 
-        Interceptor[] its = new Interceptor[1];
-        its[0] = new MybatisInterceptor();
-        fb.setPlugins(its);
+        /*Interceptor[] its = new Interceptor[1];
+       // its[0] = new MybatisInterceptor();
+        //its[0] = new ResultTypeInterceptor();
+        fb.setPlugins(its);*/
       // fb.setConfigLocation(new DefaultResourceLoader() .getResource(env .getProperty("mybatis.configLocation")));
 
         return fb.getObject();

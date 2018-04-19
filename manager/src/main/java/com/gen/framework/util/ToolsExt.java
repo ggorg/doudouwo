@@ -20,8 +20,7 @@ import java.util.Map;
 
 public class ToolsExt extends Tools {
     public static List getSysPowerMenu(Integer uid){
-        ServletRequestAttributes attrs =  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        WebApplicationContext wa= WebApplicationContextUtils.getWebApplicationContext(attrs.getRequest().getServletContext());
+        WebApplicationContext wa= getWebapplication();
         SysManagerService cm=wa.getBean(SysManagerService.class);
         List<SysMenuBean> smList=cm.getPowerMenu(uid);
         return smList;

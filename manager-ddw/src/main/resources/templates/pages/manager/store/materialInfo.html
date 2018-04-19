@@ -19,7 +19,7 @@
     <div style="float: left;width:330px;padding-right:15px">
       <img th:if="${dm!=null and dm['dmIcoImgPath']!=null}" th:src="${dm['dmIcoImgPath']}" style="width:100%" />
     </div>
-    <div style="float: left;width:465px" class="layui-form-pane">
+    <div style="float: left;width:465px" class="layui-form-pane" th:with="pn=${dm!=null? dm['dmCurrentCount']-#toolsddw.getPrestoreByM(dm['id']):0}">
       <div class="layui-form-item">
         <label class="layui-form-label">材料名称</label>
         <div class="layui-input-block">
@@ -43,7 +43,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">库存数量</label>
         <div class="layui-input-block">
-          <div class="layui-input mystyle1" th:text="${dm!=null? dm['dmCurrentCount']:''}" ></div>
+          <div class="layui-input mystyle1" th:text="${pn<1?'库存不足':pn}" ></div>
         </div>
       </div>
 
@@ -52,9 +52,9 @@
         <div class="layui-input-block">
           <div class="layui-input mystyle1"  >
             <div class=" layui-btn-group">
-              <button  class="layui-btn layui-btn-sm layui-btn-danger"  lay-submit="lay-submit" >购　入</button>
+              <button  class="layui-btn layui-btn-sm layui-btn-danger" th:disabled="${pn>0?'false':'true'}"  lay-submit="lay-submit" >购　入</button>
             </div>
-            <input style="background-color: peachpuff;width:50px;border:none;height: 80%" name="num" type="number" th:onchange="'if(this.value<1){this.value=1;}else if(this.value>'+${dm['dmCurrentCount']}+') {this.value='+${dm['dmCurrentCount']}+'}'" />
+            <input th:if="${pn>0}" style="background-color: peachpuff;width:50px;border:none;height: 80%" name="num" type="number" th:onchange="'if(this.value<1){this.value=1;}else if(this.value>'+${pn}+') {this.value='+${pn}+'}'" />
 
 
           </div>

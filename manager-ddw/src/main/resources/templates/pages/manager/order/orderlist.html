@@ -59,6 +59,9 @@
                         <col class="con1" />
                         <col class="con1" />
                         <col class="con1" />
+                        <col class="con1" />
+                        <col class="con1" />
+                        <col class="con1" />
 
                         <col class="con0" />
                     </colgroup>
@@ -71,27 +74,33 @@
                         <th class="head0">付款方式</th>
                         <th class="head0">订单类型</th>
                         <th class="head0">货品状态</th>
+                        <th  class="head0">订单状态</th>
                         <th class="head0">提交人</th>
                         <th class="head1">创建时间</th>
+
 
                         <th class="head0">操作</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <tr th:each="obj:${oPage?.result}">
-                        <td th:text="${#orderUtil.createOrderNo(obj['doOrderDate']+'',obj['doType'],obj['doPayType'],obj['id'])}"></td>
+                    <tr th:each="obj:${oPage?.result}" th:with="orderNo=${#orderUtil.createOrderNo(obj['doOrderDate']+'',obj['doType'],obj['doPayType'],obj['id'])}">
+                        <td  th:text="${orderNo}"></td>
                         <td th:text="${obj['countPrice']==null?0:obj['countPrice']}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.PayStatusEnum',obj['doPayStatus'])}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.PayTypeEnum',obj['doPayType'])}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.OrderTypeEnum',obj['doType'])}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.ShipStatusEnum',obj['doShipStatus'])}">Trident</td>
+                        <td th:text="${#toolsddw.getOrderStatusInfo(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'])}" >
+                        </td>
                         <td th:text="${obj['creater']}">Trident</td>
                         <td th:text="${#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm"   >修 改</button>
+                            <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${orderNo}+'\')'"  >查 看</button>
+                            <th:block th:utext="${#toolsddw.getBtnMsg(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}"></th:block>
+
                             </div>
                         </td>
                     </tr>
@@ -106,6 +115,42 @@
 
     </div>
     <script type="text/javascript">
+        function toDelete(orderNo){
+            layer.confirm("是否删除订单？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-delete-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
+        function toCancel(orderNo){
+            layer.confirm("是否发起取消订单？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-cancel-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
+        function toMakeSure(orderNo){
+            layer.confirm("是否确证签收？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-makesure-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
+        function toExchange(orderNo){
+            layer.confirm("是否发起退换？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-exchange-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
 
         function confirmDisabled(id,status,msg){
             layer.confirm(msg, {icon: 3, title:'提示'}, function(index){

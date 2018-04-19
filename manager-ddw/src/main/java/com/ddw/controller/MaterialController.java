@@ -1,5 +1,6 @@
 package com.ddw.controller;
 
+import com.ddw.servies.OrderService;
 import com.ddw.util.Toolsddw;
 import com.ddw.beans.MaterialDTO;
 import com.ddw.beans.StorePO;
@@ -31,9 +32,13 @@ public class MaterialController {
     @Autowired
     private StoreService storeService;
 
+    @Autowired
+    private OrderService orderService;
+
     @GetMapping("to-paging-{dmStatus}")
     public String toPaging(@RequestParam(defaultValue = "1") Integer pageNo,@PathVariable Integer dmStatus, Model model){
         try {
+            model.addAttribute("om",orderService.getOrderMaterialByPayStatusAndShipStatus(0,0));
             model.addAttribute("mPage",materialService.findPage(pageNo,dmStatus));
         }catch (Exception e){
             logger.error("MaterialController->toPage",e);
@@ -43,6 +48,7 @@ public class MaterialController {
     @GetMapping("to-show-to-store")
     public String toShowToStore(@RequestParam(defaultValue = "1") Integer pageNo, Model model){
         try {
+            model.addAttribute("om",orderService.getOrderMaterialByPayStatusAndShipStatus(0,0));
             model.addAttribute("mPage",materialService.findPage(pageNo,1));
         }catch (Exception e){
             logger.error("MaterialController->toShowToStore",e);
@@ -86,7 +92,32 @@ public class MaterialController {
         }
         return "pages/manager/store/shoppingcart";
     }
+    @GetMapping("to-update-material-num")
+    public String toUpdatelMaterialNum(Integer mid,Model model){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                model.addAttribute("m",this.materialService.getMaterialCacheById(spo.getId(),mid));
 
+            }
+        }catch (Exception e){
+            logger.error("MaterialController->toUpdatelMaterialNum",e);
+        }
+        return "pages/manager/store/updateMaterialNum";
+    }
+    @PostMapping("do-update-material-num")
+    @ResponseBody
+    public ResponseVO doUpdateMaterialNum(Integer mid,Integer num){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+              return this.materialService.updateMaterialNumCacheById(spo.getId(),mid,num);
+            }
+        }catch (Exception e){
+            logger.error("MaterialController->doUpdateMaterialNum",e);
+        }
+        return new ResponseVO(-1,"修改失败",null);
+    }
     @GetMapping("to-edit")
     public String toEdtitPage(Integer id,Model model){
         try {

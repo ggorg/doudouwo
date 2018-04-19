@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+  <style type="text/css">
+    .mystyle1{
+      line-height: 35px;
+    }
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane">
+
+    <input type="hidden" name="mid" th:value="${m!=null? m['id']:''}"/>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">材料名称</label>
+        <div class="layui-input-block">
+          <div class="layui-input mystyle1" th:text="${m!=null? m['name']:''}" ></div>
+
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">原购入数量</label>
+        <div class="layui-input-block">
+          <div class="layui-input mystyle1" th:text="${m!=null? m['num']:''}" ></div>
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">更改数量</label>
+        <div class="layui-input-block">
+          <input name="num" class="layui-input"/>
+
+        </div>
+      </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+
+
+
+</form>
+</body>
+<script type="text/javascript">
+    initForm("do-update-material-num",".layui-form")
+</script>
+</html>

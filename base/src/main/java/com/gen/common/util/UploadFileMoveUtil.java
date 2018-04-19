@@ -21,7 +21,7 @@ public class UploadFileMoveUtil {
             if(!rsDirFile.exists()){
                 rsDirFile.mkdirs();
             }
-            File destFile=new File(rsDirFile, StringUtils.isNotBlank(fileName)?fileName:file.getOriginalFilename());
+            File destFile=new File(rsDirFile, StringUtils.isNotBlank(fileName)?fileName:file.getName());
             if(FilenameUtils.getExtension(destFile.getName()).toLowerCase().matches("^(jpg|gif|png|jpeg)$")){
                 Thumbnails.of(file.getInputStream()).scale(1).outputQuality(0.5f).toFile(destFile);
             }else{

@@ -2,6 +2,7 @@ package com.gen.common.dao;
 
 import com.gen.common.beans.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

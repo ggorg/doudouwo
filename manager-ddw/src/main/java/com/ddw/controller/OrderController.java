@@ -1,5 +1,6 @@
 package com.ddw.controller;
 
+import com.ddw.enums.ShipStatusEnum;
 import com.ddw.util.Toolsddw;
 import com.ddw.beans.StorePO;
 import com.ddw.servies.OrderService;
@@ -61,4 +62,42 @@ public class OrderController {
         }
         return "pages/manager/order/orderlist";
     }
+    @PostMapping("do-delete-order")
+    @ResponseBody
+    public ResponseVO doDeleteOrder(String orderNo){
+        try{
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+               return  this.orderService.deleteOrder(spo.getId(),orderNo);
+            }
+
+        }catch (Exception e){
+            logger.error("OrderController->doDeleteOrder",e);
+        }
+        return new ResponseVO(-1,"删除订单失败",null);
+
+    }
+    @PostMapping("do-cancel-order")
+    public ResponseVO doCancelOrder(String orderNo){
+
+        return new ResponseVO(-1,"取消订单失败",null);
+    }
+    @PostMapping("do-makesure-order")
+    public ResponseVO doMakesureOrder(String orderNo){
+        try{
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                return  this.orderService.updateOrderStatus(null, ShipStatusEnum.ShipStatus3.getCode(),spo.getId(),orderNo);
+            }
+
+        }catch (Exception e){
+            logger.error("OrderController->doDeleteOrder",e);
+        }
+        return new ResponseVO(-1,"删除订单失败",null);
+    }
+    @PostMapping("do-exchange-order")
+    public ResponseVO doExchangeOrder(String orderNo){
+        return null;
+    }
+
 }
