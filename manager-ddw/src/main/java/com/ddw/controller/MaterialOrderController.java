@@ -13,10 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 材料订单
+ */
 @Controller
 @RequestMapping("/manager/order")
-public class OrderController {
-    private final Logger logger = Logger.getLogger(OrderController.class);
+public class MaterialOrderController {
+    private final Logger logger = Logger.getLogger(MaterialOrderController.class);
 
     @Autowired
     private OrderService orderService;
@@ -50,17 +53,17 @@ public class OrderController {
             logger.error("OrderController->toOrderInfo",e);
 
         }
-        return "pages/manager/order/orderInfosubmit";
+        return "pages/manager/store/orderInfosubmit";
     }
 
     @GetMapping("to-order-info")
-   public String toOrderInfo(String orderNo, Model model){
+    public String toOrderInfo(String orderNo, Model model){
         try {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
                 String orderno=MyEncryptUtil.getRealValue(orderNo);
                 if(orderno!=null){
-                    model.addAllAttributes(this.orderService.getOrderByStoreAndOrderNo(spo.getId(),orderno));
+                    model.addAllAttributes(this.orderService.getOrderByStoreAndOrderNo(orderno));
                 }
             }
 
@@ -68,9 +71,38 @@ public class OrderController {
             logger.error("OrderController->toOrderInfo",e);
 
         }
-        return "pages/manager/order/orderinfo";
+        return "pages/manager/store/orderinfo";
+    }
+    @GetMapping("to-material-order-page-by-hq")
+    public String toMaterialOrderPageByHq(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+        try {
+
+            model.addAttribute("oPage",this.orderService.findOrderByHq(pageNo));
+
+        }catch (Exception e){
+            logger.error("OrderController->toOrderByStore",e);
+
+        }
+        return "pages/manager/headquarters/orderlist";
     }
 
+    @GetMapping("to-material-order-info-by-hq")
+    public String toMaterialOrderInfoByHq(String orderNo, Model model){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                String orderno=MyEncryptUtil.getRealValue(orderNo);
+                if(orderno!=null){
+                    model.addAllAttributes(this.orderService.getOrderByStoreAndOrderNo(orderno));
+                }
+            }
+
+        }catch (Exception e){
+            logger.error("OrderController->toOrderInfo",e);
+
+        }
+        return "pages/manager/store/orderinfo";
+    }
     @GetMapping("to-order-by-store")
     public String toOrderPageByStore(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
         try {
@@ -83,7 +115,7 @@ public class OrderController {
             logger.error("OrderController->toOrderByStore",e);
 
         }
-        return "pages/manager/order/orderlist";
+        return "pages/manager/store/orderList";
     }
     @PostMapping("do-delete-order")
     @ResponseBody

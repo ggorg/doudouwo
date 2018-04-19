@@ -214,15 +214,16 @@ public class OrderService extends CommonService {
     @Cacheable(value ="orderInfo",key="'store-order-'+#storeid+'-'+#orderNo" )
     public Map getOrderCacheByStoreAndOrderNo(Integer storeid,String orderNo)throws Exception{
 
-        return this.getOrderByStoreAndOrderNo(storeid,orderNo);
+        return this.getOrderByStoreAndOrderNo(orderNo);
     }
     //@Cacheable(value ="pcShoppingCart",key="'store-order-'+#storeid+'-'+#orderNo" )
-    public Map getOrderByStoreAndOrderNo(Integer storeid,String orderNo)throws Exception{
+    public Map getOrderByStoreAndOrderNo(String orderNo)throws Exception{
         Integer orderid=OrderUtil.getOrderId(orderNo);
         String orderTime=OrderUtil.getOrderTime(orderNo);
         Map condition=new HashMap();
         condition.put("id",orderid);
         condition.put("doOrderDate",orderTime);
+       // condition.put("doCustomerStoreId",storeid);
         OrderPO orderPO=this.commonObjectBySearchCondition("ddw_order",condition,OrderPO.class);
         Map cacheMap=new HashMap();
         cacheMap.put("order",orderPO);
@@ -267,6 +268,7 @@ public class OrderService extends CommonService {
     public Page findOrderByHq(Integer pageNo)throws Exception{
         Map condition=new HashMap();
         condition.put("doType",OrderTypeEnum.OrderType2.getCode());
+        condition.put("doPayStatus,>=",PayStatusEnum.PayStatus1.getCode());
         condition.put("doSellerId",-1);
         return this.commonPage("ddw_order","updateTime desc ",pageNo,10,condition);
 
