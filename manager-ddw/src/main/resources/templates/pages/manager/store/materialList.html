@@ -67,7 +67,7 @@
                     <tr>
                         <th class="head0">材料图</th>
                         <th class="head1">材料名称</th>
-                        <th class="head0">零售价格(分)</th>
+                        <th class="head0">价格(元)</th>
                         <th class="head0">净含量</th>
                         <th class="head0">库存数</th>
                         <th class="head1">创建时间</th>
@@ -80,7 +80,7 @@
                     <tr th:each="obj:${mPage?.result}" th:with="pn=${obj['dmCurrentCount']-#toolsddw.getPrestoreByM(obj['id'],om)}">
                         <td ><img th:src="${obj['dmIcoImgPath']}" style="width:70px;height:60px" /></td>
                         <td th:text="${obj['dmName']}">Trident</td>
-                        <td th:text="${obj['dmSales']}">Trident</td>
+                        <td th:text="${#toolsddw.divided(obj['dmSales'],100)}">Trident</td>
                         <td th:text="${obj['dmUnit']}">Trident</td>
                         <td th:text="${pn<1?'库存不足':pn}">Trident</td>
 

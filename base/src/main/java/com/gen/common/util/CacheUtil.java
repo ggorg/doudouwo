@@ -27,6 +27,17 @@ public class CacheUtil {
 
 
     }
+    public static void deleteByStartWith(String cacheName,String startWithStr){
+        Cache cache=createCache(cacheName);
+        List keys=cache.getKeys();
+        for(Object k:keys){
+            if(k instanceof String ){
+                if(((String)k).startsWith(startWithStr)){
+                    cache.remove(k);
+                }
+            }
+        }
+    }
     public static void delete(String cacheName,Object key){
         Cache cache=createCache(cacheName);
 

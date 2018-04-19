@@ -13,20 +13,20 @@ public enum OrderCustomerTypeEnum implements Dictionary {
     OrderCustomerType3("服务员",3),
     OrderCustomerType4("门店",4);
 
-    private String name;
-    private Integer code;
+            private String name;
+            private Integer code;
 
     private OrderCustomerTypeEnum(String name, Integer code) {
-        this.name = name;
-        this.code = code;
-    }
-
-    // 普通方法
-    public static String getName(Integer code) {
-        for (OrderCustomerTypeEnum c : OrderCustomerTypeEnum.values()) {
-            if (c.getCode() == code) {
-                return c.name;
+                this.name = name;
+                this.code = code;
             }
+
+            // 普通方法
+        public static String getName(Integer code) {
+            for (OrderCustomerTypeEnum c : OrderCustomerTypeEnum.values()) {
+                if (c.getCode() == code || c.getCode().equals(code)) {
+                    return c.name;
+                }
         }
         return null;
     }

@@ -22,7 +22,7 @@ public enum OrderTypeEnum  implements Dictionary {
     // 普通方法
     public static String getName(Integer code) {
         for (OrderTypeEnum c : OrderTypeEnum.values()) {
-            if (c.getCode() == code) {
+            if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }
         }

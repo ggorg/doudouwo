@@ -1,5 +1,6 @@
 package com.ddw.controller;
 
+import com.ddw.enums.ShipStatusEnum;
 import com.ddw.servies.OrderService;
 import com.ddw.util.Toolsddw;
 import com.ddw.beans.MaterialDTO;
@@ -38,7 +39,7 @@ public class MaterialController {
     @GetMapping("to-paging-{dmStatus}")
     public String toPaging(@RequestParam(defaultValue = "1") Integer pageNo,@PathVariable Integer dmStatus, Model model){
         try {
-            model.addAttribute("om",orderService.getOrderMaterialByPayStatusAndShipStatus(0,0));
+            model.addAttribute("om",orderService.getOrderMaterialByPayStatusAndShipStatus(ShipStatusEnum.ShipStatus0.getCode()));
             model.addAttribute("mPage",materialService.findPage(pageNo,dmStatus));
         }catch (Exception e){
             logger.error("MaterialController->toPage",e);
@@ -48,7 +49,7 @@ public class MaterialController {
     @GetMapping("to-show-to-store")
     public String toShowToStore(@RequestParam(defaultValue = "1") Integer pageNo, Model model){
         try {
-            model.addAttribute("om",orderService.getOrderMaterialByPayStatusAndShipStatus(0,0));
+            model.addAttribute("om",orderService.getOrderMaterialByPayStatusAndShipStatus(ShipStatusEnum.ShipStatus0.getCode()));
             model.addAttribute("mPage",materialService.findPage(pageNo,1));
         }catch (Exception e){
             logger.error("MaterialController->toShowToStore",e);

@@ -14,6 +14,25 @@
 
                 });
             }
+            function setHqPower(val) {
+                //删除菜单
+                layer.confirm('是否赋予总店权限?',{icon:3,title:'提示'}, function(index){
+                    // layer.close(index);
+                    //向服务端发送删除指令
+                    jQueryCommonSubmit("/manager/role/do-give-hqpower-to-role",null,{ridStr:val});
+
+                });
+            }
+            function cancelHqPower(val) {
+                //删除菜单
+                layer.confirm('是否撤回总店权限?',{icon:3,title:'提示'}, function(index){
+                    // layer.close(index);
+                    //向服务端发送删除指令
+                    jQueryCommonSubmit("/manager/role/do-cancel-hqpower",null,{ridStr:val});
+
+                });
+            }
+
         </script>
 	</head>
     <body class="withvernav">
@@ -73,7 +92,15 @@
                         <td class="center">
                             <div class="layui-btn-group">
                             <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'500px\',\'修改角色\',\'to-edit?rId='+${obj['id']}+'\')'" >修 改</button>
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'600px\',\'480px\',\'菜单授权\',\'to-menu-power?rId='+${obj['id']}+'\')'"  >授 权</button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'600px\',\'480px\',\'菜单授权\',\'to-menu-power?rId='+${obj['id']}+'\')'"  >菜单授权</button>
+                            <th:block th:unless="${obj['rType'] eq '1_0'}">
+                                <button class="layui-btn layui-btn-sm " th:onclick="'setHqPower(\''+${#TdTool.encrypt(obj['id'])}+'\')'"  >赋予总店权限</button>
+
+                            </th:block>
+                                <th:block th:if="${obj['rType'] eq '1_0'}">
+                                <button class="layui-btn layui-btn-sm " th:onclick="'cancelHqPower(\''+${#TdTool.encrypt(obj['id'])}+'\')'"  >撤回总店权限</button>
+
+                                </th:block>
                             <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${#TdTool.encrypt(obj['id'])}+'\')'"  >删 除</button>
 
                             </div>

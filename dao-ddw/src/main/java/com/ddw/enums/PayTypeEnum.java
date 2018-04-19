@@ -21,7 +21,7 @@ public enum PayTypeEnum implements Dictionary {
     // 普通方法
     public static String getName(Integer code) {
         for (PayTypeEnum c : PayTypeEnum.values()) {
-            if (c.getCode() == code) {
+            if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }
         }

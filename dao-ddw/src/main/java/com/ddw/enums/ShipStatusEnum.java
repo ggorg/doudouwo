@@ -26,7 +26,7 @@ public enum ShipStatusEnum implements Dictionary {
     // 普通方法
     public static String getName(Integer code) {
         for (ShipStatusEnum c : ShipStatusEnum.values()) {
-            if (c.getCode() == code) {
+            if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }
         }

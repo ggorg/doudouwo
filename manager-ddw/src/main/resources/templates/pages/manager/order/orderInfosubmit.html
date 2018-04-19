@@ -17,7 +17,7 @@
 <body style="padding:10px 10px 10px 10px">
 <form class="layui-form">
 
-    <input type="hidden" name="orderNo" th:value="${orderNo}"/>
+    <input type="hidden" name="orderNo" th:value="${#httpServletRequest.getParameter('orderNo')}"/>
     <div  class="layui-form-pane">
       <div class="layui-form-item">
         <label class="layui-form-label">订单金额</label>
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="layui-form-item">
-        <label class="layui-form-label">付款状态</label>
+        <label class="layui-form-label" >付款状态</label>
         <div class="layui-input-block">
           <div class="layui-input mystyle1" th:text="${#TdEnum.text('com.ddw.enums.PayStatusEnum',order?.doPayStatus)}" ></div>
         </div>
@@ -99,12 +99,17 @@
     </div>
 
   </div>
-
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
 
 
 </form>
 </body>
 <script type="text/javascript">
-    initForm("do-add-material-to-shoppingcart",".layui-form")
+    initForm("do-submit-order",".layui-form")
 </script>
 </html>

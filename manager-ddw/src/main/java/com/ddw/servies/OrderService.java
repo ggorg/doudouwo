@@ -96,7 +96,7 @@ public class OrderService extends CommonService {
         cacheMap.put("list",morder);
         Integer cp=0;
         //获取订单预存的材料数量
-        List orderMlist=this.getOrderMaterialByPayStatusAndShipStatus(PayStatusEnum.PayStatus0.getCode(),ShipStatusEnum.ShipStatus0.getCode());
+        List orderMlist=this.getOrderMaterialByPayStatusAndShipStatus(ShipStatusEnum.ShipStatus0.getCode());
         Integer pm=null;
         for(Map m:mList){
             id=(Integer) m.get("id");
@@ -129,53 +129,92 @@ public class OrderService extends CommonService {
         }
         cacheMap.put("countPrice",cp);
         CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"storeId-"+storeid);
-       // CacheUtil.put(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo.toString(),cacheMap);
-        return new ResponseVO(1,"订单生成成功",orderNo.toString());
+        CacheUtil.put(Constant.CACHE_NAME_ORDER_INFO,"store-order-"+storeid+"-"+orderNo.toString(),cacheMap);
+        return new ResponseVO(1,"订单生成成功",MyEncryptUtil.encry(orderNo.toString()));
     }
-
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO submitOrder(Integer storeId,String orderNoEncypt)throws Exception{
         ResponseVO res=this.updateOrderStatus(PayStatusEnum.PayStatus1.getCode(),null,storeId,orderNoEncypt);
+        if(res.getReCode()==1){
+            return new ResponseVO(1,"订单提交成功",null);
+        }
+        return res;
+
+    }
+
+
+/*    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO submitOrder(Integer storeId,String orderNoEncypt)throws Exception{
+        ResponseVO res=this.updateOrderStatus(PayStatusEnum.PayStatus1.getCode(),null,storeId,orderNoEncypt);
        if(res.getReCode()==1){
+           String orderNo=MyEncryptUtil.getRealValue(orderNoEncypt);
+           Map map=(Map)CacheUtil.get(Constant.CACHE_NAME_ORDER_INFO,"store-order-"+storeId+"-"+orderNo);
+           List mlist=null;
+           if(map!=null && map.size()>0){
+               mlist= (List)map.get("list");
+           }else{
+               mlist=this.commonObjectsBySingleParam("ddw_order_material","orderNo",MyEncryptUtil.getRealValue(orderNoEncypt));
+           }
+
+           if(mlist!=null && !mlist.isEmpty()){
+               Integer materid=null;
+               Integer materialBuyNumber=null;
+               for(Object o:mlist){
+                   if(o instanceof Map){
+                       Map mm=(Map)o;
+                       materid=(Integer) mm.get("materialId");
+                       materialBuyNumber=(Integer) mm.get("materialBuyNumber");
+                   }else if(o instanceof OrderMaterialPO){
+                       OrderMaterialPO om=(OrderMaterialPO)o;
+                       materid=om.getMaterialId();
+                       materialBuyNumber=om.getMaterialBuyNumber();
+                   }
+                   for()
+
+               }
+           }
           // this.materialService.
           // CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo);
        }
        return null;
 
-    }
+    }*/
     /**
-     * 获取订单材料
-     * @param payStatus 支付状态
+     * 获取（未支付和已付款状态的）订单材料
      * @param shipStatus 货品状态
 
      * @return
      */
-    public List getOrderMaterialByPayStatusAndShipStatus(Integer payStatus,Integer shipStatus){
-        return getOrderMaterialByPayStatusAndShipStatusAndMid(payStatus,shipStatus,null);
+    public List getOrderMaterialByPayStatusAndShipStatus(Integer shipStatus){
+        return getOrderMaterialByPayStatusAndShipStatusAndMid(shipStatus,null);
 
     }
 
     /**
-     * 获取指定订单材料
-     * @param payStatus 支付状态
+     * 获取（未支付和已付款状态的）指定订单材料
      * @param shipStatus 货品状态
      * @param mid 材料id
      * @return
      */
-    public List getOrderMaterialByPayStatusAndShipStatusAndMid(Integer payStatus,Integer shipStatus,Integer mid){
+    public List getOrderMaterialByPayStatusAndShipStatusAndMid(Integer shipStatus,Integer mid){
 
         Map condition=new HashMap();
         if(mid!=null){
             condition.put("materialId",mid);
         }
         Map childCondition=new HashMap();
-        childCondition.put("doPayStatus",payStatus);
+        childCondition.put("doPayStatus,<=",PayStatusEnum.PayStatus1.getCode());
         childCondition.put("doEndTime,>=",new Date());
         childCondition.put("doShipStatus",shipStatus);
         CommonChildBean ccb=new CommonChildBean("ddw_order","id","orderId",childCondition);
         CommonSearchBean csb=new CommonSearchBean("ddw_order_material",null,"t1.*",null,null,condition,ccb);
         return this.getCommonMapper().selectObjects(csb);
 
+    }
+    @Cacheable(value ="orderInfo",key="'store-order-'+#storeid+'-'+#orderNo" )
+    public Map getOrderCacheByStoreAndOrderNo(Integer storeid,String orderNo)throws Exception{
+
+        return this.getOrderByStoreAndOrderNo(storeid,orderNo);
     }
     //@Cacheable(value ="pcShoppingCart",key="'store-order-'+#storeid+'-'+#orderNo" )
     public Map getOrderByStoreAndOrderNo(Integer storeid,String orderNo)throws Exception{
@@ -278,6 +317,7 @@ public class OrderService extends CommonService {
         condition.put("doPayStatus",PayStatusEnum.PayStatus0.getCode());
         condition.put("doCustomerStoreId",storeid);
         condition.put("id",orderid);
+
         int n=this.getCommonMapper().deleteObject(new CommonDeleteBean("ddw_order",condition));
         if(n>0){
             this.commonDelete("ddw_order_material","orderNo",orderNo);
@@ -313,6 +353,13 @@ public class OrderService extends CommonService {
         Map params=new HashMap();
         if(payStatus!=null){
             params.put("doPayStatus",payStatus);
+            if(payStatus==PayStatusEnum.PayStatus1.getCode()){
+                params.put("doEndTime",DateUtils.addHours(new Date(),24*7));
+                long sum=this.commonSumByBySingleSearchParam("ddw_order_material","materialCountPrice","orderNo",orderNo);
+
+                params.put("doCost",sum);
+
+            }
         }
         if(shipStatus!=null){
             params.put("doShipStatus",shipStatus);
@@ -327,5 +374,7 @@ public class OrderService extends CommonService {
         return new ResponseVO(1,"操作成功",null);
 
     }
+
+
 
 }

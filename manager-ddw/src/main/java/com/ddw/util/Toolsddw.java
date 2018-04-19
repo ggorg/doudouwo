@@ -45,12 +45,12 @@ public class Toolsddw extends Tools {
             }else{
                 return "未提交订单";
             }
-        }else if(payStatus>PayStatusEnum.PayStatus0.getCode() && shipStatus!=ShipStatusEnum.ShipStatus5.getCode()){
-            return "进行中";
         }else if(PayStatusEnum.PayStatus1.getCode()==payStatus && ShipStatusEnum.ShipStatus4.getCode()==shipStatus) {
             return "退换处理中";
         }else if(PayStatusEnum.PayStatus1.getCode()==payStatus && ShipStatusEnum.ShipStatus6.getCode()==shipStatus){
             return "订单已关闭";
+        }else if(payStatus>PayStatusEnum.PayStatus0.getCode() && shipStatus!=ShipStatusEnum.ShipStatus5.getCode()){
+            return "进行中";
         } else{
             return "订单完成";
         }
@@ -61,7 +61,7 @@ public class Toolsddw extends Tools {
         StringBuilder btnBuilder=new StringBuilder();
         if(PayStatusEnum.PayStatus0.getCode()==payStatus){
             if(!overflag){
-                btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"toSubmitOrder('"+ MyEncryptUtil.encry(orderNo)+"')\">去提交订单</button>");
+                btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('650px','580px','订单详情','/manager/order/to-ordercache-info?orderNo="+MyEncryptUtil.encry(orderNo)+"')\">去提交订单</button>");
 
             }
             btnBuilder.append("<button class=\"layui-btn layui-btn-sm layui-btn-danger\" onclick=\"toDelete('"+MyEncryptUtil.encry(orderNo)+"')\">删除订单</button>");
@@ -77,7 +77,7 @@ public class Toolsddw extends Tools {
     public static Integer getPrestoreByM(Integer mid){
        WebApplicationContext wa= getWebapplication();
        OrderService orderService=wa.getBean(OrderService.class);
-      List<Map> list= orderService.getOrderMaterialByPayStatusAndShipStatusAndMid(PayStatusEnum.PayStatus0.getCode(), ShipStatusEnum.ShipStatus0.getCode(),mid);
+      List<Map> list= orderService.getOrderMaterialByPayStatusAndShipStatusAndMid( ShipStatusEnum.ShipStatus0.getCode(),mid);
       Integer pm=0;
       if(list!=null && !list.isEmpty()){
           for(Map map:list){

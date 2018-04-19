@@ -25,7 +25,7 @@ public final class Enums {
 		Dictionary unknownDic = null;
 		Dictionary[] dictionaries = DictionaryUtils.getDictionaries(className);
 		for (Dictionary dictionary : dictionaries) {
-			if (dictionary.getCode() == code) {
+			if (dictionary.getCode() == code || dictionary.getCode().equals( code)) {
 				return dictionary.getName();
 			} else if (dictionary.getCode() == Integer.MIN_VALUE) {
 				unknownDic = dictionary;

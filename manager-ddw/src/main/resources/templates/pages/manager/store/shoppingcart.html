@@ -92,7 +92,7 @@
                 if(index>0){
                     jQueryCommonSubmitCallback("/manager/order/do-prestore-order",'.layui-form',function(data){
                         jQuery(".layui-form-checked").parent("td").parent().remove();
-                        openDialog('650px','580px','订单详情','/manager/order/to-order-info?orderNo='+data.data);
+                        openDialog('650px','580px','订单详情','/manager/order/to-ordercache-info?orderNo='+data.data);
                     })
 
 

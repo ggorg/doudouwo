@@ -48,7 +48,7 @@
 			<foreach collection="condition" item="value"  index="key"  >   
 		      	<choose>
 		      	
-				<when test="key.matches('([a-zA-Z0-9]+)|(\\[[a-zA-Z0-9]+\\])') and !key.matches('and.*') and !key.matches('or.*')">
+				<when test="key.matches('([a-zA-Z0-9]+)|(\\[[a-zA-Z0-9]+\\])') and !key.matches('^or($| +)') and !key.matches('^and($| +)')">
 					<if test="auto">
 					and 
 					</if>
@@ -127,7 +127,7 @@
 			<foreach collection="condition" item="value"  index="key"   >   
 		      	<choose>
 		      	
-				<when test="key.matches('([a-zA-Z0-9]+)|(\\[[a-zA-Z0-9]+\\])') and !key.matches('and.*') and !key.matches('or.*')">
+				<when test="key.matches('([a-zA-Z0-9]+)|(\\[[a-zA-Z0-9]+\\])') and !key.matches('^or($| +)') and !key.matches('^and($| +)')">
 					<if test="auto">
 					and 
 					</if>

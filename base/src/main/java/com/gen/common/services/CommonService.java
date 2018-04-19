@@ -8,6 +8,7 @@ import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +142,16 @@ public abstract class CommonService {
         Map searchCondition=new HashMap();
         searchCondition.put(paramName,paramValue);
         return this.commonMapper.deleteObject(new CommonDeleteBean(tableName,searchCondition));
+    }
+    protected long commonSumByBySingleSearchParam(String tableName,String sumParamName,String searchName,Object searchValue){
+        Map sumCondition=new HashMap();
+        sumCondition.put(searchName,searchValue);
+        List list= this.commonMapper.selectObjects(new CommonSearchBean(tableName,null,"sum(t1."+sumParamName+") sumPrice",null,null,sumCondition));
+        if(list==null || list.isEmpty()){
+            return 0;
+        }
+        Map map=(Map)list.get(0);
+        return ((BigDecimal)map.get("sumPrice")).longValue();
     }
     protected CommonMapper getCommonMapper(){
         return this.commonMapper;

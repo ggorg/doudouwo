@@ -69,7 +69,7 @@
 
                     <tr>
                         <th class="head0">订单号</th>
-                        <th class="head1">订单金额</th>
+                        <th class="head1">订单金额(元)</th>
                         <th class="head0">付款状态</th>
                         <th class="head0">付款方式</th>
                         <th class="head0">订单类型</th>
@@ -86,7 +86,7 @@
                     <tbody>
                     <tr th:each="obj:${oPage?.result}" th:with="orderNo=${#orderUtil.createOrderNo(obj['doOrderDate']+'',obj['doType'],obj['doPayType'],obj['id'])}">
                         <td  th:text="${orderNo}"></td>
-                        <td th:text="${obj['countPrice']==null?0:obj['countPrice']}">Trident</td>
+                        <td th:text="${obj['doCost']==null ||obj['doCost']==0?0:#toolsddw.divided(obj['doCost'],100)}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.PayStatusEnum',obj['doPayStatus'])}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.PayTypeEnum',obj['doPayType'])}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.OrderTypeEnum',obj['doType'])}">Trident</td>
@@ -98,7 +98,7 @@
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${orderNo}+'\')'"  >查 看</button>
+                            <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >查 看</button>
                             <th:block th:utext="${#toolsddw.getBtnMsg(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}"></th:block>
 
                             </div>
@@ -116,7 +116,7 @@
     </div>
     <script type="text/javascript">
         function toDelete(orderNo){
-            layer.confirm("是否删除订单？", {icon: 3, title:'提示'}, function(index){
+            layer.confirm("是否删除订单？", {icon: 2, title:'提示'}, function(index){
                 if(index>0){
                     jQueryCommonSubmit("do-delete-order",null,{orderNo,orderNo});
 
@@ -125,7 +125,7 @@
             });
         }
         function toCancel(orderNo){
-            layer.confirm("是否发起取消订单？", {icon: 3, title:'提示'}, function(index){
+            layer.confirm("是否发起取消订单？", {icon: 2, title:'提示'}, function(index){
                 if(index>0){
                     jQueryCommonSubmit("do-cancel-order",null,{orderNo,orderNo});
 

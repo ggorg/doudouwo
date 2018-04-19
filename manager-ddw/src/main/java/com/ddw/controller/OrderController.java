@@ -5,6 +5,7 @@ import com.ddw.util.Toolsddw;
 import com.ddw.beans.StorePO;
 import com.ddw.servies.OrderService;
 import com.ddw.servies.StoreService;
+import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,34 @@ public class OrderController {
         }
         return new ResponseVO(-1,"订购失败",null);
     }
-    @GetMapping("to-order-info")
-    public String toOrderInfo(String orderNo, Model model){
+
+    @GetMapping("to-ordercache-info")
+    public String toOrderCacheInfo(String orderNo, Model model){
         try {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-               model.addAllAttributes(this.orderService.getOrderByStoreAndOrderNo(spo.getId(),orderNo));
+                String orderno=MyEncryptUtil.getRealValue(orderNo);
+                if(orderno!=null){
+                    model.addAllAttributes(this.orderService.getOrderCacheByStoreAndOrderNo(spo.getId(),orderno));
+                }
+            }
+
+        }catch (Exception e){
+            logger.error("OrderController->toOrderInfo",e);
+
+        }
+        return "pages/manager/order/orderInfosubmit";
+    }
+
+    @GetMapping("to-order-info")
+   public String toOrderInfo(String orderNo, Model model){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                String orderno=MyEncryptUtil.getRealValue(orderNo);
+                if(orderno!=null){
+                    model.addAllAttributes(this.orderService.getOrderByStoreAndOrderNo(spo.getId(),orderno));
+                }
             }
 
         }catch (Exception e){
@@ -49,7 +72,7 @@ public class OrderController {
     }
 
     @GetMapping("to-order-by-store")
-    public String toOrderByStore(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+    public String toOrderPageByStore(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
         try {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
@@ -98,6 +121,20 @@ public class OrderController {
     @PostMapping("do-exchange-order")
     public ResponseVO doExchangeOrder(String orderNo){
         return null;
+    }
+    @PostMapping("do-submit-order")
+    @ResponseBody
+    public ResponseVO doSubmitOrder(String orderNo){
+        try{
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                return  this.orderService.submitOrder(spo.getId(), orderNo);
+            }
+
+        }catch (Exception e){
+            logger.error("OrderController->doSubmitOrder",e);
+        }
+        return new ResponseVO(-1,"订单提交失败",null);
     }
 
 }
