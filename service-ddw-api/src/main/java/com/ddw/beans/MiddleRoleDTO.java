@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
  * 角色中间表
  * Created by Jacky on 2018/4/16.
  */
-@ApiModel(value="角色中建表用例对像",description="用例对像MiddleRoleDTO")
+@ApiModel(value="角色中建表用例对象",description="用例对象MiddleRoleDTO")
 public class MiddleRoleDTO {
     @ApiModelProperty(name="userId",value="用户表关联ID",example="1")
     private int userId;

@@ -3,7 +3,7 @@ package com.ddw.beans;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value="会员用例对像",description="用例对像UserInfoDTO")
+@ApiModel(value="会员用例对象",description="用例对象UserInfoDTO")
 public class UserInfoDTO{
     @ApiModelProperty(name="userName",value="账号（微信、QQ登录时，为空）",example="某某某")
     private String userName;
