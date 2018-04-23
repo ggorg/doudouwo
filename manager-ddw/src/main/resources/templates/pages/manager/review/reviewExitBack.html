@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/sysframe2/css/style.default.css" type="text/css" />
+
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+  <style type="text/css">
+    .mystyle2{margin-bottom:0px;}
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+
+  <form class="layui-form" >
+  <div class="layui-form-pane">
+    <input type="hidden" name="orderNo" th:value="${#httpServletRequest.getParameter('orderNo')}"/>
+
+    <div class="layui-form-item layui-form-text mystyle2">
+      <label class="layui-form-label">申请</label>
+      <div class="layui-input-block">
+          <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+            <colgroup>
+              <col class="con0" style="width: 30%"  />
+              <col class="con0" style="width: 70%"  />
+            </colgroup>
+            <thead>
+            <tr>
+              <th class="head1">标题</th>
+              <th class="head1">内容</th>
+
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr >
+              <td >申请人</td>
+              <td th:text="${review?.drProposerName}"></td>
+            </tr>
+            <tr >
+              <td >业务类型</td>
+              <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessTypeEnum',review?.drBusinessType)}">Trident</td>
+            </tr>
+            <tr >
+              <td >申请时间</td>
+              <td th:text="${#dates.format(review?.createTime,'yyyy-MM-dd HH:mm')}">Win 95+</td>
+
+            </tr>
+            <tr >
+              <td >说明</td>
+              <td height="60px" th:text="${review?.drApplyDesc}"></td>
+            </tr>
+
+            </tbody>
+
+          </table>
+      </div>
+    </div>
+    <div class="layui-form-item mystyle2" style="text-align: center">
+      <i class="layui-icon" style="font-size: 20px;">&#xe671;</i>
+    </div>
+    <div class="layui-form-item mystyle2" style="text-align: center">
+      <i class="layui-icon" style="font-size: 20px;">&#xe61a;</i>
+    </div>
+    <div class="layui-form-item layui-form-text mystyle2">
+      <label class="layui-form-label">审批</label>
+      <div class="layui-input-block">
+        <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+          <colgroup>
+            <col class="con0" style="width: 30%"  />
+            <col class="con0" style="width: 70%"  />
+          </colgroup>
+          <thead>
+          <tr>
+            <th class="head1">标题</th>
+            <th class="head1">内容</th>
+
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr >
+            <td >审批状态</td>
+            <td >
+              <div class="layui-input-block">
+                <input type="radio" name="drReviewStatus"  value="1" title="通意" >
+                <input type="radio" name="drReviewStatus" value="2" title="拒绝" checked="checked">
+              </div>
+            </td>
+          </tr>
+
+          <tr >
+            <td >说明</td>
+            <td height="60px">
+              <textarea name="drReviewDesc" required="required"  lay-verify="required" placeholder="请输入审批说明"   class="layui-textarea"></textarea>
+            </td>
+          </tr>
+
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+  </div>
+  </form>
+  <script type="text/javascript">
+      initForm("do-review-exitback",".layui-form")
+
+
+  </script>
+</body>
+</html>

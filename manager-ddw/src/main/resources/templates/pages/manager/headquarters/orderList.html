@@ -53,33 +53,33 @@
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
                     <colgroup>
                         <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con1" />
                         <col class="con0" />
-                        <col class="con1" />
-                        <col class="con1" />
-                        <col class="con1" />
-                        <col class="con1" />
-                        <col class="con1" />
-                        <col class="con1" />
-                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
 
                         <col class="con0" />
                     </colgroup>
                     <thead>
 
                     <tr>
-                        <th class="head0">订单号</th>
+                        <th class="head1">订单号</th>
                         <th class="head1">订单金额(元)</th>
-                        <th class="head0">付款状态</th>
-                        <th class="head0">付款方式</th>
-                        <th class="head0">订单类型</th>
-                        <th class="head0">货品状态</th>
-                        <th  class="head0">订单状态</th>
-                        <th class="head0">提交人</th>
+                        <th class="head1">付款状态</th>
+                        <th class="head1">付款方式</th>
+                        <th class="head1">订单类型</th>
+                        <th class="head1">货品状态</th>
+                        <th  class="head1">订单状态</th>
+                        <th class="head1">提交人</th>
                         <th class="head1">创建时间</th>
 
 
-                        <th class="head0">操作</th>
+                        <th class="head1">操作</th>
                     </tr>
                     </thead>
 
@@ -91,15 +91,15 @@
                         <td th:text="${#TdEnum.text('com.ddw.enums.PayTypeEnum',obj['doPayType'])}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.OrderTypeEnum',obj['doType'])}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.ShipStatusEnum',obj['doShipStatus'])}">Trident</td>
-                        <td th:text="${#toolsddw.getOrderStatusInfo(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'])}" >
+                        <td th:text="${#toolsddw.getOrderStatusInfo(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}" >
                         </td>
                         <td th:text="${obj['creater']}">Trident</td>
                         <td th:text="${#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >查 看</button>
-                            <th:block th:utext="${#toolsddw.getBtnMsg(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}"></th:block>
+                            <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-material-order-info-by-hq?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >查 看</button>
+                            <th:block th:utext="${#toolsddw.getBtnMsgByHq(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}"></th:block>
 
                             </div>
                         </td>
@@ -115,52 +115,35 @@
 
     </div>
     <script type="text/javascript">
-        function toDelete(orderNo){
-            layer.confirm("是否删除订单？", {icon: 2, title:'提示'}, function(index){
+        function toAccept(orderNo){
+            layer.confirm("是否接受该订单？", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
-                    jQueryCommonSubmit("do-delete-order",null,{orderNo,orderNo});
+                    jQueryCommonSubmit("do-accept-order",null,{orderNo,orderNo});
 
                 }
                 //layer.close(index);
             });
         }
-        function toCancel(orderNo){
-            layer.confirm("是否发起取消订单？", {icon: 2, title:'提示'}, function(index){
+        function toFinish(orderNo){
+            layer.confirm("是否完成该订单？", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
-                    jQueryCommonSubmit("do-cancel-order",null,{orderNo,orderNo});
+                    jQueryCommonSubmit("do-accept-order",null,{orderNo,orderNo});
 
                 }
                 //layer.close(index);
             });
         }
-        function toMakeSure(orderNo){
-            layer.confirm("是否确证签收？", {icon: 3, title:'提示'}, function(index){
+        function toMakeSureByHq(orderNo){
+            layer.confirm("是否确认签收？", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
-                    jQueryCommonSubmit("do-makesure-order",null,{orderNo,orderNo});
-
-                }
-                //layer.close(index);
-            });
-        }
-        function toExchange(orderNo){
-            layer.confirm("是否发起退换？", {icon: 3, title:'提示'}, function(index){
-                if(index>0){
-                    jQueryCommonSubmit("do-exchange-order",null,{orderNo,orderNo});
+                    jQueryCommonSubmit("do-makesure-order-by-hq",null,{orderNo,orderNo});
 
                 }
                 //layer.close(index);
             });
         }
 
-        function confirmDisabled(id,status,msg){
-            layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
-                if(index>0){
-                    jQueryCommonSubmit("do-update-status",null,{idStr:id,status:status});
 
-                }
-                //layer.close(index);
-            });
-        }
         layui.use('form', function(){
             var form = layui.form;
 

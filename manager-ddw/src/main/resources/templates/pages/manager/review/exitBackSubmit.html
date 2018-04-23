@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane" >
+  <input type="hidden" name="orderNo" th:value="${#httpServletRequest.getParameter('orderNo')}"/>
+
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">退还原因</label>
+    <div class="layui-input-block">
+
+      <textarea name="drApplyDesc" required="required"  lay-verify="required"  placeholder="请输入申请说明"    class="layui-textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    initForm("do-apply-exitback",".layui-form")
+
+
+</script>
+</body>
+</html>

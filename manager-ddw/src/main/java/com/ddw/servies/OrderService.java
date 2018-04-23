@@ -35,6 +35,9 @@ public class OrderService extends CommonService {
     @Autowired
     private MaterialService materialService;
 
+    @Autowired
+    private ReviewService reviewService;
+
     //private Sysm
 
     /**
@@ -70,7 +73,7 @@ public class OrderService extends CommonService {
         orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus0.getCode());
         orderPO.setDoCustomerType(OrderCustomerTypeEnum.OrderCustomerType4.getCode());
         orderPO.setDoType(OrderTypeEnum.OrderType2.getCode());
-        orderPO.setCreater((String)userMap.get("creater"));
+        orderPO.setCreater((String)userMap.get("uNickName"));
         ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
         if(insertResponseVO.getReCode()!=1){
             throw new  GenException("订单生成失败");
@@ -139,6 +142,17 @@ public class OrderService extends CommonService {
             return new ResponseVO(1,"订单提交成功",null);
         }
         return res;
+
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO makeSureAcceptByHq(String orderNoEncypt,Integer userid)throws Exception{
+        ResponseVO res=this.updateOrderStatus(null, ShipStatusEnum.ShipStatus8.getCode(),null,orderNoEncypt);
+        if(res.getReCode()==1){
+            handleMaterialNumByOrderNo(MyEncryptUtil.getRealValue(orderNoEncypt),false,userid);
+
+            return new ResponseVO(1,"签收成功",null);
+        }
+        return new ResponseVO(-2,"签收失败",null);
 
     }
 
@@ -329,6 +343,147 @@ public class OrderService extends CommonService {
         }
         return new ResponseVO(1,"删除订单成功",null);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO makerSureSendGoods(String orderNoEncypt,String doTrackingNumber,String doExpressName,Integer userid)throws Exception{
+        if(StringUtils.isBlank(orderNoEncypt)){
+            return new ResponseVO(-2,"订单号异常",null);
+        }
+        String orderNo=MyEncryptUtil.getRealValue(orderNoEncypt);
+        if(StringUtils.isBlank(orderNo)){
+            return new ResponseVO(-2,"订单号异常",null);
+
+        }
+        if(StringUtils.isBlank(doExpressName)){
+            return new ResponseVO(-2,"快递名称为空",null);
+
+        }
+        if(StringUtils.isBlank(doTrackingNumber)){
+            return new ResponseVO(-2,"运单号为空",null);
+
+        }
+        boolean hasReview=this.reviewService.hasReviewFromStore(orderNo,ReviewBusinessTypeEnum.ReviewBusinessType1,ReviewBusinessStatusEnum.ReviewBusinessStatus6);
+        if(hasReview){
+            return new ResponseVO(-2,"抱歉，当前订单被申请取消订单，请处理完再操作",null);
+
+        }
+        Integer orderid=OrderUtil.getOrderId(orderNo);
+        Map params=new HashMap();
+        params.put("doTrackingNumber",doTrackingNumber);
+        params.put("doExpressName",doExpressName);
+
+        params.put("doShipStatus",ShipStatusEnum.ShipStatus2.getCode());
+        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
+        if(res.getReCode()==1){
+            handleMaterialNumByOrderNo(orderNo,true,userid);
+            return new ResponseVO(1,"确认发货成功",null);
+        }
+        return new ResponseVO(-2,"确认发货失败",null);
+
+
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO storeEditMailInfo(String orderNoEncypt,String doExitTrackingNumber,String doExitExpressName)throws Exception{
+        if(StringUtils.isBlank(orderNoEncypt)){
+            return new ResponseVO(-2,"订单号异常",null);
+        }
+        String orderNo=MyEncryptUtil.getRealValue(orderNoEncypt);
+        if(StringUtils.isBlank(orderNo)){
+            return new ResponseVO(-2,"订单号异常",null);
+
+        }
+        if(StringUtils.isBlank(doExitExpressName)){
+            return new ResponseVO(-2,"快递名称为空",null);
+
+        }
+        if(StringUtils.isBlank(doExitTrackingNumber)){
+            return new ResponseVO(-2,"运单号为空",null);
+
+        }
+
+        Integer orderid=OrderUtil.getOrderId(orderNo);
+        Map params=new HashMap();
+        params.put("doExitTrackingNumber",doExitTrackingNumber);
+        params.put("doExitExpressName",doExitExpressName);
+
+        params.put("doShipStatus",ShipStatusEnum.ShipStatus7.getCode());
+        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
+        if(res.getReCode()==1){
+            return new ResponseVO(1,"确认发货成功",null);
+        }
+        return new ResponseVO(-2,"确认发货失败",null);
+
+
+    }
+
+    /**
+     * 更新库存数量
+     * @param orderno 订单号
+     * @param isOut 是否出库
+     * @param userid 用户id
+     * @return
+     * @throws Exception
+     */
+    public void handleMaterialNumByOrderNo(String orderno,boolean isOut,Integer userid)throws Exception{
+        //ddw_material_inventory_record
+        List<Map> list=this.commonObjectsBySingleParam("ddw_order_material","orderNo",orderno);
+        Integer materialId=null;
+        Integer materialBuyNumber=null;
+        Map materialMap=null;
+        Integer dmVersion=null;
+        Integer dmCurrentCount=null;
+        Map setParams=null;
+        Map condition=null;
+        for(Map map:list){
+            materialId=(Integer) map.get("materialId");
+            materialBuyNumber=(Integer) map.get("materialBuyNumber");
+            for(int i=0;i<5;i++){
+                materialMap= this.commonObjectBySingleParam("ddw_material","id",materialId);
+                if(materialMap!=null && !materialMap.isEmpty()){
+                    dmVersion=(Integer) materialMap.get("dmVersion");
+                    dmCurrentCount=(Integer) materialMap.get("dmCurrentCount");
+                    if(isOut){
+                        dmCurrentCount=dmCurrentCount-materialBuyNumber;
+                    }else{
+                        dmCurrentCount=dmCurrentCount+materialBuyNumber;
+
+                    }
+                    setParams=new HashMap();
+                    setParams.put("dmCurrentCount",dmCurrentCount);
+                    setParams.put("dmVersion",dmVersion+1);
+                    condition=new HashMap();
+                    condition.put("id",materialId);
+                    condition.put("dmVersion",dmVersion);
+                   ResponseVO res= this.commonUpdateByParams("ddw_material",setParams,condition);
+                   if(res.getReCode()==-2){
+                       if(i==4){
+                           throw new GenException("材料库存数量没法变更");
+                       }
+                       Thread.sleep(i * 200);
+                       continue;
+                   }else{
+                       Map poInbound=new HashMap();
+                       poInbound.put("dmiInboundNumber",0);
+                       poInbound.put("dmiOutboundNumber",materialBuyNumber);
+                       poInbound.put("createTime",new Date());
+                       poInbound.put("creater",userid);
+                       poInbound.put("dmiType",DmiTypeEnum.DmiType1.getCode());
+                       poInbound.put("materialId",materialId);
+                       ResponseVO rVo=this.commonInsertMap("ddw_material_inventory_record",poInbound);
+                       if(rVo.getReCode()==-2){
+                           throw new GenException("出库失败");
+                       }
+                       break;
+                   }
+                }else{
+                    break;
+                }
+            }
+
+        }
+
+    }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateOrderStatus(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
         if(StringUtils.isBlank(orderNoEncypt)){

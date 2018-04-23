@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/sysframe2/css/style.default.css" type="text/css" />
+
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+  <style type="text/css">
+    .mystyle1{
+      line-height: 35px;
+    }
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form">
+
+  <input type="hidden" name="orderNo" th:value="${#httpServletRequest.getParameter('orderNo')}"/>
+  <div  class="layui-form-pane">
+    <div class="layui-form-item">
+      <label class="layui-form-label">订单金额</label>
+      <div class="layui-input-block">
+        <div class="layui-input mystyle1" th:text="${#toolsddw.divided(countPrice,100)}+'元'" ></div>
+
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">付款状态</label>
+      <div class="layui-input-block">
+        <div class="layui-input mystyle1" th:text="${#TdEnum.text('com.ddw.enums.PayStatusEnum',order?.doPayStatus)}" ></div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">付款方式</label>
+      <div class="layui-input-block">
+        <div class="layui-input mystyle1" th:text="${#TdEnum.text('com.ddw.enums.PayTypeEnum',order?.doPayType)}" ></div>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">订单类型</label>
+      <div class="layui-input-block">
+        <div class="layui-input mystyle1" th:text="${#TdEnum.text('com.ddw.enums.OrderTypeEnum',order?.doType)}" ></div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">货品状态</label>
+      <div class="layui-input-block">
+        <div class="layui-input mystyle1" th:text="${#TdEnum.text('com.ddw.enums.ShipStatusEnum',order?.doShipStatus)}"  ></div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">创建时间</label>
+      <div class="layui-input-block">
+        <div class="layui-input mystyle1" th:text="${#dates.format(order?.createTime,'yyyy-MM-dd HH:mm')}" ></div>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">订单号</label>
+      <div class="layui-input-block">
+        <div class="layui-input mystyle1" th:text="${orderNo}" ></div>
+      </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+      <label class="layui-form-label">货品列表</label>
+      <div class="layui-input-block" >
+        <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+          <colgroup>
+            <col class="con0" style="width: 30%"  />
+            <col class="con0" style="width: 60%"  />
+            <col class="con0" style="width: 10%"  />
+
+          </colgroup>
+          <thead>
+          <tr>
+
+            <th class="head1">材料名称</th>
+            <th class="head1">价格(元)</th>
+            <th class="head1">数量</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr th:each="obj:${list}">
+
+            <td th:text="${obj.materialName}"></td>
+            <td th:text="${#toolsddw.divided(obj.materialCountPrice,100)}"></td>
+            <td th:text="${obj.materialBuyNumber}"></td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">门店信息</label>
+    <div class="layui-input-block" >
+      <table cellpadding="0" cellspacing="0" border="0" id="table3" class="stdtable stdtablecb">
+        <colgroup>
+          <col class="con0" style="width: 25%"  />
+          <col class="con0" style="width: 25%"  />
+          <col class="con0" style="width: 10%"  />
+          <col class="con0" style="width: 40%"  />
+
+        </colgroup>
+        <thead>
+        <tr>
+          <th class="head1">门店名称</th>
+          <th class="head1">负责人名称</th>
+          <th class="head1">联系电话</th>
+          <th class="head1">详细地址</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <td th:text="${store?.dsName}"></td>
+        <td  th:text="${store?.dsLeaderName}"></td>
+        <td  th:text="${store?.dsLeaderTelNo}"></td>
+        <td  th:text="${store?.dsAddress}"></td>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+    <div class="layui-form-item layui-form-text" >
+      <label class="layui-form-label">寄件信息</label>
+      <div class="layui-input-block" >
+        <table cellpadding="0" cellspacing="0" border="0" id="table4" class="stdtable stdtablecb">
+          <colgroup>
+            <col class="con0" style="width: 40%"  />
+            <col class="con0" style="width: 60%"  />
+
+
+          </colgroup>
+          <thead>
+          <tr>
+            <th class="head1">快递公司名称</th>
+            <th class="head1">运单号</th>
+
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr>
+            <td >
+              <input  class="layui-input" required="required"   lay-verify="required" placeholder="请输入快递公司名称" autocomplete="off"   name="doExpressName" style="background-color: peachpuff;"/>
+
+            </td>
+            <td  >
+              <input  class="layui-input" name="doTrackingNumber" required="required"   lay-verify="required" placeholder="请输入运单号" autocomplete="off"  style="background-color: peachpuff;"/>
+            </td>
+          </tr>
+
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+</body>
+<script type="text/javascript">
+    initForm("do-makesure-sendgoods-by-hq",".layui-form")
+</script>
+</html>
