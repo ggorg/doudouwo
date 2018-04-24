@@ -24,9 +24,9 @@
         </div>
       </div>
       <div class="layui-form-item">
-        <label class="layui-form-label">规格</label>
+        <label class="layui-form-label">净含量</label>
         <div class="layui-input-block">
-          <div class="layui-input mystyle1" th:text="${dm!=null? dm['dmUnit']:''}" ></div>
+          <div class="layui-input mystyle1" th:text="${dm!=null? dm['dmNetWeight']+' '+dm['dmUnit']:''}" ></div>
         </div>
       </div>
 

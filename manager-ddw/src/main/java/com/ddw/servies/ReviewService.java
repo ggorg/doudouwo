@@ -6,6 +6,7 @@ import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,13 @@ import java.util.Map;
  */
 @Service
 public class ReviewService extends CommonService {
+
+    public Page findPage(Integer pageNo)throws Exception{
+
+        Map condtion=new HashMap();
+        //condtion.put("dmStatus",dmStatus);
+        return this.commonPage("ddw_review","updateTime desc",pageNo,10,condtion);
+    }
 
     /**
      * 判断门店是否有申请审核
@@ -55,6 +63,13 @@ public class ReviewService extends CommonService {
         }
         return new ReviewPO();
     }
+
+    public ReviewPO getReviewById(Integer id)throws Exception{
+        Map conditoin=new HashMap();
+        conditoin.put("id",id);
+        return this.commonObjectBySingleParam("ddw_review","id",id,ReviewPO.class);
+
+    }
     /**
      * 根据业务流水号获取审批记录
      * @param businessCode
@@ -68,7 +83,7 @@ public class ReviewService extends CommonService {
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO editReivewFromHq(Object businessCode,String drReviewDesc ,ReviewStatusEnum reviewStatus,ReviewBusinessTypeEnum businessType,Map userMap)throws Exception{
+    public ResponseVO editReivewFromHq(Integer id,Object businessCode,String drReviewDesc ,ReviewStatusEnum reviewStatus,ReviewBusinessTypeEnum businessType,Map userMap)throws Exception{
 
         Map params=new HashMap();
         params.put("drReviewDesc",drReviewDesc);
@@ -78,9 +93,9 @@ public class ReviewService extends CommonService {
         params.put("drReviewer", (Integer)userMap.get("id"));
         params.put("drReviewerName", (String)userMap.get("uNickName"));
 
-        ResponseVO res= this.commonUpdateBySingleSearchParam("ddw_review",params,"drBusinessCode",businessCode.toString());
+        ResponseVO res= this.commonUpdateBySingleSearchParam("ddw_review",params,"id",id);
         if(res.getReCode()==1){
-            ReviewPO rpo=this.getReviewByBusinessCode(businessCode);
+            ReviewPO rpo=this.getReviewById(id);
 
             CacheUtil.delete("reviewInfo",businessCode);
             ResponseVO resInsert=insertReviewRecord(BeanToMapUtil.beanToMap(rpo));
@@ -111,6 +126,11 @@ public class ReviewService extends CommonService {
 
         ResponseVO<Integer> responseVO=this.commonInsertMap("ddw_review",condition);
         if(responseVO.getReCode()==1){
+            Object obj=CacheUtil.get("reviewInfo",businessCode);
+            if(obj!=null){
+                CacheUtil.delete("reviewInfo",businessCode);
+            }
+
             condition.put("reviewId",responseVO.getData());
             ResponseVO res=this.insertReviewRecord(condition);
             if(res.getReCode()!=1){

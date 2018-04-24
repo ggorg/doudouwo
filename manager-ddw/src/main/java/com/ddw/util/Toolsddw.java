@@ -90,7 +90,7 @@ public class Toolsddw extends Tools {
                 ReviewService rs=getBean(ReviewService.class);
                 ReviewPO rpo=rs.getReviewByBusinessCode(orderNo);
                 if(rpo.getDrReviewStatus()== ReviewStatusEnum.ReviewStatus0.getCode()){
-                    btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('650px','580px','退换受理','/manager/review/to-review-exitback-html?orderNo="+MyEncryptUtil.encry(orderNo)+"')\">退换受理</button>");
+                    btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('650px','580px','退还受理','/manager/review/to-review-exitback-html?orderNo="+MyEncryptUtil.encry(orderNo)+"')\">退换受理</button>");
 
                 }else{
                     btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('500px','580px','审批情况','/manager/review/to-review-info-html?orderNo="+MyEncryptUtil.encry(orderNo)+"')\">审批情况</button>");

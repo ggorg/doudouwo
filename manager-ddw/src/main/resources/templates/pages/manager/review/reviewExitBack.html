@@ -17,6 +17,7 @@
   <form class="layui-form" >
   <div class="layui-form-pane">
     <input type="hidden" name="orderNo" th:value="${#httpServletRequest.getParameter('orderNo')}"/>
+    <input type="hidden" name="id" th:value="${review?.id}"/>
 
     <div class="layui-form-item layui-form-text mystyle2">
       <label class="layui-form-label">申请</label>

@@ -38,6 +38,25 @@ public class OrderMaterialPO implements Serializable {
     private Integer materialBuyNumber;
     private Date createTime;
     private Date updateTime;
+    private Integer materialCountNetWeight;
+
+    private String materialUnit;
+
+    public String getMaterialUnit() {
+        return materialUnit;
+    }
+
+    public void setMaterialUnit(String materialUnit) {
+        this.materialUnit = materialUnit;
+    }
+
+    public Integer getMaterialCountNetWeight() {
+        return materialCountNetWeight;
+    }
+
+    public void setMaterialCountNetWeight(Integer materialCountNetWeight) {
+        this.materialCountNetWeight = materialCountNetWeight;
+    }
 
     public Integer getId() {
         return id;

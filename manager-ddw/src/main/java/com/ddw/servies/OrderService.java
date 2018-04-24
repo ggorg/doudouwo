@@ -38,6 +38,8 @@ public class OrderService extends CommonService {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private StoreMaterialService storeMaterialService;
     //private Sysm
 
     /**
@@ -120,6 +122,8 @@ public class OrderService extends CommonService {
             orderMaterialPO.setMaterialUnitPrice(mpo.getDmSales());
             orderMaterialPO.setMaterialCountPrice(mpo.getDmSales()*num);
             orderMaterialPO.setOrderId(insertResponseVO.getData());
+            orderMaterialPO.setMaterialCountNetWeight(mpo.getDmNetWeight()*num);
+            orderMaterialPO.setMaterialUnit(mpo.getDmUnit());
             orderMaterialPO.setOrderNo(orderNo);
             cp=cp+mpo.getDmSales()*num;
             orderMaterialRes=this.commonInsert("ddw_order_material",orderMaterialPO);
@@ -482,6 +486,26 @@ public class OrderService extends CommonService {
 
         }
 
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO makeSureOrderByStore(Integer storeId,String orderNoEncypt)throws Exception{
+        ResponseVO res=this.updateOrderStatus(null,ShipStatusEnum.ShipStatus3.getCode(),storeId,orderNoEncypt);
+        if(res.getReCode()==1){
+            List<Map> list=this.commonObjectsBySingleParam("ddw_order_material","orderNo",MyEncryptUtil.getRealValue(orderNoEncypt));
+            Integer materialId=null;
+            Integer dmNetWeight=null;
+            Integer materialBuyNumber=null;
+            String unit=null;
+            for(Map map:list){
+                materialId=(Integer) map.get("materialId");
+                materialBuyNumber=(Integer) map.get("materialBuyNumber");
+                dmNetWeight=(Integer) map.get("materialCountNetWeight");
+                unit=(String) map.get("materialUnit");
+                storeMaterialService.buyInMaterial(storeId,materialId,materialBuyNumber,unit,dmNetWeight);
+            }
+
+        }
+        return res;
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

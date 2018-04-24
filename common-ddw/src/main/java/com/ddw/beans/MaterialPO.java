@@ -9,6 +9,7 @@ public class MaterialPO {
     private Integer id;
     private String dmName;
     private String dmUnit;
+    private Integer dmNetWeight;
     private Integer dmCost;
     private Integer dmSales;
     private Date createTime;
@@ -22,6 +23,14 @@ public class MaterialPO {
     private Integer dmVersion;
     private Integer dmStatus;
     private Integer dmSort;
+
+    public Integer getDmNetWeight() {
+        return dmNetWeight;
+    }
+
+    public void setDmNetWeight(Integer dmNetWeight) {
+        this.dmNetWeight = dmNetWeight;
+    }
 
     public Integer getDmSort() {
         return dmSort;

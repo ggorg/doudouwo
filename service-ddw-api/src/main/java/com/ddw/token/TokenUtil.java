@@ -18,6 +18,7 @@ public class TokenUtil {
         CacheService cs=getCacheService();
         String tokenStr= DateFormatUtils.format(new Date(),RandomStringUtils.randomNumeric(10)+"yyyyMMdd"+ RandomStringUtils.randomNumeric(10)+"HHmm");
         String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
+        base64Token=base64Token.replace("+","-").replace("/","_");
         cs.set(base64Token,userobj);
         return base64Token;
     }
@@ -26,7 +27,7 @@ public class TokenUtil {
         cs.delete(token);
     }
     public static String getBaseToken(String base64Token){
-        String token=new String(Base64Utils.decodeFromString(base64Token));
+        String token=new String(Base64Utils.decodeFromString(base64Token.replace("-","+").replace("_","/")));
         return token;
     }
     public static boolean hasToken(String base64Token){

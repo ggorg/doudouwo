@@ -60,14 +60,19 @@ public abstract class CommonService {
 
         return this.commonMapper.selectCount( new CommonCountBean(tableName,searchCondition));
     }
-
-    protected <T> T commonObjectBySearchCondition(String tableName,Map<String,Object> searchCondition,Class<T> clazz)throws Exception{
+    protected Map commonObjectBySearchCondition(String tableName,Map<String,Object> searchCondition){
         List<Map> list=this.commonMapper.selectObjects(new CommonSearchBean(tableName,searchCondition));
         if(list!=null && list.size()>0){
+           return list.get(0);
+        }
+        return null;
+    }
+    protected <T> T commonObjectBySearchCondition(String tableName,Map<String,Object> searchCondition,Class<T> clazz)throws Exception{
+        Map map=commonObjectBySearchCondition(tableName,searchCondition);
+        if(map!=null){
             T t=clazz.newInstance();
-            PropertyUtils.copyProperties(t,list.get(0));
+            PropertyUtils.copyProperties(t,map);
             return t;
-
         }
         return null;
     }

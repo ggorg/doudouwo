@@ -149,7 +149,7 @@ public class MaterialOrderController {
         try{
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-                return  this.orderService.updateOrderStatus(null, ShipStatusEnum.ShipStatus3.getCode(),spo.getId(),orderNo);
+                return  this.orderService.makeSureOrderByStore(spo.getId(),orderNo);
             }
 
         }catch (Exception e){

@@ -39,6 +39,35 @@ public class ReviewController {
 
     @Autowired
     private RoleService roleService;
+
+    @GetMapping("/to-review-page")
+    public String toReviewPage(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+       try {
+           model.addAttribute("rPage",this.reviewService.findPage(pageNo));
+       }catch (Exception e){
+           logger.error("ReviewController->toReviewPage",e);
+       }
+       return "pages/manager/review/list";
+
+    }
+    /**
+     * 门店-跟据ID审批情况
+     * @return
+     */
+    @GetMapping("/to-review-info-by-id-html")
+    public String  toReviewInfoByIdHtml(Integer id,Model model){
+        try {
+
+            model.addAttribute("review",this.reviewService.getReviewById(id));
+            return "pages/manager/review/reviewInfo";
+
+
+        }catch (Exception e){
+            logger.error("ReviewController->toReviewInfoByIdHtml",e);
+        }
+
+        return "pages/manager/review/reviewInfo";
+    }
     /**
      * 门店-退还申请页面
      * @return
@@ -52,7 +81,7 @@ public class ReviewController {
             }
             ReviewPO rpo=this.reviewService.getReviewByBusinessCode(on);
            // List datas=this.reviewService.getReviewRecord(on);
-            if(rpo==null || ReviewStatusEnum.ReviewStatus2.getCode().equals(rpo.getDrReviewStatus())){
+            if(rpo==null || rpo.getDrReviewStatus()==null ||ReviewStatusEnum.ReviewStatus2.getCode().equals(rpo.getDrReviewStatus())){
                 return "pages/manager/review/exitBackSubmit";
             }
 
@@ -155,7 +184,7 @@ public class ReviewController {
      */
     @PostMapping("do-review-exitback")
     @ResponseBody
-    public ResponseVO doReviewExitBack(String orderNo,  Integer drReviewStatus, String drReviewDesc, Model model){
+    public ResponseVO doReviewExitBack(Integer id,String orderNo,  Integer drReviewStatus, String drReviewDesc, Model model){
        try {
           if(StringUtils.isBlank(ReviewStatusEnum.getName(drReviewStatus))){
                return new ResponseVO(-2,"参数异常",null);
@@ -165,7 +194,7 @@ public class ReviewController {
                String on=MyEncryptUtil.getRealValue(orderNo);
                if(StringUtils.isNotBlank(on)){
 
-                  ResponseVO res=this.reviewService.editReivewFromHq(on,drReviewDesc,ReviewStatusEnum.get(drReviewStatus),ReviewBusinessTypeEnum.ReviewBusinessType1,Toolsddw.getUserMap());
+                  ResponseVO res=this.reviewService.editReivewFromHq(id,on,drReviewDesc,ReviewStatusEnum.get(drReviewStatus),ReviewBusinessTypeEnum.ReviewBusinessType1,Toolsddw.getUserMap());
                    if(res.getReCode()==1){
                        return new ResponseVO(1,"提交审批成功",null);
                    }
