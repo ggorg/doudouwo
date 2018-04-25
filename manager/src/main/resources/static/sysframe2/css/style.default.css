@@ -2150,7 +2150,7 @@ blockquote.bq2 {
 	.filemgr_category ul li .pagenuminfo { font-size: 11px; margin-top: 2px; }
 	
 	/* TABLE */
-	.stdtable tr td, .stdtable tr th { font-size: 11px; }
+	.stdtable tr td, .stdtable tr th { font-size: 14px; }
 	
 	/* PHOTO SHARING */
 	.photosharing_wrapper { width: auto; float: none; }

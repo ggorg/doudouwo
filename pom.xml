@@ -14,7 +14,7 @@
         <module>service-ddw-api</module>
         <module>manager-weixin</module>
         <module>manager-ddw</module>
-        <module>dao-ddw</module>
+        <module>common-ddw</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

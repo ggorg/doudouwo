@@ -1,7 +1,6 @@
 package com.gen.framework.services;
 
 
-import com.gen.common.beans.*;
 import com.gen.common.dao.CommonMapper;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;

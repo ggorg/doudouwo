@@ -368,4 +368,7 @@ public class Tools {
 		return wa;
 
 	}
+	public static <T>T getBean(Class<T> clazz){
+		return getWebapplication().getBean(clazz);
+	}
 }

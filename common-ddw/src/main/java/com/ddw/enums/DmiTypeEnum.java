@@ -3,29 +3,25 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 发货状态
+ * 库存类型
  */
-public enum ShipStatusEnum implements Dictionary {
-    //发货状态，未发货：0，已接单：1，已发货：2，确认签收：3，退货：4，完成：5
-    ShipStatus0("未发货",0),
-    ShipStatus1("已接单",1),
-    ShipStatus2("已发货",2),
-    ShipStatus3("确认签收",3),
-    ShipStatus4("退货",4),
-    ShipStatus5("完成",5),
-    ShipStatus6("关闭",6);
+public enum DmiTypeEnum implements Dictionary {
+    //库存动作,入库：0，出库：1
+    DmiType0("入库",0),
+    DmiType1("出库",1);
+
 
     private String name;
     private Integer code;
 
-    private ShipStatusEnum(String name, Integer code) {
+    private DmiTypeEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }
 
     // 普通方法
     public static String getName(Integer code) {
-        for (ShipStatusEnum c : ShipStatusEnum.values()) {
+        for (DmiTypeEnum c : DmiTypeEnum.values()) {
             if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }

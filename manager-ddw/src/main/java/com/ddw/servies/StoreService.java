@@ -8,10 +8,7 @@ import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
-import com.gen.common.util.BeanToMapUtil;
-import com.gen.common.util.MyEncryptUtil;
-import com.gen.common.util.Page;
-import com.gen.common.util.UploadFileMoveUtil;
+import com.gen.common.util.*;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -19,6 +16,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +46,10 @@ public class StoreService extends CommonService{
     }
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_store","id",id);
+    }
+    public StorePO getBeanById(Integer id)throws Exception{
+
+        return this.commonObjectBySingleParam("ddw_store","id",id,StorePO.class);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(StoreDTO storeDTO)throws Exception{
@@ -143,6 +145,7 @@ public class StoreService extends CommonService{
         }
         return userList;
     }
+    @Cacheable(value="commonCache",key = "'StoreBySysUserid-'+#id")
     public StorePO getStoreBySysUserid(Integer id)throws Exception{
         Map conditon=new HashMap();
         conditon.put("sysUserId",id);
@@ -169,6 +172,9 @@ public class StoreService extends CommonService{
                 pomap=new HashMap();
                 pomap.put("storeId",id);
                 pomap.put("sysUserId",userid);
+                if(CacheUtil.get("commonCache","StoreBySysUserid-"+userid)!=null){
+                    CacheUtil.delete("commonCache","StoreBySysUserid-"+userid);
+                }
                 this.commonInsertMap("ddw_store_sysuser",pomap);
             }
             return new ResponseVO(1,"关联用户成功",null);

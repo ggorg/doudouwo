@@ -74,6 +74,58 @@ public class OrderPO implements Serializable {
      */
     private String creater;
 
+    /**
+     * 卖方给买方寄出的快递号
+     */
+    private String doTrackingNumber;
+
+    /**
+     * 买家退还给卖家的快递号
+     */
+    private String doExitTrackingNumber;
+    /**
+     * 卖方给买方寄出的快递公司名称
+     */
+    private String doExpressName;
+
+    /**
+     * 买家退还给卖家的快递公司名称
+     */
+    private String doExitExpressName;
+
+
+    public String getDoTrackingNumber() {
+        return doTrackingNumber;
+    }
+
+    public void setDoTrackingNumber(String doTrackingNumber) {
+        this.doTrackingNumber = doTrackingNumber;
+    }
+
+    public String getDoExitTrackingNumber() {
+        return doExitTrackingNumber;
+    }
+
+    public void setDoExitTrackingNumber(String doExitTrackingNumber) {
+        this.doExitTrackingNumber = doExitTrackingNumber;
+    }
+
+    public String getDoExpressName() {
+        return doExpressName;
+    }
+
+    public void setDoExpressName(String doExpressName) {
+        this.doExpressName = doExpressName;
+    }
+
+    public String getDoExitExpressName() {
+        return doExitExpressName;
+    }
+
+    public void setDoExitExpressName(String doExitExpressName) {
+        this.doExitExpressName = doExitExpressName;
+    }
+
     public String getCreater() {
         return creater;
     }
