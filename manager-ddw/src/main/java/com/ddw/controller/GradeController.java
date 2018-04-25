@@ -26,9 +26,9 @@ public class GradeController {
     private GradeService gradeService;
 
     @GetMapping("list")
-    public String list(Model model){
+    public String list(String gradeName,Model model){
         try {
-            model.addAttribute("gradeList",gradeService.findListAll());
+            model.addAttribute("gradeList",gradeService.findList(gradeName));
         }catch (Exception e){
             logger.error("GradeController->list",e);
         }

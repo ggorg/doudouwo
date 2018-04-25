@@ -21,8 +21,11 @@ import java.util.Map;
 @Service
 public class GradeService extends CommonService{
 
-    public Page findListAll()throws Exception{
+    public Page findList(String gradeName)throws Exception{
         Map condtion=new HashMap();
+        if(gradeName !=null && !gradeName.equals("")){
+            condtion.put("gradeName",gradeName);
+        }
         return super.commonPage("ddw_grade","sort",1,999,condtion);
     }
 
