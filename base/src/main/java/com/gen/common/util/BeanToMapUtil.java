@@ -36,7 +36,7 @@ public class BeanToMapUtil {
 							}
 							Object value = readMethod.invoke(obj);
 							//if (value != null) {
-								params.put(name, value);
+								params.put("`"+name+"`", value);
 							//}
 						} catch (Throwable ex) {
 							logger.error("beanToMap:", ex);
