@@ -32,15 +32,19 @@ public class UserController {
     @PostMapping("/save")
     public ResponseVO save(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserInfoDTO userInfoDTO){
         try {
-            Map userMap = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
-            String token = TokenUtil.createToken(userInfoDTO.getOpenid());
-            JSONObject json = new JSONObject();
-            json.put("token",token);
-            if(userMap == null || userMap.isEmpty()){
-                userInfoService.save(userInfoDTO);
-                return new ResponseVO(1,"注册成功",json);
+            if(userInfoDTO.getOpenid() != null && !userInfoDTO.getOpenid().equals("")){
+                Map userMap = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
+                String token = TokenUtil.createToken(userInfoDTO.getOpenid());
+                JSONObject json = new JSONObject();
+                json.put("token",token);
+                if(userMap == null || userMap.isEmpty()){
+                    userInfoService.save(userInfoDTO);
+                    return new ResponseVO(1,"注册成功",json);
+                }else{
+                    return new ResponseVO(2,"账号已存在",json);
+                }
             }else{
-                return new ResponseVO(2,"账号已存在",json);
+                return new ResponseVO(-2,"用户openid不能为空",null);
             }
         }catch (Exception e){
             logger.error("UserController->save",e);
