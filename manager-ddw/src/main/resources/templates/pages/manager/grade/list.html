@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+           initPage(/*[[${gradeList!=null?gradeList.total:0}]]*/ );
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>会员等级</h3>
+
+                </div><!--contenttitle-->
+
+                <div class="tableoptions">
+
+                    <form class="layui-form" >
+                        <div class="layui-form-item2 layui-form-item">
+                        <div class="float-left-div" >
+
+                            <label class="layui-form-label" >名称</label>
+                            <div class="layui-input-inline" >
+                                <input class="layui-input" name="gradeName" th:value="${#httpServletRequest.getParameter('gradeName')}"/>
+                            </div>
+                        </div>
+                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
+
+                    </div>
+                    </form>
+                </div>
+                <div class="tableoptions">
+
+                    <button class="radius3" id="createBtn" onclick="openDialog('500px','440px','新增等级','to-edit')" title="table2">新增等级</button> &nbsp;
+
+                </div>
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                    </colgroup>
+                    <thead>
+
+                    <tr>
+                        <th class="head0">名称</th>
+                        <th class="head1">等级</th>
+                        <th class="head0">序号</th>
+                        <th class="head1">描述</th>
+                        <th class="head0">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${gradeList?.result}">
+                        <td th:text="${obj['gradeName']}">Trident</td>
+                        <td th:text="${obj['level']}">Trident</td>
+                        <td th:text="${obj['sort']}"></td>
+                        <td th:text="${obj['describe']}">Trident</td>
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'440px\',\'修改菜单\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                            <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        layui.use('form', function(){
+            var form = layui.form;
+
+        })
+
+        function del(obj) {
+            //删除菜单
+            layer.confirm('确定删除?',{icon:2,title:'删除'}, function(index){
+                layer.close(index);
+                //向服务端发送删除指令
+                jQuery.post("delete",{id:obj},function(data){
+                    layer.msg(data.reMsg);
+                    window.setTimeout(function(){
+                        top.location.href=window.parent.location.href;
+                    },500)
+                });
+            });
+        }
+    </script>
+	</body>
+
+</html>
