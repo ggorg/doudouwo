@@ -3,27 +3,25 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 审批业务类型
+ * 直播房间状态
  */
-public enum ReviewBusinessTypeEnum implements Dictionary {
-    //材料订单：1
-    ReviewBusinessType1("材料订单",1),
-    ReviewBusinessType2("会员申请当女神",2),
-    ReviewBusinessType3("女神申请直播",3),
-    ReviewBusinessType4("身份认证",4);
+public enum LiveStatusEnum implements Dictionary {
+    liveStatus0("等待直播",0),
+    liveStatus1("正在直播",1),
+    liveStatus2("停用",2);
 
 
     private String name;
     private Integer code;
 
-    private ReviewBusinessTypeEnum(String name, Integer code) {
+    private LiveStatusEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }
 
     // 普通方法
     public static String getName(Integer code) {
-        for (ReviewBusinessTypeEnum c : ReviewBusinessTypeEnum.values()) {
+        for (LiveStatusEnum c : LiveStatusEnum.values()) {
             if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }

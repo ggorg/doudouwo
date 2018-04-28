@@ -11,7 +11,7 @@
     inner join baseuserrole bur on bur.rId=br.id
     left join baseuser bu on bu.id=bur.uid
 	where bu.id=#{uid}
-    order by bm.mSort asc
+    order by bm.mParentId,bm.mSort asc
     </select>
 
   <select id="queryUidByMid"  parameterType="java.lang.Integer" resultType="java.lang.Integer">

@@ -2,7 +2,9 @@ package com.ddw.token;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.ResponseVO;
+import com.ddw.controller.AppIndexController;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,7 @@ import java.util.Map;
 
 @Configuration
 public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
+    private final Logger logger = Logger.getLogger(TokenInterceptorConfig.class);
 
     @Value("${tokenLiveHour}")
     private Integer tokenLiveHour;
@@ -51,8 +54,15 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                        toWriteResponseVo(response,-1000,"参数异常");
                        return false;
                    }
+
                    String base64Token=map.get("token");
+                    logger.info("base64Token:"+base64Token);
                    String baseToken=TokenUtil.getBaseToken(base64Token);
+                   if(base64Token==null){
+                       toWriteResponseVo(response,-1000,"token异常");
+                       return false;
+                   }
+                    logger.info("baseToken:"+baseToken);
                     if(!TokenUtil.validToken(baseToken)){
                         toWriteResponseVo(response,-1000,"token异常");
                         return false;

@@ -5,6 +5,7 @@ import com.ddw.beans.OrderMaterialPO;
 import com.ddw.beans.OrderPO;
 import com.ddw.enums.*;
 import com.ddw.util.Constant;
+import com.ddw.util.LiveRadioConstant;
 import com.ddw.util.Toolsddw;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonDeleteBean;
@@ -22,7 +23,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.annotation.OrderUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -166,7 +166,7 @@ public class OrderService extends CommonService {
         ResponseVO res=this.updateOrderStatus(PayStatusEnum.PayStatus1.getCode(),null,storeId,orderNoEncypt);
        if(res.getReCode()==1){
            String orderNo=MyEncryptUtil.getRealValue(orderNoEncypt);
-           Map map=(Map)CacheUtil.get(Constant.CACHE_NAME_ORDER_INFO,"store-order-"+storeId+"-"+orderNo);
+           Map map=(Map)CacheUtil.get(LiveRadioConstant.CACHE_NAME_ORDER_INFO,"store-order-"+storeId+"-"+orderNo);
            List mlist=null;
            if(map!=null && map.size()>0){
                mlist= (List)map.get("list");
@@ -192,7 +192,7 @@ public class OrderService extends CommonService {
                }
            }
           // this.materialService.
-          // CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo);
+          // CacheUtil.delete(LiveRadioConstant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo);
        }
        return null;
 
@@ -341,7 +341,7 @@ public class OrderService extends CommonService {
         int n=this.getCommonMapper().deleteObject(new CommonDeleteBean("ddw_order",condition));
         if(n>0){
             this.commonDelete("ddw_order_material","orderNo",orderNo);
-            //CacheUtil.delete(Constant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo.toString());
+            //CacheUtil.delete(LiveRadioConstant.CACHE_NAME_PC_SHOPPING_CART,"store-order-"+storeid+"-"+orderNo.toString());
         }else{
             return new ResponseVO(-2,"删除订单失败",null);
         }

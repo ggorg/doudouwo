@@ -33,18 +33,18 @@ public class MaterialController {
     @Autowired
     private StoreService storeService;
 
-    @Autowired
-    private OrderService orderService;
+        @Autowired
+        private OrderService orderService;
 
     @GetMapping("to-paging-{dmStatus}")
     public String toPaging(@RequestParam(defaultValue = "1") Integer pageNo,@PathVariable Integer dmStatus, Model model){
-        try {
-            model.addAttribute("om",orderService.getOrderMaterialByPayStatusAndShipStatus(ShipStatusEnum.ShipStatus0.getCode()));
-            model.addAttribute("mPage",materialService.findPage(pageNo,dmStatus));
-        }catch (Exception e){
-            logger.error("MaterialController->toPage",e);
-        }
-        return "pages/manager/headquarters/list";
+            try {
+                model.addAttribute("om",orderService.getOrderMaterialByPayStatusAndShipStatus(ShipStatusEnum.ShipStatus0.getCode()));
+                model.addAttribute("mPage",materialService.findPage(pageNo,dmStatus));
+            }catch (Exception e){
+                logger.error("MaterialController->toPage",e);
+            }
+            return "pages/manager/headquarters/list";
     }
     @GetMapping("to-show-to-store")
     public String toShowToStore(@RequestParam(defaultValue = "1") Integer pageNo, Model model){

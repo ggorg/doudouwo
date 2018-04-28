@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+           initPage(/*[[${page!=null?page.total:0}]]*/ );
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>订单列表</h3>
+
+                </div><!--contenttitle-->
+
+                <div class="tableoptions">
+
+                    <form class="layui-form" >
+                        <div class="layui-form-item2 layui-form-item">
+                        <div class="float-left-div" >
+
+                            <label class="layui-form-label" >女神名称</label>
+                            <div class="layui-input-inline" >
+                                <input class="layui-input" name="gName" th:value="${#httpServletRequest.getParameter('gName')}"/>
+                            </div>
+                        </div>
+                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
+
+                    </div>
+                    </form>
+                    <!-- <select class="radius3">
+                         <option value="">Show All</option>
+                         <option value="">Rendering Engine</option>
+                         <option value="">Platform</option>
+                     </select> &nbsp;
+                     <button class="radius3">Apply Filter</button>
+                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+                </div><!--tableoptions-->
+
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+
+                    </colgroup>
+                    <thead>
+
+                    <tr>
+                        <th class="head1">房间名称</th>
+                        <th class="head1">房间状态</th>
+                        <th class="head1">直播女神</th>
+                        <th class="head1">访问量</th>
+                        <th class="head1">群最高人数</th>
+                        <th class="head1">过期时间</th>
+
+                        <th class="head1">创建时间</th>
+
+
+                        <th class="head1">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${page?.result}" >
+                        <td  th:text="${obj['spaceName']}"></td>
+                        <td th:text="${#TdEnum.text('com.ddw.enums.LiveStatusEnum',obj['liveStatus'])}">Trident</td>
+                        <td th:text="${obj['userName']}">Trident</td>
+                        <td th:text="${obj['pv']}">Trident</td>
+                        <td th:text="${obj['maxGroupNum']}">Trident</td>
+                        <td th:text="${obj['endDate']==null?'':#dates.format(obj['endDate'],'yyyy-MM-dd HH:mm:ss')}" >
+                        </td>
+                        <td th:text="${obj['createTime']==null?'':#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm:ss')}">Trident</td>
+
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >停 用</button>
+
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+        function toStop(orderNo){
+            layer.confirm("是否发起取消订单？", {icon: 2, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-cancel-order",null,{orderNo,orderNo});
+
+                }
+                //layer.close(index);
+            });
+        }
+
+        layui.use('form', function(){
+            var form = layui.form;
+
+        })
+
+    </script>
+	</body>
+
+</html>

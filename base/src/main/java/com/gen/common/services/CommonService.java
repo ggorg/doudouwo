@@ -113,6 +113,54 @@ public abstract class CommonService {
         }
         return vo;
     }
+
+    /**
+     *
+     * @param tableName 表名
+     * @param setParams 修改的字段集合
+     * @param searchCondition 查询条件集合
+     * @param versionName 版本号字段名称
+     * @return
+     * @throws Exception
+     */
+    protected ResponseVO commonOptimisticLockUpdateByByParam(String tableName,Map setParams,Map searchCondition,String versionName)throws Exception{
+        Map map=null;
+        Integer version=null;
+        Map vSetMap=null;
+        Map vSearchMap=null;
+        ResponseVO res=null;
+        for(int i=1;i<=5;i++){
+            map=this.commonObjectBySearchCondition(tableName,searchCondition);
+            if(map==null || map.isEmpty()){
+                return new ResponseVO(-2,"更新失败",null);
+            }else{
+                version=(Integer)map.get(versionName);
+                vSearchMap=new HashMap(searchCondition);
+               if(version==null){
+                   version=1;
+               }else{
+                   vSearchMap.put(versionName,version);
+               }
+                vSetMap =new HashMap(setParams);
+                vSetMap.put(versionName,version+1);
+                res=this.commonUpdateByParams(tableName,vSetMap,vSearchMap);
+                if(res.getReCode()!=1){
+                    if(i==5){
+                        return new ResponseVO(-2,"更新失败",null);
+                    }
+                    Thread.sleep(i * 200);
+                    continue;
+                }else{
+
+                    break;
+                }
+
+            }
+
+        }
+        return new ResponseVO(1,"更新成功",null);
+
+    }
     protected ResponseVO commonUpdateByParams(String tableName, Map setParams,Map searchCondition){
         ResponseVO vo=new ResponseVO();
 

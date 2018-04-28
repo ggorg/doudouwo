@@ -27,13 +27,26 @@ import java.util.Map;
 @Service
 public class ReviewService extends CommonService {
 
-    public Page findPage(Integer pageNo)throws Exception{
-
-        Map condtion=new HashMap();
+    public Page findPage(Integer pageNo,Map condtion)throws Exception{
         //condtion.put("dmStatus",dmStatus);
         return this.commonPage("ddw_review","updateTime desc",pageNo,10,condtion);
     }
 
+    public Page findMaterialPageByHq(Integer pageNo)throws Exception{
+        Map condtion=new HashMap();
+        condtion.put("drReviewerType",ReviewReviewerTypeEnum.ReviewReviewerType0.getCode());
+        condtion.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType1.getCode());
+        return this.findPage(pageNo,condtion);
+    }
+
+
+    public Page findLiveRadioPageByStore(Integer pageNo,Integer storeId)throws Exception{
+        Map condtion=new HashMap();
+        condtion.put("drReviewerType",ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
+        condtion.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
+        condtion.put("drBelongToStoreId",storeId);
+        return this.findPage(pageNo,condtion);
+    }
     /**
      * 判断门店是否有申请审核
      * @param businessCode 业务流水号

@@ -13,7 +13,12 @@ import com.gen.common.util.Tools;
 import freemarker.template.utility.NumberUtil;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
@@ -174,7 +179,7 @@ public class Toolsddw extends Tools {
        /* WebApplicationContext wa= getWebapplication();
 
         //wa.getBean()
-        Cache cache= CacheUtil.getCacheManager().getCache(Constant.CACHE_NAME_PC_SHOPPING_CART);
+        Cache cache= CacheUtil.getCacheManager().getCache(LiveRadioConstant.CACHE_NAME_PC_SHOPPING_CART);
         List<String> keys=cache.getKeys();
         Element element=null;
         Map cacheMap=null;
@@ -193,5 +198,50 @@ public class Toolsddw extends Tools {
 
             }
         }*/
+    }
+    public static String createLiveRadioUrl(){
+        String refererKey="bb136f00754697b5ea85bb6ee69a1946";
+        String apiKey="aaceb72fe5a8a474bcca9c2576b92a58";
+        // appid: 1255887407	 bizid : 23115
+        //txSecret = MD5(refererKey+ stream_id + txTime)
+        String bizid="23115";
+        String streamid="23115_"+ RandomStringUtils.randomAlphabetic(10);
+        String pushUrl="rtmp://23115.livepush.myqcloud.com/live/23115_test001?txSecret=xxx&txTime=5C2A3CFF";
+        String txTime=Long.toHexString(DateUtils.addHours(new Date(),24).getTime()/1000).toUpperCase();
+        try {
+            txTime= Long.toHexString(DateUtils.parseDate("2018-04-25 23:59:59","yyyy-MM-dd HH:mm:ss").getTime()/1000).toUpperCase();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+       // DigestUtils
+
+      //  Hex.decodeHex(new Date().getTime()/1000)
+        String md5str=DigestUtils.md5Hex(refererKey+streamid+txTime);
+        StringBuilder url=new StringBuilder();
+        url.append("rtmp://");
+        url.append(bizid);
+        url.append(".livepush.myqcloud.com/live/");
+        url.append(streamid);
+        System.out.println("播放："+url.toString().replace("livepush","liveplay"));
+
+        url.append("?bizid=").append(bizid).append("&");
+
+        url.append("txSecret=").append(md5str);
+        url.append("&txTime=").append(txTime);
+        System.out.println("推流："+url.toString());
+
+        try {
+            System.out.println(Long.toHexString(DateUtils.parseDate("2016-07-30 11:13:45","yyyy-MM-dd HH:mm:ss").getTime()/1000).toUpperCase());
+            System.out.println();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        createLiveRadioUrl();
     }
 }

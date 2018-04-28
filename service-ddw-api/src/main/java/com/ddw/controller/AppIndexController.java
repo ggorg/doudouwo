@@ -5,6 +5,7 @@ import com.ddw.token.Token;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/ddwapp/index")
 @Api(description="首页",tags = "首页")
 public class AppIndexController {
+    private final Logger logger = Logger.getLogger(AppIndexController.class);
 
     @PostMapping("/{token}")
     @ApiOperation(value = "首页",produces = MediaType.APPLICATION_JSON_VALUE)

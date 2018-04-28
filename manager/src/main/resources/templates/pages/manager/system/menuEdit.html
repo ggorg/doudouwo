@@ -32,10 +32,10 @@
       </select>
     </div>
   </div>
-  <div class="layui-form-item">
+  <div class="layui-form-item" th:if="${#httpServletRequest.getParameter('pid')!='-1'}">
     <label class="layui-form-label">url地址</label>
     <div class="layui-input-block">
-      <input type="text" name="mUrl" required="required" th:value="${menuObject?.mUrl}"  lay-verify="required" placeholder="请输入url地址" autocomplete="off" class="layui-input" />
+      <input type="text" name="mUrl"  th:value="${menuObject?.mUrl}"   placeholder="请输入url地址" autocomplete="off" class="layui-input" />
     </div>
   </div>
   <div class="layui-form-item">

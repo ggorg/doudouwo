@@ -40,14 +40,38 @@ public class ReviewController {
     @Autowired
     private RoleService roleService;
 
+    /**
+     * 总店-材料相关业务审核列表
+     * @param pageNo
+     * @param model
+     * @return
+     */
     @GetMapping("/to-review-page")
-    public String toReviewPage(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+    public String toReviewPageByHq(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
        try {
-           model.addAttribute("rPage",this.reviewService.findPage(pageNo));
+
+           model.addAttribute("rPage",this.reviewService.findMaterialPageByHq(pageNo));
        }catch (Exception e){
            logger.error("ReviewController->toReviewPage",e);
        }
        return "pages/manager/review/list";
+
+    }
+
+    /**
+     * 门店-女神申请直播
+     * @return
+     */
+    @GetMapping("/to-live-radio-review-page")
+    public String toLiveRadioReviewPage(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+
+            model.addAttribute("rPage",this.reviewService.findLiveRadioPageByStore(pageNo,spo.getId()));
+        }catch (Exception e){
+            logger.error("ReviewController->toReviewPage",e);
+        }
+        return "pages/manager/review/list";
 
     }
     /**

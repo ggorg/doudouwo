@@ -20,7 +20,15 @@ public class ReviewPO implements Serializable {
     private Integer drReviewerType ;//审批人类型，总店：0，门店：1
     private Integer drBusinessStatus ;//审批业务状态
     private String drApplyDesc ;//申请人说明
+    private Integer drBelongToStoreId;//所属门店，门店ID号，空值表示属于总店
 
+    public Integer getDrBelongToStoreId() {
+        return drBelongToStoreId;
+    }
+
+    public void setDrBelongToStoreId(Integer drBelongToStoreId) {
+        this.drBelongToStoreId = drBelongToStoreId;
+    }
 
     public Integer getId() {
         return id;

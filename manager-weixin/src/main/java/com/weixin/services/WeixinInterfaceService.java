@@ -1,12 +1,12 @@
 package com.weixin.services;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gen.common.util.HttpUtil;
 import com.weixin.core.pojo.Menu;
 import com.weixin.core.pojo.AccessToken;
 import com.weixin.dao.RedPackRecordMapper;
 import com.weixin.entity.RedPackRecord;
 import com.weixin.entity.UserInfo;
-import com.weixin.util.HttpUtil;
 import com.weixin.util.SignUtil;
 import com.weixin.util.WeixinUtil;
 import org.springframework.beans.factory.annotation.Autowired;

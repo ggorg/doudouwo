@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 @Service
 public class SysManagerService extends CommonService {
@@ -245,7 +246,7 @@ public class SysManagerService extends CommonService {
                 vo.setReMsg("菜单名为空");
                 return vo;
             }
-            if(StringUtils.isBlank(sysMenuBean.getmUrl())){
+            if((sysMenuBean.getmParentId()!=null && sysMenuBean.getmParentId()>-1) && StringUtils.isBlank(sysMenuBean.getmUrl())){
                 vo.setReCode(-2);
                 vo.setReMsg("菜单地址为空");
                 return vo;
@@ -469,8 +470,37 @@ public class SysManagerService extends CommonService {
     @Cacheable(value = "commonCache",key = "#uid")
     public List getPowerMenu(Integer uid){
         //Cache cache=cacheManager.getCache("commonCache");
+        List<SysMenuBean> menuList=this.menuPowerMapper.queryById(uid);
+        List<SysMenuBean> childList=menuList.stream().filter(s->(s.getmParentId()>-1)).collect(Collectors.toList());
+        Integer mParentId=null;
+        Integer mid=null;
+        TreeSet<SysMenuBean> childMSet=null;
+        Integer childParentId=null;
+        SysMenuBean[] chidArray=null;
+        for (SysMenuBean m:menuList){
+            mParentId=m.getmParentId();
+            mid=m.getId();
+            if(mParentId==-1){
+                childMSet=new TreeSet(new MenuMapComparator());
+                for(SysMenuBean childM:childList){
+                    childParentId=childM.getmParentId();
+                    if(childParentId==mid || childParentId.equals(mid)){
+                        childMSet.add(childM);
+                    }
+                }
+                if(childMSet.size()>0){
+                    chidArray= new SysMenuBean[childMSet.size()];
+                    m.setmUrl(childMSet.toArray(chidArray)[0].getmUrl());
+                }
 
-        return this.menuPowerMapper.queryById(uid);
+
+               // childMSet.clear();
+               // chidArray=null;
+               // childMSet=null;
+
+            }
+        }
+        return menuList;
     }
     /*@Cacheable(value = "commonCache",key = "#uid")
     public void clearCacheMenuByUid(Integer uid){
