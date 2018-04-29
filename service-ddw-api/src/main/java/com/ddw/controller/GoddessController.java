@@ -51,7 +51,7 @@ public class GoddessController {
     @Token
     @ApiOperation(value = "女神信息查询")
     @PostMapping("/query/{token}")
-    public ResponseVO query(@PathVariable String token,@RequestParam @ApiParam(name = "userId",value="userId", required = true) int userId){
+    public ResponseVO query(@PathVariable String token,@RequestParam @ApiParam(name = "userId",value="女神对应会员id", required = true) int userId){
         try {
             return new ResponseVO(1,"成功",goddessService.query(userId));
         }catch (Exception e){

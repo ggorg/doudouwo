@@ -1,35 +1,56 @@
 package com.ddw.beans;
 
-import java.util.Date;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-public class UserInfoPO {
+import java.util.List;
+
+@ApiModel(value="会员展示用例对象",description="用例对象UserInfoDTO")
+public class UserInfoVO {
+    @ApiModelProperty(name="id",value="主键",example="1")
     private Integer id;
+    @ApiModelProperty(name="userName",value="账号（微信、QQ登录时，为空）",example="某某某")
     private String userName;
+    @ApiModelProperty(name="userPwd",value="密码（微信、QQ登录时，为空）",example="123456")
     private String userPwd;
+    @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
     private String openid;
-    private String realName;
+    @ApiModelProperty(name="nickName",value="昵称",example="某某某")
     private String nickName;
+    @ApiModelProperty(name="headImgUrl",value="头像URL",example="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522752012429&di=b26668f45e547cb644bb85d054242abe&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fbba1cd11728b4710655829d1c9cec3fdfc0323bc.jpg")
     private String headImgUrl;
+    @ApiModelProperty(name="phone",value="手机号码",example="18500000000")
     private String phone;
-    private Integer gradeId;
-    private String inviteCode;
+    @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
     private String label;
+    @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
     private String starSign;
-    private String signature;
+    @ApiModelProperty(name="province",value="用户所在省份",example="广东省")
     private String province;
+    @ApiModelProperty(name="city",value="用户所在城市",example="广州市")
     private String city;
+    @ApiModelProperty(name="area",value="用户所在地区",example="天河区")
     private String area;
-    private Integer sex;
-    private Integer registerType;
+    @ApiModelProperty(name="gradeId",value="会员等级，关联ddw_grade表",example="1")
+    private Integer gradeId;
+    @ApiModelProperty(name="goddessGradeId",value="女神等级，关联ddw_goddess_grade表",example="1")
     private Integer goddessGradeId;
+    @ApiModelProperty(name="practiceGradeId",value="代练等级，关联ddw_practice_grade表",example="1")
     private Integer practiceGradeId;
-    private String idcard;
-    private String idcardFrontUrl;
-    private String idcardOppositeUrl;
+    @ApiModelProperty(name="goddessFlag",value="女神标记，0非女神，1女神",example="1")
     private Integer goddessFlag;
+    @ApiModelProperty(name="practiceFlag",value="代练标记，0非代练，1代练",example="1")
     private Integer practiceFlag;
-    private Date createTime;
-    private Date updateTime;
+    @ApiModelProperty(name="inviteCode",value="邀请码",example="aabbccddee")
+    private String inviteCode;
+    @ApiModelProperty(name="signature",value="个性签名",example="这个人很懒,什么都没有留下...")
+    private String signature;
+    @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
+    private Integer sex;
+    @ApiModelProperty(name="registerType",value="注册类型1 微信注册,2 QQ注册",example="1")
+    private Integer registerType;
+    @ApiModelProperty(name="photograph",value="相册列表",example="1")
+    private List<PhotographPO> photograph;
 
     public String getArea() {
         return area;
@@ -45,14 +66,6 @@ public class UserInfoPO {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public Integer getGoddessFlag() {
@@ -93,30 +106,6 @@ public class UserInfoPO {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getIdcard() {
-        return idcard;
-    }
-
-    public void setIdcard(String idcard) {
-        this.idcard = idcard;
-    }
-
-    public String getIdcardFrontUrl() {
-        return idcardFrontUrl;
-    }
-
-    public void setIdcardFrontUrl(String idcardFrontUrl) {
-        this.idcardFrontUrl = idcardFrontUrl;
-    }
-
-    public String getIdcardOppositeUrl() {
-        return idcardOppositeUrl;
-    }
-
-    public void setIdcardOppositeUrl(String idcardOppositeUrl) {
-        this.idcardOppositeUrl = idcardOppositeUrl;
     }
 
     public String getInviteCode() {
@@ -183,14 +172,6 @@ public class UserInfoPO {
         this.province = province;
     }
 
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
     public Integer getRegisterType() {
         return registerType;
     }
@@ -223,14 +204,6 @@ public class UserInfoPO {
         this.starSign = starSign;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
     public String getUserName() {
         return userName;
     }
@@ -245,5 +218,13 @@ public class UserInfoPO {
 
     public void setUserPwd(String userPwd) {
         this.userPwd = userPwd;
+    }
+
+    public List<PhotographPO> getPhotograph() {
+        return photograph;
+    }
+
+    public void setPhotograph(List<PhotographPO> photograph) {
+        this.photograph = photograph;
     }
 }
