@@ -56,7 +56,7 @@ public class MyAttentionController {
     @Token
     @ApiOperation(value = "根据用户id查询关注的女神列表")
     @PostMapping("/query/{token}")
-    public ResponseVO queryGoddessByUserId(@PathVariable String token,@RequestParam @ApiParam(name = "userId",value="userId", required = true) int userId){
+    public ResponseVO queryGoddessByUserId(@PathVariable String token,@RequestParam @ApiParam(name = "userId",value="会员id", required = true) int userId){
         try {
             return new ResponseVO(1,"成功",myAttentionService.queryGoddessByUserId(userId));
         }catch (Exception e){
@@ -68,7 +68,7 @@ public class MyAttentionController {
     @Token
     @ApiOperation(value = "查询女神下有多少关注用户数")
     @PostMapping("/coundUserByGoddess/{token}")
-    public ResponseVO coundUserByGoddess(@PathVariable String token,@RequestParam @ApiParam(name = "userId",value="userId", required = true) int userId){
+    public ResponseVO coundUserByGoddess(@PathVariable String token,@RequestParam @ApiParam(name = "userId",value="女神id", required = true) int userId){
         try {
             return new ResponseVO(1,"成功",myAttentionService.coundUserByGoddess(userId));
         }catch (Exception e){
