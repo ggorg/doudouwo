@@ -19,6 +19,15 @@ public class LiveRadioPO {
     private String groupId;
     private String userName;
     private Integer maxGroupNum;
+    private String businessCode;
+
+    public String getBusinessCode() {
+        return businessCode;
+    }
+
+    public void setBusinessCode(String businessCode) {
+        this.businessCode = businessCode;
+    }
 
     public Integer getMaxGroupNum() {
         return maxGroupNum;

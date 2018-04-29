@@ -1,10 +1,12 @@
 package com.ddw.beans;
 
+import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiResponse;
 
 @ApiModel
-public class ResponseVO<T> {
+public class ResponseApiVO<T> {
 
     @ApiModelProperty(name="reCode",value="响应代码，负数都是失败，正数都是成功",example="1")
     private Integer reCode;
@@ -13,14 +15,19 @@ public class ResponseVO<T> {
 
     @ApiModelProperty(name="data",value="业务数据",example="")
     private T data;
-    public ResponseVO(Integer reCode, String reMsg, T data) {
+    public ResponseApiVO(Integer reCode, String reMsg, T data) {
         this.reCode = reCode;
         this.reMsg = reMsg;
         this.data = data;
     }
 
 
-    public ResponseVO() {
+    public ResponseApiVO() {
+    }
+    public ResponseApiVO(ResponseVO<T> responseVO) {
+        this.reCode=responseVO.getReCode();
+        this.reMsg=responseVO.getReMsg();
+        this.data=responseVO.getData();
     }
 
     public Integer getReCode() {
@@ -49,7 +56,7 @@ public class ResponseVO<T> {
 
     @Override
     public String toString() {
-        return "ResponseVO{" +
+        return "ResponseApiVO{" +
                 "reCode=" + reCode +
                 ", reMsg='" + reMsg + '\'' +
                 ", data=" + data +

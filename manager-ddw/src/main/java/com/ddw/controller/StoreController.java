@@ -25,6 +25,7 @@ public class StoreController {
     @Autowired
     private StoreService storeService;
 
+
     @GetMapping("to-paging")
     public String toPaging(@RequestParam(defaultValue = "1") Integer pageNo, Model model){
         try {

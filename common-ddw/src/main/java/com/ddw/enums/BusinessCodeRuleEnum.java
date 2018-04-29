@@ -3,27 +3,24 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 审批业务类型
+ * 女神标识
  */
-public enum ReviewBusinessTypeEnum implements Dictionary {
-    //材料订单：1
-    ReviewBusinessType1("材料订单",1),
-    ReviewBusinessType2("会员",2),
-    ReviewBusinessType3("直播",3),
-    ReviewBusinessType4("身份认证",4);
+public enum BusinessCodeRuleEnum implements Dictionary {
+    liveRadioCode("yyyyMMddHHmmssS01{storeid}{userid}{random}",0),
+    goddessFlag1("女神",1);
 
 
     private String name;
     private Integer code;
 
-    private ReviewBusinessTypeEnum(String name, Integer code) {
+    private BusinessCodeRuleEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }
 
     // 普通方法
     public static String getName(Integer code) {
-        for (ReviewBusinessTypeEnum c : ReviewBusinessTypeEnum.values()) {
+        for (BusinessCodeRuleEnum c : BusinessCodeRuleEnum.values()) {
             if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }

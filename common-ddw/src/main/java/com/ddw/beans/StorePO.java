@@ -22,7 +22,16 @@ public class StorePO {
     private String dsBankCardCode;
     private Date createTime;
     private Date updateTime;
-    private Integer dmStatus;
+    private Integer dsStatus;
+    private String dsHeadUrl;
+
+    public String getDsHeadUrl() {
+        return dsHeadUrl;
+    }
+
+    public void setDsHeadUrl(String dsHeadUrl) {
+        this.dsHeadUrl = dsHeadUrl;
+    }
 
     public String getDsLongitude() {
         return dsLongitude;
@@ -64,12 +73,12 @@ public class StorePO {
         this.updateTime = updateTime;
     }
 
-    public Integer getDmStatus() {
-        return dmStatus;
+    public Integer getDsStatus() {
+        return dsStatus;
     }
 
-    public void setDmStatus(Integer dmStatus) {
-        this.dmStatus = dmStatus;
+    public void setDsStatus(Integer dsStatus) {
+        this.dsStatus = dsStatus;
     }
 
     public Integer getId() {

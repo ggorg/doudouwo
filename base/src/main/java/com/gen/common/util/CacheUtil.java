@@ -17,15 +17,12 @@ public class CacheUtil {
     }
     public static Object  get(String cacheName,Object key){
         Cache cache=createCache(cacheName);
-
         Element element=cache.get(key);
         cache.flush();
         if(element!=null){
             return element.getObjectValue();
         }
         return null;
-
-
     }
     public static void deleteByStartWith(String cacheName,String startWithStr){
         Cache cache=createCache(cacheName);

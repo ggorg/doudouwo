@@ -7,8 +7,11 @@ import com.gen.common.dict.Dictionary;
  */
 public enum ReviewBusinessStatusEnum implements Dictionary {
     //订单-取消订单：6，订单-退还：4
-    ReviewBusinessStatus6("取消订单",6),
-    ReviewBusinessStatus4("退还",4);
+    orderStatus6("取消订单",6),
+    orderStatus4("退还",4),
+    liveRadio10("申请直播",10),
+    goddessFlag2("申请当女神",2),
+    practiceFlag5("申请代练",5);
     private String name;
     private Integer code;
 

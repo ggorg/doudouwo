@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -8,12 +9,16 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel
 public class AppIndexButtonVO {
+
+    @JsonProperty("title")
     @ApiModelProperty(name="title",value="按钮名称",example="")
     private String dbTitle;
 
+    @JsonProperty("iconUrl")
     @ApiModelProperty(name="iconUrl",value="按钮图片",example="http://.........")
     private String dbIconUrl;
 
+    @JsonProperty("iconLinkUrl")
     @ApiModelProperty(name="iconLinkUrl",value="标识",example="")
     private String dbIconLinkUrl;
 

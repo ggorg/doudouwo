@@ -155,12 +155,12 @@ public class ReviewController {
             if(StringUtils.isBlank(on)){
                 return new ResponseVO(-2,"订单号异常",null);
             }
-            boolean flag=this.reviewService.hasReviewFromStore(on, ReviewBusinessTypeEnum.ReviewBusinessType1, ReviewBusinessStatusEnum.ReviewBusinessStatus4);
+            boolean flag=this.reviewService.hasReviewFromStore(on, ReviewBusinessTypeEnum.ReviewBusinessType1, ReviewBusinessStatusEnum.orderStatus4);
             if(flag){
                 return new ResponseVO(-2,"抱歉，当前记录已被审核过",null);
 
             }else{
-                ResponseVO res=this.reviewService.saveReviewFromStore(on,drApplyDesc,ReviewBusinessTypeEnum.ReviewBusinessType1, ReviewBusinessStatusEnum.ReviewBusinessStatus4, Toolsddw.getUserMap());
+                ResponseVO res=this.reviewService.saveReviewFromStore(on,drApplyDesc,ReviewBusinessTypeEnum.ReviewBusinessType1, ReviewBusinessStatusEnum.orderStatus4, Toolsddw.getUserMap());
                 if(res.getReCode()==1){
                     res=this.orderService.updateOrderStatus(PayStatusEnum.PayStatus1.getCode(), ShipStatusEnum.ShipStatus4.getCode(),spo.getId(),orderNo);
                     if(res.getReCode()==1){

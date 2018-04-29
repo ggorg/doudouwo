@@ -1,6 +1,7 @@
 package com.ddw.token;
 
 import com.gen.common.services.CacheService;
+import com.gen.common.util.CacheUtil;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -14,6 +15,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TokenUtil {
     private static final Logger logger = Logger.getLogger(TokenUtil.class);
@@ -23,12 +26,47 @@ public class TokenUtil {
         String tokenStr= DateFormatUtils.format(new Date(),RandomStringUtils.randomNumeric(10)+"yyyyMMdd"+ RandomStringUtils.randomNumeric(10)+"HHmm");
         String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
         base64Token=base64Token.replace("+","-").replace("/","_");
-        cs.set(base64Token,userobj);
+        Map map=new HashMap();
+        map.put("user",userobj);
+        CacheUtil.put("tokenCache",base64Token,map);
+       // cs.set(base64Token,map);
         return base64Token;
     }
+    public static void resetUserObject(String base64Token,Object userobj){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("user",userobj);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
+    public static Object getUserObject(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return map.get("user");
+        }
+        return null;
+    }
+    public static void putStoreid(String base64Token,Integer storeId){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("storeId",storeId);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
+    public static Integer getStoreIdObject(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (Integer) map.get("storeId");
+        }
+        return null;
+    }
     public static void deleteToken(String token){
-        CacheService cs=getCacheService();
-        cs.delete(token);
+        CacheUtil.delete("tokenCache",token);
+
     }
     public static String getBaseToken(String base64Token){
         String token=null;
@@ -41,8 +79,8 @@ public class TokenUtil {
         return token;
     }
     public static boolean hasToken(String base64Token){
-        CacheService cs=getCacheService();
-        if(cs.get(base64Token)!=null){
+
+        if(CacheUtil.get("tokenCache",base64Token)!=null){
             return true;
         }
         return false;
@@ -50,10 +88,7 @@ public class TokenUtil {
     public static boolean validToken(String baseToken){
         return baseToken.matches("^([0-9]{10})([0-9]{8})([0-9]{10})([0-9]{4})$");
     }
-    public static Object getObjByToken(String base64Token){
-        CacheService cs=getCacheService();
-        return cs.get(base64Token);
-    }
+
     public static String  getTimeByToken(String baseToken){
 
         if(baseToken.length()==32){

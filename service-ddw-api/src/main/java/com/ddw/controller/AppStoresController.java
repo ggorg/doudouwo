@@ -1,14 +1,15 @@
 package com.ddw.controller;
 
 import com.ddw.beans.*;
+import com.ddw.services.AppStoresService;
 import com.ddw.token.Token;
 import io.swagger.annotations.*;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.Base64Utils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,21 +18,24 @@ import java.util.List;
 @Api(description="门店接口",tags ="门店接口")
 public class AppStoresController {
 
+    private final Logger logger = Logger.getLogger(AppStoresController.class);
+
+
+    @Autowired
+    private AppStoresService appStoresService;
+
+
     @Token
     @PostMapping("/show-nearby-stores/{token}")
     @ApiOperation(value = "定位展示门店",produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseVO<PageVO<AppStoresShowNearbyVO>> showNearbyStores(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)AppStoresShowNearbyDTO args){
-
-        List array=new ArrayList();
-        for(int i=1;i<=10;i++){
-            AppStoresShowNearbyVO sv=new AppStoresShowNearbyVO();
-            sv.setDsName("门店"+i);
-            sv.setDistance("100"+i);
-            array.add(sv);
+    public ResponseApiVO<PageVO<AppStoresShowNearbyVO>> showNearbyStores(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)AppStoresShowNearbyDTO args){
+        try{
+            return this.appStoresService.showNearby(args);
+        }catch (Exception e){
+            logger.error("AppStoresController->showNearbyStores",e);
+            return new ResponseApiVO<>(-1,"展示门店失败",null);
         }
-
-        return new ResponseVO(1,"获取成功",new PageVO("1","1",array));
     }
 
     public static void main(String[] args) {

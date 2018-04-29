@@ -5,7 +5,6 @@ import com.ddw.beans.OrderMaterialPO;
 import com.ddw.beans.OrderPO;
 import com.ddw.enums.*;
 import com.ddw.util.Constant;
-import com.ddw.util.LiveRadioConstant;
 import com.ddw.util.Toolsddw;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonDeleteBean;
@@ -366,7 +365,7 @@ public class OrderService extends CommonService {
             return new ResponseVO(-2,"运单号为空",null);
 
         }
-        boolean hasReview=this.reviewService.hasReviewFromStore(orderNo,ReviewBusinessTypeEnum.ReviewBusinessType1,ReviewBusinessStatusEnum.ReviewBusinessStatus6);
+        boolean hasReview=this.reviewService.hasReviewFromStore(orderNo,ReviewBusinessTypeEnum.ReviewBusinessType1,ReviewBusinessStatusEnum.orderStatus6);
         if(hasReview){
             return new ResponseVO(-2,"抱歉，当前订单被申请取消订单，请处理完再操作",null);
 

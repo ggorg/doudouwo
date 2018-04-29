@@ -1,13 +1,8 @@
 package com.ddw.token;
 
-import com.ddw.beans.RequestDTO;
-import com.ddw.beans.ResponseVO;
+import com.ddw.beans.ResponseApiVO;
 import com.gen.common.exception.GenException;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 //@ControllerAdvice(annotations = {Token.class})
 public class TokenControllerAdvice {
@@ -28,11 +23,11 @@ public class TokenControllerAdvice {
     }
     @ExceptionHandler({Exception.class})
     @ResponseBody
-    public ResponseVO toException(Exception e){
+    public ResponseApiVO toException(Exception e){
         if(e instanceof GenException){
             System.out.println("----------haha");
-            new ResponseVO(-1,e.getMessage(),null);
+            new ResponseApiVO(-1,e.getMessage(),null);
         }
-        return new ResponseVO(-1,"系统异常",null);
+        return new ResponseApiVO(-1,"系统异常",null);
     }
 }

@@ -1,14 +1,10 @@
 package com.ddw.token;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ddw.beans.ResponseVO;
-import com.ddw.controller.AppIndexController;
-import org.apache.commons.beanutils.PropertyUtils;
+import com.ddw.beans.ResponseApiVO;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.MethodParameter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -17,10 +13,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
 import java.util.Map;
 
 @Configuration
@@ -38,7 +31,7 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
         public void toWriteResponseVo(HttpServletResponse response,Integer code,String msg)throws Exception{
             response.setContentType("application/json;charset=utf-8");
             PrintWriter out=response.getWriter();
-            out.print(JSONObject.toJSON(new ResponseVO(code,msg,null)));
+            out.print(JSONObject.toJSON(new ResponseApiVO(code,msg,null)));
             out.close();
             out.flush();
         }

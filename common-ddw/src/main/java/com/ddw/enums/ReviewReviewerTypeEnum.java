@@ -8,7 +8,7 @@ import com.gen.common.dict.Dictionary;
 public enum ReviewReviewerTypeEnum implements Dictionary {
     //审批人类型，总店：0，门店：1
     ReviewReviewerType0("总店",0),
-    ReviewReviewerType1("门员",1);
+    ReviewReviewerType1("门店",1);
 
 
     private String name;

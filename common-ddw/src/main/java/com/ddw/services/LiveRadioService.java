@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.LiveRadioPO;
 import com.ddw.beans.LiveRadioUrlBean;
+import com.ddw.beans.ReviewPO;
 import com.ddw.beans.UserInfoPO;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.util.IMApiUtil;
@@ -42,7 +43,7 @@ public class LiveRadioService extends CommonService{
 
         Map condtion=new HashMap();
         condtion.put("userid",userid);
-        condtion.put("liveStatus", LiveStatusEnum.liveStatus0.getCode());
+       // condtion.put("liveStatus", LiveStatusEnum.liveStatus0.getCode());
         condtion.put("endDate,>=", new Date());
        return  this.commonObjectBySearchCondition("ddw_live_radio_space",condtion, LiveRadioPO.class);
     }
@@ -63,18 +64,22 @@ public class LiveRadioService extends CommonService{
 
     }*/
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO createLiveRadioRoom(Integer userId,Integer storeId)throws Exception{
+    public ResponseVO createLiveRadioRoom(String liveRadioBusinessCode,Integer storeId)throws Exception{
         Date date= new Date();
         Date endDate=DateUtils.addHours(date,12);
        // String txTime=Long.toHexString(endDate.getTime()/1000).toUpperCase();
-        String streamIdExt=storeId+"_"+userId+"_"+ DateFormatUtils.format(date,"yyMMddHHmmss");
+        ReviewPO reviewPO=this.commonObjectBySingleParam("ddw_review","drBusinessCode",liveRadioBusinessCode, ReviewPO.class);
+        if(reviewPO==null){
+            return new ResponseVO(-2,"创建直播间失败",null);
+        }
+        String streamIdExt=storeId+"_"+reviewPO.getDrProposer()+"_"+ DateFormatUtils.format(date,"yyMMddHHmmss");
         //创建推流拉流地址
         LiveRadioUrlBean liveRadioUrlBean= LiveRadioApiUtil.createLiveUrl(streamIdExt,endDate);
 
 
-        UserInfoPO upo=this.commonObjectBySingleParam("ddw_userinfo","id",userId, UserInfoPO.class);
+        UserInfoPO upo=this.commonObjectBySingleParam("ddw_userinfo","id",reviewPO.getDrProposer(), UserInfoPO.class);
         String spaceName=StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName()+"直播间";
-        String callBack=IMApiUtil.createGroup(userId.toString(),streamIdExt,spaceName);
+        String callBack=IMApiUtil.createGroup(reviewPO.getDrProposer().toString().toString(),streamIdExt,spaceName);
         JSONObject jsonObject=JSON.parseObject(callBack);
         Integer errorCode=jsonObject.getInteger("ErrorCode");
         String groupId=null;
@@ -92,8 +97,9 @@ public class LiveRadioService extends CommonService{
         liveRadioPO.setSpaceName(spaceName);
         liveRadioPO.setGroupId(groupId);
         liveRadioPO.setStoreid(storeId);
-        liveRadioPO.setUserid(userId);
+        liveRadioPO.setUserid(reviewPO.getDrProposer());
         liveRadioPO.setVersion(1);
+        liveRadioPO.setBusinessCode(liveRadioBusinessCode);
         liveRadioPO.setUserName(StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName());
         ResponseVO res=this.commonInsertMap("ddw_live_radio_space",BeanToMapUtil.beanToMap(liveRadioPO));
         if(res.getReCode()==1){

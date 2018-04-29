@@ -3,6 +3,7 @@ package com.gen.common.vo;
 public class ResponseVO<T> {
     private Integer reCode;
     private String reMsg;
+
     private T data;
 
     public ResponseVO(Integer reCode, String reMsg, T data) {

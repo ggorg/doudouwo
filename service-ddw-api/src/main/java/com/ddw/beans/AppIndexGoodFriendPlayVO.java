@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -13,9 +14,11 @@ public class AppIndexGoodFriendPlayVO {
     @ApiModelProperty(name="id",value="房间id",example="1")
     private Integer id;
 
+    @JsonProperty("name")
     @ApiModelProperty(name="name",value="房间名称",example="牛人之说")
     private String dgName;
 
+    @JsonProperty("tableNumber")
     @ApiModelProperty(name="tableNumber",value="桌号",example="808")
     private String dgTableNumber;
 

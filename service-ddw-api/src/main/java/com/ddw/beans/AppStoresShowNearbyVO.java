@@ -13,6 +13,19 @@ public class AppStoresShowNearbyVO {
     @ApiModelProperty(name="distance",value="距离，单位：米",example="1001")
     private String distance;
 
+    @ApiModelProperty(name="storeId",value="门店Id",example="1")
+    private Integer id;
+
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getDsName() {
         return dsName;
     }

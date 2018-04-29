@@ -120,7 +120,7 @@ public class StoreService extends CommonService{
             return this.commonUpdateBySingleSearchParam("ddw_store",updatePoMap,"id",storeDTO.getId());
 
         }else{
-            storePO.setDmStatus(0);
+            storePO.setDsStatus(0);
             storePO.setCreateTime(new Date());
             return this.commonInsert("ddw_store",storePO);
         }

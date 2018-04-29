@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -9,11 +10,14 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class AppIndexTopImgsVO {
     @ApiModelProperty(name="imgUrl",value="图片地址",example="http:/xxxxxxxxxxxx")
+    @JsonProperty("imgUrl")
     private String dtImgPath;
 
+    @JsonProperty("targetUrl")
     @ApiModelProperty(name="targetUrl",value="活动地址",example="http:/xxxxxxxxxxxx")
     private String dtTargetPath;
 
+    @JsonProperty("title")
     @ApiModelProperty(name="title",value="标题 ",example="xxxxxx")
     private String dtTitle;
 

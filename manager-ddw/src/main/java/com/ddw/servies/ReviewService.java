@@ -2,6 +2,7 @@ package com.ddw.servies;
 
 import com.ddw.beans.ReviewPO;
 import com.ddw.enums.*;
+import com.ddw.services.CommonReviewService;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
@@ -10,6 +11,7 @@ import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,6 +28,9 @@ import java.util.Map;
  */
 @Service
 public class ReviewService extends CommonService {
+
+    @Autowired
+    private CommonReviewService commonReviewService;
 
     public Page findPage(Integer pageNo,Map condtion)throws Exception{
         //condtion.put("dmStatus",dmStatus);
@@ -105,20 +110,8 @@ public class ReviewService extends CommonService {
         params.put("drBusinessType",businessType.getCode());
         params.put("drReviewer", (Integer)userMap.get("id"));
         params.put("drReviewerName", (String)userMap.get("uNickName"));
+        return this.commonReviewService.submitReview(params,id,businessCode.toString());
 
-        ResponseVO res= this.commonUpdateBySingleSearchParam("ddw_review",params,"id",id);
-        if(res.getReCode()==1){
-            ReviewPO rpo=this.getReviewById(id);
-
-            CacheUtil.delete("reviewInfo",businessCode);
-            ResponseVO resInsert=insertReviewRecord(BeanToMapUtil.beanToMap(rpo));
-            if(resInsert.getReCode()!=1){
-                throw new GenException("插入审批记录表失败");
-            }
-        }else {
-            throw new GenException("审批失败");
-        }
-       return new ResponseVO(1,"更新审批成功",null);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO saveReviewFromStore(Object businessCode,String drApplyDesc,ReviewBusinessTypeEnum businessType, ReviewBusinessStatusEnum businessStatus,Map userMap)throws Exception{
@@ -137,32 +130,9 @@ public class ReviewService extends CommonService {
         condition.put("drProposerName", (String)userMap.get("uNickName"));
         condition.put("createTime", new Date());
 
-        ResponseVO<Integer> responseVO=this.commonInsertMap("ddw_review",condition);
-        if(responseVO.getReCode()==1){
-            Object obj=CacheUtil.get("reviewInfo",businessCode);
-            if(obj!=null){
-                CacheUtil.delete("reviewInfo",businessCode);
-            }
-
-            condition.put("reviewId",responseVO.getData());
-            ResponseVO res=this.insertReviewRecord(condition);
-            if(res.getReCode()!=1){
-                throw new GenException("插入审批记录表失败");
-            }
-            return new ResponseVO(1,"提交申请成功",null);
-        }
-        return new ResponseVO(1,"提交申请失败",null);
+       return this.commonReviewService.submitAppl(condition);
 
     }
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO insertReviewRecord(Map params)throws Exception{
-        Map record=new HashMap(params);
-       if(record.containsKey("drApplyDesc")) record.remove("drApplyDesc");
-        if(record.containsKey("drReviewDesc")) record.remove("drReviewDesc");
-        if(record.containsKey("id")) record.remove("id");
-       // PropertyUtils.copyProperties(record,params);
-        record.put("createTime",new Date());
-        return this.commonInsertMap("ddw_review_record",record);
-    }
+
 
 }
