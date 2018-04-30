@@ -59,6 +59,8 @@ public class UserInfoVO {
     private String idcardOppositeUrl;
     @ApiModelProperty(name="photograph",value="相册列表",example="1")
     private List<PhotographPO> photograph;
+    @ApiModelProperty(name="token",value="令牌",example="MjY5MTIxMjQ0MzIwMTgwNDMwOTUzOTM2MTUxNjE0NTU")
+    private String token;
 
     public String getArea() {
         return area;
@@ -250,6 +252,14 @@ public class UserInfoVO {
 
     public void setStarSign(String starSign) {
         this.starSign = starSign;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getUserName() {
