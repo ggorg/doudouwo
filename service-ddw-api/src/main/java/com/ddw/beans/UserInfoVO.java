@@ -15,6 +15,8 @@ public class UserInfoVO {
     private String userPwd;
     @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
     private String openid;
+    @ApiModelProperty(name="realName",value="真是姓名",example="金三胖")
+    private String realName;
     @ApiModelProperty(name="nickName",value="昵称",example="某某某")
     private String nickName;
     @ApiModelProperty(name="headImgUrl",value="头像URL",example="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522752012429&di=b26668f45e547cb644bb85d054242abe&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fbba1cd11728b4710655829d1c9cec3fdfc0323bc.jpg")
@@ -49,6 +51,12 @@ public class UserInfoVO {
     private Integer sex;
     @ApiModelProperty(name="registerType",value="注册类型1 微信注册,2 QQ注册",example="1")
     private Integer registerType;
+    @ApiModelProperty(name="idcard",value="身份证号码",example="4402911182736736261")
+    private String idcard;
+    @ApiModelProperty(name="idcardFrontUrl",value="身份证正面图片URL",example="")
+    private String idcardFrontUrl;
+    @ApiModelProperty(name="idcardOppositeUrl",value="身份证背面图片URL",example="")
+    private String idcardOppositeUrl;
     @ApiModelProperty(name="photograph",value="相册列表",example="1")
     private List<PhotographPO> photograph;
 
@@ -108,6 +116,30 @@ public class UserInfoVO {
         this.id = id;
     }
 
+    public String getIdcard() {
+        return idcard;
+    }
+
+    public void setIdcard(String idcard) {
+        this.idcard = idcard;
+    }
+
+    public String getIdcardFrontUrl() {
+        return idcardFrontUrl;
+    }
+
+    public void setIdcardFrontUrl(String idcardFrontUrl) {
+        this.idcardFrontUrl = idcardFrontUrl;
+    }
+
+    public String getIdcardOppositeUrl() {
+        return idcardOppositeUrl;
+    }
+
+    public void setIdcardOppositeUrl(String idcardOppositeUrl) {
+        this.idcardOppositeUrl = idcardOppositeUrl;
+    }
+
     public String getInviteCode() {
         return inviteCode;
     }
@@ -148,6 +180,14 @@ public class UserInfoVO {
         this.phone = phone;
     }
 
+    public List<PhotographPO> getPhotograph() {
+        return photograph;
+    }
+
+    public void setPhotograph(List<PhotographPO> photograph) {
+        this.photograph = photograph;
+    }
+
     public Integer getPracticeFlag() {
         return practiceFlag;
     }
@@ -170,6 +210,14 @@ public class UserInfoVO {
 
     public void setProvince(String province) {
         this.province = province;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 
     public Integer getRegisterType() {
@@ -218,13 +266,5 @@ public class UserInfoVO {
 
     public void setUserPwd(String userPwd) {
         this.userPwd = userPwd;
-    }
-
-    public List<PhotographPO> getPhotograph() {
-        return photograph;
-    }
-
-    public void setPhotograph(List<PhotographPO> photograph) {
-        this.photograph = photograph;
     }
 }
