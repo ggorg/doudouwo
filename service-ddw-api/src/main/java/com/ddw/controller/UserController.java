@@ -48,12 +48,13 @@ public class UserController {
                     userInfoService.save(userInfoDTO);
                     userPO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                     PropertyUtils.copyProperties(userVO,userPO);
-                    List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userPO.getId()));
-                    userVO.setPhotograph(photographList);
                     json.put("userInfo",userVO);
                     return new ResponseVO(1,"注册成功",json);
                 }else{
                     PropertyUtils.copyProperties(userVO,userPO);
+                    List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userPO.getId()));
+                    userVO.setPhotograph(photographList);
+                    json.put("userInfo",userVO);
                     json.put("userInfo",userVO);
                     return new ResponseVO(2,"账号已存在",json);
                 }
