@@ -17,20 +17,12 @@ public class UserInfoDTO{
     private String headImgUrl;
     @ApiModelProperty(name="phone",value="手机号码",example="18500000000")
     private String phone;
-    @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
-    private String label;
-    @ApiModelProperty(name="gradeId",value="会员等级，关联ddw_grade表",example="1")
-    private Integer gradeId;
-    @ApiModelProperty(name="inviteCode",value="邀请码",example="aabbccddee")
-    private String inviteCode;
     @ApiModelProperty(name="signature",value="个性签名",example="这个人很懒,什么都没有留下...")
     private String signature;
     @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
     private Integer sex;
     @ApiModelProperty(name="registerType",value="注册类型1 微信注册,2 QQ注册",example="1")
     private Integer registerType;
-    @ApiModelProperty(name="id",value="主键",example="1")
-    private Integer id;
 
     public String getHeadImgUrl() {
         return headImgUrl;
@@ -38,22 +30,6 @@ public class UserInfoDTO{
 
     public void setHeadImgUrl(String headImgUrl) {
         this.headImgUrl = headImgUrl;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     public String getNickName() {
@@ -119,38 +95,4 @@ public class UserInfoDTO{
     public void setUserPwd(String userPwd) {
         this.userPwd = userPwd;
     }
-
-    public String getInviteCode() {
-        return inviteCode;
-    }
-
-    public void setInviteCode(String inviteCode) {
-        this.inviteCode = inviteCode;
-    }
-
-    public Integer getGradeId() {
-        return gradeId;
-    }
-
-    public void setGradeId(Integer gradeId) {
-        this.gradeId = gradeId;
-    }
-
-    @Override
-    public String toString() {
-        return "UserInfoDTO{" +
-                "userName='" + userName + '\'' +
-                ", userPwd='" + userPwd + '\'' +
-                ", openid='" + openid + '\'' +
-                ", nickName='" + nickName + '\'' +
-                ", headImgUrl='" + headImgUrl + '\'' +
-                ", phone='" + phone + '\'' +
-                ", label='" + label + '\'' +
-                ", signature='" + signature + '\'' +
-                ", sex=" + sex +
-                ", registerType=" + registerType +
-                ", id=" + id +
-                '}';
-    }
-
 }

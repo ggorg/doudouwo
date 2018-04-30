@@ -1,7 +1,6 @@
 package com.ddw.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.RealNameReviewService;
 import com.ddw.services.UserInfoService;
@@ -38,39 +37,37 @@ public class UserController {
     private tls_sigcheck ts;
 
     @ApiOperation(value = "会员注册用例")
-   // @ApiImplicitParam(name = "args", value = "参数", required = true, dataType = "UserInfoDTO")
+    // @ApiImplicitParam(name = "args", value = "参数", required = true, dataType = "UserInfoDTO")
     @PostMapping("/save")
-    public ResponseVO save(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserInfoDTO userInfoDTO){
+    public ResponseApiVO<UserInfoVO> save(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserInfoDTO userInfoDTO){
         try {
             if(!StringUtils.isBlank(userInfoDTO.getOpenid())){
                 UserInfoPO userPO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                 UserInfoVO userVO = new UserInfoVO();
                 String token = TokenUtil.createToken(userInfoDTO.getOpenid());
-                JSONObject json = new JSONObject();
-                json.put("token",token);
                 if(userPO == null){
                     userInfoService.save(userInfoDTO);
                     userPO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                     PropertyUtils.copyProperties(userVO,userPO);
-                    List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userPO.getId()));
-                    userVO.setPhotograph(photographList);
-                    json.put("userInfo",userVO);
-                    json.put("identifier",userVO.getOpenid());
-                    json.put("userSign",ts.createSign(userVO.getOpenid()));
-                    return new ResponseVO(1,"注册成功",json);
+                    userVO.setToken(token);
+                    userVO.setIdentifier(userVO.getOpenid());
+                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                    return new ResponseApiVO(1,"注册成功",userVO);
                 }else{
                     PropertyUtils.copyProperties(userVO,userPO);
-                    json.put("userInfo",userVO);
-                    json.put("identifier",userVO.getOpenid());
-                    json.put("userSign",ts.createSign(userVO.getOpenid()));
-                    return new ResponseVO(2,"账号已存在",json);
+                    List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userPO.getId()));
+                    userVO.setPhotograph(photographList);
+                    userVO.setToken(token);
+                    userVO.setIdentifier(userVO.getOpenid());
+                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                    return new ResponseApiVO(2,"账号已存在",userVO);
                 }
             }else{
-                return new ResponseVO(-2,"用户openid不能为空",null);
+                return new ResponseApiVO(-2,"用户openid不能为空",null);
             }
         }catch (Exception e){
             logger.error("UserController->save",e);
-            return new ResponseVO(-1,"提交失败",null);
+            return new ResponseApiVO(-1,"提交失败",null);
         }
     }
 
@@ -107,8 +104,8 @@ public class UserController {
     @ApiOperation(value = "会员相册上传用例")
     @PostMapping(value = "/uploadPhotograph/{token}",consumes = "multipart/*",headers = "content-type=multipart/form-data" )
     public ResponseVO uploadPhotograph( @PathVariable String token,
-                                @RequestParam(value = "id") @ApiParam(name = "id",value="会员id", required = true) String id,
-                                @RequestParam(value = "photograph") @ApiParam(name = "photograph",value="上传照片,支持多张", required = true) MultipartFile[]photograph){
+                                        @RequestParam(value = "id") @ApiParam(name = "id",value="会员id", required = true) String id,
+                                        @RequestParam(value = "photograph") @ApiParam(name = "photograph",value="上传照片,支持多张", required = true) MultipartFile[]photograph){
         try {
             if(StringUtils.isBlank(id) || photograph.length == 0){
                 return new ResponseVO(-2,"参数不正确",null);
