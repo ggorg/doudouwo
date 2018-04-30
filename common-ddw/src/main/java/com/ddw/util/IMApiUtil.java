@@ -103,6 +103,7 @@ public class IMApiUtil {
         }
     }
     private static String createSignParams(String identifier){
+        initDDWGlobls();
         tls_sigcheck ts=new tls_sigcheck();
         ts.setDdwGlobals(ddwGlobals);
         StringBuilder sb=new StringBuilder();

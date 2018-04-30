@@ -8,6 +8,7 @@ import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
+import com.tls.sigcheck.tls_sigcheck;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -33,6 +34,9 @@ public class UserController {
     @Autowired
     private RealNameReviewService realNameReviewService;
 
+    @Autowired
+    private tls_sigcheck ts;
+
     @ApiOperation(value = "会员注册用例")
    // @ApiImplicitParam(name = "args", value = "参数", required = true, dataType = "UserInfoDTO")
     @PostMapping("/save")
@@ -51,10 +55,14 @@ public class UserController {
                     List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userPO.getId()));
                     userVO.setPhotograph(photographList);
                     json.put("userInfo",userVO);
+                    json.put("identifier",userVO.getOpenid());
+                    json.put("userSign",ts.createSign(userVO.getOpenid()));
                     return new ResponseVO(1,"注册成功",json);
                 }else{
                     PropertyUtils.copyProperties(userVO,userPO);
                     json.put("userInfo",userVO);
+                    json.put("identifier",userVO.getOpenid());
+                    json.put("userSign",ts.createSign(userVO.getOpenid()));
                     return new ResponseVO(2,"账号已存在",json);
                 }
             }else{

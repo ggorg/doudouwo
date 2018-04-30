@@ -16,7 +16,18 @@ public class AppStoresShowNearbyVO {
     @ApiModelProperty(name="storeId",value="门店Id",example="1")
     private Integer id;
 
+    public String getImgUrl() {
+        return imgUrl;
+    }
 
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    @ApiModelProperty(name="imgUrl",value="门店照片",example="http://xxxxxxx")
+    private String imgUrl
+
+            ;
 
     public Integer getId() {
         return id;

@@ -4,8 +4,10 @@ import com.ddw.beans.PhotographPO;
 import com.ddw.beans.UserInfoDTO;
 import com.ddw.beans.UserInfoPO;
 import com.ddw.beans.UserInfoUpdateDTO;
+import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.config.MainGlobals;
+import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.ws.Response;
 import java.util.*;
 
 /**
@@ -44,7 +47,14 @@ public class UserInfoService extends CommonService {
         userInfoPO.setInviteCode("");
         userInfoPO.setCreateTime(new Date());
         userInfoPO.setUpdateTime(new Date());
-        return this.commonInsert("ddw_userinfo",userInfoPO);
+        ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
+        if(re.getReCode()==1){
+            boolean flag=IMApiUtil.importUser(userInfoPO,0);
+            if(!flag){
+                throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
+            }
+        }
+        return re;
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
