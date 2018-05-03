@@ -87,7 +87,7 @@
                         <td th:text="${obj['drProposerName']}">Trident</td>
                         <td th:text="${obj['createTime']==null?'':#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessStatusEnum',obj['drBusinessStatus'])}"></td>
-                        <td th:text="${obj['drReviewer']}">Trident</td>
+                        <td th:text="${obj['drReviewerName']}">Trident</td>
                         <td th:text="${obj['updateTime']==null?'':#dates.format(obj['updateTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.ReviewStatusEnum',obj['drReviewStatus'])}"></td>
 
@@ -95,6 +95,9 @@
                         <td class="center">
                             <div class="layui-btn-group">
                             <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'580px\',\'查看\',\'/manager/review/to-review-info-by-id-html?id='+${obj['id']}+'\')'"  >查 看</button>
+                                <th:block th:utext="${#toolsddw.commonReviewBtn(obj['drBusinessCode'],obj['drReviewStatus'])}"></th:block>
+
+                            </div>
                             </div>
                         </td>
                     </tr>

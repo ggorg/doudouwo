@@ -74,7 +74,8 @@ public class TokenUtil {
             token=new String(Base64Utils.decodeFromString(base64Token.replace("-","+").replace("_","/")));
 
         }catch (Exception e){
-            logger.error("getBaseToken",e);
+            logger.error("token异常-》getBaseToken："+base64Token);
+
         }
         return token;
     }

@@ -11,6 +11,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -371,4 +372,5 @@ public class Tools {
 	public static <T>T getBean(Class<T> clazz){
 		return getWebapplication().getBean(clazz);
 	}
+
 }

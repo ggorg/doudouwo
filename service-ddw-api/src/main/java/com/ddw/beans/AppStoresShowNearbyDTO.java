@@ -28,7 +28,7 @@ public class AppStoresShowNearbyDTO {
     private Integer pageNo;
 
     public Integer getPageNo() {
-        return pageNo;
+        return pageNo==null?1:pageNo;
     }
 
     public void setPageNo(Integer pageNo) {

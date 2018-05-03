@@ -16,7 +16,7 @@
 
   <form class="layui-form" >
   <div class="layui-form-pane">
-    <input type="hidden" name="orderNo" th:value="${#httpServletRequest.getParameter('orderNo')}"/>
+    <input type="hidden" name="businessCode" th:value="${#httpServletRequest.getParameter('businessCode')}"/>
     <input type="hidden" name="id" th:value="${review?.id}"/>
 
     <div class="layui-form-item layui-form-text mystyle2">
@@ -113,7 +113,7 @@
   </div>
   </form>
   <script type="text/javascript">
-      initForm("do-review-exitback",".layui-form")
+      initForm("do-review-by-hq",".layui-form")
 
 
   </script>

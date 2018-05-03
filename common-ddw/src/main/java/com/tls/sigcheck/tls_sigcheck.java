@@ -145,8 +145,7 @@ public class tls_sigcheck {
 
         try {
             loadJniLib();
-            URI keyuri=tls_sigcheck.class.getClassLoader().getResource(LiveRadioConstant.PRIVATE_KEY_CLASS_PATH).toURI();
-            String keycontent= FileUtils.readFileToString(new File(keyuri));
+            String keycontent= FileUtils.readFileToString(new File(ddwGlobals.getPrivateKeypath()));
             int n= tls_gen_signature_ex2(LiveRadioConstant.SDK_API,identifier,keycontent);
                 if(n==0){
                 return getSig();

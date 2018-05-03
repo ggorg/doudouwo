@@ -20,6 +20,15 @@ public class LiveRadioPO {
     private String userName;
     private Integer maxGroupNum;
     private String businessCode;
+    private Date updateTime;
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public String getBusinessCode() {
         return businessCode;

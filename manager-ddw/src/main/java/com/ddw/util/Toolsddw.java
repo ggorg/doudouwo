@@ -1,12 +1,14 @@
 package com.ddw.util;
 
 import com.ddw.beans.OrderMaterialPO;
+import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
-import com.ddw.enums.PayStatusEnum;
-import com.ddw.enums.ReviewStatusEnum;
-import com.ddw.enums.ShipStatusEnum;
+import com.ddw.beans.StorePO;
+import com.ddw.enums.*;
 import com.ddw.servies.OrderService;
 import com.ddw.servies.ReviewService;
+import com.ddw.servies.RoleService;
+import com.ddw.servies.StoreService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.Tools;
@@ -21,6 +23,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -95,10 +98,10 @@ public class Toolsddw extends Tools {
                 ReviewService rs=getBean(ReviewService.class);
                 ReviewPO rpo=rs.getReviewByBusinessCode(orderNo);
                 if(rpo.getDrReviewStatus()== ReviewStatusEnum.ReviewStatus0.getCode()){
-                    btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('650px','580px','退还受理','/manager/review/to-review-exitback-html?orderNo="+MyEncryptUtil.encry(orderNo)+"')\">退换受理</button>");
+                    btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('650px','580px','退还受理','/manager/review/to-review-by-hq-html?businessCode="+MyEncryptUtil.encry(orderNo)+"')\">退换受理</button>");
 
                 }else{
-                    btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('500px','580px','审批情况','/manager/review/to-review-info-html?orderNo="+MyEncryptUtil.encry(orderNo)+"')\">审批情况</button>");
+                    btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('500px','580px','审批情况','/manager/review/to-review-info-html?businessCode="+MyEncryptUtil.encry(orderNo)+"')\">审批情况</button>");
 
                 }
 
@@ -132,7 +135,7 @@ public class Toolsddw extends Tools {
             try {
                 ReviewService rs=getBean(ReviewService.class);
                 ReviewPO rpo=rs.getReviewByBusinessCode(orderNo);
-                btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('500px','580px','审批情况','/manager/review/to-review-info-html?orderNo="+MyEncryptUtil.encry(orderNo)+"')\">审批情况</button>");
+                btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('500px','580px','审批情况','/manager/review/to-review-info-html?businessCode="+MyEncryptUtil.encry(orderNo)+"')\">审批情况</button>");
                 if(rpo.getDrReviewStatus()== ReviewStatusEnum.ReviewStatus1.getCode()){
                     btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('500px','270px','填写寄件信息','/manager/order/to-order-exit-back-edit-mail-html?orderNo="+MyEncryptUtil.encry(orderNo)+"')\">填写寄件信息</button>");
 
@@ -147,6 +150,29 @@ public class Toolsddw extends Tools {
             }
         }
         return btnBuilder.toString();
+    }
+    public static String commonReviewBtn(String businessCode,Integer reviewStatus){
+        try {
+            StringBuilder builder=new StringBuilder();
+            StorePO spo=getWebapplication().getBean(StoreService.class).getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
+                if(spo!=null){
+                    //                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'580px\',\'审批处理\',\'/manager/review/to-review-by-hq-html??id='+${obj['id']}+'\')'"  >去审批</button>
+                    builder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('650px','580px','审批处理','/manager/review/to-review-by-store-html?businessCode="+MyEncryptUtil.encry(businessCode)+"')\">去审批</button>");
+
+                }else{
+                    List roleList=getWebapplication().getBean(RoleService.class).getRoleByUserId(Toolsddw.getCurrentUserId(), RoleTypeEnum.RoleType1_0.getCode());
+                    if(roleList!=null && roleList.size()>0){
+                        builder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('650px','580px','审批处理','/manager/review/to-review-by-hq-html?businessCode="+MyEncryptUtil.encry(businessCode)+"')\">去审批</button>");
+                    }
+                }
+                return builder.toString();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "";
     }
     public static Integer getPrestoreByM(Integer mid){
        WebApplicationContext wa= getWebapplication();

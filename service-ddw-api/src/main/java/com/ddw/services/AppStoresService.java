@@ -3,6 +3,7 @@ package com.ddw.services;
 import com.alibaba.druid.sql.PagerUtils;
 import com.ddw.beans.AppStoresShowNearbyDTO;
 import com.ddw.beans.AppStoresShowNearbyVO;
+import com.ddw.beans.ListVO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.util.Distance;
 import com.ddw.util.LanglatComparator;
@@ -65,8 +66,8 @@ public class AppStoresService extends CommonService {
 
             data.clear();
             filterList.clear();
-            return new ResponseApiVO(1,"成功",objData);
+            return new ResponseApiVO(1,"成功",new ListVO(objData));
         }
-    return new ResponseApiVO(1,"成功",null);
+    return new ResponseApiVO(1,"成功",new ListVO(new ArrayList()));
     }
 }

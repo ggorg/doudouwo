@@ -1,11 +1,17 @@
 package com.ddw.services;
 
+import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
+import com.ddw.enums.ReviewCallBackEnum;
+import com.ddw.util.ReviewCallBackUtil;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +22,10 @@ import java.util.Map;
 
 @Component
 public class CommonReviewService extends CommonService {
+
+    @Autowired
+    private ReviewCallBackService reviewCallBackService;
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO insertReviewRecord(Map params)throws Exception{
         Map record=new HashMap(params);
@@ -39,10 +49,19 @@ public class CommonReviewService extends CommonService {
             if(resInsert.getReCode()!=1){
                 throw new GenException("插入审批记录表失败");
             }
+            ReviewCallBackBean rb=new ReviewCallBackBean();
+            rb.setBusinessCode(businessCode);
+            rb.setStoreId(rpo.getDrBelongToStoreId());
+            //回调处理
+            if(StringUtils.isNotBlank(ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()))){
+                ResponseVO callBackRes=(ResponseVO) ReviewCallBackUtil.invoke(reviewCallBackService, ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()), rb);
+
+            }
+
         }else {
             throw new GenException("审批失败");
         }
-        return new ResponseVO(1,"更新审批成功",null);
+        return new ResponseVO(1,"审批成功",null);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

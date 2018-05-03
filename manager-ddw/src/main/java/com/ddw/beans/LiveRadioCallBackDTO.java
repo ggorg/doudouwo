@@ -265,6 +265,30 @@ public class LiveRadioCallBackDTO {
                 ", sign='" + sign + '\'' +
                 ", event_type=" + event_type +
                 ", stream_id='" + stream_id + '\'' +
+                ", channel_id='" + channel_id + '\'' +
+                ", appname='" + appname + '\'' +
+                ", app='" + app + '\'' +
+                ", event_time=" + event_time +
+                ", sequence='" + sequence + '\'' +
+                ", node='" + node + '\'' +
+                ", user_ip='" + user_ip + '\'' +
+                ", errcode=" + errcode +
+                ", errmsg='" + errmsg + '\'' +
+                ", push_duration='" + push_duration + '\'' +
+                ", video_id='" + video_id + '\'' +
+                ", video_url='" + video_url + '\'' +
+                ", file_size='" + file_size + '\'' +
+                ", start_time=" + start_time +
+                ", end_time=" + end_time +
+                ", file_id='" + file_id + '\'' +
+                ", file_format='" + file_format + '\'' +
+                ", vod2Flag=" + vod2Flag +
+                ", record_file_id='" + record_file_id + '\'' +
+                ", duration=" + duration +
+                ", stream_param='" + stream_param + '\'' +
+                ", pic_url='" + pic_url + '\'' +
+                ", create_time=" + create_time +
+                ", pic_full_url='" + pic_full_url + '\'' +
                 '}';
     }
 }

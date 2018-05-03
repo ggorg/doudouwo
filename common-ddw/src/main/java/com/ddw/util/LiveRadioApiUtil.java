@@ -1,6 +1,8 @@
 package com.ddw.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.LiveRadioUrlBean;
+import com.gen.common.util.HttpUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -26,5 +28,25 @@ public class LiveRadioApiUtil {
         liveRadioUrlBean.setPushUrl(url.toString());
         liveRadioUrlBean.setStreamid(streamid);
         return liveRadioUrlBean;
+    }
+    public static boolean closeLoveRadio(String streamId){
+        String t=DateUtils.addHours(new Date(),12).getTime()/1000+"";
+        StringBuilder builder=new StringBuilder();
+        builder.append("http://fcgi.video.qcloud.com/common_access?");
+        builder.append("appid=").append(LiveRadioConstant.API_ID).append("&");
+        builder.append("interface=Live_Channel_SetStatus&");
+        builder.append("Param.s.channel_id=").append(streamId).append("&");
+        builder.append("Param.n.status=0&");
+        builder.append("t=").append(t).append("&");
+        builder.append("sign=").append(DigestUtils.md5Hex(LiveRadioConstant.API_KEY+t));
+        String str=HttpUtil.doGet(builder.toString());
+        if(str!=null){
+           JSONObject json= JSONObject.parseObject(str);
+           if(json.getInteger("ret")==0){
+               return true;
+           }
+        }
+        return false;
+
     }
 }

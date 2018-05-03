@@ -1,16 +1,20 @@
 package com.ddw.servies;
 
+import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
 import com.ddw.enums.*;
 import com.ddw.services.CommonReviewService;
+import com.ddw.services.ReviewCallBackService;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
+import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,6 +35,7 @@ public class ReviewService extends CommonService {
 
     @Autowired
     private CommonReviewService commonReviewService;
+
 
     public Page findPage(Integer pageNo,Map condtion)throws Exception{
         //condtion.put("dmStatus",dmStatus);
@@ -101,7 +106,7 @@ public class ReviewService extends CommonService {
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO editReivewFromHq(Integer id,Object businessCode,String drReviewDesc ,ReviewStatusEnum reviewStatus,ReviewBusinessTypeEnum businessType,Map userMap)throws Exception{
+    public ResponseVO editReivew(Integer id,Object businessCode,String drReviewDesc ,ReviewStatusEnum reviewStatus,ReviewBusinessTypeEnum businessType,Map userMap)throws Exception{
 
         Map params=new HashMap();
         params.put("drReviewDesc",drReviewDesc);
@@ -110,7 +115,9 @@ public class ReviewService extends CommonService {
         params.put("drBusinessType",businessType.getCode());
         params.put("drReviewer", (Integer)userMap.get("id"));
         params.put("drReviewerName", (String)userMap.get("uNickName"));
+
         return this.commonReviewService.submitReview(params,id,businessCode.toString());
+
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

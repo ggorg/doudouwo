@@ -92,11 +92,10 @@
                         <td th:text="${obj['createTime']==null?'':#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm:ss')}">Trident</td>
 
                         <td class="center">
-                            <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >停 用</button>
+                            <button  th:if="${obj['liveStatus'] ==2}" class="layui-btn layui-btn-sm layui-btn-disabled" >已禁用</button>
 
+                            <button  th:if="${obj['liveStatus'] <2}" class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'toStop(\''+${#TdTool.encrypt(obj['streamid'])}+'\')'">禁　用</button>
 
-                            </div>
                         </td>
                     </tr>
 
@@ -111,10 +110,10 @@
     </div>
     <script type="text/javascript">
 
-        function toStop(orderNo){
-            layer.confirm("是否发起取消订单？", {icon: 2, title:'提示'}, function(index){
+        function toStop(streamId){
+            layer.confirm("是否禁用直播房间？", {icon: 2, title:'提示'}, function(index){
                 if(index>0){
-                    jQueryCommonSubmit("do-cancel-order",null,{orderNo,orderNo});
+                    jQueryCommonSubmit("do-close-live-radio",null,{streamId,streamId});
 
                 }
                 //layer.close(index);

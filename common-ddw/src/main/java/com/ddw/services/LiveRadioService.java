@@ -6,7 +6,9 @@ import com.ddw.beans.LiveRadioPO;
 import com.ddw.beans.LiveRadioUrlBean;
 import com.ddw.beans.ReviewPO;
 import com.ddw.beans.UserInfoPO;
+import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.enums.LiveStatusEnum;
+import com.ddw.enums.ReviewStatusEnum;
 import com.ddw.util.IMApiUtil;
 import com.ddw.util.LiveRadioApiUtil;
 import com.ddw.util.LiveRadioConstant;
@@ -56,6 +58,24 @@ public class LiveRadioService extends CommonService{
         return this.commonOptimisticLockUpdateByByParam("ddw_live_radio_space",param,condition,"version");
 
     }
+    public ResponseVO handleLiveRadioStatus(String streamId,Integer eventType)throws Exception{
+        if(StringUtils.isNotBlank(streamId) && eventType!=null && StringUtils.isNotBlank(LiveEventTypeEnum.getName(eventType))){
+            if(LiveEventTypeEnum.eventType0.getCode().equals(eventType)){
+                ResponseVO res=this.updateLiveRadioStatus(streamId,LiveStatusEnum.liveStatus2);
+                if(res.getReCode()==1){
+                    boolean flag=IMApiUtil.destoryGroup(streamId.replace(LiveRadioConstant.BIZID+"_",""));
+                    if(flag){
+                        return new ResponseVO(1,"关闭直播成功",null);
+                    }else{
+                        return new ResponseVO(-2,"关闭直播失败",null);
+                    }
+                }
+            }else if(LiveEventTypeEnum.eventType1.getCode().equals(eventType)){
+                return this.updateLiveRadioStatus(streamId,LiveStatusEnum.liveStatus1);
+            }
+        }
+        return new ResponseVO(-2,"更新直播状态失败",null);
+    }
     /*public ResponseVO addPersonNum(String groupId){
         this.ad
     }
@@ -71,6 +91,9 @@ public class LiveRadioService extends CommonService{
         ReviewPO reviewPO=this.commonObjectBySingleParam("ddw_review","drBusinessCode",liveRadioBusinessCode, ReviewPO.class);
         if(reviewPO==null){
             return new ResponseVO(-2,"创建直播间失败",null);
+        }
+        if(!ReviewStatusEnum.ReviewStatus1.getCode().equals(reviewPO.getDrReviewStatus())){
+            return new ResponseVO(-2,"没有审批通过",null);
         }
         String streamIdExt=storeId+"_"+reviewPO.getDrProposer()+"_"+ DateFormatUtils.format(date,"yyMMddHHmmss");
         //创建推流拉流地址
@@ -92,6 +115,7 @@ public class LiveRadioService extends CommonService{
         LiveRadioPO liveRadioPO=new LiveRadioPO();
         PropertyUtils.copyProperties(liveRadioPO,liveRadioUrlBean);
         liveRadioPO.setCreateTime(new Date());
+        liveRadioPO.setUpdateTime(new Date());
         liveRadioPO.setEndDate(endDate);
         liveRadioPO.setLiveStatus(0);
         liveRadioPO.setSpaceName(spaceName);

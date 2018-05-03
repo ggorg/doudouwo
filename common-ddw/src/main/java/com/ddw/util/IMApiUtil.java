@@ -69,6 +69,15 @@ public class IMApiUtil {
        return  HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(map));
 
     }
+    public static boolean destoryGroup(String groupId){
+        Map param=new HashMap();
+        param.put("GroupId",groupId);
+        StringBuilder sb=new StringBuilder();
+        sb.append(baseUri);
+        sb.append("/group_open_http_svc/destroy_group");
+        sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
+        return for5Sends(sb,param);
+    }
     public static boolean importUser(UserInfoPO userInfoPO,Integer imUserType){
         Map param=new HashMap();
         param.put("Identifier",userInfoPO.getOpenid());
@@ -80,6 +89,12 @@ public class IMApiUtil {
         sb.append(baseUri);
         sb.append("/im_open_login_svc/account_import");
         sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
+
+       return for5Sends(sb,param);
+
+
+    }
+    private static boolean  for5Sends(StringBuilder sb,Map param){
         String callBack=null;
         for(int i=0;i<5;i++){
             callBack=HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(param));
@@ -93,9 +108,7 @@ public class IMApiUtil {
                 }
             }
         }
-
-    return false;
-
+        return false;
     }
     private static void initDDWGlobls(){
         if(ddwGlobals==null){

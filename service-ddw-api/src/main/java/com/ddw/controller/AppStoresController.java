@@ -29,7 +29,7 @@ public class AppStoresController {
     @PostMapping("/show-nearby-stores/{token}")
     @ApiOperation(value = "定位展示门店",produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseApiVO<PageVO<AppStoresShowNearbyVO>> showNearbyStores(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)AppStoresShowNearbyDTO args){
+    public ResponseApiVO<ListVO<AppStoresShowNearbyVO>> showNearbyStores(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)AppStoresShowNearbyDTO args){
         try{
             return this.appStoresService.showNearby(args);
         }catch (Exception e){

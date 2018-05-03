@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -8,9 +9,11 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel
 public class AppStoresShowNearbyVO {
+
     @ApiModelProperty(name="name",value="门店名称",example="xxx门店")
+    @JsonProperty("name")
     private String dsName;
-    @ApiModelProperty(name="distance",value="距离，单位：米",example="1001")
+    @ApiModelProperty(name="distance",value="距离，单位：千米",example="1001.1km")
     private String distance;
 
     @ApiModelProperty(name="storeId",value="门店Id",example="1")

@@ -50,11 +50,15 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
 
                    String base64Token=map.get("token");
                     logger.info("base64Token:"+base64Token);
-                   String baseToken=TokenUtil.getBaseToken(base64Token);
                    if(base64Token==null){
                        toWriteResponseVo(response,-1000,"token异常");
                        return false;
                    }
+                    String baseToken=TokenUtil.getBaseToken(base64Token);
+                    if(baseToken==null){
+                        toWriteResponseVo(response,-1000,"token异常");
+                        return false;
+                    }
                     logger.info("baseToken:"+baseToken);
                     if(!TokenUtil.validToken(baseToken)){
                         toWriteResponseVo(response,-1000,"token异常");

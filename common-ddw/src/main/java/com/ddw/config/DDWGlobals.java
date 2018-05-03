@@ -9,6 +9,16 @@ public class DDWGlobals {
     @Value("${im.tls.sigcheck.lib.path}")
     private String libpath;
 
+    @Value("${im.tls.sigcheck.lib.privatekey.path}")
+    private String privateKeypath;
+
+    public String getPrivateKeypath() {
+        return privateKeypath;
+    }
+
+    public void setPrivateKeypath(String privateKeypath) {
+        this.privateKeypath = privateKeypath;
+    }
 
     public String getLibpath() {
         return libpath;
