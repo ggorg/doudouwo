@@ -5,8 +5,9 @@ import java.util.Date;
 /**
  * Created by Jacky on 2018/4/29.
  */
-public class RealNameReviewPO {
+public class ReviewRealNamePO {
     private Integer id;
+    private String drBusinessCode;
     private Integer userId;
     private String realName;
     private String idcard;
@@ -17,7 +18,6 @@ public class RealNameReviewPO {
     private String describe;
     private Date createTime;
     private Date updateTime;
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -104,5 +104,13 @@ public class RealNameReviewPO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getDrBusinessCode() {
+        return drBusinessCode;
+    }
+
+    public void setDrBusinessCode(String drBusinessCode) {
+        this.drBusinessCode = drBusinessCode;
     }
 }
