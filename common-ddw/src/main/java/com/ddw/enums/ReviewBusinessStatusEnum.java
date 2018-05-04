@@ -10,6 +10,7 @@ public enum ReviewBusinessStatusEnum implements Dictionary {
     orderStatus6("取消订单",6),
     orderStatus4("退还",4),
     liveRadio10("申请直播",10),
+    realName11("实名认证申请",11),
     goddessFlag2("申请当女神",2),
     practiceFlag5("申请代练",5);
     private String name;
