@@ -2,13 +2,17 @@ package com.ddw.controller;
 
 import com.ddw.beans.IMCallBackDTO;
 import com.ddw.beans.LiveRadioCallBackDTO;
+import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.services.LiveRadioService;
+import com.gen.common.services.CacheService;
 import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("/manager")
@@ -18,6 +22,9 @@ public class CallBackController {
 
     @Autowired
     private LiveRadioService liveRadioService;
+
+    @Autowired
+    private CacheService cacheService;
     /**
      1	recv rtmp deleteStream	主播端主动断流
      2	recv rtmp closeStream	主播端主动断流
@@ -35,7 +42,15 @@ public class CallBackController {
         try {
             System.out.println(dto);
             ResponseVO responseVO=this.liveRadioService.handleLiveRadioStatus(dto.getStream_id(),dto.getEvent_type());
+
             if(responseVO.getReCode()==1){
+                if(dto.getEvent_type().equals(LiveEventTypeEnum.eventType0.getCode())){
+                    Map<String,Integer> map=(Map<String,Integer>)cacheService.get("backRoom");
+                    if(map.containsKey(dto.getStream_id())){
+                        map.remove(dto.getStream_id());
+                        cacheService.set("backRoom",map);
+                    }
+                }
                 return "{ \"code\":0 }";
             }
         }catch (Exception e){

@@ -49,4 +49,27 @@ public class LiveRadioApiUtil {
         return false;
 
     }
+    public static boolean isActLiveRoom(String streamId){
+        //http://fcgi.video.qcloud.com/common_access
+        String t=DateUtils.addHours(new Date(),12).getTime()/1000+"";
+        StringBuilder builder=new StringBuilder();
+        builder.append("http://fcgi.video.qcloud.com/common_access?");
+        builder.append("appid=").append(LiveRadioConstant.API_ID).append("&");
+        builder.append("interface=Live_Channel_GetStatus&");
+        builder.append("Param.s.channel_id=").append(streamId).append("&");
+        builder.append("t=").append(t).append("&");
+        builder.append("sign=").append(DigestUtils.md5Hex(LiveRadioConstant.API_KEY+t));
+        String str=HttpUtil.doGet(builder.toString());
+        if(str!=null){
+            JSONObject json= JSONObject.parseObject(str);
+            if(json.getInteger("ret")==20601){
+              return false;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        isActLiveRoom("23115_1_8_1805040133649");
+    }
 }

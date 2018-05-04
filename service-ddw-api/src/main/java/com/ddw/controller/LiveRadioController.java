@@ -1,16 +1,14 @@
 package com.ddw.controller;
 
-import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.*;
 import com.ddw.services.LiveRadioClientService;
 import com.ddw.services.ReviewService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,4 +67,29 @@ public class LiveRadioController {
 
         }
     }
+    @Token
+    @ApiOperation(value = "获取女神直播列表",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/queryLiveRadioList/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<LiveRadioListVO>> toLiveRadioList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+        try {
+            return this.liveRadioClientService.getLiveRadioListByStore(args.getPageNo(),TokenUtil.getStoreIdObject(token));
+        }catch (Exception e){
+            logger.error("LiveRadioController->toLiveRadioList",e);
+            return new ResponseApiVO(-1,"获取直播列表失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "选择直播房间",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/selectLiveRadioRoom/{token}")
+    @ResponseBody
+    public ResponseApiVO<SelectLiveRadioVO> selectLiveRadioRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
+        try {
+            return this.liveRadioClientService.selectLiveRadio(args,TokenUtil.getStoreIdObject(token));
+        }catch (Exception e){
+            logger.error("LiveRadioController->toLiveRadioList",e);
+            return new ResponseApiVO(-1,"选择直播房间",null);
+        }
+    }
+
 }
