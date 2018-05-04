@@ -62,7 +62,7 @@ public class ReviewRealNameService extends CommonService {
             reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
             reviewPO.setDrProposer(Integer.valueOf(userId));
             reviewPO.setDrApplyDesc("申请实名认证");
-            reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.liveRadio10.getCode());
+            reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.realName11.getCode());
             ResponseApiVO responseApiVO = new ResponseApiVO(this.commonReviewService.submitAppl(reviewPO));
             if(responseApiVO.getReCode()>0){
                 ReviewRealNamePO reviewRealNamePO = new ReviewRealNamePO();
