@@ -9,7 +9,7 @@ public class SelectLiveRadioVO {
     @ApiModelProperty(name="pullUrl",value="播放地址",example="rtmp://xxxx")
     public String pullUrl;
 
-    @ApiModelProperty(name="groupId",value="聊天群组",example="rtmp://xxxx")
+    @ApiModelProperty(name="groupId",value="聊天群组",example="xxxxxxg")
     public String groupId;
 
     public String getPullUrl() {

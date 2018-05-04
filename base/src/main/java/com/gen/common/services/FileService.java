@@ -19,7 +19,7 @@ public class FileService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO saveFile(CommonBeanFiles file){
 
-        return this.commonInsert("basefiles",file);
+        return this.commonInsert("base_files",file);
     }
     public CommonBeanFiles createCommonBeanFiles(FileInfoVo vo){
         CommonBeanFiles file=new CommonBeanFiles();

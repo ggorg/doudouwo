@@ -41,13 +41,13 @@ public class SysManagerService extends CommonService {
             condition.put("uName,like",uName+"%");
         }
 
-        return this.commonPage("baseUser","createTime desc",pageNum,10,condition);
+        return this.commonPage("base_user","createTime desc",pageNum,10,condition);
     }
     public List getAllUser(){
-        return this.commonList("baseUser","createTime desc",null,null,new HashMap<>());
+        return this.commonList("base_user","createTime desc",null,null,new HashMap<>());
     }
     public SysUserBean getUserById(Integer uid)throws Exception{
-        Map map=this.commonObjectBySingleParam("baseUser","id",uid);
+        Map map=this.commonObjectBySingleParam("base_user","id",uid);
         SysUserBean userBean=new SysUserBean();
         if(map!=null){
 
@@ -60,7 +60,7 @@ public class SysManagerService extends CommonService {
         }
 
         return userBean;
-        //return this.commonObjectBySingleParam("baseUser","id",uid,SysUserBean.class);
+        //return this.commonObjectBySingleParam("base_User","id",uid,SysUserBean.class);
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -68,7 +68,7 @@ public class SysManagerService extends CommonService {
 
         Map setParams=new HashMap();
         setParams.put("disabled",sysUserBean.getDisabled());
-       return this.commonUpdateBySingleSearchParam("baseUser",setParams,"id",sysUserBean.getId());
+       return this.commonUpdateBySingleSearchParam("base_user",setParams,"id",sysUserBean.getId());
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -98,7 +98,7 @@ public class SysManagerService extends CommonService {
             }
             Map params=new HashMap();
             params.put("uPassword",newPwd);
-            return this.commonUpdateBySingleSearchParam("baseUser",params,"id",uid);
+            return this.commonUpdateBySingleSearchParam("base_user",params,"id",uid);
         }
         vo.setReCode(-2);
         vo.setReMsg("修改失败");
@@ -124,7 +124,7 @@ public class SysManagerService extends CommonService {
         }
         Map params= BeanToMapUtil.beanToMap(sysUserBean);
         params.put("updateTime",new Date());
-        Map map= this.commonObjectBySingleParam("baseUser","uName",sysUserBean.getuName());
+        Map map= this.commonObjectBySingleParam("base_user","uName",sysUserBean.getuName());
         if(sysUserBean.getId()!=null && sysUserBean.getId()>0){
 
            if(map!=null && (Integer)map.get("id")!=sysUserBean.getId()){
@@ -133,7 +133,7 @@ public class SysManagerService extends CommonService {
                return vo;
            }
             params.remove("disabled");
-            return this.commonUpdateBySingleSearchParam("baseUser",params,"id",sysUserBean.getId());
+            return this.commonUpdateBySingleSearchParam("base_user",params,"id",sysUserBean.getId());
         }else{
             params.put("createTime",new Date());
 
@@ -143,7 +143,7 @@ public class SysManagerService extends CommonService {
                vo.setReMsg("用户已经存在，请换一个");
                return vo;
            }
-            return this.commonInsertMap("baseUser",params);
+            return this.commonInsertMap("base_user",params);
         }
         }
 
@@ -153,7 +153,7 @@ public class SysManagerService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO saveRole(SysRoleBean sysRoleBean, Integer[] uIds){
-        String roleTable="baseRole";
+        String roleTable="base_role";
         ResponseVO vo=new ResponseVO();
         if(StringUtils.isBlank(sysRoleBean.getrName())){
             vo.setReCode(-2);
@@ -172,7 +172,7 @@ public class SysManagerService extends CommonService {
 
             vo=this.commonUpdateBySingleSearchParam(roleTable,roleMap,"id",sysRoleBean.getId());
             vo.setData(sysRoleBean.getId());
-            this.commonDelete("baseUserRole","rId",sysRoleBean.getId());
+            this.commonDelete("base_user_role","rId",sysRoleBean.getId());
             vo.setReMsg("修改角色成功");
         }else{
             roleMap.put("createTime",new Date());
@@ -188,7 +188,7 @@ public class SysManagerService extends CommonService {
                     ur=new SysUserRoleBean();
                     ur.setrId((Integer) vo.getData());
                     ur.setuId(uid);
-                    this.commonInsert("baseUserRole",ur);
+                    this.commonInsert("base_user_role",ur);
                 }
             }
 
@@ -200,9 +200,9 @@ public class SysManagerService extends CommonService {
 
     public Map getRoleById(Integer rId)throws Exception{
         Map data=new HashMap();
-        data.put("roleObject",this.commonObjectBySingleParam("baseRole","id",rId,SysRoleBean.class));
+        data.put("roleObject",this.commonObjectBySingleParam("base_role","id",rId,SysRoleBean.class));
         List<Map> list=getAllUser();
-        List<Map> urList=this.commonObjectsBySingleParam("baseUserRole","rId",rId);
+        List<Map> urList=this.commonObjectsBySingleParam("base_user_role","rId",rId);
         Integer userId=null;
         Integer ur_uid=null;
         if(list!=null && !list.isEmpty()){
@@ -224,14 +224,14 @@ public class SysManagerService extends CommonService {
     }
     public Page getRolePage(Integer pageNum)throws Exception{
 
-        return this.commonPage("baseRole","createTime desc",pageNum,10,new HashMap<String,Object>());
+        return this.commonPage("base_role","createTime desc",pageNum,10,new HashMap<String,Object>());
     }
     public SysMenuBean getMenuById(Integer mId)throws Exception{
-       return  this.commonObjectBySingleParam("baseMenu","id",mId,SysMenuBean.class);
+       return  this.commonObjectBySingleParam("base_menu","id",mId,SysMenuBean.class);
     }
     public Page getMenuPage(Integer pageNum)throws Exception{
 
-        return this.commonPage("baseMenu","mSort asc",pageNum,10,new HashMap<String,Object>());
+        return this.commonPage("base_menu","mSort asc",pageNum,10,new HashMap<String,Object>());
     }
     public TreeSet getMenuPage()throws Exception{
 
@@ -254,7 +254,7 @@ public class SysManagerService extends CommonService {
             if(sysMenuBean.getmParentId()==null || sysMenuBean.getmParentId()==0){
                 sysMenuBean.setmParentId(-1);
             }else if(sysMenuBean.getmParentId()!=-1){
-                long num=this.commonCountBySingleParam("baseMenu","id",sysMenuBean.getmParentId());
+                long num=this.commonCountBySingleParam("base_menu","id",sysMenuBean.getmParentId());
                 if(num==0){
                     vo.setReCode(-2);
                     vo.setReMsg("上级菜单ID【"+sysMenuBean.getmParentId()+"】不存在");
@@ -267,11 +267,11 @@ public class SysManagerService extends CommonService {
             Map params= BeanToMapUtil.beanToMap(sysMenuBean);
             params.put("updateTime",new Date());
             if(sysMenuBean.getId()!=null && sysMenuBean.getId()>0){
-                vo=this.commonUpdateBySingleSearchParam("baseMenu",params,"id",sysMenuBean.getId());;
+                vo=this.commonUpdateBySingleSearchParam("base_menu",params,"id",sysMenuBean.getId());;
 
             }else{
                 params.put("createTime",new Date());
-                vo=this.commonInsertMap("baseMenu",params);
+                vo=this.commonInsertMap("base_menu",params);
             }
             return vo;
         }finally {
@@ -288,14 +288,14 @@ public class SysManagerService extends CommonService {
     }
     @Cacheable(value="allMenu",key="'all'")
     public List getAllMenu(){
-        return this.commonList("baseMenu","mSort asc",null,null,new HashMap<>());
+        return this.commonList("base_menu","mSort asc",null,null,new HashMap<>());
     }
     public SysRoleMenuBean getPower(Integer rId)throws Exception{
-        return this.commonObjectBySingleParam("baseRoleMenus","rId",rId,SysRoleMenuBean.class);
+        return this.commonObjectBySingleParam("base_role_menus","rId",rId,SysRoleMenuBean.class);
 
     }
     public TreeSet handlePower(Integer rId)throws Exception{
-        List menuList=this.commonList("baseMenu","mSort asc",null,null,new HashMap<>());
+        List menuList=this.commonList("base_menu","mSort asc",null,null,new HashMap<>());
         CopyOnWriteArrayList<Map> linkeMenuList=new CopyOnWriteArrayList(menuList);
         TreeSet<Map> topMenus=new TreeSet(new MenuMapComparator());
         Integer mParentId=null;
@@ -303,7 +303,7 @@ public class SysManagerService extends CommonService {
         Integer childMid=null;
         List srm=null;
         if(rId!=null){
-            srm=this.commonObjectsBySingleParam("baseRoleMenus","rId",rId);
+            srm=this.commonObjectsBySingleParam("base_role_menus","rId",rId);
         }
 
 
@@ -363,19 +363,19 @@ public class SysManagerService extends CommonService {
             vo.setReMsg("请选择授权菜单");
             return vo;
         }
-        long count=this.commonCountBySingleParam("baseRole","id",rId);
+        long count=this.commonCountBySingleParam("base_role","id",rId);
         if(count==0){
             vo.setReCode(-2);
             vo.setReMsg("角色不存在");
             return vo;
         }
         SysRoleMenuBean srm=null;
-        this.commonDelete("baseRoleMenus","rId",rId);
+        this.commonDelete("base_role_menus","rId",rId);
         for(Integer mid:mIds){
             srm=new SysRoleMenuBean();
             srm.setrId(rId);
             srm.setmId(mid);
-            this.commonInsert("baseRoleMenus",srm);
+            this.commonInsert("base_role_menus",srm);
         }
 
         vo.setReCode(1);
@@ -399,7 +399,7 @@ public class SysManagerService extends CommonService {
         searchMap.put("uPassword",sysUserBean.getuPassword());
         //searchMap.put("disabled",false);
 
-        List list=this.commonList("baseUser",null,null,null,searchMap);
+        List list=this.commonList("base_user",null,null,null,searchMap);
         if(list!=null && !list.isEmpty()){
             Map user=(Map) list.get(0);
             if(user.containsKey("disabled")){
@@ -427,11 +427,11 @@ public class SysManagerService extends CommonService {
             return new ResponseVO(-2,"删除失败",null);
         }
         Integer rid=Integer.valueOf(ridValue);
-        int n=this.commonDelete("baseRole","id",rid);
+        int n=this.commonDelete("base_role","id",rid);
         if(n>0){
             this.resetPowerByRid(rid);
-            this.commonDelete("baseUserRole","rId",rid);
-            this.commonDelete("baseRoleMenus","rId",rid);
+            this.commonDelete("base_user_role","rId",rid);
+            this.commonDelete("base_role_menus","rId",rid);
         }else{
             return new ResponseVO(-2,"删除失败",null);
         }
@@ -444,18 +444,18 @@ public class SysManagerService extends CommonService {
             return new ResponseVO(-2,"删除失败",null);
         }
         Integer mid=Integer.valueOf(midValue);
-        int n=this.commonDelete("baseMenu","id",mid);
+        int n=this.commonDelete("base_menu","id",mid);
         if(n>0){
             this.resetPowerByMid(mid);
-            this.commonDelete("baseRoleMenus","mId",mid);
-            List<Map> parentList=this.commonObjectsBySingleParam("baseMenu","mParentId",mid);
+            this.commonDelete("base_role_menus","mId",mid);
+            List<Map> parentList=this.commonObjectsBySingleParam("base_menu","mParentId",mid);
             if(parentList!=null && parentList.size()>0){
                 for(Map pmap:parentList){
                     mid=(Integer)pmap.get("id");
-                    n=this.commonDelete("baseMenu","id",mid);
+                    n=this.commonDelete("base_menu","id",mid);
                     if(n>0){
                         this.resetPowerByMid(mid);
-                        this.commonDelete("baseRoleMenus","mId",mid);
+                        this.commonDelete("base_role_menus","mId",mid);
                     }
                 }
             }
@@ -508,7 +508,7 @@ public class SysManagerService extends CommonService {
     }*/
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public void resetPowerByRid(Integer rid)throws Exception{
-        List<Map> lur=this.commonObjectsBySingleParam("baseUserRole","rid",rid);
+        List<Map> lur=this.commonObjectsBySingleParam("base_user_role","rid",rid);
         if(lur!=null && lur.size()>0){
 
             Cache cache=cacheManager.getCache("commonCache");
