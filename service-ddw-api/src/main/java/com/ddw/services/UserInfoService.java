@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.ws.Response;
 import java.util.*;
 
 /**
@@ -60,16 +59,16 @@ public class UserInfoService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO update(UserInfoUpdateDTO userInfoUpdateDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
-        Map map = this.query(String.valueOf(userInfoUpdateDTO.getId()));
-        PropertyUtils.copyProperties(userInfoPO,map);
+        UserInfoPO user = this.query(String.valueOf(userInfoUpdateDTO.getId()));
+        PropertyUtils.copyProperties(userInfoPO,user);
         PropertyUtils.copyProperties(userInfoPO,userInfoUpdateDTO);
         userInfoPO.setUpdateTime(new Date());
         Map updatePoMap= BeanToMapUtil.beanToMap(userInfoPO);
         return this.commonUpdateBySingleSearchParam("ddw_userinfo",updatePoMap,"id",userInfoPO.getId());
     }
 
-    public Map query(String id)throws Exception{
-        return this.commonObjectBySingleParam("ddw_userinfo","id",id);
+    public UserInfoPO query(String id)throws Exception{
+        return this.commonObjectBySingleParam("ddw_userinfo","id",id,new UserInfoPO().getClass());
     }
 
     public UserInfoPO queryByOpenid(String openid)throws Exception{
