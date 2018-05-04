@@ -39,7 +39,7 @@ public class ReviewService extends CommonService {
 
     public Page findPage(Integer pageNo,Map condtion)throws Exception{
         //condtion.put("dmStatus",dmStatus);
-        return this.commonPage("ddw_review","updateTime desc",pageNo,10,condtion);
+        return this.commonPage("ddw_review","createTime desc",pageNo,10,condtion);
     }
 
     public Page findMaterialPageByHq(Integer pageNo)throws Exception{

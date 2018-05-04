@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -41,6 +42,13 @@ public class LiveRadioService extends CommonService{
         }
         return this.commonPage("ddw_live_radio_space","updateTime desc",pageNo,10,condtion);
     }
+
+    public List getAllActLiveRadio(){
+        Map condtion=new HashMap();
+        condtion.put("liveStatus,<",LiveStatusEnum.liveStatus2.getCode());
+        return this.commonList("ddw_live_radio_space",null,null,null,condtion);
+    }
+
     public LiveRadioPO getLiveRadio(Integer userid,Integer storeid)throws Exception{
 
         Map condtion=new HashMap();
@@ -48,6 +56,15 @@ public class LiveRadioService extends CommonService{
        // condtion.put("liveStatus", LiveStatusEnum.liveStatus0.getCode());
         condtion.put("endDate,>=", new Date());
        return  this.commonObjectBySearchCondition("ddw_live_radio_space",condtion, LiveRadioPO.class);
+    }
+
+    public LiveRadioPO getLiveRadioByIdAndStoreId(Integer id,Integer storeId)throws Exception{
+        Map condtion=new HashMap();
+        condtion.put("id",id);
+        condtion.put("liveStatus", LiveStatusEnum.liveStatus1.getCode());
+        condtion.put("endDate,>=", new Date());
+        condtion.put("storeid", storeId);
+        return  this.commonObjectBySearchCondition("ddw_live_radio_space",condtion, LiveRadioPO.class);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateLiveRadioStatus(String streamId,LiveStatusEnum liveStatusEnum)throws Exception{
