@@ -71,6 +71,28 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "会员资料查询用例")
+    @PostMapping("/query")
+    public ResponseApiVO<UserInfoVO> query(@PathVariable String token,
+                                           @RequestParam(value = "id") @ApiParam(name = "id",value="会员id", required = true) String id){
+        try {
+            if(!StringUtils.isBlank(id)){
+                UserInfoPO userPO = userInfoService.query(id);
+                UserInfoVO userVO = new UserInfoVO();
+                PropertyUtils.copyProperties(userVO,userPO);
+                userVO.setToken(token);
+                userVO.setIdentifier(userVO.getOpenid());
+                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                return new ResponseApiVO(1,"成功",userVO);
+            }else{
+                return new ResponseApiVO(-2,"用户id不能为空",null);
+            }
+        }catch (Exception e){
+            logger.error("UserController->query",e);
+            return new ResponseApiVO(-1,"提交失败",null);
+        }
+    }
+
     @Token
     @ApiOperation(value = "会员修改资料用例")
     @PostMapping("/update/{token}")
