@@ -2,7 +2,7 @@ package com.ddw.controller;
 
 
 import com.ddw.beans.*;
-import com.ddw.services.RealNameReviewService;
+import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
@@ -31,7 +31,7 @@ public class UserController {
     @Autowired
     private UserInfoService userInfoService;
     @Autowired
-    private RealNameReviewService realNameReviewService;
+    private ReviewRealNameService reviewRealNameService;
 
     @Autowired
     private tls_sigcheck ts;
@@ -72,7 +72,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "会员资料查询用例")
-    @PostMapping("/query")
+    @PostMapping("/query/{token}")
     public ResponseApiVO<UserInfoVO> query(@PathVariable String token,
                                            @RequestParam(value = "id") @ApiParam(name = "id",value="会员id", required = true) String id){
         try {
@@ -108,17 +108,17 @@ public class UserController {
     @Token
     @ApiOperation(value = "会员实名认证申请用例,是否需要实名认证可以通过用户资料的身份证是否为空判断")
     @PostMapping("/realName/{token}")
-    public ResponseVO realName( @PathVariable String token,
+    public ResponseApiVO realName( @PathVariable String token,
                                 @RequestParam(value = "id") @ApiParam(name = "id",value="会员id", required = true) String id,
                                 @RequestParam(value = "realName") @ApiParam(name = "realName",value="真实姓名", required = true) String realName,
                                 @RequestParam(value = "idcard") @ApiParam(name = "idcard",value="身份证", required = true) String idcard,
                                 @RequestParam(value = "idcardFront") @ApiParam(name = "idcardFront",value="身份证正面", required = true) MultipartFile idcardFront,
                                 @RequestParam(value = "idcardOpposite") @ApiParam(name = "idcardOpposite",value="身份证反面", required = true) MultipartFile idcardOpposite){
         try {
-            return realNameReviewService.realName(id,realName,idcard,idcardFront,idcardOpposite);
+            return reviewRealNameService.realName(id,realName,idcard,idcardFront,idcardOpposite);
         }catch (Exception e){
             logger.error("UserController->realName",e);
-            return new ResponseVO(-1,"提交失败",null);
+            return new ResponseApiVO(-1,"提交失败",null);
         }
     }
 
