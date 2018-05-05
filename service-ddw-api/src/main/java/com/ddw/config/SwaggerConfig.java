@@ -1,5 +1,6 @@
 package com.ddw.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -13,14 +14,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 public class SwaggerConfig {
 
+    @Value("${swagger.host:}")
+    private String host;
 
+    @Value("${swagger.serviceUrl:}")
+    private String serviceUrl;
 
 
     @Bean
-
     public Docket createRestApi() {
 
         return new Docket(DocumentationType.SWAGGER_2)
+                .host(host)
 
                 .apiInfo(apiInfo())
 
@@ -44,7 +49,7 @@ public class SwaggerConfig {
 
                 .description("逗逗窝API")
 
-                .termsOfServiceUrl("http://localhost:8833/")
+                .termsOfServiceUrl(serviceUrl)
 
                 .contact("drg")
 

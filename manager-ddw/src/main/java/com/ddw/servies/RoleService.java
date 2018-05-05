@@ -32,7 +32,7 @@ public class RoleService extends CommonService{
         }
         Map setParams=new HashMap();
         setParams.put("rType",roleType);
-        ResponseVO res=this.commonUpdateBySingleSearchParam("baserole",setParams,"id",Integer.parseInt(ridS));
+        ResponseVO res=this.commonUpdateBySingleSearchParam("base_role",setParams,"id",Integer.parseInt(ridS));
         if(res.getReCode()==1){
             CacheUtil.deleteByStartWith("commonCache","roleByUserId-");
         }
@@ -45,9 +45,9 @@ public class RoleService extends CommonService{
         condition.put("uid",userid);
         Map childCondition=new HashMap();
         childCondition.put("rType", roleType);
-        CommonSearchBean csb=new CommonSearchBean("baseuserrole",null,"ct0.*",null,null,condition,
-                new CommonChildBean("baserole","id","rId",childCondition),
-                new CommonChildBean("baseuser","id","uId",null));
+        CommonSearchBean csb=new CommonSearchBean("base_user_role",null,"ct0.*",null,null,condition,
+                new CommonChildBean("base_role","id","rId",childCondition),
+                new CommonChildBean("base_user","id","uId",null));
         List list=this.getCommonMapper().selectObjects(csb);
         return list;
     }

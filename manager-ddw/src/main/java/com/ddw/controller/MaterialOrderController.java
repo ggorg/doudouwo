@@ -275,7 +275,7 @@ public class MaterialOrderController {
             logger.error("MaterialOrderController->toOrderByStore",e);
 
         }
-        return "pages/manager/headquarters/orderlist";
+        return "pages/manager/headquarters/orderList";
     }
 
     /**
