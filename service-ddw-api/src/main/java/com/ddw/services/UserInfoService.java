@@ -6,6 +6,8 @@ import com.ddw.beans.UserInfoPO;
 import com.ddw.beans.UserInfoUpdateDTO;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
@@ -57,9 +59,9 @@ public class UserInfoService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO update(UserInfoUpdateDTO userInfoUpdateDTO)throws Exception{
+    public ResponseVO update(String openid,UserInfoUpdateDTO userInfoUpdateDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
-        UserInfoPO user = this.query(String.valueOf(userInfoUpdateDTO.getId()));
+        UserInfoPO user = this.queryByOpenid(openid);
         PropertyUtils.copyProperties(userInfoPO,user);
         PropertyUtils.copyProperties(userInfoPO,userInfoUpdateDTO);
         userInfoPO.setUpdateTime(new Date());
@@ -68,13 +70,41 @@ public class UserInfoService extends CommonService {
     }
 
     public UserInfoPO query(String id)throws Exception{
-        return this.commonObjectBySingleParam("ddw_userinfo","id",id,new UserInfoPO().getClass());
+//        return this.commonObjectBySingleParam("ddw_userinfo","id",id,new UserInfoPO().getClass());
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("id",id);
+
+        Map conditon=new HashMap();
+
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.*,ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel,ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",conditon),
+                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",conditon),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
+        List list=this.getCommonMapper().selectObjects(csb);
+        if(list!=null && list.size()>0){
+            UserInfoPO userInfoPO=new UserInfoPO();
+            PropertyUtils.copyProperties(userInfoPO,list.get(0));
+            return userInfoPO;
+        }
+        return null;
     }
 
     public UserInfoPO queryByOpenid(String openid)throws Exception{
+//        Map searchCondition = new HashMap<>();
+//        searchCondition.put("openid",openid);
+//        return this.commonObjectBySearchCondition("ddw_userinfo",searchCondition,new UserInfoPO().getClass());
         Map searchCondition = new HashMap<>();
         searchCondition.put("openid",openid);
-        return this.commonObjectBySearchCondition("ddw_userinfo",searchCondition,new UserInfoPO().getClass());
+
+        Map conditon=new HashMap();
+
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.*,ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel,ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",conditon),
+                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",conditon),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
+        List list=this.getCommonMapper().selectObjects(csb);
+        if(list!=null && list.size()>0){
+            UserInfoPO userInfoPO=new UserInfoPO();
+            PropertyUtils.copyProperties(userInfoPO,list.get(0));
+            return userInfoPO;
+        }
+        return null;
     }
 
     /**
@@ -120,5 +150,19 @@ public class UserInfoService extends CommonService {
         }else{
             return new ResponseVO(-1,"上传失败",null);
         }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO deletePhotograph(String photograph)throws Exception{
+        Map searchCondition = new HashMap<>();
+        StringBuffer sb = new StringBuffer();
+        for(String photo:photograph.split(",")){
+            sb = sb.append("'").append(photo).append("'").append(",");
+        }
+        if(sb.lastIndexOf(",")==sb.length()-1){
+            sb = sb.deleteCharAt(sb.length()-1);
+        }
+        searchCondition.put("id ","in ("+sb.toString()+")");
+        return this.commonDeleteByCombination("ddw_photograph",searchCondition);
     }
 }

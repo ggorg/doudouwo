@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value="会员修改资料用例",description="UserInfoUpdateDTO")
 public class UserInfoUpdateDTO {
-    @ApiModelProperty(name="id",value="主键",example="1")
-    private Integer id;
     @ApiModelProperty(name="userName",value="账号（微信、QQ登录时，为空）",example="某某某")
     private String userName;
     @ApiModelProperty(name="userPwd",value="密码（微信、QQ登录时，为空）",example="123456")
@@ -44,14 +42,6 @@ public class UserInfoUpdateDTO {
 
     public void setCity(String city) {
         this.city = city;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getLabel() {

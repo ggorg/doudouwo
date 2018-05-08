@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.UserInfoService;
@@ -51,7 +52,7 @@ public class UserController {
                     PropertyUtils.copyProperties(userVO,userPO);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
-                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+//                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     return new ResponseApiVO(1,"注册成功",userVO);
                 }else{
                     PropertyUtils.copyProperties(userVO,userPO);
@@ -59,7 +60,7 @@ public class UserController {
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
-                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+//                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     return new ResponseApiVO(2,"账号已存在",userVO);
                 }
             }else{
@@ -74,15 +75,15 @@ public class UserController {
     @ApiOperation(value = "会员资料查询用例")
     @PostMapping("/query/{token}")
     public ResponseApiVO<UserInfoVO> query(@PathVariable String token,
-                                           @RequestParam(value = "id") @ApiParam(name = "id",value="会员id", required = true) String id){
+                                           @RequestBody @ApiParam(name = "id",value="会员id,传入json格式,如:{\"id\":\"1\"}", required = true) JSONObject json){
         try {
-            if(!StringUtils.isBlank(id)){
-                UserInfoPO userPO = userInfoService.query(id);
+            if(!json.isEmpty()){
+                UserInfoPO userPO = userInfoService.query(json.getString("id"));
                 UserInfoVO userVO = new UserInfoVO();
                 PropertyUtils.copyProperties(userVO,userPO);
                 userVO.setToken(token);
                 userVO.setIdentifier(userVO.getOpenid());
-                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+//                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                 return new ResponseApiVO(1,"成功",userVO);
             }else{
                 return new ResponseApiVO(-2,"用户id不能为空",null);
@@ -98,7 +99,8 @@ public class UserController {
     @PostMapping("/update/{token}")
     public ResponseVO update( @PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserInfoUpdateDTO userInfoUpdateDTO){
         try {
-            return userInfoService.update(userInfoUpdateDTO);
+            String openid = TokenUtil.getUserObject(token).toString();
+            return userInfoService.update(openid,userInfoUpdateDTO);
         }catch (Exception e){
             logger.error("UserController->update",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -109,13 +111,14 @@ public class UserController {
     @ApiOperation(value = "会员实名认证申请用例,是否需要实名认证可以通过用户资料的身份证是否为空判断")
     @PostMapping("/realName/{token}")
     public ResponseApiVO realName( @PathVariable String token,
-                                @RequestParam(value = "id") @ApiParam(name = "id",value="会员id", required = true) String id,
                                 @RequestParam(value = "realName") @ApiParam(name = "realName",value="真实姓名", required = true) String realName,
                                 @RequestParam(value = "idcard") @ApiParam(name = "idcard",value="身份证", required = true) String idcard,
                                 @RequestParam(value = "idcardFront") @ApiParam(name = "idcardFront",value="身份证正面", required = true) MultipartFile idcardFront,
                                 @RequestParam(value = "idcardOpposite") @ApiParam(name = "idcardOpposite",value="身份证反面", required = true) MultipartFile idcardOpposite){
         try {
-            return reviewRealNameService.realName(id,realName,idcard,idcardFront,idcardOpposite);
+            String openid = TokenUtil.getUserObject(token).toString();
+            UserInfoPO user = userInfoService.queryByOpenid(openid);
+            return reviewRealNameService.realName(user.getId().toString(),realName,idcard,idcardFront,idcardOpposite);
         }catch (Exception e){
             logger.error("UserController->realName",e);
             return new ResponseApiVO(-1,"提交失败",null);
@@ -126,15 +129,29 @@ public class UserController {
     @ApiOperation(value = "会员相册上传用例")
     @PostMapping(value = "/uploadPhotograph/{token}",consumes = "multipart/*",headers = "content-type=multipart/form-data" )
     public ResponseVO uploadPhotograph( @PathVariable String token,
-                                        @RequestParam(value = "id") @ApiParam(name = "id",value="会员id", required = true) String id,
                                         @RequestParam(value = "photograph") @ApiParam(name = "photograph",value="上传照片,支持多张", required = true) MultipartFile[]photograph){
         try {
-            if(StringUtils.isBlank(id) || photograph.length == 0){
-                return new ResponseVO(-2,"参数不正确",null);
-            }
-            return userInfoService.uploadPhotograph(id,photograph);
+            String openid = TokenUtil.getUserObject(token).toString();
+            UserInfoPO user = userInfoService.queryByOpenid(openid);
+            return userInfoService.uploadPhotograph(user.getId().toString(),photograph);
         }catch (Exception e){
             logger.error("UserController->uploadPhotograph",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @ApiOperation(value = "删除会员相册用例")
+    @PostMapping("/deletePhotograph/{token}")
+    public ResponseVO deletePhotograph(@PathVariable String token,
+                                           @RequestBody @ApiParam(name = "photograph",value="相册id,传入json格式,如:{\"photograph\":\"1,2,3\"}", required = true) JSONObject json){
+        try {
+            if(!json.isEmpty() && json.containsKey("photograph")){
+                return userInfoService.deletePhotograph(json.getString("photograph"));
+            }else{
+                return new ResponseVO(-2,"photograph不能为空",null);
+            }
+        }catch (Exception e){
+            logger.error("UserController->query",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }

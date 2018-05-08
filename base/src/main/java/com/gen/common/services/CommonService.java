@@ -218,6 +218,19 @@ public abstract class CommonService {
         }
         return vo;
     }
+
+    protected ResponseVO commonDeleteByCombination(String tableName,Map<String,Object> searchCondition){
+        ResponseVO vo=new ResponseVO();
+        int n=this.commonMapper.deleteObjectCombination(new CommonDeleteBean(tableName,searchCondition));
+        if(n>0){
+            vo.setReCode(1);
+            vo.setReMsg("删除成功");
+        }else{
+            vo.setReCode(-2);
+            vo.setReMsg("删除失败");
+        }
+        return vo;
+    }
     protected CommonMapper getCommonMapper(){
         return this.commonMapper;
     }

@@ -11,7 +11,6 @@ public class UserInfoPO {
     private String nickName;
     private String headImgUrl;
     private String phone;
-    private Integer gradeId;
     private String inviteCode;
     private String label;
     private String starSign;
@@ -21,8 +20,15 @@ public class UserInfoPO {
     private String area;
     private Integer sex;
     private Integer registerType;
+    private Integer gradeId;
     private Integer goddessGradeId;
     private Integer practiceGradeId;
+    private String ugradeName;
+    private String ggradeName;
+    private String pgradeName;
+    private String ulevel;
+    private String glevel;
+    private String plevel;
     private String idcard;
     private String idcardFrontUrl;
     private String idcardOppositeUrl;
@@ -53,6 +59,22 @@ public class UserInfoPO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getGgradeName() {
+        return ggradeName;
+    }
+
+    public void setGgradeName(String ggradeName) {
+        this.ggradeName = ggradeName;
+    }
+
+    public String getGlevel() {
+        return glevel;
+    }
+
+    public void setGlevel(String glevel) {
+        this.glevel = glevel;
     }
 
     public Integer getGoddessFlag() {
@@ -151,12 +173,28 @@ public class UserInfoPO {
         this.openid = openid;
     }
 
+    public String getPgradeName() {
+        return pgradeName;
+    }
+
+    public void setPgradeName(String pgradeName) {
+        this.pgradeName = pgradeName;
+    }
+
     public String getPhone() {
         return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getPlevel() {
+        return plevel;
+    }
+
+    public void setPlevel(String plevel) {
+        this.plevel = plevel;
     }
 
     public Integer getPracticeFlag() {
@@ -221,6 +259,22 @@ public class UserInfoPO {
 
     public void setStarSign(String starSign) {
         this.starSign = starSign;
+    }
+
+    public String getUgradeName() {
+        return ugradeName;
+    }
+
+    public void setUgradeName(String ugradeName) {
+        this.ugradeName = ugradeName;
+    }
+
+    public String getUlevel() {
+        return ulevel;
+    }
+
+    public void setUlevel(String ulevel) {
+        this.ulevel = ulevel;
     }
 
     public Date getUpdateTime() {

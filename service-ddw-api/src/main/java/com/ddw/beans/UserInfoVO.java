@@ -33,12 +33,24 @@ public class UserInfoVO {
     private String city;
     @ApiModelProperty(name="area",value="用户所在地区",example="天河区")
     private String area;
-    @ApiModelProperty(name="gradeId",value="会员等级，关联ddw_grade表",example="1")
+    @ApiModelProperty(name="gradeId",value="会员等级编号，关联ddw_grade表",example="1")
     private Integer gradeId;
-    @ApiModelProperty(name="goddessGradeId",value="女神等级，关联ddw_goddess_grade表",example="1")
+    @ApiModelProperty(name="ugradeName",value="会员等级名称",example="青铜")
+    private String ugradeName;
+    @ApiModelProperty(name="ulevel",value="会员等级水平",example="VIP0")
+    private String ulevel;
+    @ApiModelProperty(name="goddessGradeId",value="女神等级编号，关联ddw_goddess_grade表",example="1")
     private Integer goddessGradeId;
-    @ApiModelProperty(name="practiceGradeId",value="代练等级，关联ddw_practice_grade表",example="1")
+    @ApiModelProperty(name="ggradeName",value="女神等级名称",example="青铜")
+    private String ggradeName;
+    @ApiModelProperty(name="glevel",value="女神等级水平",example="VIP0")
+    private String glevel;
+    @ApiModelProperty(name="practiceGradeId",value="代练等级编号，关联ddw_practice_grade表",example="1")
     private Integer practiceGradeId;
+    @ApiModelProperty(name="pgradeName",value="代练等级名称",example="青铜")
+    private String pgradeName;
+    @ApiModelProperty(name="plevel",value="代练等级水平",example="VIP0")
+    private String plevel;
     @ApiModelProperty(name="goddessFlag",value="女神标记，0非女神，1女神",example="1")
     private Integer goddessFlag;
     @ApiModelProperty(name="practiceFlag",value="代练标记，0非代练，1代练",example="1")
@@ -59,7 +71,7 @@ public class UserInfoVO {
     private String idcardOppositeUrl;
     @ApiModelProperty(name="photograph",value="相册列表",example="1")
     private List<PhotographPO> photograph;
-    @ApiModelProperty(name="token",value="令牌",example="MjY5MTIxMjQ0MzIwMTgwNDMwOTUzOTM2MTUxNjE0NTU")
+    @ApiModelProperty(name="token",value="令牌",example="MjY5MTIxMjQ0MzIwMTgwNDMwOTUzOTM2MTUxNjE0NTU=")
     private String token;
 
     @ApiModelProperty(name="identifier",value="IM用户标识",example="xxxx")
@@ -67,22 +79,6 @@ public class UserInfoVO {
 
     @ApiModelProperty(name="userSign",value="IM签名",example="xxxx")
     private String userSign;
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getUserSign() {
-        return userSign;
-    }
-
-    public void setUserSign(String userSign) {
-        this.userSign = userSign;
-    }
 
     public String getArea() {
         return area;
@@ -98,6 +94,22 @@ public class UserInfoVO {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getGgradeName() {
+        return ggradeName;
+    }
+
+    public void setGgradeName(String ggradeName) {
+        this.ggradeName = ggradeName;
+    }
+
+    public String getGlevel() {
+        return glevel;
+    }
+
+    public void setGlevel(String glevel) {
+        this.glevel = glevel;
     }
 
     public Integer getGoddessFlag() {
@@ -164,6 +176,14 @@ public class UserInfoVO {
         this.idcardOppositeUrl = idcardOppositeUrl;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
     public String getInviteCode() {
         return inviteCode;
     }
@@ -196,6 +216,14 @@ public class UserInfoVO {
         this.openid = openid;
     }
 
+    public String getPgradeName() {
+        return pgradeName;
+    }
+
+    public void setPgradeName(String pgradeName) {
+        this.pgradeName = pgradeName;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -210,6 +238,14 @@ public class UserInfoVO {
 
     public void setPhotograph(List<PhotographPO> photograph) {
         this.photograph = photograph;
+    }
+
+    public String getPlevel() {
+        return plevel;
+    }
+
+    public void setPlevel(String plevel) {
+        this.plevel = plevel;
     }
 
     public Integer getPracticeFlag() {
@@ -284,6 +320,22 @@ public class UserInfoVO {
         this.token = token;
     }
 
+    public String getUgradeName() {
+        return ugradeName;
+    }
+
+    public void setUgradeName(String ugradeName) {
+        this.ugradeName = ugradeName;
+    }
+
+    public String getUlevel() {
+        return ulevel;
+    }
+
+    public void setUlevel(String ulevel) {
+        this.ulevel = ulevel;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -298,5 +350,13 @@ public class UserInfoVO {
 
     public void setUserPwd(String userPwd) {
         this.userPwd = userPwd;
+    }
+
+    public String getUserSign() {
+        return userSign;
+    }
+
+    public void setUserSign(String userSign) {
+        this.userSign = userSign;
     }
 }

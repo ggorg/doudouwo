@@ -2,7 +2,6 @@ package com.gen.common.dao;
 
 import com.gen.common.beans.*;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,4 +13,5 @@ public interface CommonMapper {
 	int insertObject(CommonInsertBean commonInsertBean);
 	int updateObject(CommonUpdateBean commonUpdateBean);
 	int deleteObject(CommonDeleteBean dommonDeleteBean);
+	int deleteObjectCombination(CommonDeleteBean dommonDeleteBean);
 }
