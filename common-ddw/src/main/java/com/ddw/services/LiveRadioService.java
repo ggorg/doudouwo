@@ -72,7 +72,7 @@ public class LiveRadioService extends CommonService{
         param.put("liveStatus",liveStatusEnum.getCode());
         Map condition=new HashMap();
         condition.put("streamid",streamId);
-        return this.commonOptimisticLockUpdateByByParam("ddw_live_radio_space",param,condition,"version");
+        return this.commonOptimisticLockUpdateByParam("ddw_live_radio_space",param,condition,"version");
 
     }
     public ResponseVO handleLiveRadioStatus(String streamId,Integer eventType)throws Exception{

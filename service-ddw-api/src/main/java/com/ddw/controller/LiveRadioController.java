@@ -39,7 +39,7 @@ public class LiveRadioController {
     })
     public ResponseApiVO applLiveRadio(@PathVariable String token){
         try {
-            return this.reviewService.applyLiveRadio((String) TokenUtil.getUserObject(token),TokenUtil.getStoreIdObject(token));
+            return this.reviewService.applyLiveRadio((String) TokenUtil.getUserObject(token),TokenUtil.getStoreId(token));
         }catch (Exception e){
             logger.error("LiveRadioController->applLiveRadio",e);
             return new ResponseApiVO(-1,"提交申请失败",null);
@@ -60,7 +60,7 @@ public class LiveRadioController {
     })
     public ResponseApiVO toLiveRadio(@PathVariable String token){
         try {
-            return this.liveRadioClientService.toLiveRadio((String) TokenUtil.getUserObject(token),TokenUtil.getStoreIdObject(token));
+            return this.liveRadioClientService.toLiveRadio((String) TokenUtil.getUserObject(token),TokenUtil.getStoreId(token));
         }catch (Exception e){
             logger.error("LiveRadioController->applLiveRadio",e);
             return new ResponseApiVO(-1,"查看失败",null);
@@ -73,7 +73,7 @@ public class LiveRadioController {
     @ResponseBody
     public ResponseApiVO<ListVO<LiveRadioListVO>> toLiveRadioList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
         try {
-            return this.liveRadioClientService.getLiveRadioListByStore(args.getPageNo(),TokenUtil.getStoreIdObject(token));
+            return this.liveRadioClientService.getLiveRadioListByStore(args.getPageNo(),TokenUtil.getStoreId(token));
         }catch (Exception e){
             logger.error("LiveRadioController->toLiveRadioList",e);
             return new ResponseApiVO(-1,"获取直播列表失败",null);
@@ -85,7 +85,7 @@ public class LiveRadioController {
     @ResponseBody
     public ResponseApiVO<SelectLiveRadioVO> selectLiveRadioRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
         try {
-            return this.liveRadioClientService.selectLiveRadio(args,TokenUtil.getStoreIdObject(token));
+            return this.liveRadioClientService.selectLiveRadio(args,TokenUtil.getStoreId(token));
         }catch (Exception e){
             logger.error("LiveRadioController->toLiveRadioList",e);
             return new ResponseApiVO(-1,"选择直播房间",null);

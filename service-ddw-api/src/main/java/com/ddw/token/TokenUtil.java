@@ -56,11 +56,36 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
-    public static Integer getStoreIdObject(String base64Token){
+    public static void putUseridAndName(String base64Token,Integer userId,String name){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("userId",userId);
+            map.put("name",name);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
+    public static String getUserName(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (String) map.get("name");
+        }
+        return null;
+    }
+    public static Integer getStoreId(String base64Token){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (Integer) map.get("storeId");
+        }
+        return null;
+    }
+    public static Integer getUserId(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (Integer) map.get("userId");
         }
         return null;
     }

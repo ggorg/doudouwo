@@ -2,6 +2,7 @@ package com.gen.common.services;
 
 import com.gen.common.beans.*;
 import com.gen.common.dao.CommonMapper;
+import com.gen.common.exception.GenException;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
@@ -115,7 +116,60 @@ public abstract class CommonService {
     }
 
     /**
-     *
+     *  计算字段乐观锁更新
+     * @param tableName 表名
+     * @param setParams 修改的参数
+     * @param searchCondition 查询的参数
+     * @param versionName 版本字段名
+     * @param calculateName 要计算的字段名（加法计算）（比如金额字段）
+     * @return
+     */
+    protected  ResponseVO commonCalculateOptimisticLockUpdateByParam(String tableName,Map setParams,Map searchCondition,String versionName,String calculateName)throws Exception{
+        Map map=null;
+        Integer version=null;
+        Integer num=null;
+        Map vSetMap=null;
+        Map vSearchMap=null;
+        ResponseVO res=null;
+        Integer cn=(Integer) setParams.get(calculateName);
+        if(cn==null)cn=0;
+        setParams.remove(calculateName);
+        for(int i=1;i<=5;i++){
+            map=this.commonObjectBySearchCondition(tableName,searchCondition);
+            if(map==null || map.isEmpty()){
+                return new ResponseVO(-2,"更新失败",null);
+            }else{
+                version=(Integer)map.get(versionName);
+                num=(Integer)map.get(calculateName);
+                num=(num==null?0:num)+cn;
+                setParams.put(calculateName,num);
+                vSearchMap=new HashMap(searchCondition);
+                if(version==null){
+                    version=1;
+                }else{
+                    vSearchMap.put(versionName,version);
+                }
+                vSetMap =new HashMap(setParams);
+                vSetMap.put(versionName,version+1);
+                res=this.commonUpdateByParams(tableName,vSetMap,vSearchMap);
+                if(res.getReCode()!=1){
+                    if(i==5){
+                        throw new GenException("更新失败");
+                    }
+                    Thread.sleep(i * 200);
+                    continue;
+                }else{
+
+                    break;
+                }
+
+            }
+
+        }
+        return new ResponseVO(1,"更新成功",null);
+    }
+    /**
+     *  普通乐观锁更新
      * @param tableName 表名
      * @param setParams 修改的字段集合
      * @param searchCondition 查询条件集合
@@ -123,7 +177,7 @@ public abstract class CommonService {
      * @return
      * @throws Exception
      */
-    protected ResponseVO commonOptimisticLockUpdateByByParam(String tableName,Map setParams,Map searchCondition,String versionName)throws Exception{
+    protected ResponseVO commonOptimisticLockUpdateByParam(String tableName,Map setParams,Map searchCondition,String versionName)throws Exception{
         Map map=null;
         Integer version=null;
         Map vSetMap=null;
@@ -146,7 +200,7 @@ public abstract class CommonService {
                 res=this.commonUpdateByParams(tableName,vSetMap,vSearchMap);
                 if(res.getReCode()!=1){
                     if(i==5){
-                        return new ResponseVO(-2,"更新失败",null);
+                        throw new GenException("更新失败");
                     }
                     Thread.sleep(i * 200);
                     continue;
@@ -205,6 +259,15 @@ public abstract class CommonService {
         }
         Map map=(Map)list.get(0);
         return ((BigDecimal)map.get("sumPrice")).longValue();
+    }
+    protected <T>T commonSingleFieldBySingleSearchParam(String tableName,String searchName,String searchValue,String fieldName,Class<T> clazz){
+        Map sumCondition=new HashMap();
+        sumCondition.put(searchName,searchValue);
+        List<Map> list=this.commonMapper.selectObjects(new CommonSearchBean(tableName,null,fieldName,null,null,sumCondition));
+        if(list!=null && !list.isEmpty()){
+            return (T)list.get(0).get(fieldName);
+        }
+        return null;
     }
     protected ResponseVO commonDeleteByParams(String tableName,Map<String,Object> searchCondition){
         ResponseVO vo=new ResponseVO();

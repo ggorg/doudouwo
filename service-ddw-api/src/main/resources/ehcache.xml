@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache>
-    <cacheManagerPeerProviderFactory
-            class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1,
-            multicastGroupPort=9000, timeToLive=32" />
+    <cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+            properties="peerDiscovery=manual,rmiUrls=//127.0.0.1:9001/onlinePersonNum|//127.0.0.1:9001/stores|//127.0.0.1:9001/pay" />
     <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
             properties="hostName=127.0.0.1, port=9002,
         socketTimeoutMillis=2000"/>
     <!--切换为ehcache 缓存时使用-->
-    <cache name="allMenu" maxElementsInMemory="1" />
     <cache name="commonCache" maxElementsInMemory="500" />
-    <cache name="validCodeCache" maxElementsInMemory="300" timeToLiveSeconds="60" />
-    <cache name="bindInfoCache" maxElementsInMemory="1000" timeToLiveSeconds="1800" />
 
     <cache name="reviewInfo"  maxElementsInMemory="1000" timeToLiveSeconds="86400" diskPersistent="false" maxElementsOnDisk="0" />
-
    <cache name="pcShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="86400" diskPersistent="true" maxElementsOnDisk="0" />
    <cache name="orderInfo"  maxElementsInMemory="1000" timeToLiveSeconds="900" diskPersistent="true" maxElementsOnDisk="0" />
     <cache name="appShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="7200" diskPersistent="true" />
     <cache name="imSign"  maxElementsInMemory="10" timeToLiveSeconds="86400" diskPersistent="true" />
     <cache name="onlinePersonNum"  maxElementsInMemory="1000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
-        <bootstrapCacheLoaderFactory  class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
+        <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
+
     </cache>
     <cache name="stores"  maxElementsInMemory="200" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
-        <bootstrapCacheLoaderFactory  class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
+        <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
+
+    </cache>
+    <cache name="pay"  maxElementsInMemory="2000" timeToLiveSeconds="10800"  diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
+        <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
     </cache>
     <cache name="tokenCache"  maxElementsInMemory="2000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0"></cache>
 

@@ -8,7 +8,8 @@ import com.gen.common.dict.Dictionary;
 public enum OrderTypeEnum  implements Dictionary {
     //商品:1,原材料：2
     OrderType1("商品",1),
-    OrderType2("原材料",2);
+    OrderType2("原材料",2),
+    OrderType3("充值",3);
 
 
     private String name;

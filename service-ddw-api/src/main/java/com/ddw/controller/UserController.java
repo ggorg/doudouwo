@@ -6,6 +6,7 @@ import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
 import io.swagger.annotations.Api;
@@ -45,6 +46,7 @@ public class UserController {
                 UserInfoPO userPO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                 UserInfoVO userVO = new UserInfoVO();
                 String token = TokenUtil.createToken(userInfoDTO.getOpenid());
+
                 if(userPO == null){
                     userInfoService.save(userInfoDTO);
                     userPO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
@@ -52,14 +54,17 @@ public class UserController {
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                    TokenUtil.putUseridAndName(token,userPO.getId(),userPO.getNickName());
                     return new ResponseApiVO(1,"注册成功",userVO);
                 }else{
+
                     PropertyUtils.copyProperties(userVO,userPO);
                     List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userPO.getId()));
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                    TokenUtil.putUseridAndName(token,userPO.getId(),userPO.getNickName());
                     return new ResponseApiVO(2,"账号已存在",userVO);
                 }
             }else{

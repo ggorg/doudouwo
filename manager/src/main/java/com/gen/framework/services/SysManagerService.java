@@ -4,6 +4,7 @@ package com.gen.framework.services;
 import com.gen.common.dao.CommonMapper;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;

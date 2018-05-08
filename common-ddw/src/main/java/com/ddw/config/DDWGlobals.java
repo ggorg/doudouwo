@@ -12,6 +12,17 @@ public class DDWGlobals {
     @Value("${im.tls.sigcheck.lib.privatekey.path}")
     private String privateKeypath;
 
+    @Value("${callbackurl.host:}")
+    private String callBackHost;
+
+    public String getCallBackHost() {
+        return callBackHost;
+    }
+
+    public void setCallBackHost(String callBackHost) {
+        this.callBackHost = callBackHost;
+    }
+
     public String getPrivateKeypath() {
         return privateKeypath;
     }

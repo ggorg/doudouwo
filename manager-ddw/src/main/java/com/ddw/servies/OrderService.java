@@ -507,6 +507,44 @@ public class OrderService extends CommonService {
         return res;
     }
 
+    /**
+     * 调用微信或者支付宝支付接口回调时候执行的
+     * @param payStatusEnum
+     * @param orderNo
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updateOrderPayStatus(PayStatusEnum payStatusEnum,String orderNo)throws Exception{
+        if(StringUtils.isBlank(orderNo)){
+            return new ResponseVO(-2,"订单号为空",null);
+        }
+        String prepayId=(String) CacheUtil.get("common","weixin-prepay-"+orderNo);
+        if(StringUtils.isBlank(prepayId)){
+            return new ResponseVO(-2,"预交易标识ID不存在",null);
+
+        }
+        Map map=new HashMap();
+        map.put("doPayStatus",payStatusEnum.getCode());
+        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",OrderUtil.getOrderId(orderNo));
+        if(res.getReCode()==1){
+            Map mapRecharge=this.commonObjectBySingleParam("ddw_order_recharge","orderNo",orderNo);
+            Integer userid=(Integer) mapRecharge.get("creater");
+            Integer dorCost=(Integer) mapRecharge.get("dorCost");
+            Map setParams=new HashMap();
+            setParams.put("money",dorCost);
+            Map condition=new HashMap();
+            condition.put("userId",userid);
+            ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version","money");
+            if(wres.getReCode()==1){
+                return new ResponseVO(1,"更新支付状态成功",null);
+            }
+        }
+        return new ResponseVO(-2,"更新支付状态失败",null);
+
+
+    }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateOrderStatus(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
         if(StringUtils.isBlank(orderNoEncypt)){

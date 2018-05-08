@@ -20,7 +20,7 @@ public class BeanToMapUtil {
 	 * @param obj
 	 * @return
 	 */
-	public static Map<String, Object> beanToMap(Object obj,boolean ... isAddFilterStr) {
+	public static Map<String, Object> beanToMap(Object obj,boolean ... isNotAddFilterStr) {
 		Map<String, Object> params = new HashMap<String, Object>(0);
 		try {
 			PropertyDescriptor[] descriptors = BeanUtils.getPropertyDescriptors(obj.getClass());
@@ -36,7 +36,7 @@ public class BeanToMapUtil {
 							}
 							Object value = readMethod.invoke(obj);
 							//if (value != null) {
-							if(isAddFilterStr!=null && isAddFilterStr.length>0){
+							if(isNotAddFilterStr!=null && isNotAddFilterStr.length>0){
 								params.put(name, value);
 							}else{
 								params.put("`"+name+"`", value);
