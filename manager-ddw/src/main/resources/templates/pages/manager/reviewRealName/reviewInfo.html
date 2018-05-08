@@ -13,11 +13,9 @@
   </style>
 </head>
 <body style="padding:10px 10px 10px 10px">
+<div>
 
-  <form class="layui-form" >
   <div class="layui-form-pane">
-    <input type="hidden" name="businessCode" th:value="${#httpServletRequest.getParameter('businessCode')}"/>
-    <input type="hidden" name="id" th:value="${review?.id}"/>
 
     <div class="layui-form-item layui-form-text mystyle2">
       <label class="layui-form-label">申请</label>
@@ -45,9 +43,20 @@
               <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessTypeEnum',review?.drBusinessType)}">Trident</td>
             </tr>
             <tr >
+                <td >身份证号</td>
+                <td th:text="${reviewRealName?.idcard}"></td>
+            </tr>
+            <tr >
+                <td >身份证正面
+                <td><img src="${reviewRealName?.idcardFrontUrl}" th:width="300px" th:height="200px"></td>
+            </tr>
+            <tr >
+                <td >身份证反面</td>
+                <td><img src="${reviewRealName?.idcardOppositeUrl}" th:width="300px" th:height="200px"></td>
+            </tr>
+            <tr >
               <td >申请时间</td>
-              <td th:text="${#dates.format(review?.createTime,'yyyy-MM-dd HH:mm')}">Win 95+</td>
-
+              <td th:text="${review?.createTime==null?'':#dates.format(review?.createTime,'yyyy-MM-dd HH:mm')}">Win 95+</td>
             </tr>
             <tr >
               <td >说明</td>
@@ -84,19 +93,19 @@
           <tbody>
           <tr >
             <td >审批状态</td>
-            <td >
-              <div class="layui-input-block">
-                <input type="radio" name="drReviewStatus"  value="1" title="同意" >
-                <input type="radio" name="drReviewStatus" value="2" title="拒绝" checked="checked">
-              </div>
-            </td>
+            <td th:text="${#TdEnum.text('com.ddw.enums.ReviewStatusEnum',review?.drReviewStatus)}">Trident</td>
           </tr>
-
+          <tr >
+            <td >审批人</td>
+            <td th:text="${review?.drReviewerName}">24</td>
+          </tr>
+          <tr >
+            <td >审批时间</td>
+            <td th:text="${review?.updateTime==null?'':#dates.format(review?.updateTime,'yyyy-MM-dd HH:mm')}">Win 95+</td>
+          </tr>
           <tr >
             <td >说明</td>
-            <td height="60px">
-              <textarea name="drReviewDesc" required="required"  lay-verify="required" placeholder="请输入审批说明"   class="layui-textarea"></textarea>
-            </td>
+            <td height="60px" th:text="${review?.drReviewDesc}"></td>
           </tr>
 
           </tbody>
@@ -104,18 +113,8 @@
         </table>
       </div>
     </div>
-    <div class="layui-form-item">
-      <div class="layui-input-block">
-        <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
-        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-      </div>
-    </div>
   </div>
-  </form>
-  <script type="text/javascript">
-      initForm("do-review-by-hq",".layui-form")
+</div>
 
-
-  </script>
 </body>
 </html>

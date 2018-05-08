@@ -59,11 +59,12 @@ public class ReviewRealNameService extends CommonService {
             reviewPO.setDrBusinessType(ReviewBusinessTypeEnum.ReviewBusinessType4.getCode());
             reviewPO.setDrReviewStatus(ReviewStatusEnum.ReviewStatus0.getCode());
             reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
-            reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
+            reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType0.getCode());
             reviewPO.setDrProposer(Integer.valueOf(userId));
             reviewPO.setDrApplyDesc("申请实名认证");
             reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.realName11.getCode());
             ResponseApiVO responseApiVO = new ResponseApiVO(this.commonReviewService.submitAppl(reviewPO));
+            //插入会员实名认证审核表
             if(responseApiVO.getReCode()>0){
                 ReviewRealNamePO reviewRealNamePO = new ReviewRealNamePO();
                 reviewRealNamePO.setUserId(Integer.valueOf(userId));
