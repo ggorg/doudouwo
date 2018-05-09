@@ -219,7 +219,7 @@ public class ReviewController {
                String on=MyEncryptUtil.getRealValue(businessCode);
                if(StringUtils.isNotBlank(on)){
 
-                  ResponseVO res=this.reviewService.editReivew(id,on,drReviewDesc,ReviewStatusEnum.get(drReviewStatus),ReviewBusinessTypeEnum.ReviewBusinessType1,Toolsddw.getUserMap());
+                  ResponseVO res=this.reviewService.editReivew(id,on,drReviewDesc,ReviewStatusEnum.get(drReviewStatus),Toolsddw.getUserMap());
                    if(res.getReCode()==1){
                        return new ResponseVO(1,"提交审批成功",null);
                    }
@@ -278,7 +278,7 @@ public class ReviewController {
                 String on=MyEncryptUtil.getRealValue(businessCode);
                 if(StringUtils.isNotBlank(on)){
 
-                    ResponseVO res=this.reviewService.editReivew(id,on,drReviewDesc,ReviewStatusEnum.get(drReviewStatus),ReviewBusinessTypeEnum.ReviewBusinessType3,Toolsddw.getUserMap());
+                    ResponseVO res=this.reviewService.editReivew(id,on,drReviewDesc,ReviewStatusEnum.get(drReviewStatus),Toolsddw.getUserMap());
                     if(res.getReCode()==1){
                         return new ResponseVO(1,"提交审批成功",null);
                     }

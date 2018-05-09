@@ -106,13 +106,13 @@ public class ReviewService extends CommonService {
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO editReivew(Integer id,Object businessCode,String drReviewDesc ,ReviewStatusEnum reviewStatus,ReviewBusinessTypeEnum businessType,Map userMap)throws Exception{
+    public ResponseVO editReivew(Integer id,Object businessCode,String drReviewDesc ,ReviewStatusEnum reviewStatus,Map userMap)throws Exception{
 
         Map params=new HashMap();
         params.put("drReviewDesc",drReviewDesc);
         params.put("drReviewStatus",reviewStatus.getCode());
         params.put("updateTime",new Date());
-        params.put("drBusinessType",businessType.getCode());
+       // params.put("drBusinessType",businessType.getCode());
         params.put("drReviewer", (Integer)userMap.get("id"));
         params.put("drReviewerName", (String)userMap.get("uNickName"));
 
