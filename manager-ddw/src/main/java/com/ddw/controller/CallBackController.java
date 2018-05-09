@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.services.LiveRadioService;
+import com.ddw.servies.AsyncService;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.HttpUtil;
@@ -31,6 +32,9 @@ public class CallBackController {
     @Autowired
     private CacheService cacheService;
 
+    @Autowired
+    private AsyncService asyncService;
+
     @Value("${ProxyCallBackHost:}")
     private String proxyCallBackHost;
     /**
@@ -48,23 +52,22 @@ public class CallBackController {
     @ResponseBody
     public String liveExecute( @RequestBody LiveRadioCallBackDTO dto){
         try {
-            System.out.println(dto);
+            logger.info("直播回调："+dto);
             if(proxyCallBackHost!=null){
-                return HttpUtil.doPost(proxyCallBackHost+"/manager/live/execute", JSON.toJSONString(dto));
-            }else{
-                ResponseVO responseVO=this.liveRadioService.handleLiveRadioStatus(dto.getStream_id(),dto.getEvent_type());
-
-                if(responseVO.getReCode()==1){
-                    if(dto.getEvent_type().equals(LiveEventTypeEnum.eventType0.getCode())){
-                        Map<String,Integer> map=(Map<String,Integer>)cacheService.get("backRoom");
-                        if(map.containsKey(dto.getStream_id())){
-                            map.remove(dto.getStream_id());
-                            cacheService.set("backRoom",map);
-                        }
-                    }
-                    return "{ \"code\":0 }";
-                }
+                asyncService.requestProxyHost(proxyCallBackHost+"/manager/live/execute", JSON.toJSONString(dto));
             }
+            ResponseVO responseVO=this.liveRadioService.handleLiveRadioStatus(dto.getStream_id(),dto.getEvent_type());
+            if(responseVO.getReCode()==1){
+                if(dto.getEvent_type().equals(LiveEventTypeEnum.eventType0.getCode())){
+                    Map<String,Integer> map=(Map<String,Integer>)cacheService.get("backRoom");
+                    if(map.containsKey(dto.getStream_id())){
+                        map.remove(dto.getStream_id());
+                        cacheService.set("backRoom",map);
+                    }
+                }
+                return "{ \"code\":0 }";
+            }
+
 
         }catch (Exception e){
             logger.error("liveExecute",e);
@@ -77,6 +80,8 @@ public class CallBackController {
     public String imExecute(@RequestParam IMCallBackDTO dto, @RequestBody HttpEntity data){
         System.out.println(dto);
         System.out.println(data);
+        logger.info("IM回调："+data+","+dto);
+
         if(proxyCallBackHost!=null){
             StringBuilder stringBuilder=new StringBuilder();
             stringBuilder.append(proxyCallBackHost).append("/manager/im/execute?");
@@ -85,9 +90,8 @@ public class CallBackController {
             stringBuilder.append("SdkAppid=").append(dto.getSdkAppid()).append("&");
             stringBuilder.append("contenttype=").append(dto.getContenttype()).append("&");
             stringBuilder.append("OptPlatform=").append(dto.getOptPlatform());
-            return HttpUtil.doPost(stringBuilder.toString(), JSON.toJSONString(dto));
-        }else{
 
+            asyncService.requestProxyHost(stringBuilder.toString(), data.getBody().toString());
         }
 
         return "{" +
