@@ -49,7 +49,7 @@ public class UserController {
                     userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
-//                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token,userVO.getId(),userVO.getNickName());
                     return new ResponseApiVO(1,"注册成功",userVO);
                 }else{
@@ -57,7 +57,7 @@ public class UserController {
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
-//                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token,userVO.getId(),userVO.getNickName());
                     return new ResponseApiVO(2,"账号已存在",userVO);
                 }
@@ -79,7 +79,7 @@ public class UserController {
                 UserInfoVO userVO = userInfoService.query(json.getString("id"));
                 userVO.setToken(token);
                 userVO.setIdentifier(userVO.getOpenid());
-//                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                 return new ResponseApiVO(1,"成功",userVO);
             }else{
                 return new ResponseApiVO(-2,"用户id不能为空",null);
