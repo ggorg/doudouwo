@@ -12,7 +12,6 @@ import com.tls.sigcheck.tls_sigcheck;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,28 +42,23 @@ public class UserController {
     public ResponseApiVO<UserInfoVO> save(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserInfoDTO userInfoDTO){
         try {
             if(!StringUtils.isBlank(userInfoDTO.getOpenid())){
-                UserInfoPO userPO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
-                UserInfoVO userVO = new UserInfoVO();
+                UserInfoVO userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                 String token = TokenUtil.createToken(userInfoDTO.getOpenid());
-                if(userPO == null){
+                if(userVO == null){
                     userInfoService.save(userInfoDTO);
-                    userPO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
-                    PropertyUtils.copyProperties(userVO,userPO);
+                    userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
 //                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                    TokenUtil.putUseridAndName(token,userPO.getId(),userPO.getNickName());
+                    TokenUtil.putUseridAndName(token,userVO.getId(),userVO.getNickName());
                     return new ResponseApiVO(1,"注册成功",userVO);
                 }else{
-                    PropertyUtils.copyProperties(userVO,userPO);
-                    List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userPO.getId()));
+                    List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
 //                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                    TokenUtil.putUseridAndName(token,userPO.getId(),userPO.getNickName());
+                    TokenUtil.putUseridAndName(token,userVO.getId(),userVO.getNickName());
                     return new ResponseApiVO(2,"账号已存在",userVO);
                 }
             }else{
@@ -82,9 +76,7 @@ public class UserController {
                                            @RequestBody @ApiParam(name = "id",value="会员id,传入json格式,如:{\"id\":\"1\"}", required = true) JSONObject json){
         try {
             if(!json.isEmpty()){
-                UserInfoPO userPO = userInfoService.query(json.getString("id"));
-                UserInfoVO userVO = new UserInfoVO();
-                PropertyUtils.copyProperties(userVO,userPO);
+                UserInfoVO userVO = userInfoService.query(json.getString("id"));
                 userVO.setToken(token);
                 userVO.setIdentifier(userVO.getOpenid());
 //                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
@@ -121,7 +113,7 @@ public class UserController {
                                 @RequestParam(value = "idcardOpposite") @ApiParam(name = "idcardOpposite",value="身份证反面", required = true) MultipartFile idcardOpposite){
         try {
             String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoPO user = userInfoService.queryByOpenid(openid);
+            UserInfoVO user = userInfoService.queryByOpenid(openid);
             return reviewRealNameService.realName(user.getId().toString(),realName,idcard,idcardFront,idcardOpposite);
         }catch (Exception e){
             logger.error("UserController->realName",e);
@@ -136,7 +128,7 @@ public class UserController {
                                         @RequestParam(value = "photograph") @ApiParam(name = "photograph",value="上传照片,支持多张", required = true) MultipartFile[]photograph){
         try {
             String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoPO user = userInfoService.queryByOpenid(openid);
+            UserInfoVO user = userInfoService.queryByOpenid(openid);
             return userInfoService.uploadPhotograph(user.getId().toString(),photograph);
         }catch (Exception e){
             logger.error("UserController->uploadPhotograph",e);

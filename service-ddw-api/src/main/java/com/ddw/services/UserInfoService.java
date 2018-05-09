@@ -1,15 +1,10 @@
 package com.ddw.services;
 
-import com.ddw.beans.PhotographPO;
-import com.ddw.beans.UserInfoDTO;
-import com.ddw.beans.UserInfoPO;
-import com.ddw.beans.UserInfoUpdateDTO;
-import com.ddw.util.IMApiUtil;
+import com.ddw.beans.*;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
-import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
@@ -44,24 +39,28 @@ public class UserInfoService extends CommonService {
         PropertyUtils.copyProperties(userInfoPO,userInfoDTO);
         userInfoPO.setId(null);
         userInfoPO.setGradeId(1);
+        userInfoPO.setGoddessGradeId(1);
+        userInfoPO.setPracticeGradeId(1);
+        userInfoPO.setGoddessFlag(0);
+        userInfoPO.setPracticeFlag(0);
         //TODO 生成邀请码
         userInfoPO.setInviteCode("");
         userInfoPO.setCreateTime(new Date());
         userInfoPO.setUpdateTime(new Date());
         ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
-        if(re.getReCode()==1){
-            boolean flag=IMApiUtil.importUser(userInfoPO,0);
-            if(!flag){
-                throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
-            }
-        }
+//        if(re.getReCode()==1){
+//            boolean flag=IMApiUtil.importUser(userInfoPO,0);
+//            if(!flag){
+//                throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
+//            }
+//        }
         return re;
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO update(String openid,UserInfoUpdateDTO userInfoUpdateDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
-        UserInfoPO user = this.queryByOpenid(openid);
+        UserInfoVO user = this.queryByOpenid(openid);
         PropertyUtils.copyProperties(userInfoPO,user);
         PropertyUtils.copyProperties(userInfoPO,userInfoUpdateDTO);
         userInfoPO.setUpdateTime(new Date());
@@ -69,7 +68,7 @@ public class UserInfoService extends CommonService {
         return this.commonUpdateBySingleSearchParam("ddw_userinfo",updatePoMap,"id",userInfoPO.getId());
     }
 
-    public UserInfoPO query(String id)throws Exception{
+    public UserInfoVO query(String id)throws Exception{
 //        return this.commonObjectBySingleParam("ddw_userinfo","id",id,new UserInfoPO().getClass());
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",id);
@@ -80,14 +79,14 @@ public class UserInfoService extends CommonService {
                 new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",conditon),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
         List list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && list.size()>0){
-            UserInfoPO userInfoPO=new UserInfoPO();
-            PropertyUtils.copyProperties(userInfoPO,list.get(0));
-            return userInfoPO;
+            UserInfoVO userInfoVO=new UserInfoVO();
+            PropertyUtils.copyProperties(userInfoVO,list.get(0));
+            return userInfoVO;
         }
         return null;
     }
 
-    public UserInfoPO queryByOpenid(String openid)throws Exception{
+    public UserInfoVO queryByOpenid(String openid)throws Exception{
 //        Map searchCondition = new HashMap<>();
 //        searchCondition.put("openid",openid);
 //        return this.commonObjectBySearchCondition("ddw_userinfo",searchCondition,new UserInfoPO().getClass());
@@ -100,9 +99,9 @@ public class UserInfoService extends CommonService {
                 new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",conditon),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
         List list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && list.size()>0){
-            UserInfoPO userInfoPO=new UserInfoPO();
-            PropertyUtils.copyProperties(userInfoPO,list.get(0));
-            return userInfoPO;
+            UserInfoVO userInfoVO=new UserInfoVO();
+            PropertyUtils.copyProperties(userInfoVO,list.get(0));
+            return userInfoVO;
         }
         return null;
     }
