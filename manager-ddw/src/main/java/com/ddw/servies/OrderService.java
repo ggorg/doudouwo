@@ -526,19 +526,25 @@ public class OrderService extends CommonService {
         }
         Map map=new HashMap();
         map.put("doPayStatus",payStatusEnum.getCode());
+        Integer doType=this.commonSingleFieldBySingleSearchParam("ddw_order","id",OrderUtil.getOrderId(orderNo),"doType",Integer.class);
         ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",OrderUtil.getOrderId(orderNo));
         if(res.getReCode()==1){
-            Map mapRecharge=this.commonObjectBySingleParam("ddw_order_recharge","orderNo",orderNo);
-            Integer userid=(Integer) mapRecharge.get("creater");
-            Integer dorCost=(Integer) mapRecharge.get("dorCost");
-            Map setParams=new HashMap();
-            setParams.put("money",dorCost);
-            Map condition=new HashMap();
-            condition.put("userId",userid);
-            ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version","money");
-            if(wres.getReCode()==1){
-                return new ResponseVO(1,"更新支付状态成功",null);
+            if(OrderTypeEnum.OrderType3.getCode().equals(doType)){
+                Map mapRecharge=this.commonObjectBySingleParam("ddw_order_recharge","orderNo",orderNo);
+                Integer userid=(Integer) mapRecharge.get("creater");
+                Integer dorCost=(Integer) mapRecharge.get("dorCost");
+                Map setParams=new HashMap();
+                setParams.put("money",dorCost);
+                Map condition=new HashMap();
+                condition.put("userId",userid);
+                ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version","money");
+                if(wres.getReCode()!=1){
+                    return new ResponseVO(-2,"更新支付状态失败",null);
+                }
             }
+
+            return new ResponseVO(1,"更新支付状态成功",null);
+
         }
         return new ResponseVO(-2,"更新支付状态失败",null);
 

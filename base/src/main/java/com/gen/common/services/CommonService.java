@@ -260,7 +260,7 @@ public abstract class CommonService {
         Map map=(Map)list.get(0);
         return ((BigDecimal)map.get("sumPrice")).longValue();
     }
-    protected <T>T commonSingleFieldBySingleSearchParam(String tableName,String searchName,String searchValue,String fieldName,Class<T> clazz){
+    protected <T>T commonSingleFieldBySingleSearchParam(String tableName,String searchName,Object searchValue,String fieldName,Class<T> clazz){
         Map sumCondition=new HashMap();
         sumCondition.put(searchName,searchValue);
         List<Map> list=this.commonMapper.selectObjects(new CommonSearchBean(tableName,null,fieldName,null,null,sumCondition));

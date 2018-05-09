@@ -127,7 +127,7 @@
         function toFinish(orderNo){
             layer.confirm("是否完成该订单？", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
-                    jQueryCommonSubmit("do-accept-order",null,{orderNo,orderNo});
+                    jQueryCommonSubmit("do-finish-order",null,{orderNo,orderNo});
 
                 }
                 //layer.close(index);

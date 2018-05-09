@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.enums.LiveEventTypeEnum;
+import com.ddw.enums.PayStatusEnum;
 import com.ddw.services.LiveRadioService;
 import com.ddw.servies.AsyncService;
+import com.ddw.servies.OrderService;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.HttpUtil;
@@ -34,6 +36,9 @@ public class CallBackController {
 
     @Autowired
     private AsyncService asyncService;
+
+    @Autowired
+    private OrderService orderService;
 
     @Value("${ProxyCallBackHost:}")
     private String proxyCallBackHost;
@@ -78,8 +83,7 @@ public class CallBackController {
     @PostMapping("/im/execute")
     @ResponseBody
     public String imExecute(@RequestParam IMCallBackDTO dto, @RequestBody HttpEntity data){
-        System.out.println(dto);
-        System.out.println(data);
+
         logger.info("IM回调："+data+","+dto);
 
         if(proxyCallBackHost!=null){
@@ -109,13 +113,22 @@ public class CallBackController {
     @PostMapping("/weixin/pay/execute")
     @ResponseBody
     public WeiXinPayCallBackVO weiXinPayExecute(@RequestBody WeiXinPayCallBackDTO dto){
-        if(dto!=null && "SUCCESS".equals(dto.getReturn_code())&& "SUCCESS".equals(dto.getResult_code()) ){
+        try{
+            if(dto!=null && "SUCCESS".equals(dto.getReturn_code())&& "SUCCESS".equals(dto.getResult_code()) ){
 
-            TreeMap treeMap =(TreeMap) CacheUtil.get("pay","weixin-pay-"+dto.getOut_trade_no());
-            if(treeMap==null){
-                return new WeiXinPayCallBackVO("FAIL","ok");
+                TreeMap treeMap =(TreeMap) CacheUtil.get("pay","weixin-pay-"+dto.getOut_trade_no());
+                if(treeMap==null){
+                    return new WeiXinPayCallBackVO("FAIL","ok");
+                }
+                ResponseVO res=orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOut_trade_no());
+                if(res.getReCode()==1){
+                    return new WeiXinPayCallBackVO("SUCCESS","ok");
+
+                }
             }
-            return new WeiXinPayCallBackVO("SUCCESS","ok");
+
+        }catch (Exception e){
+            logger.error("微信支付回调失败");
         }
 
         return new WeiXinPayCallBackVO("FAIL","ok");
@@ -129,9 +142,20 @@ public class CallBackController {
     @PostMapping("/alipay/execute")
     @ResponseBody
     public String aliPayExecute(@RequestParam AliPayCallBackDTO dto){
-        if(dto!=null && ("TRADE_FINISHED".equals(dto.getTrade_status()) || "TRADE_SUCCESS".equals(dto.getTrade_status()))){
-            return "success";
+        try {
+
+            if(dto!=null && ("TRADE_FINISHED".equals(dto.getTrade_status()) || "TRADE_SUCCESS".equals(dto.getTrade_status()))){
+                ResponseVO rs=this.orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOut_trade_no());
+                if(rs.getReCode()==1){
+                    return "success";
+
+                }
+            }
+        }catch (Exception e){
+            logger.error("支付宝支付回调失败");
+
         }
+
         return "fail";
     }
 }
