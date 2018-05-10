@@ -71,6 +71,7 @@ public class ReviewRealNameService extends CommonService {
                 reviewRealNamePO.setDrBusinessCode(bussinessCode);
                 reviewRealNamePO.setRealName(realName);
                 reviewRealNamePO.setIdcard(idcard);
+                reviewRealNamePO.setCreateTime(new Date());
                 reviewRealNamePO.setStatus(0);
                 String idcardFrontImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( idcardFront.getOriginalFilename());
                 FileInfoVo fileInfoVo= UploadFileMoveUtil.move( idcardFront,mainGlobals.getRsDir(), idcardFrontImgName);

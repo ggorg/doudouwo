@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.dao.PhotographMapper;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
@@ -34,6 +35,8 @@ public class UserInfoService extends CommonService {
     private FileService fileService;
     @Autowired
     private MainGlobals mainGlobals;
+    @Autowired
+    private PhotographMapper photographMapper;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(UserInfoDTO userInfoDTO)throws Exception{
@@ -113,8 +116,8 @@ public class UserInfoService extends CommonService {
     public List<PhotographPO>queryPhotograph(String id)throws Exception{
         List<PhotographPO> photographList = new ArrayList<PhotographPO>();
         List<Map> list = this.commonObjectsBySingleParam("ddw_photograph","userId",id);
-        PhotographPO photographPO = new PhotographPO();
         for(Map map:list){
+            PhotographPO photographPO = new PhotographPO();
             PropertyUtils.copyProperties(photographPO,map);
             photographList.add(photographPO);
         }
@@ -125,6 +128,8 @@ public class UserInfoService extends CommonService {
     public ResponseVO uploadPhotograph(String id,MultipartFile[]photograph)throws Exception{
         PhotographPO photographPO = new PhotographPO();
         int code = 1;
+        HashSet<String> hs = new HashSet<String>();
+        List<PhotographPO> list = new ArrayList<PhotographPO>();
         for(MultipartFile phto:photograph){
             String idcardFrontImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( phto.getOriginalFilename());
             FileInfoVo fileInfoVo= UploadFileMoveUtil.move( phto,mainGlobals.getRsDir(), idcardFrontImgName);
@@ -140,12 +145,17 @@ public class UserInfoService extends CommonService {
             ResponseVO responseVO = this.commonInsert("ddw_photograph",photographPO);
             if(responseVO.getReCode()<0){
                 code = 0;
+            }else{
+                hs.add(idcardFrontImgName);
             }
         }
+        if(!hs.isEmpty()){
+            list = photographMapper.findListByNames(hs);
+        }
         if(code == 1){
-            return new ResponseVO(1,"上传成功",null);
+            return new ResponseVO(1,"上传成功",list);
         }else{
-            return new ResponseVO(-1,"上传失败",null);
+            return new ResponseVO(-1,"上传失败",list);
         }
     }
 

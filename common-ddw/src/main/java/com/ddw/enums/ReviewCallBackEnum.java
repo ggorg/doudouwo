@@ -10,7 +10,7 @@ public enum ReviewCallBackEnum implements Dictionary {
     orderStatus6("取消订单",6),
     orderStatus4("退还",4),
     liveRadioCallBack10("executeLiveRadio",10),//申请直播
-    realName11("实名认证申请",11),
+    realName11("executeRealName",11),//实名认证申请
     goddessFlagCallBack2("申请当女神",2),
     practiceFlag5("申请代练",5);
     private String name;

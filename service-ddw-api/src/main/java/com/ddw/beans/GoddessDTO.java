@@ -13,10 +13,13 @@ public class GoddessDTO {
     @ApiModelProperty(name="tableNo",value="店内桌号（桌名）",example="103")
     private String tableNo;
 
+    @ApiModelProperty(name="storeId",value="门店ID",example="1")
+    private int storeId;
 
     public String getTableNo() {
         return tableNo;
     }
+
 
     public void setTableNo(String tableNo) {
         this.tableNo = tableNo;
@@ -28,5 +31,13 @@ public class GoddessDTO {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
 }
