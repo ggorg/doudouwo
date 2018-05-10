@@ -119,7 +119,7 @@ public class LiveRadioService extends CommonService{
 
         UserInfoPO upo=this.commonObjectBySingleParam("ddw_userinfo","id",reviewPO.getDrProposer(), UserInfoPO.class);
         String spaceName=StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName()+"直播间";
-        String callBack=IMApiUtil.createGroup(reviewPO.getDrProposer().toString().toString(),streamIdExt,spaceName);
+        String callBack=IMApiUtil.createGroup(reviewPO.getDrProposer().toString(),streamIdExt,spaceName);
         JSONObject jsonObject=JSON.parseObject(callBack);
         Integer errorCode=jsonObject.getInteger("ErrorCode");
         String groupId=null;

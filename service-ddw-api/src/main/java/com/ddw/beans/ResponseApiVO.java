@@ -1,10 +1,12 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiResponse;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel
 public class ResponseApiVO<T> {
 

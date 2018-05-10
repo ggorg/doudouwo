@@ -1,9 +1,11 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexGoddessVO {
     @ApiModelProperty(name="id",value="女神id",example="1")
     private Integer id;

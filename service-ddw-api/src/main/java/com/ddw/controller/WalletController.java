@@ -45,7 +45,7 @@ public class WalletController {
     @ResponseBody
     public ResponseApiVO<WalletWeixinRechargeVO> doWeixinRecharge (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
         try {
-            return this.walletService.recharge(token,args.getMoney(), PayTypeEnum.PayType1.getCode(), OrderTypeEnum.OrderType3);
+            return this.walletService.prePay(token,args.getMoney(), PayTypeEnum.PayType1.getCode(), OrderTypeEnum.OrderType3);
         }catch (Exception e){
             logger.error("WalletController-getBalance-》查询钱包余额-》系统异常",e);
             return new ResponseApiVO(-1,"微信充值失败",null);
@@ -59,7 +59,7 @@ public class WalletController {
     @ResponseBody
     public ResponseApiVO<WalletAlipayRechargeVO> doAlipayRecharge (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
         try {
-            return this.walletService.recharge(token,args.getMoney(), PayTypeEnum.PayType2.getCode(), OrderTypeEnum.OrderType3);
+            return this.walletService.prePay(token,args.getMoney(), PayTypeEnum.PayType2.getCode(), OrderTypeEnum.OrderType3);
         }catch (Exception e){
             logger.error("WalletController-getBalance-》支付宝充值-》系统异常",e);
             return new ResponseApiVO(-1,"支付宝充值失败",null);

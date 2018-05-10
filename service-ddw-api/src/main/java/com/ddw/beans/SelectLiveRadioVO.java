@@ -1,9 +1,11 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SelectLiveRadioVO {
 
     @ApiModelProperty(name="pullUrl",value="播放地址",example="rtmp://xxxx")

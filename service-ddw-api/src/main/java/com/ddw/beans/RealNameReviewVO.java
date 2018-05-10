@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -7,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
  * Created by Jacky on 2018/4/29.
  */
 @ApiModel(value="会员实名认证展示用例",description="RealNameReviewVO")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RealNameReviewVO {
     @ApiModelProperty(name="userId",value="会员id",example="1")
     private Integer userId;

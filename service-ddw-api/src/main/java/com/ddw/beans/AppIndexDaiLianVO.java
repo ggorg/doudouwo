@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -7,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
  * 代练
  */
 @ApiModel
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexDaiLianVO {
     @ApiModelProperty(name="id",value="代练id",example="1")
     private Integer id;

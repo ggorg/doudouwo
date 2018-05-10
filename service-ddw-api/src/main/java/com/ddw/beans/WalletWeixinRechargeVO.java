@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 @ApiModel
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class WalletWeixinRechargeVO implements Serializable {
     @ApiModelProperty(name="appid",value="应用ID",example="wx8888888888888888")
     private String appid;

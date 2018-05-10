@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
@@ -7,6 +8,7 @@ import io.swagger.annotations.ApiParam;
 import java.util.List;
 
 @ApiModel
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageVO<T> {
 
 

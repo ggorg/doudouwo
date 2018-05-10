@@ -1,10 +1,12 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(value="会员展示用例对象",description="用例对象UserInfoDTO")
 public class UserInfoVO {
     @ApiModelProperty(name="id",value="主键",example="1")

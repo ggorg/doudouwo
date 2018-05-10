@@ -10,6 +10,7 @@ import com.ddw.util.LanglatComparator;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
+import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,11 @@ public class AppStoresService extends CommonService {
 
         List filterList=obj.stream().filter(m->((String)m.get("dsCity")).equals(dto.getDsCity())).collect(Collectors.toList());
         if(StringUtils.isNotBlank(dto.getLanglat())){
+           String[] lls= dto.getLanglat().split(",");
+            if(lls.length!=2 || !dto.getLanglat().matches("^[0-9]+[.][^,]+,[0-9]+[.][0-9]+$")){
+                return new ResponseApiVO(-2,"坐标格式有误",null);
+
+            }
             Collections.sort(filterList,new LanglatComparator(dto.getLanglat()));
         }
 

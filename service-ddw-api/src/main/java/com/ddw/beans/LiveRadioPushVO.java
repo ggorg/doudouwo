@@ -1,10 +1,12 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LiveRadioPushVO {
     @ApiModelProperty(name="pushUrl",value="推流地址",example="rtmp://xxxxxx")
     private String pushUrl;//推流地址

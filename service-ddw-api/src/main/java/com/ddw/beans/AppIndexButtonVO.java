@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
  * 按钮
  */
 @ApiModel
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexButtonVO {
 
     @JsonProperty("title")

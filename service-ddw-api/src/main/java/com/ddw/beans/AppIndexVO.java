@@ -1,11 +1,13 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
 @ApiModel
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexVO {
     @ApiModelProperty(name="topImgsList",value="顶部图片",example="")
     public List<AppIndexTopImgsVO> topImgsList ;

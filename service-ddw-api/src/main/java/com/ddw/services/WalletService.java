@@ -48,8 +48,17 @@ public class WalletService extends CommonService {
         return new ResponseApiVO(1,"成功",balanceVO);
     }
 
+    /**
+     * 预支付
+     * @param token
+     * @param cost
+     * @param payType
+     * @param orderTypeEnum
+     * @return
+     * @throws Exception
+     */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO recharge(String token,Integer cost,Integer payType,OrderTypeEnum orderTypeEnum)throws Exception{
+    public ResponseApiVO prePay(String token,Integer cost,Integer payType,OrderTypeEnum orderTypeEnum)throws Exception{
         if(!PayTypeEnum.PayType1.getCode().equals(payType) && !PayTypeEnum.PayType2.getCode().equals(payType)){
             return new ResponseApiVO(-2,"请选择有效的支付方式",null);
         }
