@@ -93,12 +93,13 @@ public class ReviewRealNameService extends CommonService {
         this.commonUpdateByParams("ddw_review_realname",setParams,searchCondition);
         ReviewRealNamePO reviewRealNamePO = this.getReviewRealNameByCode(drBusinessCode);
         Map setParams2=new HashMap();
+        setParams2.put("realName",reviewRealNamePO.getRealName());
         setParams2.put("idcard",reviewRealNamePO.getIdcard());
         setParams2.put("idcardFrontUrl",reviewRealNamePO.getIdcardFrontUrl());
         setParams2.put("idcardOppositeUrl",reviewRealNamePO.getIdcardOppositeUrl());
         Map searchCondition2=new HashMap();
         searchCondition2.put("id",reviewRealNamePO.getUserId());
-        return this.commonUpdateByParams("ddw_review_realname",setParams2,searchCondition2);
+        return this.commonUpdateByParams("ddw_userinfo",setParams2,searchCondition2);
     }
 
 }
