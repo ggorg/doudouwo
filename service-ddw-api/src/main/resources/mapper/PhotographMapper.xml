@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ddw.dao.PhotographMapper">
+
+    <resultMap id="BaseResultMap" type="com.ddw.beans.PhotographPO">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="imgName" column="imgName"/>
+        <result property="imgUrl" column="imgUrl"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+        userId,
+        imgName,
+        imgUrl,
+        createTime,
+        updateTime
+    </sql>
+
+    <select id="findListByNames" resultType="com.ddw.beans.PhotographPO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM ddw_photograph
+        WHERE
+        imgName in
+        <foreach collection="condition" item="value"  index="key" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+    </select>
+
+
+</mapper>

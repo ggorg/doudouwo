@@ -1,11 +1,10 @@
-package com.ddw.servies;
+package com.ddw.services;
 
 import com.ddw.beans.ReviewPO;
 import com.ddw.beans.ReviewRealNamePO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.ddw.enums.ReviewStatusEnum;
-import com.ddw.services.CommonReviewService;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
@@ -80,10 +79,26 @@ public class ReviewRealNameService extends CommonService {
         params.put("drBusinessType",businessType.getCode());
         params.put("drReviewer", (Integer)userMap.get("id"));
         params.put("drReviewerName", (String)userMap.get("uNickName"));
-
         return this.commonReviewService.submitReview(params,id,businessCode.toString());
+    }
 
-
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updateReviewRealName(String drBusinessCode)throws Exception{
+        Map setParams=new HashMap();
+        setParams.put("status",1);
+        setParams.put("updateTime",new Date());
+        Map searchCondition=new HashMap();
+        searchCondition.put("drBusinessCode",drBusinessCode);
+        searchCondition.put("status",0);//未审核
+        this.commonUpdateByParams("ddw_review_realname",setParams,searchCondition);
+        ReviewRealNamePO reviewRealNamePO = this.getReviewRealNameByCode(drBusinessCode);
+        Map setParams2=new HashMap();
+        setParams2.put("idcard",reviewRealNamePO.getIdcard());
+        setParams2.put("idcardFrontUrl",reviewRealNamePO.getIdcardFrontUrl());
+        setParams2.put("idcardOppositeUrl",reviewRealNamePO.getIdcardOppositeUrl());
+        Map searchCondition2=new HashMap();
+        searchCondition2.put("id",reviewRealNamePO.getUserId());
+        return this.commonUpdateByParams("ddw_review_realname",setParams2,searchCondition2);
     }
 
 }

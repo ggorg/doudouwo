@@ -15,10 +15,18 @@ public class ReviewCallBackService {
 
     @Autowired
     private LiveRadioService liveRadioService;
+    @Autowired
+    private ReviewRealNameService reviewRealNameService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeLiveRadio(ReviewCallBackBean rb)throws Exception{
         return liveRadioService.createLiveRadioRoom(rb.getBusinessCode(),rb.getStoreId());
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO executeRealName(ReviewCallBackBean rb)throws Exception{
+        return reviewRealNameService.updateReviewRealName(rb.getBusinessCode());
 
     }
 }

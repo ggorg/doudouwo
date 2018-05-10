@@ -49,7 +49,7 @@ public class UserController {
                     userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
-                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+//                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token,userVO.getId(),userVO.getNickName());
                     return new ResponseApiVO(1,"注册成功",userVO);
                 }else{
@@ -57,7 +57,7 @@ public class UserController {
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
-                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+//                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token,userVO.getId(),userVO.getNickName());
                     return new ResponseApiVO(2,"账号已存在",userVO);
                 }
@@ -77,9 +77,11 @@ public class UserController {
         try {
             if(!json.isEmpty()){
                 UserInfoVO userVO = userInfoService.query(json.getString("id"));
+                List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
+                userVO.setPhotograph(photographList);
                 userVO.setToken(token);
                 userVO.setIdentifier(userVO.getOpenid());
-                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+//                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                 return new ResponseApiVO(1,"成功",userVO);
             }else{
                 return new ResponseApiVO(-2,"用户id不能为空",null);
@@ -127,9 +129,13 @@ public class UserController {
     public ResponseVO uploadPhotograph( @PathVariable String token,
                                         @RequestParam(value = "photograph") @ApiParam(name = "photograph",value="上传照片,支持多张", required = true) MultipartFile[]photograph){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO user = userInfoService.queryByOpenid(openid);
-            return userInfoService.uploadPhotograph(user.getId().toString(),photograph);
+            if(photograph != null && photograph.length>0){
+                String openid = TokenUtil.getUserObject(token).toString();
+                UserInfoVO user = userInfoService.queryByOpenid(openid);
+                return userInfoService.uploadPhotograph(user.getId().toString(),photograph);
+            }else{
+                return new ResponseVO(-2,"参数有误",null);
+            }
         }catch (Exception e){
             logger.error("UserController->uploadPhotograph",e);
             return new ResponseVO(-1,"提交失败",null);

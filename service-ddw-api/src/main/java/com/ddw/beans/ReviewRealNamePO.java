@@ -13,9 +13,7 @@ public class ReviewRealNamePO {
     private String idcard;
     private String idcardFrontUrl;
     private String idcardOppositeUrl;
-    private String operator;
     private Integer status;
-    private String describe;
     private Date createTime;
     private Date updateTime;
     public Date getCreateTime() {
@@ -24,14 +22,6 @@ public class ReviewRealNamePO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public String getDescribe() {
-        return describe;
-    }
-
-    public void setDescribe(String describe) {
-        this.describe = describe;
     }
 
     public Integer getId() {
@@ -64,14 +54,6 @@ public class ReviewRealNamePO {
 
     public void setIdcardOppositeUrl(String idcardOppositeUrl) {
         this.idcardOppositeUrl = idcardOppositeUrl;
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public void setOperator(String operator) {
-        this.operator = operator;
     }
 
     public String getRealName() {
