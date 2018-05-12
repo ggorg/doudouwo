@@ -15,11 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 女神
+ * 代练
  * Created by Jacky on 2018/4/16.
  */
 @Service
-public class GoddessService extends CommonService {
+public class PracticeService extends CommonService {
     @Autowired
     private CommonReviewService commonReviewService;
 
@@ -51,8 +51,8 @@ public class GoddessService extends CommonService {
         reviewPO.setDrProposerName(user.getRealName());
         reviewPO.setDrBusinessType(ReviewBusinessTypeEnum.ReviewBusinessType5.getCode());
         reviewPO.setDrReviewStatus(ReviewStatusEnum.ReviewStatus0.getCode());
-        reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
-        reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType0.getCode());
+        reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType0.getCode());
+        reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
         reviewPO.setDrProposer(Integer.valueOf(user.getId()));
         reviewPO.setDrApplyDesc("女神申请");
         reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.goddessFlag2.getCode());

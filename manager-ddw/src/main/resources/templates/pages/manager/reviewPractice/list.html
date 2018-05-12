@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+    <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${sPage!=null?sPage.total:0}]]*/ );
+    </script>
+</head>
+<body class="withvernav">
+<div class="bodywrapper">
+
+    <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+    <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+    <div class="centercontent tables">
+
+        <!-- <div class="pageheader notab">
+        <h1 class="pagetitle">Tables</h1>
+        <span class="pagedesc">This is a sample description of a page</span>
+
+    </div>--><!--pageheader-->
+
+        <div id="contentwrapper" class="contentwrapper">
+            <div class="contenttitle2">
+                <h3>业务审批列表</h3>
+
+            </div><!--contenttitle-->
+
+            <div class="tableoptions">
+
+                <form class="layui-form" >
+                    <div class="layui-form-item2 layui-form-item">
+                        <div class="float-left-div" >
+
+                            <label class="layui-form-label" >名称</label>
+                            <div class="layui-input-inline" >
+                                <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
+                            </div>
+                        </div>
+                        <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
+
+                    </div>
+                </form>
+                <!-- <select class="radius3">
+                     <option value="">Show All</option>
+                     <option value="">Rendering Engine</option>
+                     <option value="">Platform</option>
+                 </select> &nbsp;
+                 <button class="radius3">Apply Filter</button>
+                 <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+            </div><!--tableoptions-->
+
+            <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                <colgroup>
+                    <!--<col class="con0" style="width: 4%" />-->
+                    <col class="con0" />
+                    <col class="con0" />
+                    <col class="con0" />
+                    <col class="con0" />
+                    <col class="con0" />
+                    <col class="con0" />
+                    <col class="con0" />
+                    <col class="con0" />
+
+                    <col class="con0" />
+                </colgroup>
+                <thead>
+
+                <tr>
+                    <th class="head1">业务编号</th>
+                    <th class="head1">业务类型</th>
+                    <th class="head1">申请人名称</th>
+                    <th class="head1">申请时间</th>
+                    <th class="head1">所属业务状态</th>
+                    <th class="head1">审批人名称</th>
+                    <th class="head1">审批时间</th>
+                    <th class="head1">审批状态</th>
+
+                    <th class="head1">操作</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="obj:${rPage?.result}">
+                    <td th:text="${obj['drBusinessCode']}">Trident</td>
+                    <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessTypeEnum',obj['drBusinessType'])}"></td>
+                    <td th:text="${obj['drProposerName']}">Trident</td>
+                    <td th:text="${obj['createTime']==null?'':#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
+                    <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessStatusEnum',obj['drBusinessStatus'])}"></td>
+                    <td th:text="${obj['drReviewer']}">Trident</td>
+                    <td th:text="${obj['updateTime']==null?'':#dates.format(obj['updateTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
+                    <td th:text="${#TdEnum.text('com.ddw.enums.ReviewStatusEnum',obj['drReviewStatus'])}"></td>
+
+
+                    <td class="center">
+                        <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'580px\',\'查看\',\'/manager/reviewPractice/to-review-info-by-id-html?id='+${obj['id']}+'\')'"  >查 看</button>
+                            <th:block th:utext="${#toolsddw.commonReviewBtn(obj['drBusinessCode'],obj['drReviewStatus'])}"></th:block>
+
+                        </div>
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
+
+            <div id="pages"></div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+
+    layui.use('form', function(){
+        var form = layui.form;
+
+    })
+
+</script>
+</body>
+
+</html>

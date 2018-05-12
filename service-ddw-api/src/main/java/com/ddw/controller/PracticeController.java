@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 访问地址：/swagger-ui.html
  */
-@Api(value = "女神用例",description = "女神用例",tags = {"女神用例"})
+@Api(value = "代练用例",description = "代练用例",tags = {"代练用例"})
 @RestController
-@RequestMapping("/ddwapp/goddess")
-public class GoddessController {
-    private final Logger logger = Logger.getLogger(GoddessController.class);
+@RequestMapping("/ddwapp/practice")
+public class PracticeController {
+    private final Logger logger = Logger.getLogger(PracticeController.class);
     @Autowired
     private GoddessService goddessService;
     @Autowired
