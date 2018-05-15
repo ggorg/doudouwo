@@ -2,12 +2,14 @@ package com.ddw.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayClient;
 import com.ddw.beans.*;
 import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.enums.PayStatusEnum;
 import com.ddw.services.LiveRadioService;
 import com.ddw.servies.AsyncService;
 import com.ddw.servies.OrderService;
+import com.ddw.util.SignUtil;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.HttpUtil;
@@ -115,9 +117,13 @@ public class CallBackController {
     public WeiXinPayCallBackVO weiXinPayExecute(@RequestBody WeiXinPayCallBackDTO dto){
         try{
             if(dto!=null && "SUCCESS".equals(dto.getReturn_code())&& "SUCCESS".equals(dto.getResult_code()) ){
+                if(!SignUtil.wxPaySign(dto)){
+                    logger.info("微信支付回调验签不成功"+dto);
+                    return new WeiXinPayCallBackVO("FAIL","ok");
 
-                TreeMap treeMap =(TreeMap) CacheUtil.get("pay","weixin-pay-"+dto.getOut_trade_no());
-                if(treeMap==null){
+                }
+                Object data =(Object) CacheUtil.get("pay","weixin-pay-"+dto.getOut_trade_no());
+                if(data==null){
                     return new WeiXinPayCallBackVO("FAIL","ok");
                 }
                 ResponseVO res=orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOut_trade_no());
@@ -141,10 +147,14 @@ public class CallBackController {
      */
     @PostMapping("/alipay/execute")
     @ResponseBody
-    public String aliPayExecute(@RequestParam AliPayCallBackDTO dto){
+    public String aliPayExecute(AliPayCallBackDTO dto){
         try {
 
             if(dto!=null && ("TRADE_FINISHED".equals(dto.getTrade_status()) || "TRADE_SUCCESS".equals(dto.getTrade_status()))){
+                Object data =(Object) CacheUtil.get("pay","alipay-pay-"+dto.getOut_trade_no());
+                if(data==null){
+                    return "fail";
+                }
                 ResponseVO rs=this.orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOut_trade_no());
                 if(rs.getReCode()==1){
                     return "success";

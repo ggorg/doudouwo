@@ -22,11 +22,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.http.util.Asserts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -42,18 +44,22 @@ public class WalletService extends CommonService {
             return new ResponseApiVO(-2,"参数异常",null);
 
         }
-        Object obj=null;
+        String paystatus=null;
         for(int i=1;i<=3;i++){
-            obj=CacheUtil.get("pay","order-"+dto.getOrderNo());
-            if(obj==null){
+            paystatus=(String)CacheUtil.get("pay","order-"+dto.getOrderNo());
+            if(paystatus==null){
                 Thread.sleep(i*200);
                 continue;
             }else{
                 break;
             }
         }
-        if(obj==null){
+        if(paystatus==null){
             Map map=new HashMap();
+            if(CacheUtil.get("pay","weixin-pay-"+dto.getOrderNo()) ==null && CacheUtil.get("pay","alipay-pay-"+dto.getOrderNo())==null){
+                return new ResponseApiVO(-2,"抱歉，没有支付记录",null);
+
+            }
             map.put("doCustomerUserId",TokenUtil.getUserId(token));
             map.put("id",OrderUtil.getOrderId(dto.getOrderNo()));
             Map voMap=this.commonObjectBySearchCondition("ddw_order",map);
@@ -66,9 +72,15 @@ public class WalletService extends CommonService {
                 return new ResponseApiVO(1,"支付成功",null);
 
             }
-            return new ResponseApiVO(-2,"支付失败",null);
+
+        }else if("success".equals(paystatus)){
+            return new ResponseApiVO(1,"支付成功",null);
+
+        }else if("fail".equals(paystatus)){
+            return new ResponseApiVO(-3,"支付失败",null);
+
         }
-        return new ResponseApiVO(1,"支付成功",null);
+        return new ResponseApiVO(-4,"支付处理中，请稍等",null);
 
     }
     /**
@@ -79,7 +91,20 @@ public class WalletService extends CommonService {
      */
     public ResponseApiVO getBalance(Integer userid)throws Exception{
         WalletBalanceVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletBalanceVO.class);
+
         return new ResponseApiVO(1,"成功",balanceVO);
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO createWallet(Integer userid){
+        Map wallet=new HashMap();
+        wallet.put("userId",userid);
+        wallet.put("money",0);
+        wallet.put("coin",0);
+        wallet.put("version",1);
+        wallet.put("createTime",new Date());
+        wallet.put("updateTime",new Date());
+        ResponseVO vo=this.commonInsertMap("ddw_my_wallet",wallet);
+        return new ResponseApiVO(vo.getReCode(),vo.getReMsg(),null);
     }
 
     /**
@@ -127,15 +152,19 @@ public class WalletService extends CommonService {
 
             if(resVo.getReCode()==1){
                 if(PayTypeEnum.PayType1.getCode().equals(payType)){
-                    RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+orderTypeEnum.getName()+"-"+((double)cost/100)+"元",orderNo,cost, Tools.getIpAddr());
-                    if("SUCCESS".equals(vo.getReturn_code()) && "SUCCESS".equals(vo.getResult_code())){
+                    RequestWeiXinOrderVO vo=new RequestWeiXinOrderVO();
+                    vo.setReturn_code("SUCCESS");
+                    vo.setResult_code("SUCCESS");
+                    vo.setPrepay_id(RandomStringUtils.randomAlphabetic(10));
+                    //RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+orderTypeEnum.getName()+"-"+((double)cost/100)+"元",orderNo,cost, Tools.getIpAddr());
+                    if(vo!=null && "SUCCESS".equals(vo.getReturn_code()) && "SUCCESS".equals(vo.getResult_code())){
                         TreeMap treeMap=new TreeMap();
                         treeMap.put("appid", PayApiConstant.WEI_XIN_PAY_APP_ID);
                         treeMap.put("partnerid",PayApiConstant.WEI_XIN_PAY_MCH_ID);
                         treeMap.put("prepayid",vo.getPrepay_id());
                         treeMap.put("package","Sign=WXPay");
-                        treeMap.put("noncestr", RandomStringUtils.randomAlphanumeric(20));
-                        treeMap.put("timestamp",new Date().getTime()/1000);
+                        treeMap.put("noncestr", RandomStringUtils.randomAlphanumeric(20)+"");
+                        treeMap.put("timestamp",new Date().getTime()/1000+"");
                         Set<String> keys=treeMap.keySet();
                         StringBuilder builder=new StringBuilder();
                         for(String key:keys){
@@ -147,7 +176,7 @@ public class WalletService extends CommonService {
                         treeMap.remove("package");
                         WalletWeixinRechargeVO wxVo=new WalletWeixinRechargeVO();
                         PropertyUtils.copyProperties(wxVo,treeMap);
-                        CacheUtil.put("pay","weixin-pay-"+orderNo,treeMap);
+                        CacheUtil.put("pay","weixin-pay-"+orderNo,OrderTypeEnum.OrderType3.getCode());
                         return new ResponseApiVO(1,"成功",wxVo);
                     }else{
                         throw new GenException("调用微信支付接口失败");
@@ -176,10 +205,14 @@ public class WalletService extends CommonService {
                     for(String k:keys){
                         builder.append(k).append("=").append(treeMap.get(k)).append("&");
                     }
+
                     builder.deleteCharAt(builder.length()-1);
-                    String privateKey= IOUtils.toString(PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/private_key"));
+                    InputStream is=PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/private_key");
+                    String privateKey= IOUtils.toString(is);
+                    IOUtils.closeQuietly(is);
                     treeMap.clear();
                     alipayVo.setSign(AlipaySignature.rsa256Sign(builder.toString(),privateKey,"utf-8"));
+                    CacheUtil.put("pay","alipay-pay-"+orderNo,OrderTypeEnum.OrderType3.getCode());
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
                 }
