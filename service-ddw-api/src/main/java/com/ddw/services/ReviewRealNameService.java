@@ -47,8 +47,8 @@ public class ReviewRealNameService extends CommonService {
             conditionMap.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType4.getCode());
             //查询状态审核未通过
             conditionMap.put("drReviewStatus,!=",2);
-            ReviewRealNamePO realPO = this.commonObjectBySearchCondition("ddw_review",conditionMap,new ReviewRealNamePO().getClass());
-            if(realPO != null){
+            ReviewPO rePO = this.commonObjectBySearchCondition("ddw_review",conditionMap,new ReviewPO().getClass());
+            if(rePO != null){
                 return new ResponseApiVO(-2,"不允许重复提交申请",null);
             }
             //插入审批表

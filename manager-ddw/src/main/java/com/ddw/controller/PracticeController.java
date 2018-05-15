@@ -32,7 +32,7 @@ public class PracticeController {
 
             model.addAttribute("rPage",this.peviewPracticeService.findPracticePageByHq(pageNo));
         }catch (Exception e){
-            logger.error("ReviewRealNameController->toReviewPage",e);
+            logger.error("PracticeController->toReviewPageByHq",e);
         }
         return "pages/manager/reviewPractice/list";
 
@@ -47,9 +47,12 @@ public class PracticeController {
         try {
             ReviewPO reviewPO = this.peviewPracticeService.getReviewById(id);
             model.addAttribute("review",reviewPO);
+            if (reviewPO != null) {
+                model.addAttribute("reviewPractice",this.peviewPracticeService.getReviewPracticeByCode(reviewPO.getDrBusinessCode()));
+            }
             return "pages/manager/reviewPractice/reviewInfo";
         }catch (Exception e){
-            logger.error("ReviewRealNameController->toReviewInfoByIdHtml",e);
+            logger.error("PracticeController->toReviewInfoByIdHtml",e);
         }
 
         return "pages/manager/reviewPractice/reviewInfo";

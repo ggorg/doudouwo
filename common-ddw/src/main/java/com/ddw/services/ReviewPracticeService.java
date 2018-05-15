@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.ReviewPO;
+import com.ddw.beans.ReviewPracticePO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.services.CommonService;
@@ -38,6 +39,13 @@ public class ReviewPracticeService extends CommonService {
         Map conditoin=new HashMap();
         conditoin.put("drBusinessCode",drBusinessCode);
         return this.commonObjectBySingleParam("ddw_review","drBusinessCode",drBusinessCode,ReviewPO.class);
+
+    }
+
+    public ReviewPracticePO getReviewPracticeByCode(String drBusinessCode)throws Exception{
+        Map conditoin=new HashMap();
+        conditoin.put("drBusinessCode",drBusinessCode);
+        return this.commonObjectBySingleParam("ddw_review_practice","drBusinessCode",drBusinessCode,ReviewPracticePO.class);
 
     }
 

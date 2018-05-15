@@ -54,7 +54,7 @@ public class GoddessService extends CommonService {
         reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
         reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType0.getCode());
         reviewPO.setDrProposer(Integer.valueOf(user.getId()));
-        reviewPO.setDrApplyDesc("女神申请");
+        reviewPO.setDrApplyDesc("申请成为女神");
         reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.goddessFlag2.getCode());
         reviewPO.setDrBelongToStoreId(storeId);
         return this.commonReviewService.submitAppl(reviewPO);

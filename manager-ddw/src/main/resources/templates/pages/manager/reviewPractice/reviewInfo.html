@@ -43,6 +43,26 @@
               <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessTypeEnum',review?.drBusinessType)}">Trident</td>
             </tr>
             <tr >
+              <td >游戏名称</td>
+              <td th:text="${reviewPractice?.gameId}"></td>
+            </tr>
+            <tr >
+              <td >游戏段位</td>
+              <td th:text="${reviewPractice?.rankId}"></td>
+            </tr>
+            <tr >
+              <td >游戏截图一
+              <td><img src="${reviewPractice?.picUrl1}" th:width="300px" th:height="200px"></td>
+            </tr>
+            <tr >
+              <td >游戏截图二</td>
+              <td><img src="${reviewPractice?.picUrl2}" th:width="300px" th:height="200px"></td>
+            </tr>
+            <tr >
+                <td >游戏截图三</td>
+                <td><img src="${reviewPractice?.picUrl3}" th:width="300px" th:height="200px"></td>
+            </tr>
+            <tr >
               <td >申请时间</td>
               <td th:text="${review?.createTime==null?'':#dates.format(review?.createTime,'yyyy-MM-dd HH:mm')}">Win 95+</td>
 
