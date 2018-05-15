@@ -17,7 +17,7 @@ public class BiddingVO implements Serializable {
     @ApiModelProperty(name="userName",value="用户名称",example="Xxx")
     private String userName;
 
-    @ApiModelProperty(name="price",value="价格",example="100元")
+    @ApiModelProperty(name="price",value="价格，单位分",example="10000")
     @JsonProperty
     private String price;
 

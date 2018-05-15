@@ -542,7 +542,7 @@ public class OrderService extends CommonService {
                     return new ResponseVO(-2,"更新支付状态失败",null);
                 }
             }
-
+            CacheUtil.put("pay","order-"+orderNo,"success");
             return new ResponseVO(1,"更新支付状态成功",null);
 
         }

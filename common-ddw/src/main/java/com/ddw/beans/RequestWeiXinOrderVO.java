@@ -1,9 +1,10 @@
 package com.ddw.beans;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 @XmlRootElement(name="xml")
-public class RequestWeiXinOrderVO {
+public class RequestWeiXinOrderVO implements Serializable {
     private String return_code;
     private String return_msg;
     private String appid;

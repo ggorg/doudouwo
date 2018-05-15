@@ -19,6 +19,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,40 @@ public class WalletService extends CommonService {
 
     @Autowired
     private DDWGlobals ddwGlobals;
+    public ResponseApiVO searchPayStatus(String token,PayStatusDTO dto)throws Exception{
+        if(dto==null || StringUtils.isBlank(dto.getOrderNo())){
+            return new ResponseApiVO(-2,"参数异常",null);
 
+        }
+        Object obj=null;
+        for(int i=1;i<=3;i++){
+            obj=CacheUtil.get("pay","order-"+dto.getOrderNo());
+            if(obj==null){
+                Thread.sleep(i*200);
+                continue;
+            }else{
+                break;
+            }
+        }
+        if(obj==null){
+            Map map=new HashMap();
+            map.put("doCustomerUserId",TokenUtil.getUserId(token));
+            map.put("id",OrderUtil.getOrderId(dto.getOrderNo()));
+            Map voMap=this.commonObjectBySearchCondition("ddw_order",map);
+            if(voMap==null || !voMap.containsKey("doPayStatus")){
+                return new ResponseApiVO(-2,"支付记录不存在",null);
+
+            }
+            Integer doPayStatus=(Integer) voMap.get("doPayStatus");
+            if(PayStatusEnum.PayStatus1.getCode().equals(doPayStatus)){
+                return new ResponseApiVO(1,"支付成功",null);
+
+            }
+            return new ResponseApiVO(-2,"支付失败",null);
+        }
+        return new ResponseApiVO(1,"支付成功",null);
+
+    }
     /**
      * 获取余额
      * @param userid

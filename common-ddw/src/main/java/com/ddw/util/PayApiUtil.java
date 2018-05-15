@@ -70,6 +70,7 @@ public class PayApiUtil {
         if(callBackStr!=null){
             XStream xStream=new XStream();
             xStream.alias("xml",RequestWeiXinOrderVO.class);
+            System.out.println(xStream.fromXML(callBackStr));
             return (RequestWeiXinOrderVO)xStream.fromXML(callBackStr);
         }
         return null;

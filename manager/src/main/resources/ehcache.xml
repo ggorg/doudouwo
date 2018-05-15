@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache>
     <cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=manual,rmiUrls=//127.0.0.1:9002/onlinePersonNum|//127.0.0.1:9002/stores|//127.0.0.1:9002/pay" />
+            properties="peerDiscovery=manual,rmiUrls=//127.0.0.1:9002/onlinePersonNum|//127.0.0.1:9002/stores|//127.0.0.1:9002/pay|//127.0.0.1:9002/review" />
 
     <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
@@ -28,6 +28,10 @@
         <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
     </cache>
     <cache name="pay"  maxElementsInMemory="2000" timeToLiveSeconds="5400"  diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
+        <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
+    </cache>
+    <cache name="review"  maxElementsInMemory="500" timeToLiveSeconds="10800"  diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
         <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
     </cache>

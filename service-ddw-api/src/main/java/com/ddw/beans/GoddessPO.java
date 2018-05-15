@@ -1,16 +1,44 @@
 package com.ddw.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 女神
  */
-public class GoddessPO {
+public class GoddessPO implements Serializable {
     private int id;
     private int userId;
     private String tableNo;
     private Date createTime;
     private Date updateTime;
+    private Integer appointment;
+    private Integer bidPrice;
+    private Integer earnest;
+
+    public Integer getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Integer appointment) {
+        this.appointment = appointment;
+    }
+
+    public Integer getBidPrice() {
+        return bidPrice;
+    }
+
+    public void setBidPrice(Integer bidPrice) {
+        this.bidPrice = bidPrice;
+    }
+
+    public Integer getEarnest() {
+        return earnest;
+    }
+
+    public void setEarnest(Integer earnest) {
+        this.earnest = earnest;
+    }
 
     public Date getCreateTime() {
         return createTime;

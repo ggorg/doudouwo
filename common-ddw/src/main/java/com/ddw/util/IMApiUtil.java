@@ -7,10 +7,12 @@ import com.ddw.config.DDWGlobals;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.HttpUtil;
 import com.gen.common.util.Tools;
+import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.xml.ws.Response;
 import java.util.*;
 
 public class IMApiUtil {
@@ -77,6 +79,30 @@ public class IMApiUtil {
         sb.append("/group_open_http_svc/destroy_group");
         sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
         return for5Sends(sb,param);
+    }
+
+    public static String sendGroupMsg(String groupId, ResponseVO responseVO){
+        StringBuilder sb=new StringBuilder();
+        sb.append(baseUri);
+        sb.append("/group_open_http_svc");
+        sb.append("/send_group_msg");
+
+        sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
+
+        Map baseMap=new HashMap();
+        baseMap.put("GroupId",groupId);
+        baseMap.put("Random",RandomStringUtils.randomNumeric(10));
+        List data=new ArrayList();
+        Map dataMap=new HashMap();
+        dataMap.put("MsgType","TIMCustomElem");
+        Map ext=new HashMap();
+        ext.put("ext",responseVO);
+        dataMap.put("MsgContent",ext);
+        data.add(dataMap);
+        baseMap.put("MsgBody",data);
+        return  HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(baseMap));
+
+
     }
     public static boolean importUser(UserInfoPO userInfoPO,Integer imUserType){
         Map param=new HashMap();
