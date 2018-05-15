@@ -10,6 +10,7 @@ public class WeiXinPayCallBackDTO {
     private String mch_id;
     private String nonce_str;
     private String sign;
+    private String device_info;
 
     /**
      * SUCCESS/FAIL
@@ -27,6 +28,79 @@ public class WeiXinPayCallBackDTO {
     private String transaction_id;
     private String out_trade_no;
     private String time_end;
+
+    private String err_code_des;
+    private String is_subscribe;
+    private Integer cash_fee_type;
+    private Integer coupon_fee;
+    private Integer coupon_count;
+    private String coupon_id;
+    private String attach;
+
+
+    public String getDevice_info() {
+        return device_info;
+    }
+
+    public void setDevice_info(String device_info) {
+        this.device_info = device_info;
+    }
+
+    public String getErr_code_des() {
+        return err_code_des;
+    }
+
+    public void setErr_code_des(String err_code_des) {
+        this.err_code_des = err_code_des;
+    }
+
+    public String getIs_subscribe() {
+        return is_subscribe;
+    }
+
+    public void setIs_subscribe(String is_subscribe) {
+        this.is_subscribe = is_subscribe;
+    }
+
+    public Integer getCash_fee_type() {
+        return cash_fee_type;
+    }
+
+    public void setCash_fee_type(Integer cash_fee_type) {
+        this.cash_fee_type = cash_fee_type;
+    }
+
+    public Integer getCoupon_fee() {
+        return coupon_fee;
+    }
+
+    public void setCoupon_fee(Integer coupon_fee) {
+        this.coupon_fee = coupon_fee;
+    }
+
+    public Integer getCoupon_count() {
+        return coupon_count;
+    }
+
+    public void setCoupon_count(Integer coupon_count) {
+        this.coupon_count = coupon_count;
+    }
+
+    public String getCoupon_id() {
+        return coupon_id;
+    }
+
+    public void setCoupon_id(String coupon_id) {
+        this.coupon_id = coupon_id;
+    }
+
+    public String getAttach() {
+        return attach;
+    }
+
+    public void setAttach(String attach) {
+        this.attach = attach;
+    }
 
     public String getReturn_code() {
         return return_code;

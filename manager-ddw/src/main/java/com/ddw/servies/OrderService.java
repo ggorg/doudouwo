@@ -519,11 +519,7 @@ public class OrderService extends CommonService {
         if(StringUtils.isBlank(orderNo)){
             return new ResponseVO(-2,"订单号为空",null);
         }
-        String prepayId=(String) CacheUtil.get("common","weixin-prepay-"+orderNo);
-        if(StringUtils.isBlank(prepayId)){
-            return new ResponseVO(-2,"预交易标识ID不存在",null);
 
-        }
         Map map=new HashMap();
         map.put("doPayStatus",payStatusEnum.getCode());
         Integer doType=this.commonSingleFieldBySingleSearchParam("ddw_order","id",OrderUtil.getOrderId(orderNo),"doType",Integer.class);
@@ -539,6 +535,7 @@ public class OrderService extends CommonService {
                 condition.put("userId",userid);
                 ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version","money");
                 if(wres.getReCode()!=1){
+                    CacheUtil.put("pay","order-"+orderNo,"fail");
                     return new ResponseVO(-2,"更新支付状态失败",null);
                 }
             }
@@ -546,6 +543,7 @@ public class OrderService extends CommonService {
             return new ResponseVO(1,"更新支付状态成功",null);
 
         }
+        CacheUtil.put("pay","order-"+orderNo,"fail");
         return new ResponseVO(-2,"更新支付状态失败",null);
 
 
