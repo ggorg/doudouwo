@@ -53,9 +53,9 @@ public class UserInfoVO {
     private String pgradeName;
     @ApiModelProperty(name="plevel",value="代练等级水平",example="VIP0")
     private String plevel;
-    @ApiModelProperty(name="goddessFlag",value="女神标记，0非女神，1女神",example="1")
+    @ApiModelProperty(name="goddessFlag",value="女神标记，0非女神，1女神,2审核中,3拒绝",example="1")
     private Integer goddessFlag;
-    @ApiModelProperty(name="practiceFlag",value="代练标记，0非代练，1代练",example="1")
+    @ApiModelProperty(name="practiceFlag",value="代练标记，0非代练，1代练,2审核中,3拒绝",example="1")
     private Integer practiceFlag;
     @ApiModelProperty(name="inviteCode",value="邀请码",example="aabbccddee")
     private String inviteCode;
@@ -83,7 +83,7 @@ public class UserInfoVO {
     private String userSign;
 
     public String getArea() {
-        return area;
+        return area==null?"":area;
     }
 
     public void setArea(String area) {
@@ -91,7 +91,7 @@ public class UserInfoVO {
     }
 
     public String getCity() {
-        return city;
+        return city==null?"":city;
     }
 
     public void setCity(String city) {
@@ -99,7 +99,7 @@ public class UserInfoVO {
     }
 
     public String getGgradeName() {
-        return ggradeName;
+        return ggradeName==null?"":ggradeName;
     }
 
     public void setGgradeName(String ggradeName) {
@@ -107,7 +107,7 @@ public class UserInfoVO {
     }
 
     public String getGlevel() {
-        return glevel;
+        return glevel==null?"":glevel;
     }
 
     public void setGlevel(String glevel) {
@@ -139,7 +139,7 @@ public class UserInfoVO {
     }
 
     public String getHeadImgUrl() {
-        return headImgUrl;
+        return headImgUrl==null?"":headImgUrl;
     }
 
     public void setHeadImgUrl(String headImgUrl) {
@@ -155,7 +155,7 @@ public class UserInfoVO {
     }
 
     public String getIdcard() {
-        return idcard;
+        return idcard==null?"":idcard;
     }
 
     public void setIdcard(String idcard) {
@@ -163,7 +163,7 @@ public class UserInfoVO {
     }
 
     public String getIdcardFrontUrl() {
-        return idcardFrontUrl;
+        return idcardFrontUrl==null?"":idcardFrontUrl;
     }
 
     public void setIdcardFrontUrl(String idcardFrontUrl) {
@@ -171,7 +171,7 @@ public class UserInfoVO {
     }
 
     public String getIdcardOppositeUrl() {
-        return idcardOppositeUrl;
+        return idcardOppositeUrl==null?"":idcardOppositeUrl;
     }
 
     public void setIdcardOppositeUrl(String idcardOppositeUrl) {
@@ -179,7 +179,7 @@ public class UserInfoVO {
     }
 
     public String getIdentifier() {
-        return identifier;
+        return identifier==null?"":identifier;
     }
 
     public void setIdentifier(String identifier) {
@@ -187,7 +187,7 @@ public class UserInfoVO {
     }
 
     public String getInviteCode() {
-        return inviteCode;
+        return inviteCode==null?"":inviteCode;
     }
 
     public void setInviteCode(String inviteCode) {
@@ -195,7 +195,7 @@ public class UserInfoVO {
     }
 
     public String getLabel() {
-        return label;
+        return label==null?"":label;
     }
 
     public void setLabel(String label) {
@@ -203,7 +203,7 @@ public class UserInfoVO {
     }
 
     public String getNickName() {
-        return nickName;
+        return nickName==null?"":nickName;
     }
 
     public void setNickName(String nickName) {
@@ -211,7 +211,7 @@ public class UserInfoVO {
     }
 
     public String getOpenid() {
-        return openid;
+        return openid==null?"":openid;
     }
 
     public void setOpenid(String openid) {
@@ -219,7 +219,7 @@ public class UserInfoVO {
     }
 
     public String getPgradeName() {
-        return pgradeName;
+        return pgradeName==null?"":pgradeName;
     }
 
     public void setPgradeName(String pgradeName) {
@@ -227,7 +227,7 @@ public class UserInfoVO {
     }
 
     public String getPhone() {
-        return phone;
+        return phone==null?"":phone;
     }
 
     public void setPhone(String phone) {
@@ -243,7 +243,7 @@ public class UserInfoVO {
     }
 
     public String getPlevel() {
-        return plevel;
+        return plevel==null?"":plevel;
     }
 
     public void setPlevel(String plevel) {
@@ -267,7 +267,7 @@ public class UserInfoVO {
     }
 
     public String getProvince() {
-        return province;
+        return province==null?"":province;
     }
 
     public void setProvince(String province) {
@@ -275,7 +275,7 @@ public class UserInfoVO {
     }
 
     public String getRealName() {
-        return realName;
+        return realName==null?"":realName;
     }
 
     public void setRealName(String realName) {
@@ -299,7 +299,7 @@ public class UserInfoVO {
     }
 
     public String getSignature() {
-        return signature;
+        return signature==null?"":signature;
     }
 
     public void setSignature(String signature) {
@@ -307,7 +307,7 @@ public class UserInfoVO {
     }
 
     public String getStarSign() {
-        return starSign;
+        return starSign==null?"":starSign;
     }
 
     public void setStarSign(String starSign) {
@@ -315,7 +315,7 @@ public class UserInfoVO {
     }
 
     public String getToken() {
-        return token;
+        return token==null?"":token;
     }
 
     public void setToken(String token) {
@@ -323,7 +323,7 @@ public class UserInfoVO {
     }
 
     public String getUgradeName() {
-        return ugradeName;
+        return ugradeName==null?"":ugradeName;
     }
 
     public void setUgradeName(String ugradeName) {
@@ -331,7 +331,7 @@ public class UserInfoVO {
     }
 
     public String getUlevel() {
-        return ulevel;
+        return ulevel==null?"":ulevel;
     }
 
     public void setUlevel(String ulevel) {
@@ -339,7 +339,7 @@ public class UserInfoVO {
     }
 
     public String getUserName() {
-        return userName;
+        return userName==null?"":userName;
     }
 
     public void setUserName(String userName) {
@@ -347,7 +347,7 @@ public class UserInfoVO {
     }
 
     public String getUserPwd() {
-        return userPwd;
+        return userPwd==null?"":userPwd;
     }
 
     public void setUserPwd(String userPwd) {
@@ -355,7 +355,7 @@ public class UserInfoVO {
     }
 
     public String getUserSign() {
-        return userSign;
+        return userSign==null?"":userSign;
     }
 
     public void setUserSign(String userSign) {

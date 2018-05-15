@@ -3,7 +3,7 @@ package com.ddw.controller;
 
 import com.ddw.beans.GoddessDTO;
 import com.ddw.beans.UserInfoVO;
-import com.ddw.services.GoddessService;
+import com.ddw.services.ReviewGoddessService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class GoddessController {
     private final Logger logger = Logger.getLogger(GoddessController.class);
     @Autowired
-    private GoddessService goddessService;
+    private ReviewGoddessService reviewGoddessService;
     @Autowired
     private UserInfoService userInfoService;
 
@@ -38,7 +38,7 @@ public class GoddessController {
             int storeId = TokenUtil.getStoreId(token);
             UserInfoVO user = userInfoService.queryByOpenid(openid);
             if(!StringUtils.isBlank(user.getIdcard())) {
-                return goddessService.apply(user, storeId);
+                return reviewGoddessService.apply(user, storeId);
             }else{
                 return new ResponseVO(-2,"请先实名认证",null);
             }

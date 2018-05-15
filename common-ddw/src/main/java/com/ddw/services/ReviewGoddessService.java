@@ -4,6 +4,7 @@ import com.ddw.beans.ReviewPO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,8 @@ public class ReviewGoddessService extends CommonService {
         setParams.put("goddessFlag",1);
         Map searchCondition=new HashMap();
         searchCondition.put("id",reviewPO.getDrProposer());
+        //删除审核拒绝缓存
+        CacheUtil.delete("review","goddess"+reviewPO.getDrProposer());
         return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
     }
 }
