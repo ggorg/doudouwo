@@ -35,6 +35,16 @@ public class WalletAlipayRechargeVO implements Serializable {
     @ApiModelProperty(name="biz_content",value="业务请求参数的集合",example="{xxxxxxxxx}")
     private String biz_content;
 
+    @ApiModelProperty(name="orderNo",value="订单号",example="1111111111111111111")
+    private String orderNo;
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
 
     public String getApp_id() {
         return app_id;

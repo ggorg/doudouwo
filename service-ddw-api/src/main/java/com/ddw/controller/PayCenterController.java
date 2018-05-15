@@ -1,8 +1,9 @@
 package com.ddw.controller;
 
-import com.ddw.beans.MoneyDTO;
-import com.ddw.beans.PayStatusDTO;
-import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.*;
+import com.ddw.enums.OrderTypeEnum;
+import com.ddw.enums.PayTypeEnum;
+import com.ddw.services.PayCenterService;
 import com.ddw.services.ReviewService;
 import com.ddw.services.WalletService;
 import com.ddw.token.Token;
@@ -26,6 +27,9 @@ public class PayCenterController {
 
     @Autowired
     private ReviewService reviewService;
+
+    @Autowired
+    private PayCenterService payCenterService;
 
     @Token
     @ApiOperation(value = "查询支付状态",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,6 +55,46 @@ public class PayCenterController {
         }
         return new ResponseApiVO(-1,"提现申请失败",null);
 
+    }
+    @Token
+    @ApiOperation(value = "统一支付",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/public/pay/{token}")
+    @ResponseBody
+    public ResponseApiVO publicPay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PublicPayDTO args){
+        try {
+            //return this.walletService.searchPayStatus(token,args);
+            return this.payCenterService.prePay(token,args.getMoney(),args.getPayType(),args.getOrderType() );
+        }catch (Exception e){
+            logger.error("PayCenterController-earnestMoney-》统一支付-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"支付失败",null);
+
+    }
+    @Token
+    @ApiOperation(value = "微信支付",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/weixin/pay/{token}")
+    @ResponseBody
+    public ResponseApiVO<WalletWeixinRechargeVO> weixinPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
+        try {
+            return this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType1.getCode(), args.getOrderType());
+        }catch (Exception e){
+            logger.error("PayCenterController-weixinPay-》微信支付-》系统异常",e);
+            return new ResponseApiVO(-1,"微信支付失败",null);
+        }
+    }
+
+
+    @Token
+    @ApiOperation(value = "支付宝支付",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/alipay/pay/{token}")
+    @ResponseBody
+    public ResponseApiVO<WalletAlipayRechargeVO> aliPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
+        try {
+            return this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType2.getCode(),args.getOrderType());
+        }catch (Exception e){
+            logger.error("PayCenterController-aliPay-》支付宝支付-》系统异常",e);
+            return new ResponseApiVO(-1,"支付宝支付失败",null);
+        }
     }
 
 }

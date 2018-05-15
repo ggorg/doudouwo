@@ -65,7 +65,7 @@ public class BiddingService extends CommonService {
         Map searchMap=new HashMap();
         searchMap.put("endTime,>=",new Date());
         searchMap.put("groupId",dto.getGroupId());
-        List<Map> bidList=this.commonList("ddw_goddess_bidding","creatTime desc",1,1,searchMap);
+        List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
         if(bidList!=null && !bidList.isEmpty()){
 
             return new ResponseApiVO(3,"陪玩中，空闲时间约在"+this.getSurplusTimeStr((Map)bidList.get(0))+"后",null);
@@ -93,7 +93,7 @@ public class BiddingService extends CommonService {
         Map searchMap=new HashMap();
         //searchMap.put("bidEndTime,>=",new Date());
         searchMap.put("groupId",dto.getGroupId());
-        List<Map> bidList=this.commonList("ddw_goddess_bidding","creatTime desc",1,1,searchMap);
+        List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
         Integer bidId=null;
         boolean flag=false;
         if(bidList==null || bidList.isEmpty()){

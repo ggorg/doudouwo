@@ -33,8 +33,8 @@ public class BiddingController {
         try {
             return this.biddingService.getCurrentMaxPrice(args);
         }catch (Exception e){
-            logger.error("OrderController-searchPayStatus-》支付状态查询-》系统异常",e);
-            return new ResponseApiVO(-1,"支付状态查询失败",null);
+            logger.error("BiddingController-queryMaxPrice-》获取当前最高价位-》系统异常",e);
+            return new ResponseApiVO(-1,"查询失败",null);
         }
     }
 
