@@ -43,11 +43,12 @@ public class ReviewRealNameService extends CommonService {
             return new ResponseApiVO(-1,"参数不正确",null);
         }else{
             Map conditionMap = new HashMap<>();
-            conditionMap.put("userId",userId);
+            conditionMap.put("drProposer",userId);
+            conditionMap.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType4.getCode());
             //查询状态审核未通过
-            conditionMap.put("status,!=",2);
-            ReviewRealNamePO realPO = this.commonObjectBySearchCondition("ddw_review_realname",conditionMap,new ReviewRealNamePO().getClass());
-            if(realPO != null){
+            conditionMap.put("drReviewStatus,!=",2);
+            ReviewPO rePO = this.commonObjectBySearchCondition("ddw_review",conditionMap,new ReviewPO().getClass());
+            if(rePO != null){
                 return new ResponseApiVO(-2,"不允许重复提交申请",null);
             }
             //插入审批表

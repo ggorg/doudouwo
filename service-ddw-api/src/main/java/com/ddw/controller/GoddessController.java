@@ -2,18 +2,18 @@ package com.ddw.controller;
 
 
 import com.ddw.beans.GoddessDTO;
-import com.ddw.beans.GoddessPO;
-import com.ddw.beans.ResponseApiVO;
-import com.ddw.enums.ErrorCodeEnum;
+import com.ddw.beans.UserInfoVO;
 import com.ddw.services.GoddessService;
-import com.ddw.services.ReviewService;
+import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,20 +26,21 @@ public class GoddessController {
     private final Logger logger = Logger.getLogger(GoddessController.class);
     @Autowired
     private GoddessService goddessService;
-
     @Autowired
-    private ReviewService reviewService;
+    private UserInfoService userInfoService;
 
     @Token
-    @ApiOperation(value = "女神信息添加")
-    @PostMapping("/save/{token}")
-    public ResponseVO save(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoddessDTO args){
+    @ApiOperation(value = "申请成为女神")
+    @PostMapping("/apply/{token}")
+    public ResponseVO apply(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoddessDTO args){
         try {
-            GoddessPO goddessPO = goddessService.query(args.getUserId());
-            if(goddessPO == null){
-                return goddessService.save(args);
+            String openid = TokenUtil.getUserObject(token).toString();
+            int storeId = TokenUtil.getStoreId(token);
+            UserInfoVO user = userInfoService.queryByOpenid(openid);
+            if(!StringUtils.isBlank(user.getIdcard())) {
+                return goddessService.apply(user, storeId);
             }else{
-                return goddessService.update(args);
+                return new ResponseVO(-2,"请先实名认证",null);
             }
         }catch (Exception e){
             logger.error("GoddessController->save",e);
@@ -51,14 +52,15 @@ public class GoddessController {
     @Token
     @ApiOperation(value = "女神信息查询")
     @PostMapping("/query/{token}")
-    public ResponseVO query(@PathVariable String token,@RequestParam @ApiParam(name = "userId",value="女神对应会员id", required = true) int userId){
+    public ResponseVO query(@PathVariable String token){
         try {
-            return new ResponseVO(1,"成功",goddessService.query(userId));
+            String openid = TokenUtil.getUserObject(token).toString();
+            UserInfoVO user = userInfoService.queryByOpenid(openid);
+            return new ResponseVO(1,"成功",user);
         }catch (Exception e){
             logger.error("GoddessController->query",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }
-
 
 }

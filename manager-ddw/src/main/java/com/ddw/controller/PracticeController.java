@@ -2,7 +2,7 @@ package com.ddw.controller;
 
 
 import com.ddw.beans.ReviewPO;
-import com.ddw.services.ReviewRealNameService;
+import com.ddw.services.ReviewPracticeService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,28 +12,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/manager/reviewRealName")
-public class ReviewRealNameController {
+@RequestMapping("/manager/reviewPractice")
+public class PracticeController {
 
-    private final Logger logger = Logger.getLogger(ReviewRealNameController.class);
+    private final Logger logger = Logger.getLogger(PracticeController.class);
 
     @Autowired
-    private ReviewRealNameService reviewRealNameService;
+    private ReviewPracticeService peviewPracticeService;
 
     /**
-     * 总店-会员实名认证列表
+     * 总店-代练认证列表
      * @param pageNo
      * @param model
      * @return
      */
     @GetMapping("/to-review-page")
     public String toReviewPageByHq(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
-       try {
-           model.addAttribute("rPage",this.reviewRealNameService.findRealNamePageByHq(pageNo));
-       }catch (Exception e){
-           logger.error("ReviewRealNameController->toReviewPage",e);
-       }
-       return "pages/manager/reviewRealName/list";
+        try {
+
+            model.addAttribute("rPage",this.peviewPracticeService.findPracticePageByHq(pageNo));
+        }catch (Exception e){
+            logger.error("PracticeController->toReviewPageByHq",e);
+        }
+        return "pages/manager/reviewPractice/list";
 
     }
 
@@ -44,19 +45,18 @@ public class ReviewRealNameController {
     @GetMapping("/to-review-info-by-id-html")
     public String  toReviewInfoByIdHtml(Integer id,Model model){
         try {
-            ReviewPO reviewPO = this.reviewRealNameService.getReviewById(id);
+            ReviewPO reviewPO = this.peviewPracticeService.getReviewById(id);
             model.addAttribute("review",reviewPO);
             if (reviewPO != null) {
-                model.addAttribute("reviewRealName",this.reviewRealNameService.getReviewRealNameByCode(reviewPO.getDrBusinessCode()));
+                model.addAttribute("reviewPractice",this.peviewPracticeService.getReviewPracticeByCode(reviewPO.getDrBusinessCode()));
             }
-            return "pages/manager/reviewRealName/reviewInfo";
-
-
+            return "pages/manager/reviewPractice/reviewInfo";
         }catch (Exception e){
-            logger.error("ReviewRealNameController->toReviewInfoByIdHtml",e);
+            logger.error("PracticeController->toReviewInfoByIdHtml",e);
         }
 
-        return "pages/manager/reviewRealName/reviewInfo";
+        return "pages/manager/reviewPractice/reviewInfo";
     }
+
 
 }

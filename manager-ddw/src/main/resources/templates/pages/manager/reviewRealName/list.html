@@ -112,15 +112,6 @@
     </div>
     <script type="text/javascript">
 
-        function confirmDisabled(id,status,msg){
-            layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
-                if(index>0){
-                    jQueryCommonSubmit("do-update-status",null,{idStr:id,status:status});
-
-                }
-                //layer.close(index);
-            });
-        }
         layui.use('form', function(){
             var form = layui.form;
 
