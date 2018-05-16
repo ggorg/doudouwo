@@ -118,5 +118,19 @@ public class WalletAlipayRechargeVO implements Serializable {
         this.biz_content = biz_content;
     }
 
-
+    @Override
+    public String toString() {
+        return "WalletAlipayRechargeVO{" +
+                "app_id='" + app_id + '\'' +
+                ", method='" + method + '\'' +
+                ", charset='" + charset + '\'' +
+                ", sign_type='" + sign_type + '\'' +
+                ", sign='" + sign + '\'' +
+                ", timestamp='" + timestamp + '\'' +
+                ", version='" + version + '\'' +
+                ", notify_url='" + notify_url + '\'' +
+                ", biz_content='" + biz_content + '\'' +
+                ", orderNo='" + orderNo + '\'' +
+                '}';
+    }
 }

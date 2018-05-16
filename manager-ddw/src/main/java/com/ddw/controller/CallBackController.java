@@ -59,7 +59,7 @@ public class CallBackController {
     @ResponseBody
     public String liveExecute( @RequestBody LiveRadioCallBackDTO dto){
         try {
-            logger.info("直播回调："+dto);
+            logger.info("liveExecute-request："+dto);
             if(proxyCallBackHost!=null){
                 asyncService.requestProxyHost(proxyCallBackHost+"/manager/live/execute", JSON.toJSONString(dto));
             }
@@ -86,7 +86,7 @@ public class CallBackController {
     @ResponseBody
     public String imExecute(@RequestParam IMCallBackDTO dto, @RequestBody HttpEntity data){
 
-        logger.info("IM回调："+data+","+dto);
+        logger.info("imExecute-request："+data+","+dto);
 
         if(proxyCallBackHost!=null){
             StringBuilder stringBuilder=new StringBuilder();
@@ -116,21 +116,28 @@ public class CallBackController {
     @ResponseBody
     public WeiXinPayCallBackVO weiXinPayExecute(@RequestBody WeiXinPayCallBackDTO dto){
         try{
+            logger.info("weiXinPayExecute-request："+dto);
             if(dto!=null && "SUCCESS".equals(dto.getReturn_code())&& "SUCCESS".equals(dto.getResult_code()) ){
                 if(!SignUtil.wxPaySign(dto)){
                     logger.info("微信支付回调验签不成功"+dto);
+
+                    CacheUtil.put("pay","order-"+dto.getOut_trade_no(),"fail");
+
                     return new WeiXinPayCallBackVO("FAIL","ok");
 
                 }
                 Object data =(Object) CacheUtil.get("pay","weixin-pay-"+dto.getOut_trade_no());
-                if(data==null){
-                    return new WeiXinPayCallBackVO("FAIL","ok");
-                }
-                ResponseVO res=orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOut_trade_no());
-                if(res.getReCode()==1){
-                    return new WeiXinPayCallBackVO("SUCCESS","ok");
+                if(data!=null){
+                    ResponseVO res=orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOut_trade_no());
+                    if(res.getReCode()==1){
+                        return new WeiXinPayCallBackVO("SUCCESS","ok");
 
+                    }
+
+                }else{
+                    CacheUtil.put("pay","order-"+dto.getOut_trade_no(),"fail");
                 }
+
             }
 
         }catch (Exception e){
@@ -149,23 +156,25 @@ public class CallBackController {
     @ResponseBody
     public String aliPayExecute(AliPayCallBackDTO dto){
         try {
-
+            logger.info("aliPayExecute->request："+dto);
             if(dto!=null && ("TRADE_FINISHED".equals(dto.getTrade_status()) || "TRADE_SUCCESS".equals(dto.getTrade_status()))){
                 Object data =(Object) CacheUtil.get("pay","alipay-pay-"+dto.getOut_trade_no());
-                if(data==null){
-                    return "fail";
-                }
-                ResponseVO rs=this.orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOut_trade_no());
-                if(rs.getReCode()==1){
-                    return "success";
+                if(data!=null){
+                    ResponseVO rs=this.orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOut_trade_no());
+                    if(rs.getReCode()==1){
+                        return "success";
 
+                    }
+
+                }else{
+                    CacheUtil.put("pay","order-"+dto.getOut_trade_no(),"fail");
                 }
+
             }
         }catch (Exception e){
             logger.error("支付宝支付回调失败");
 
         }
-
         return "fail";
     }
 }

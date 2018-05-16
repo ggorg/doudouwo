@@ -17,11 +17,12 @@ public class CacheUtil {
     }
     public static Object  get(String cacheName,Object key){
         Cache cache=createCache(cacheName);
-
-        Element element=cache.getQuiet(key);
-        cache.flush();
-        if(element!=null){
-            return element.getObjectValue();
+        if(cache.isKeyInCache(key)){
+            Element element=cache.getQuiet(key);
+            cache.flush();
+            if(element!=null){
+                return element.getObjectValue();
+            }
         }
         return null;
     }

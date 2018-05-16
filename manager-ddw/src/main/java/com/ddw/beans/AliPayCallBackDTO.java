@@ -289,4 +289,42 @@ public class AliPayCallBackDTO {
     public void setDiscount_amount(String discount_amount) {
         this.discount_amount = discount_amount;
     }
+
+    @Override
+    public String toString() {
+        return "AliPayCallBackDTO{" +
+                "notify_type='" + notify_type + '\'' +
+                ", notify_id='" + notify_id + '\'' +
+                ", notify_time='" + notify_time + '\'' +
+                ", sign_type='" + sign_type + '\'' +
+                ", sign='" + sign + '\'' +
+                ", trade_no='" + trade_no + '\'' +
+                ", app_id='" + app_id + '\'' +
+                ", out_trade_no='" + out_trade_no + '\'' +
+                ", seller_id='" + seller_id + '\'' +
+                ", trade_status='" + trade_status + '\'' +
+                ", total_amount='" + total_amount + '\'' +
+                ", refund_fee='" + refund_fee + '\'' +
+                ", subject='" + subject + '\'' +
+                ", body='" + body + '\'' +
+                ", gmt_create='" + gmt_create + '\'' +
+                ", gmt_payment='" + gmt_payment + '\'' +
+                ", gmt_refund='" + gmt_refund + '\'' +
+                ", gmt_close='" + gmt_close + '\'' +
+                ", buyer_id='" + buyer_id + '\'' +
+                ", fund_bill_list='" + fund_bill_list + '\'' +
+                ", receipt_amount='" + receipt_amount + '\'' +
+                ", invoice_amount='" + invoice_amount + '\'' +
+                ", buyer_pay_amount='" + buyer_pay_amount + '\'' +
+                ", point_amount='" + point_amount + '\'' +
+                ", voucher_detail_list='" + voucher_detail_list + '\'' +
+                ", buyer_logon_id='" + buyer_logon_id + '\'' +
+                ", seller_email='" + seller_email + '\'' +
+                ", out_biz_no='" + out_biz_no + '\'' +
+                ", passback_params='" + passback_params + '\'' +
+                ", out_channel_type='" + out_channel_type + '\'' +
+                ", mdiscount_amount='" + mdiscount_amount + '\'' +
+                ", discount_amount='" + discount_amount + '\'' +
+                '}';
+    }
 }

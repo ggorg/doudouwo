@@ -229,4 +229,34 @@ public class WeiXinPayCallBackDTO {
     public void setTime_end(String time_end) {
         this.time_end = time_end;
     }
+
+    @Override
+    public String toString() {
+        return "WeiXinPayCallBackDTO{" +
+                "return_code='" + return_code + '\'' +
+                ", return_msg='" + return_msg + '\'' +
+                ", appid='" + appid + '\'' +
+                ", mch_id='" + mch_id + '\'' +
+                ", nonce_str='" + nonce_str + '\'' +
+                ", sign='" + sign + '\'' +
+                ", device_info='" + device_info + '\'' +
+                ", result_code='" + result_code + '\'' +
+                ", err_code='" + err_code + '\'' +
+                ", openid='" + openid + '\'' +
+                ", trade_type='" + trade_type + '\'' +
+                ", bank_type='" + bank_type + '\'' +
+                ", total_fee=" + total_fee +
+                ", cash_fee=" + cash_fee +
+                ", transaction_id='" + transaction_id + '\'' +
+                ", out_trade_no='" + out_trade_no + '\'' +
+                ", time_end='" + time_end + '\'' +
+                ", err_code_des='" + err_code_des + '\'' +
+                ", is_subscribe='" + is_subscribe + '\'' +
+                ", cash_fee_type=" + cash_fee_type +
+                ", coupon_fee=" + coupon_fee +
+                ", coupon_count=" + coupon_count +
+                ", coupon_id='" + coupon_id + '\'' +
+                ", attach='" + attach + '\'' +
+                '}';
+    }
 }

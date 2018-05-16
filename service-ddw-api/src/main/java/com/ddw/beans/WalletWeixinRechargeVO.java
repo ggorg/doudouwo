@@ -98,4 +98,18 @@ public class WalletWeixinRechargeVO implements Serializable {
     public void setSign(String sign) {
         this.sign = sign;
     }
+
+    @Override
+    public String toString() {
+        return "WalletWeixinRechargeVO{" +
+                "appid='" + appid + '\'' +
+                ", partnerid='" + partnerid + '\'' +
+                ", prepayid='" + prepayid + '\'' +
+                ", packages='" + packages + '\'' +
+                ", noncestr='" + noncestr + '\'' +
+                ", timestamp='" + timestamp + '\'' +
+                ", sign='" + sign + '\'' +
+                ", orderNo='" + orderNo + '\'' +
+                '}';
+    }
 }

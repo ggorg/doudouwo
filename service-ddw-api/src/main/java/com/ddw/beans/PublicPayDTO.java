@@ -39,4 +39,13 @@ public class PublicPayDTO {
     public void setOrderType(Integer orderType) {
         this.orderType = orderType;
     }
+
+    @Override
+    public String toString() {
+        return "PublicPayDTO{" +
+                "money=" + money +
+                ", payType=" + payType +
+                ", orderType=" + orderType +
+                '}';
+    }
 }

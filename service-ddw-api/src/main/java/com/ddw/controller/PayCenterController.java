@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class PayCenterController {
     private final Logger logger = Logger.getLogger(PayCenterController.class);
 
-    @Autowired
-    private WalletService walletService;
 
     @Autowired
     private ReviewService reviewService;
@@ -37,7 +35,11 @@ public class PayCenterController {
     @ResponseBody
     public ResponseApiVO searchPayStatus (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PayStatusDTO args){
         try {
-            return this.walletService.searchPayStatus(token,args);
+            logger.info("searchPayStatus->request："+args);
+            ResponseApiVO vo= this.payCenterService.searchPayStatus(token,args);
+            logger.info("searchPayStatus->response："+vo);
+
+            return vo;
         }catch (Exception e){
             logger.error("PayCenterController-searchPayStatus-》支付状态查询-》系统异常",e);
             return new ResponseApiVO(-1,"支付状态查询失败",null);
@@ -49,6 +51,8 @@ public class PayCenterController {
     @ResponseBody
     public ResponseApiVO withdrawMoney(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)MoneyDTO args){
         try {
+            logger.info("withdrawMoney->request："+args);
+
             //return this.walletService.searchPayStatus(token,args);
         }catch (Exception e){
             logger.error("PayCenterController-withdrawMoney-》提现申请-》系统异常",e);
@@ -63,7 +67,10 @@ public class PayCenterController {
     public ResponseApiVO publicPay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PublicPayDTO args){
         try {
             //return this.walletService.searchPayStatus(token,args);
-            return this.payCenterService.prePay(token,args.getMoney(),args.getPayType(),args.getOrderType() );
+            logger.info("publicPay->request："+args);
+            ResponseApiVO vo= this.payCenterService.prePay(token,args.getMoney(),args.getPayType(),args.getOrderType() );
+            logger.info("publicPay->response:"+vo);
+            return vo;
         }catch (Exception e){
             logger.error("PayCenterController-earnestMoney-》统一支付-》系统异常",e);
         }
@@ -76,7 +83,11 @@ public class PayCenterController {
     @ResponseBody
     public ResponseApiVO<WalletWeixinRechargeVO> weixinPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
         try {
-            return this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType1.getCode(), args.getOrderType());
+            logger.info("weixinPay->request："+args);
+            ResponseApiVO vo=this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType1.getCode(), args.getOrderType());
+            logger.info("weixinPay->response："+vo);
+
+            return vo;
         }catch (Exception e){
             logger.error("PayCenterController-weixinPay-》微信支付-》系统异常",e);
             return new ResponseApiVO(-1,"微信支付失败",null);
@@ -90,7 +101,11 @@ public class PayCenterController {
     @ResponseBody
     public ResponseApiVO<WalletAlipayRechargeVO> aliPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
         try {
-            return this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType2.getCode(),args.getOrderType());
+            logger.info("aliPay->request："+args);
+            ResponseApiVO vo=this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType2.getCode(),args.getOrderType());
+            logger.info("aliPay->response："+vo);
+
+            return vo;
         }catch (Exception e){
             logger.error("PayCenterController-aliPay-》支付宝支付-》系统异常",e);
             return new ResponseApiVO(-1,"支付宝支付失败",null);
