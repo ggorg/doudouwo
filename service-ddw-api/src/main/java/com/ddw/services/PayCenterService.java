@@ -36,6 +36,9 @@ public class PayCenterService extends CommonService {
     private final Logger logger = Logger.getLogger(PayCenterService.class);
 
     @Autowired
+    private BiddingService biddingService;
+
+    @Autowired
     private DDWGlobals ddwGlobals;
     public ResponseApiVO searchPayStatus(String token,PayStatusDTO dto)throws Exception{
         if(dto==null || StringUtils.isBlank(dto.getOrderNo())){
@@ -117,7 +120,7 @@ public class PayCenterService extends CommonService {
         ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
         if(insertResponseVO.getReCode()==1){
             Map m=new HashMap();
-            String orderNo= OrderUtil.createOrderNo(orderPO.getDoOrderDate(),OrderTypeEnum.OrderType3.getCode(),payType,insertResponseVO.getData());
+            String orderNo= OrderUtil.createOrderNo(orderPO.getDoOrderDate(),orderType,payType,insertResponseVO.getData());
             ResponseVO<Integer> resVo=null;
             if(orderType.equals(OrderTypeEnum.OrderType3.getCode())){
                 m.put("orderId",insertResponseVO.getData());
@@ -127,6 +130,19 @@ public class PayCenterService extends CommonService {
                 m.put("creater",TokenUtil.getUserId(token));
                 m.put("dorCost",cost);
                 resVo=this.commonInsertMap("ddw_order_recharge",m);
+            }if(orderType.equals(OrderTypeEnum.OrderType4.getCode())){
+                m.put("orderId",insertResponseVO.getData());
+                m.put("orderNo",orderNo);
+                m.put("createTime",new Date());
+                m.put("updateTime",new Date());
+                m.put("creater",TokenUtil.getUserId(token));
+                m.put("dorCost",cost);
+                Map bidMap=this.biddingService.getCurrentBidMap(TokenUtil.getGroupId(token));
+                if(bidMap==null){
+                    return new ResponseApiVO(-2,"支付竞价定金失败，当前竞价已经结束",null);
+                }
+                m.put("biddingId",bidMap.get("id"));
+                resVo=this.commonInsertMap("ddw_order_bidding_earnest",m);
             }
 
             if(resVo.getReCode()==1){
@@ -149,14 +165,15 @@ public class PayCenterService extends CommonService {
                         for(String key:keys){
                             builder.append(key).append("=").append(treeMap.get(key)).append("&");
                         }
-                        builder.deleteCharAt(builder.length()-1);
+                        builder.append("key=").append(PayApiConstant.WEI_XIN_PAY_KEY);
+                       // builder.deleteCharAt(builder.length()-1);
                         treeMap.put("sign", DigestUtils.md5Hex(builder.toString()).toUpperCase());
                         treeMap.put("packages",treeMap.get("package"));
                         treeMap.remove("package");
                         WalletWeixinRechargeVO wxVo=new WalletWeixinRechargeVO();
                         PropertyUtils.copyProperties(wxVo,treeMap);
                         wxVo.setOrderNo(orderNo);
-                        CacheUtil.put("pay","weixin-pay-"+orderNo,OrderTypeEnum.OrderType3.getCode());
+                        CacheUtil.put("pay","weixin-pay-"+orderNo,orderType);
                         return new ResponseApiVO(1,"成功",wxVo);
                     }else{
                         throw new GenException("调用微信支付接口失败");
@@ -193,13 +210,13 @@ public class PayCenterService extends CommonService {
                     IOUtils.closeQuietly(is);
                     treeMap.clear();
                     alipayVo.setSign(AlipaySignature.rsa256Sign(builder.toString(),privateKey,"utf-8"));
-                    CacheUtil.put("pay","alipay-pay-"+orderNo,OrderTypeEnum.OrderType3.getCode());
+                    CacheUtil.put("pay","alipay-pay-"+orderNo,orderType);
                     alipayVo.setOrderNo(orderNo);
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
                 }
             }
         }
-        return new ResponseApiVO(-2,"充值失败",null);
+        return new ResponseApiVO(-2,"支付失败",null);
     }
 }

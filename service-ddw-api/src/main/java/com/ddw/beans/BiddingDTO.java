@@ -13,8 +13,6 @@ public class BiddingDTO implements Serializable {
     @ApiModelProperty(name="price",value="价格",example="xxx，分单位")
     private Integer price;
 
-    @ApiModelProperty(name="groupId",value="群组ID",example="")
-    private String groupId;
 
     public Integer getPrice() {
         return price;
@@ -24,11 +22,5 @@ public class BiddingDTO implements Serializable {
         this.price = price;
     }
 
-    public String getGroupId() {
-        return groupId;
-    }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
 }

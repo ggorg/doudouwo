@@ -12,6 +12,7 @@ public class WalletRechargeDTO {
     @ApiModelProperty(name="orderType",value="订单类型,充值：3，竞价定金：4",example="3")
     private Integer orderType;
 
+
     public Integer getOrderType() {
         return orderType;
     }

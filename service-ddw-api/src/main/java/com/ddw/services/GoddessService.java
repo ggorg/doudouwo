@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.ddw.beans.*;
 import com.ddw.enums.*;
+import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -23,6 +24,47 @@ public class GoddessService extends CommonService {
     @Autowired
     private CommonReviewService commonReviewService;
 
+    @Autowired
+    private CacheService cacheService;
+
+    public GoddessPO getAppointment(Integer userid)throws Exception{
+        GoddessPO obj=(GoddessPO)cacheService.get("goddess-"+userid);
+        if(obj==null){
+            GoddessPO po= this.commonObjectBySingleParam("ddw_goddess","userId",userid,GoddessPO.class);
+            if(po!=null){
+                Integer ap=po.getAppointment()==null?0:po.getAppointment();
+                po.setAppointment(ap);
+                cacheService.set("goddess-"+userid,po);
+                return po;
+            }
+        }else{
+            return  obj;
+        }
+       return null;
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO updateAppointment(String userid,Integer ap)throws Exception{
+       GoddessPO po= this.commonObjectBySingleParam("ddw_goddess","userId",userid,GoddessPO.class);
+       if(po!=null){
+           if(GoddessAppointmentEnum.getName(ap)==null){
+               return new ResponseApiVO(-2,"ap状态值不正确",null);
+           }
+           Map map=new HashMap();
+           map.put("appointment",ap);
+           ResponseVO vo=this.commonUpdateBySingleSearchParam("ddw_goddess",map,"userId",userid);
+           if(vo.getReCode()==1){
+               po.setAppointment(ap);
+               cacheService.set("goddess-"+userid,po);
+               return new ResponseApiVO(1,"修改成功",null);
+           }
+       }
+       return new ResponseApiVO(-2,"修改失败",null);
+
+    }
+
+    public GoddessPO getByUserId(Integer userId)throws Exception{
+        return this.commonObjectBySingleParam("ddw_goddess","userId",userId,GoddessPO.class);
+    }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(GoddessDTO goddessDTO)throws Exception{
         GoddessPO goddessPO = new GoddessPO();

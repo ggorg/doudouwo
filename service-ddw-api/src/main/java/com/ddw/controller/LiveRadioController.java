@@ -85,7 +85,8 @@ public class LiveRadioController {
     @ResponseBody
     public ResponseApiVO<SelectLiveRadioVO> selectLiveRadioRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
         try {
-            return this.liveRadioClientService.selectLiveRadio(args,TokenUtil.getStoreId(token));
+            ResponseApiVO vo=this.liveRadioClientService.selectLiveRadio(args, token);
+            return vo;
         }catch (Exception e){
             logger.error("LiveRadioController->toLiveRadioList",e);
             return new ResponseApiVO(-1,"选择直播房间",null);

@@ -1,7 +1,11 @@
 package com.gen.common.util;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -16,6 +20,9 @@ import java.net.InetAddress;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 工具计算类
@@ -403,6 +410,24 @@ public class Tools {
 			}
 		}
 		return ip;
+	}
+	public static <T> T xmlCastObject(String xmlStr,Class<T> tClass){
+		try {
+			Document doc=DocumentHelper.parseText(xmlStr);
+			Element root=doc.getRootElement();
+
+			Object obj=tClass.newInstance();
+			List<Element> el=root.elements();
+			Map map=new HashMap();
+			for(Element e:el){
+				map.put(e.getName(),e.getTextTrim());
+			}
+			PropertyUtils.copyProperties(obj,map);
+			return (T)obj;
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
