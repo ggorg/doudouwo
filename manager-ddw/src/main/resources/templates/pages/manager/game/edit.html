@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+  <style type="text/css">
+    .dmImge{z-index:10;width: 353px;height: 93.83px;position:absolute;top:0;left:0}
+    .dmImg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane" >
+  <input th:if="${gradePO!=null and gradePO['id']!=null}" th:name="id" th:value="${gradePO['id']}" type="hidden"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="gradeName" required="required" title="名称"  lay-verify="required|max20" th:value="${gradePO!=null? gradePO['gradeName']:''}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">等级</label>
+    <div class="layui-input-block">
+      <input type="text" name="level" required="required" title="等级"  lay-verify="required" th:value="${gradePO!=null? gradePO['level']:''}" placeholder="请输入等级" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">序号</label>
+    <div class="layui-input-block">
+      <input type="text" name="sort" required="required" title="序号"  lay-verify="required" th:value="${gradePO!=null? gradePO['sort']:''}" placeholder="请输入序号" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item ">
+    <label class="layui-form-label">描述</label>
+    <div class="layui-input-block">
+
+      <textarea name="describe" th:text="${gradePO!=null?gradePO['describe']:''}"  class="layui-textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    initForm("do-edit",".layui-form")
+</script>
+</body>
+</html>

@@ -47,6 +47,8 @@ public class PracticeController {
         try {
             ReviewPO reviewPO = this.peviewPracticeService.getReviewById(id);
             model.addAttribute("review",reviewPO);
+            model.addAttribute("gameList",this.peviewPracticeService.gameList());
+            model.addAttribute("rankList",this.peviewPracticeService.rankList());
             if (reviewPO != null) {
                 model.addAttribute("reviewPractice",this.peviewPracticeService.getReviewPracticeByCode(reviewPO.getDrBusinessCode()));
             }

@@ -51,6 +51,10 @@ public class ReviewPracticeService extends CommonService {
             if(realPO != null){
                 return new ResponseApiVO(-2,"不允许重复提交申请",null);
             }
+            //更新会员女神状态为审核中
+            Map setConditionMap = new HashMap<>();
+            setConditionMap.put("practiceFlag",2);
+            this.commonUpdateBySingleSearchParam("ddw_userinfo",setConditionMap,"id",user.getId());
             //插入审批表
             ReviewPO reviewPO=new ReviewPO();
             String bussinessCode = String.valueOf(new Date().getTime());

@@ -5,6 +5,7 @@ import com.ddw.beans.ReviewPracticePO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,6 +64,15 @@ public class ReviewPracticeService extends CommonService {
         setParams.put("practiceGradeId",1);
         Map searchCondition=new HashMap();
         searchCondition.put("id",reviewPO.getDrProposer());
+        //删除审核拒绝缓存
+        CacheUtil.delete("review","practice"+reviewPO.getDrProposer());
         return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
+    }
+
+    public List<Map> gameList(){
+        return this.commonList("ddw_game",null,1,9999,new HashMap<>());
+    }
+    public List<Map> rankList(){
+        return this.commonList("ddw_rank",null,1,9999,new HashMap<>());
     }
 }

@@ -8,7 +8,6 @@ import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
-import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
@@ -38,8 +37,6 @@ public class UserInfoService extends CommonService {
     private MainGlobals mainGlobals;
     @Autowired
     private PhotographMapper photographMapper;
-
-
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(UserInfoDTO userInfoDTO)throws Exception{

@@ -1,11 +1,12 @@
 package com.ddw.services;
 
-import com.ddw.beans.*;
+import com.ddw.beans.ReviewPO;
+import com.ddw.beans.ReviewRealNamePO;
+import com.ddw.beans.UserInfoVO;
 import com.ddw.enums.*;
 import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.vo.ResponseVO;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,7 +21,7 @@ import java.util.Map;
  * Created by Jacky on 2018/4/16.
  */
 @Service
-public class GoddessService extends CommonService {
+public class ReviewGoddessService extends CommonService {
     @Autowired
     private CommonReviewService commonReviewService;
 
@@ -66,15 +67,6 @@ public class GoddessService extends CommonService {
         return this.commonObjectBySingleParam("ddw_goddess","userId",userId,GoddessPO.class);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO save(GoddessDTO goddessDTO)throws Exception{
-        GoddessPO goddessPO = new GoddessPO();
-        PropertyUtils.copyProperties(goddessPO,goddessDTO);
-        goddessPO.setCreateTime(new Date());
-        goddessPO.setUpdateTime(new Date());
-        return this.commonInsert("ddw_goddess",goddessPO);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO apply(UserInfoVO user,int storeId)throws Exception{
         Map conditionMap = new HashMap<>();
         conditionMap.put("drProposer",user.getId());
@@ -85,6 +77,10 @@ public class GoddessService extends CommonService {
         if(realPO != null){
             return new ResponseVO(-3,"不允许重复提交申请",null);
         }
+        //更新会员女神状态为审核中
+        Map setConditionMap = new HashMap<>();
+        setConditionMap.put("goddessFlag",2);
+        this.commonUpdateBySingleSearchParam("ddw_userinfo",setConditionMap,"id",user.getId());
         //插入审批表
         ReviewPO reviewPO=new ReviewPO();
         String bussinessCode = String.valueOf(new Date().getTime());
