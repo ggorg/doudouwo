@@ -1,8 +1,6 @@
 package com.ddw.services;
 
-import com.ddw.beans.ReviewPO;
-import com.ddw.beans.ReviewRealNamePO;
-import com.ddw.beans.UserInfoVO;
+import com.ddw.beans.*;
 import com.ddw.enums.*;
 import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
@@ -44,7 +42,7 @@ public class ReviewGoddessService extends CommonService {
        return null;
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO updateAppointment(String userid,Integer ap)throws Exception{
+    public ResponseApiVO updateAppointment(String userid, Integer ap)throws Exception{
        GoddessPO po= this.commonObjectBySingleParam("ddw_goddess","userId",userid,GoddessPO.class);
        if(po!=null){
            if(GoddessAppointmentEnum.getName(ap)==null){

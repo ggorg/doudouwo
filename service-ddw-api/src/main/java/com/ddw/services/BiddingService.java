@@ -37,7 +37,7 @@ public class BiddingService extends CommonService {
     @Autowired
     private CacheService cacheService;
     @Autowired
-    private GoddessService goddessService;
+    private ReviewGoddessService goddessService;
     private String getSurplusTimeStr(Map m){
         Date endTime=(Date)m.get("endTime");
         long l=endTime.getTime()-System.currentTimeMillis();
