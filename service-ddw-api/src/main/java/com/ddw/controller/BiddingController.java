@@ -29,12 +29,12 @@ public class BiddingController {
     @ApiOperation(value = "获取当前最高价位",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/maxprice/{token}")
     @ResponseBody
-    public ResponseApiVO queryMaxPrice(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GroupIdDTO args){
+    public ResponseApiVO queryMaxPrice(@PathVariable String token){
         try {
-            return this.biddingService.getCurrentMaxPrice(args);
+            return this.biddingService.getCurrentMaxPrice(token);
         }catch (Exception e){
-            logger.error("OrderController-searchPayStatus-》支付状态查询-》系统异常",e);
-            return new ResponseApiVO(-1,"支付状态查询失败",null);
+            logger.error("BiddingController-queryMaxPrice-》获取当前最高价位-》系统异常",e);
+            return new ResponseApiVO(-1,"查询失败",null);
         }
     }
 

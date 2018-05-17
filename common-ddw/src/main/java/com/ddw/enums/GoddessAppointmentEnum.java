@@ -3,27 +3,23 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 订单类型
+ * 女神预约开关
  */
-public enum OrderTypeEnum  implements Dictionary {
-    //商品:1,原材料：2
-    OrderType1("商品",1),
-    OrderType2("原材料",2),
-    OrderType3("充值",3),
-    OrderType4("竞价定金",4);
-
+public enum GoddessAppointmentEnum implements Dictionary {
+    status0("关闭",0),
+    status1("开启",1);
 
     private String name;
     private Integer code;
 
-    private OrderTypeEnum(String name, Integer code) {
+    private GoddessAppointmentEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }
 
     // 普通方法
     public static String getName(Integer code) {
-        for (OrderTypeEnum c : OrderTypeEnum.values()) {
+        for (GoddessAppointmentEnum c : GoddessAppointmentEnum.values()) {
             if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }

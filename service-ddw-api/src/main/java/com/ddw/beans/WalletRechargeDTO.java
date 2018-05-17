@@ -6,9 +6,20 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
 public class WalletRechargeDTO {
-    @ApiModelProperty(name="money",value="充值金额",example="1000，单位分")
+    @ApiModelProperty(name="money",value="金额,单位分",example="1000")
     private Integer money;
 
+    @ApiModelProperty(name="orderType",value="订单类型,充值：3，竞价定金：4",example="3")
+    private Integer orderType;
+
+
+    public Integer getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(Integer orderType) {
+        this.orderType = orderType;
+    }
 
     public Integer getMoney() {
         return money;
@@ -18,4 +29,11 @@ public class WalletRechargeDTO {
         this.money = money;
     }
 
+    @Override
+    public String toString() {
+        return "WalletRechargeDTO{" +
+                "money=" + money +
+                ", orderType=" + orderType +
+                '}';
+    }
 }

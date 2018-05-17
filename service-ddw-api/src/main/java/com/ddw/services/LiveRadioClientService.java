@@ -3,6 +3,7 @@ package com.ddw.services;
 import com.ddw.beans.*;
 import com.ddw.enums.GoddessFlagEnum;
 import com.ddw.enums.LiveStatusEnum;
+import com.ddw.token.TokenUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
@@ -64,7 +65,8 @@ public class LiveRadioClientService  extends CommonService{
         ListVO list=new ListVO(Map);
         return new ResponseApiVO(1,"成功",list);
     }
-    public ResponseApiVO selectLiveRadio(CodeDTO dto, Integer storeId)throws Exception{
+    public ResponseApiVO selectLiveRadio(CodeDTO dto, String token)throws Exception{
+        Integer storeId=TokenUtil.getStoreId(token);
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择一个门店",null);
 
@@ -75,6 +77,7 @@ public class LiveRadioClientService  extends CommonService{
         }
         LiveRadioPO po=this.liveRadioService.getLiveRadioByIdAndStoreId(dto.getCode(),storeId);
         if(po!=null){
+            TokenUtil.putGroupId(token,po.getGroupId());
             SelectLiveRadioVO svo=new SelectLiveRadioVO();
             PropertyUtils.copyProperties(svo,po);
             return new ResponseApiVO(1,"成功",svo);

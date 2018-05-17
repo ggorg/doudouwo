@@ -49,6 +49,9 @@ public class LiveRadioService extends CommonService{
         return this.commonList("ddw_live_radio_space",null,null,null,condtion);
     }
 
+    public LiveRadioPO getLiveRadioByGroupId(String groupId)throws Exception{
+        return this.commonObjectBySingleParam("ddw_live_radio_space","groupId",groupId,LiveRadioPO.class);
+    }
     public LiveRadioPO getLiveRadio(Integer userid,Integer storeid)throws Exception{
 
         Map condtion=new HashMap();

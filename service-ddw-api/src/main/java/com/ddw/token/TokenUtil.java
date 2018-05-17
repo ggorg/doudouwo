@@ -56,6 +56,14 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
+    public static void putGroupId(String base64Token,String groupId){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("groupId",groupId);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
     public static void putUseridAndName(String base64Token,Integer userId,String name){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){
@@ -78,6 +86,14 @@ public class TokenUtil {
         if(obj!=null){
             Map map=(Map)obj;
             return (Integer) map.get("storeId");
+        }
+        return null;
+    }
+    public static String getGroupId(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (String) map.get("groupId");
         }
         return null;
     }

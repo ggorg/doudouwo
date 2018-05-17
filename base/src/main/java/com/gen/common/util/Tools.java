@@ -11,12 +11,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 工具计算类
@@ -406,21 +405,4 @@ public class Tools {
 		return ip;
 	}
 
-    public static String getGameName(int id,List<Map> gameList){
-        for(Map map :gameList){
-            if(map.containsKey("id") && map.containsKey("gameName") && (Integer)map.get("id") == id){
-                return (String)map.get("gameName");
-            }
-        }
-        return null;
-    }
-
-    public static String getRankName(int id, List<Map>rankList){
-        for(Map map :rankList){
-            if(map.containsKey("id") && map.containsKey("rank") && (Integer)map.get("id") == id){
-                return (String)map.get("rank");
-            }
-        }
-        return null;
-    }
 }

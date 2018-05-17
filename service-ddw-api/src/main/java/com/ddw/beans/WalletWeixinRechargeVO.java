@@ -32,6 +32,17 @@ public class WalletWeixinRechargeVO implements Serializable {
     @ApiModelProperty(name="sign",value="签名",example="C380BEC2BFD727A4B6845133519F3AD6")
     private String sign;
 
+    @ApiModelProperty(name="orderNo",value="订单号",example="1111111111111111111")
+    private String orderNo;
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
     public String getAppid() {
         return appid;
     }
@@ -86,5 +97,19 @@ public class WalletWeixinRechargeVO implements Serializable {
 
     public void setSign(String sign) {
         this.sign = sign;
+    }
+
+    @Override
+    public String toString() {
+        return "WalletWeixinRechargeVO{" +
+                "appid='" + appid + '\'' +
+                ", partnerid='" + partnerid + '\'' +
+                ", prepayid='" + prepayid + '\'' +
+                ", packages='" + packages + '\'' +
+                ", noncestr='" + noncestr + '\'' +
+                ", timestamp='" + timestamp + '\'' +
+                ", sign='" + sign + '\'' +
+                ", orderNo='" + orderNo + '\'' +
+                '}';
     }
 }

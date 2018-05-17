@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache>
+    <diskStore path="/data/cache/serviceapi"/>
     <cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
             properties="peerDiscovery=manual,rmiUrls=//127.0.0.1:9001/onlinePersonNum|//127.0.0.1:9001/stores|//127.0.0.1:9001/pay|//127.0.0.1:9001/review" />
     <cacheManagerPeerListenerFactory

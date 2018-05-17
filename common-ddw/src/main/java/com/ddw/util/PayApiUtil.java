@@ -40,7 +40,7 @@ public class PayApiUtil {
 
     private static DDWGlobals ddwGlobals;
     static{
-        ddwGlobals= Tools.getBean(DDWGlobals.class);
+       ddwGlobals= Tools.getBean(DDWGlobals.class);
     }
 
     public static RequestWeiXinOrderVO requestWeiXinOrder(String body,String orderNo,Integer cost,String ip)throws Exception{
@@ -68,10 +68,8 @@ public class PayApiUtil {
         rootXML.addElement("sign").addCDATA(DigestUtils.md5Hex(params.toString()).toUpperCase());
         String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,rootXML.asXML());
         if(callBackStr!=null){
-            XStream xStream=new XStream();
-            xStream.alias("xml",RequestWeiXinOrderVO.class);
-            System.out.println(xStream.fromXML(callBackStr));
-            return (RequestWeiXinOrderVO)xStream.fromXML(callBackStr);
+            RequestWeiXinOrderVO vo= Tools.xmlCastObject(callBackStr,RequestWeiXinOrderVO.class);
+            return vo;
         }
         return null;
     }
@@ -128,9 +126,16 @@ public class PayApiUtil {
 
     public static void main(String[] args)throws Exception {
        // PayApiUtil.requestAliPayOrder("公用事业","weg","124124124",2000,"0.0.0.0");
-       RequestWeiXinOrderVO vo= PayApiUtil.requestWeiXinOrder("充值","123123123",1,"0.0.0.0");
+      // RequestWeiXinOrderVO vo= PayApiUtil.requestWeiXinOrder("充值","123123123",1,"0.0.0.0");
+       // System.out.println(vo);
+      // System.out.println((double) 859/100);
+
+        XStream xStream=new XStream();
+        xStream.alias("xml",RequestWeiXinOrderVO.class);
+       // xStream.processAnnotations(RequestWeiXinOrderVO.class);
+        RequestWeiXinOrderVO vo= (RequestWeiXinOrderVO)xStream.fromXML("<xml><return_code>wegweg</return_code></xml>");
         System.out.println(vo);
-       System.out.println((double) 859/100);
+
     }
 
 }
