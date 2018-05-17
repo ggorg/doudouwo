@@ -96,7 +96,9 @@ public class UserInfoService extends CommonService {
         Map condition=new HashMap();
         CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.id,t1.openid,t1.userName,t1.userPwd,t1.realName,t1.nickName," +
                 "t1.headImgUrl,t1.phone,t1.label,t1.starSign,t1.signature,t1.province,t1.city,t1.area,t1.sex,t1.registerType,t1.idcard," +
-                "t1.idcardFrontUrl,t1.idcardOppositeUrl,t1.inviteCode,t1.goddessFlag,t1.practiceFlag,ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel,ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",condition),
+                "t1.idcardFrontUrl,t1.idcardOppositeUrl,t1.inviteCode,t1.goddessFlag,t1.practiceFlag," +
+                "ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel," +
+                "ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",condition),
                 new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",condition),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",condition));
         List list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && list.size()>0){

@@ -44,11 +44,11 @@
             </tr>
             <tr >
               <td >游戏名称</td>
-              <td th:text="${reviewPractice?.gameId}"></td>
+              <td th:text="${#TdTool.getGameName(reviewPractice?.gameId,gameList)}">Win 95+</td>
             </tr>
             <tr >
               <td >游戏段位</td>
-              <td th:text="${reviewPractice?.rankId}"></td>
+              <td th:text="${#TdTool.getRankName(reviewPractice?.rankId,rankList)}">Win 95+</td>
             </tr>
             <tr >
               <td >游戏截图一

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,5 +67,12 @@ public class ReviewPracticeService extends CommonService {
         //删除审核拒绝缓存
         CacheUtil.delete("review","practice"+reviewPO.getDrProposer());
         return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
+    }
+
+    public List<Map> gameList(){
+        return this.commonList("ddw_game",null,1,9999,new HashMap<>());
+    }
+    public List<Map> rankList(){
+        return this.commonList("ddw_rank",null,1,9999,new HashMap<>());
     }
 }

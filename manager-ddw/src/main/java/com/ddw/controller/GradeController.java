@@ -54,7 +54,7 @@ public class GradeController {
         try {
             return this.gradeService.saveOrUpdate(gradeDTO);
         }catch (Exception e){
-            logger.error("StoreController->doEdit",e);
+            logger.error("GradeController->doEdit",e);
             return new ResponseVO(-1,"提交失败",null);
         }
 
