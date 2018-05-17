@@ -184,7 +184,7 @@ public class BiddingService extends CommonService {
             BiddingEarnestVO be=new BiddingEarnestVO();
             be.setBidCode(MyEncryptUtil.encry(bidId+""));
             be.setPrice(gpo.getEarnest());
-            return new ResponseApiVO(-2,"请先交定金",be);
+            return new ResponseApiVO(-2,"请完成定金支付",be);
         }
 
         if(dto.getPrice()==null ||  dto.getPrice()<=0 ){
@@ -202,6 +202,11 @@ public class BiddingService extends CommonService {
                 }
                 Thread.sleep(i*200);
             }else{
+                BiddingVO bvo=(BiddingVO)list.get(list.size()-1);
+                if(dto.getPrice()<=Integer.parseInt(bvo.getPrice())){
+                    return new ResponseApiVO(-2,"价位不能小于当前价位"+Double.parseDouble(bvo.getPrice())/100+"元",null);
+
+                }
                 list.add("handling");
                 cacheService.set("groupId-"+groupId,list);
                 break;
@@ -222,10 +227,12 @@ public class BiddingService extends CommonService {
                 cacheService.set("groupId-"+groupId,list);
             }
         }else{
+
             vo=new BiddingVO();
             vo.setPrice(dto.getPrice()+"");
             vo.setOpenId(TokenUtil.getUserObject(token).toString());
             vo.setUserName(TokenUtil.getUserName(token));
+
             list.add(vo);
             list.remove("handling");
             cacheService.set("groupId-"+groupId,list);
@@ -235,7 +242,15 @@ public class BiddingService extends CommonService {
        // this.commonSingleFieldBySingleSearchParam()
           return new ResponseApiVO(1,"成功",null);
     }
+    public ResponseApiVO getCurrentCacheBidding(String token)throws Exception{
+        LiveRadioPO po=this.liveRadioService.getLiveRadio(TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
+        if(po==null){
+            return new ResponseApiVO(-2,"直播房间不存在",null);
+        }
+        List list=(List)CacheUtil.get("commonCache","groupId-"+po.getGroupId());
+        return new ResponseApiVO(1,"成功",list);
 
+    }
     public static void main(String[] args) {
         long l=(DateUtils.addMinutes(new Date(),150).getTime()-System.currentTimeMillis());
         System.out.println(l);

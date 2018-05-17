@@ -422,6 +422,7 @@ public class Tools {
 			for(Element e:el){
 				map.put(e.getName(),e.getTextTrim());
 			}
+
 			PropertyUtils.copyProperties(obj,map);
 			return (T)obj;
 		}catch (Exception e){
@@ -429,5 +430,43 @@ public class Tools {
 		}
 		return null;
 	}
+	public static Map xmlCastMap(String xmlStr){
+		try {
+			Document doc=DocumentHelper.parseText(xmlStr);
+			Element root=doc.getRootElement();
 
+			List<Element> el=root.elements();
+			Map map=new HashMap();
+			for(Element e:el){
+				map.put(e.getName(),e.getTextTrim());
+			}
+
+			return map;
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void main(String[] args) {
+		Map map=xmlCastMap("<xml><appid><![CDATA[wx0c0f25470c893a03]]></appid>\n" +
+				"<bank_type><![CDATA[CFT]]></bank_type>\n" +
+				"<cash_fee><![CDATA[1]]></cash_fee>\n" +
+				"<fee_type><![CDATA[CNY]]></fee_type>\n" +
+				"<is_subscribe><![CDATA[N]]></is_subscribe>\n" +
+				"<mch_id><![CDATA[1503574001]]></mch_id>\n" +
+				"<nonce_str><![CDATA[IcOmddqsyeLfpAUDCO2L]]></nonce_str>\n" +
+				"<openid><![CDATA[omc2C0kG_Y6icQ9GAEtbzsGESbME]]></openid>\n" +
+				"<out_trade_no><![CDATA[01201805172042270301000000000110]]></out_trade_no>\n" +
+				"<result_code><![CDATA[SUCCESS]]></result_code>\n" +
+				"<return_code><![CDATA[SUCCESS]]></return_code>\n" +
+				"<sign><![CDATA[FFF35842C05A475DBF5AAA4D38329757]]></sign>\n" +
+				"<time_end><![CDATA[20180517204236]]></time_end>\n" +
+				"<total_fee>1</total_fee>\n" +
+				"<trade_type><![CDATA[APP]]></trade_type>\n" +
+				"<transaction_id><![CDATA[4200000110201805172122566582]]></transaction_id>\n" +
+				"</xml>");
+		System.out.println(map);
+		System.out.println(map!=null && "SUCCESS".equals(map.get("return_code"))&& "SUCCESS".equals(map.get("result_code")) );
+	}
 }
