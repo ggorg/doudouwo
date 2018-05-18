@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WalletWeixinRechargeVO implements Serializable {
+public class PayCenterWeixinPayVO implements Serializable {
     @ApiModelProperty(name="appid",value="应用ID",example="wx8888888888888888")
     private String appid;
 
@@ -101,7 +101,7 @@ public class WalletWeixinRechargeVO implements Serializable {
 
     @Override
     public String toString() {
-        return "WalletWeixinRechargeVO{" +
+        return "PayCenterWeixinPayVO{" +
                 "appid='" + appid + '\'' +
                 ", partnerid='" + partnerid + '\'' +
                 ", prepayid='" + prepayid + '\'' +

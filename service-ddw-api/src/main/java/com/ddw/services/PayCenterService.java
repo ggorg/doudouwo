@@ -68,6 +68,10 @@ public class PayCenterService extends CommonService {
                 return new ResponseApiVO(-2,"支付记录不存在",null);
 
             }
+            Date endTime=(Date)voMap.get("doEndTime");
+            if(endTime.before(new Date())){
+                return new ResponseApiVO(-3,"支付失败，已超时",null);
+            }
             Integer doPayStatus=(Integer) voMap.get("doPayStatus");
             if(PayStatusEnum.PayStatus1.getCode().equals(doPayStatus)){
                 return new ResponseApiVO(1,"支付成功",null);
@@ -170,7 +174,7 @@ public class PayCenterService extends CommonService {
                         treeMap.put("sign", DigestUtils.md5Hex(builder.toString()).toUpperCase());
                         treeMap.put("packages",treeMap.get("package"));
                         treeMap.remove("package");
-                        WalletWeixinRechargeVO wxVo=new WalletWeixinRechargeVO();
+                        PayCenterWeixinPayVO wxVo=new PayCenterWeixinPayVO();
                         PropertyUtils.copyProperties(wxVo,treeMap);
                         wxVo.setOrderNo(orderNo);
                         CacheUtil.put("pay","weixin-pay-"+orderNo,orderType);
@@ -180,47 +184,14 @@ public class PayCenterService extends CommonService {
                     }
                 } if(PayTypeEnum.PayType2.getCode().equals(payType)){
                     String dcost=(double)cost/100+"";
-                    Map data=new HashMap();
-                    data.put("total_amount", dcost+"");
-                    data.put("subject", OrderTypeEnum.getName(orderType));
-                    data.put("body", "支付宝"+OrderTypeEnum.getName(orderType)+dcost+"元");
-                    data.put("out_trade_no", orderNo);
-                    data.put("product_code", "QUICK_MSECURITY_PAY");
-                    WalletAlipayRechargeVO alipayVo=new WalletAlipayRechargeVO();
-                    alipayVo.setApp_id(PayApiConstant.ALI_PAY_APP_ID);
-                    alipayVo.setBiz_content(JSONObject.toJSONString(data));
-                    alipayVo.setCharset("utf-8");
-                    alipayVo.setMethod("alipay.trade.app.pay");
-                    alipayVo.setNotify_url(ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/alipay/execute":ddwGlobals.getCallBackHost()+"/manager/alipay/execute");
-                    alipayVo.setSign_type("RSA2");
-                    alipayVo.setTimestamp(DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
-                    alipayVo.setVersion("1.0");
-                    Map map= BeanToMapUtil.beanToMap(alipayVo,true);
-                    map.remove("orderNo");
-                    map.remove("sign");
-                    map.remove("sign_type");
-
-                    TreeMap treeMap=new TreeMap(map);
-                    Set<String> keys=treeMap.keySet();
-                    StringBuilder builder=new StringBuilder();
-                    Object objValue=null;
-                    for(String k:keys){
-                        objValue=treeMap.get(k);
-                        if(objValue!=null){
-                            builder.append(k).append("=").append(objValue).append("&");
-                        }
-                    }
-
-                    builder.deleteCharAt(builder.length()-1);
-                    logger.info("alipay->basesign->:"+builder.toString());
-                    InputStream is=PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/private_key");
-                    String privateKey= IOUtils.toString(is);
-                    IOUtils.closeQuietly(is);
-                    treeMap.clear();
-
-                    alipayVo.setSign(AlipaySignature.rsa256Sign(builder.toString(),privateKey,"utf-8"));
                     CacheUtil.put("pay","alipay-pay-"+orderNo,orderType);
-                    alipayVo.setOrderNo(orderNo);
+                    PayCenterAliPayVO alipayVo=new PayCenterAliPayVO();
+                    RequestAliOrderVO rvo=PayApiUtil.requestAliPayOrder(OrderTypeEnum.getName(orderType),orderNo,dcost,Tools.getIpAddr());
+                    if(rvo==null){
+                        throw new GenException("调用支付宝接口失败");
+
+                    }
+                    PropertyUtils.copyProperties(alipayVo,resVo);
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
                 }

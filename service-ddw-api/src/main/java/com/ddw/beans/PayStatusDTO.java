@@ -16,4 +16,11 @@ public class PayStatusDTO {
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
+
+    @Override
+    public String toString() {
+        return "PayStatusDTO{" +
+                "orderNo='" + orderNo + '\'' +
+                '}';
+    }
 }

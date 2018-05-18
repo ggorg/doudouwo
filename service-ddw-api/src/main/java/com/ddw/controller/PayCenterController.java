@@ -1,11 +1,9 @@
 package com.ddw.controller;
 
 import com.ddw.beans.*;
-import com.ddw.enums.OrderTypeEnum;
 import com.ddw.enums.PayTypeEnum;
 import com.ddw.services.PayCenterService;
 import com.ddw.services.ReviewService;
-import com.ddw.services.WalletService;
 import com.ddw.token.Token;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -81,7 +79,7 @@ public class PayCenterController {
     @ApiOperation(value = "微信支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/weixin/pay/{token}")
     @ResponseBody
-    public ResponseApiVO<WalletWeixinRechargeVO> weixinPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
+    public ResponseApiVO<PayCenterWeixinPayVO> weixinPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
         try {
             logger.info("weixinPay->request："+args);
             ResponseApiVO vo=this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType1.getCode(), args.getOrderType());
@@ -99,7 +97,7 @@ public class PayCenterController {
     @ApiOperation(value = "支付宝支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/alipay/pay/{token}")
     @ResponseBody
-    public ResponseApiVO<WalletAlipayRechargeVO> aliPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
+    public ResponseApiVO<PayCenterAliPayVO> aliPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
         try {
             logger.info("aliPay->request："+args);
             ResponseApiVO vo=this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType2.getCode(),args.getOrderType());

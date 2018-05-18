@@ -6,8 +6,10 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
+import com.ddw.beans.RequestAliOrderVO;
 import com.ddw.beans.RequestWeiXinOrderVO;
 import com.ddw.config.DDWGlobals;
+import com.ddw.enums.OrderTypeEnum;
 import com.gen.common.util.HttpUtil;
 import com.gen.common.util.Tools;
 import com.thoughtworks.xstream.XStream;
@@ -17,16 +19,19 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
 
 public class PayApiUtil {
+    private static final Logger logger = Logger.getLogger(PayApiUtil.class);
 
     /**
      * 微信统一订单接口
@@ -73,55 +78,44 @@ public class PayApiUtil {
         }
         return null;
     }
-    public static void requestAliPayOrder(String subject,String body,String orderNo,String cost,String ip)throws Exception{
-        //String nonce_str= RandomStringUtils.randomAlphanumeric(20);
+    public static RequestAliOrderVO requestAliPayOrder(String title, String orderNo, String cost, String ip)throws Exception{
+        InputStream privateIs=null;
+        InputStream publicIs=null;
+        try {
+            privateIs= PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/private_key");
+            publicIs= PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/public_key");
+            String privateKey= IOUtils.toString(privateIs);
+            String publicKey= IOUtils.toString(publicIs);
 
-        /*StringBuilder builder=new StringBuilder();
-        builder.append(ALIPAY_UNIFIEDORDER).append("?");
-        builder.append("app_id=").append(PayApiConstant.ALI_PAY_APP_ID).append("&");
-        builder.append("method=").append("alipay.trade.app.pay").append("&");
-        builder.append("charset=").append("utf-8").append("&");
-        builder.append("sign_type=").append("RSA2").append("&");
-        builder.append("sign=").append("").append("&");
-        builder.append("timestamp=").append(DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss")).append("&");
-        builder.append("version=2.0&");
-        builder.append("notify_url=http://cnwork.wicp.net:40431/manager/alipay/execut&");
-        //builder.append("notify_url=").append(ddwGlobals.getCallBackHost()+"/manager/alipay/execute").append("&");
-        Map data=new HashMap();
-        data.put("total_amount", (double)cost/100);
-        data.put("subject", subject);
-        data.put("body", body);
-        data.put("out_trade_no", orderNo);
-        builder.append("biz_content=").append(JSONObject.toJSONString(data));
-        String callBackStr= HttpUtil.sendHtpps(builder.toString(),null);
-        System.out.println(callBackStr);*/
-        String privateKey= IOUtils.toString(PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/private_key"));
-        String publicKey= IOUtils.toString(PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/public_key"));
-        System.out.println(privateKey);
-        System.out.println(publicKey);
-        AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER,PayApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
-        AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
-        model.setBody(body);
-        model.setSubject(subject);
-        model.setTotalAmount( cost);
-        model.setOutTradeNo(orderNo);
+            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER,PayApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
+            AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
+            model.setBody(title);
+            model.setSubject("支付宝"+title+cost+"元");
+            model.setTotalAmount(cost);
+            model.setOutTradeNo(orderNo);
+            model.setProductCode("QUICK_MSECURITY_PAY");
+
+            AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
 
 
-        AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
-        Map data=new HashMap();
-        data.put("total_amount", cost);
-        data.put("subject", subject);
-        data.put("body", body);
-        data.put("out_trade_no", orderNo);
-        request.setBizContent(JSONObject.toJSONString(data));
+            request.setNotifyUrl(URLEncoder.encode(ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/alipay/execute":ddwGlobals.getCallBackHost()+"/manager/alipay/execute","utf-8"));
+            request.setBizModel(model);
+            AlipayTradeAppPayResponse response =alipayClient.sdkExecute(request);
+            if(response.isSuccess()){
+                RequestAliOrderVO vo=new RequestAliOrderVO();
+                vo.setOrderNo(orderNo);
+                vo.setOrderString(response.getBody());
+                return vo;
+            }
 
-        request.setNotifyUrl(URLEncoder.encode(ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/alipay/execute":ddwGlobals.getCallBackHost()+"/manager/alipay/execute","utf-8"));
-        request.setBizModel(model);
-        AlipayTradeAppPayResponse response =alipayClient.execute(request);
-        System.out.println(response.isSuccess());
-       // System.out.println(response.getCode()+","+response.getMsg());
-        // data.put("notify_url", ddwGlobals.getCallBackHost()+"/manager/alipay/execute");
-       // String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,rootXML.asXML());
+        }catch (Exception e){
+            logger.error("阿里支付异常",e);
+        }finally {
+            IOUtils.closeQuietly(privateIs);
+            IOUtils.closeQuietly(publicIs);
+        }
+
+        return null;
     }
 
     public static void main(String[] args)throws Exception {
@@ -129,12 +123,7 @@ public class PayApiUtil {
       // RequestWeiXinOrderVO vo= PayApiUtil.requestWeiXinOrder("充值","123123123",1,"0.0.0.0");
        // System.out.println(vo);
       // System.out.println((double) 859/100);
-
-        XStream xStream=new XStream();
-        xStream.alias("xml",RequestWeiXinOrderVO.class);
-       // xStream.processAnnotations(RequestWeiXinOrderVO.class);
-        RequestWeiXinOrderVO vo= (RequestWeiXinOrderVO)xStream.fromXML("<xml><return_code>wegweg</return_code></xml>");
-        System.out.println(vo);
+        System.out.println(       requestAliPayOrder(OrderTypeEnum.OrderType3.getName(),"123456789321321","0.01","127.0.0.1"));
 
     }
 
