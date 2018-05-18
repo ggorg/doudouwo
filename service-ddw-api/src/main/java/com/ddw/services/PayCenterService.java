@@ -184,7 +184,6 @@ public class PayCenterService extends CommonService {
                     }
                 } if(PayTypeEnum.PayType2.getCode().equals(payType)){
                     String dcost=(double)cost/100+"";
-                    CacheUtil.put("pay","alipay-pay-"+orderNo,orderType);
                     PayCenterAliPayVO alipayVo=new PayCenterAliPayVO();
                     RequestAliOrderVO rvo=PayApiUtil.requestAliPayOrder(OrderTypeEnum.getName(orderType),orderNo,dcost,Tools.getIpAddr());
                     if(rvo==null){
@@ -192,6 +191,7 @@ public class PayCenterService extends CommonService {
 
                     }
                     PropertyUtils.copyProperties(alipayVo,resVo);
+                    CacheUtil.put("pay","alipay-pay-"+orderNo,orderType);
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
                 }
