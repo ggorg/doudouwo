@@ -2,6 +2,8 @@ package com.ddw.services;
 
 import com.ddw.beans.*;
 import com.ddw.dao.PhotographMapper;
+import com.ddw.enums.ReviewBusinessTypeEnum;
+import com.ddw.enums.ReviewStatusEnum;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
@@ -11,6 +13,7 @@ import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
@@ -94,14 +97,71 @@ public class UserInfoService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("openid",openid);
 
-        Map conditon=new HashMap();
-
-        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.*,ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel,ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",conditon),
-                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",conditon),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
+        Map condition=new HashMap();
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.id,t1.openid,t1.userName,t1.userPwd,t1.realName,t1.nickName," +
+                "t1.headImgUrl,t1.phone,t1.label,t1.starSign,t1.signature,t1.province,t1.city,t1.area,t1.sex,t1.registerType,t1.idcard," +
+                "t1.idcardFrontUrl,t1.idcardOppositeUrl,t1.inviteCode,t1.goddessFlag,t1.practiceFlag," +
+                "ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel," +
+                "ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",condition),
+                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",condition),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",condition));
         List list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && list.size()>0){
             UserInfoVO userInfoVO=new UserInfoVO();
             PropertyUtils.copyProperties(userInfoVO,list.get(0));
+            //实名认证状态
+            if(userInfoVO.getGoddessFlag() !=null && userInfoVO.getGoddessFlag() != 1){
+                //判断审核缓存是否存在
+                if(CacheUtil.get("review","realname"+userInfoVO.getId()) == null){
+                    Map condition1=new HashMap();
+                    condition1.put("drProposer",userInfoVO.getId());
+                    condition1.put("drBusinessType", ReviewBusinessTypeEnum.ReviewBusinessType4.getCode());
+                    condition1.put("drReviewStatus",ReviewStatusEnum.ReviewStatus2.getCode());
+                    List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review",condition1));
+                    if(list1.size()>0){
+                        CacheUtil.put("review","realname"+userInfoVO.getId(),3);
+                        userInfoVO.setRealnameFlag(3);
+                    }
+                }else {
+                    userInfoVO.setRealnameFlag((Integer) CacheUtil.get("review","realname"+userInfoVO.getId()));
+                }
+            }
+            //女神状态
+            if(userInfoVO.getGoddessFlag() !=null && userInfoVO.getGoddessFlag() != 1){
+                //判断审核缓存是否存在
+                if(CacheUtil.get("review","goddess"+userInfoVO.getId()) == null){
+                    Map condition1=new HashMap();
+                    condition1.put("drProposer",userInfoVO.getId());
+                    condition1.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType5.getCode());
+                    condition1.put("drReviewStatus", ReviewStatusEnum.ReviewStatus2.getCode());
+                    List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review",condition1));
+                    if(list1.size()>0){
+                        CacheUtil.put("review","goddess"+userInfoVO.getId(),3);
+                        userInfoVO.setGoddessFlag(3);
+                    }
+                }else {
+                    userInfoVO.setRealnameFlag((Integer) CacheUtil.get("review","goddess"+userInfoVO.getId()));
+                }
+            }
+            //代练状态
+            if(userInfoVO.getPracticeFlag() !=null && userInfoVO.getPracticeFlag() != 1){
+                //判断审核缓存是否存在
+                if(CacheUtil.get("review","practice"+userInfoVO.getId()) == null){
+                    Map condition1=new HashMap();
+                    condition1.put("drProposer",userInfoVO.getId());
+                    condition1.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType6.getCode());
+                    condition1.put("drReviewStatus",ReviewStatusEnum.ReviewStatus2.getCode());
+                    List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review",condition1));
+                    if(list1.size()>0){
+                        CacheUtil.put("review","practice"+userInfoVO.getId(),3);
+                        userInfoVO.setPracticeFlag(3);
+                    }
+                }else {
+                    userInfoVO.setRealnameFlag((Integer) CacheUtil.get("review","practice"+userInfoVO.getId()));
+                }
+            }
+            if(userInfoVO.getIdcard() != null){
+                userInfoVO.setRealnameFlag(1);
+            }
             return userInfoVO;
         }
         return null;
