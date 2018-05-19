@@ -1,16 +1,18 @@
 package com.ddw.services;
 
-import com.ddw.beans.ReviewRealNamePO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.ReviewPO;
+import com.ddw.beans.ReviewRealNamePO;
 import com.ddw.enums.*;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.FileInfoVo;
+import com.gen.common.vo.ResponseVO;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -46,7 +48,7 @@ public class ReviewRealNameService extends CommonService {
             conditionMap.put("drProposer",userId);
             conditionMap.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType4.getCode());
             //查询状态审核未通过
-            conditionMap.put("drReviewStatus,!=",2);
+            conditionMap.put("drReviewStatus,!=",ReviewStatusEnum.ReviewStatus2.getCode());
             ReviewPO rePO = this.commonObjectBySearchCondition("ddw_review",conditionMap,new ReviewPO().getClass());
             if(rePO != null){
                 return new ResponseApiVO(-2,"不允许重复提交申请",null);
@@ -87,7 +89,11 @@ public class ReviewRealNameService extends CommonService {
                 CommonBeanFiles f2=this.fileService.createCommonBeanFiles(fileInfoVo2);
                 this.fileService.saveFile(f2);
                 Map updatePoMap= BeanToMapUtil.beanToMap(reviewRealNamePO);
-                this.commonInsertMap("ddw_review_realname",updatePoMap);
+                ResponseVO rv =this.commonInsertMap("ddw_review_realname",updatePoMap);
+                if (rv.getReCode() > 0) {
+                    //更新缓存中审核状态为2审核中
+                    CacheUtil.put("review","realname"+userId,2);
+                }
             }
             return responseApiVO;
         }

@@ -57,6 +57,8 @@ public class UserInfoVO {
     private Integer goddessFlag;
     @ApiModelProperty(name="practiceFlag",value="代练标记，0非代练，1代练,2审核中,3拒绝",example="1")
     private Integer practiceFlag;
+    @ApiModelProperty(name="realnameFlag",value="实名认证标记，0未实名，1已认证,2审核中,3拒绝",example="1")
+    private Integer realnameFlag;
     @ApiModelProperty(name="inviteCode",value="邀请码",example="aabbccddee")
     private String inviteCode;
     @ApiModelProperty(name="signature",value="个性签名",example="这个人很懒,什么都没有留下...")
@@ -82,52 +84,108 @@ public class UserInfoVO {
     @ApiModelProperty(name="userSign",value="IM签名",example="xxxx")
     private String userSign;
 
-    public String getArea() {
-        return area==null?"":area;
+    public Integer getId() {
+        return id;
     }
 
-    public void setArea(String area) {
-        this.area = area;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserPwd() {
+        return userPwd;
+    }
+
+    public void setUserPwd(String userPwd) {
+        this.userPwd = userPwd;
+    }
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getHeadImgUrl() {
+        return headImgUrl;
+    }
+
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getStarSign() {
+        return starSign;
+    }
+
+    public void setStarSign(String starSign) {
+        this.starSign = starSign;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
     }
 
     public String getCity() {
-        return city==null?"":city;
+        return city;
     }
 
     public void setCity(String city) {
         this.city = city;
     }
 
-    public String getGgradeName() {
-        return ggradeName==null?"":ggradeName;
+    public String getArea() {
+        return area;
     }
 
-    public void setGgradeName(String ggradeName) {
-        this.ggradeName = ggradeName;
-    }
-
-    public String getGlevel() {
-        return glevel==null?"":glevel;
-    }
-
-    public void setGlevel(String glevel) {
-        this.glevel = glevel;
-    }
-
-    public Integer getGoddessFlag() {
-        return goddessFlag;
-    }
-
-    public void setGoddessFlag(Integer goddessFlag) {
-        this.goddessFlag = goddessFlag;
-    }
-
-    public Integer getGoddessGradeId() {
-        return goddessGradeId;
-    }
-
-    public void setGoddessGradeId(Integer goddessGradeId) {
-        this.goddessGradeId = goddessGradeId;
+    public void setArea(String area) {
+        this.area = area;
     }
 
     public Integer getGradeId() {
@@ -138,124 +196,44 @@ public class UserInfoVO {
         this.gradeId = gradeId;
     }
 
-    public String getHeadImgUrl() {
-        return headImgUrl==null?"":headImgUrl;
+    public String getUgradeName() {
+        return ugradeName;
     }
 
-    public void setHeadImgUrl(String headImgUrl) {
-        this.headImgUrl = headImgUrl;
+    public void setUgradeName(String ugradeName) {
+        this.ugradeName = ugradeName;
     }
 
-    public Integer getId() {
-        return id;
+    public String getUlevel() {
+        return ulevel;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUlevel(String ulevel) {
+        this.ulevel = ulevel;
     }
 
-    public String getIdcard() {
-        return idcard==null?"":idcard;
+    public Integer getGoddessGradeId() {
+        return goddessGradeId;
     }
 
-    public void setIdcard(String idcard) {
-        this.idcard = idcard;
+    public void setGoddessGradeId(Integer goddessGradeId) {
+        this.goddessGradeId = goddessGradeId;
     }
 
-    public String getIdcardFrontUrl() {
-        return idcardFrontUrl==null?"":idcardFrontUrl;
+    public String getGgradeName() {
+        return ggradeName;
     }
 
-    public void setIdcardFrontUrl(String idcardFrontUrl) {
-        this.idcardFrontUrl = idcardFrontUrl;
+    public void setGgradeName(String ggradeName) {
+        this.ggradeName = ggradeName;
     }
 
-    public String getIdcardOppositeUrl() {
-        return idcardOppositeUrl==null?"":idcardOppositeUrl;
+    public String getGlevel() {
+        return glevel;
     }
 
-    public void setIdcardOppositeUrl(String idcardOppositeUrl) {
-        this.idcardOppositeUrl = idcardOppositeUrl;
-    }
-
-    public String getIdentifier() {
-        return identifier==null?"":identifier;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    public String getInviteCode() {
-        return inviteCode==null?"":inviteCode;
-    }
-
-    public void setInviteCode(String inviteCode) {
-        this.inviteCode = inviteCode;
-    }
-
-    public String getLabel() {
-        return label==null?"":label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getNickName() {
-        return nickName==null?"":nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public String getOpenid() {
-        return openid==null?"":openid;
-    }
-
-    public void setOpenid(String openid) {
-        this.openid = openid;
-    }
-
-    public String getPgradeName() {
-        return pgradeName==null?"":pgradeName;
-    }
-
-    public void setPgradeName(String pgradeName) {
-        this.pgradeName = pgradeName;
-    }
-
-    public String getPhone() {
-        return phone==null?"":phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public List<PhotographPO> getPhotograph() {
-        return photograph;
-    }
-
-    public void setPhotograph(List<PhotographPO> photograph) {
-        this.photograph = photograph;
-    }
-
-    public String getPlevel() {
-        return plevel==null?"":plevel;
-    }
-
-    public void setPlevel(String plevel) {
-        this.plevel = plevel;
-    }
-
-    public Integer getPracticeFlag() {
-        return practiceFlag;
-    }
-
-    public void setPracticeFlag(Integer practiceFlag) {
-        this.practiceFlag = practiceFlag;
+    public void setGlevel(String glevel) {
+        this.glevel = glevel;
     }
 
     public Integer getPracticeGradeId() {
@@ -266,28 +244,60 @@ public class UserInfoVO {
         this.practiceGradeId = practiceGradeId;
     }
 
-    public String getProvince() {
-        return province==null?"":province;
+    public String getPgradeName() {
+        return pgradeName;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
+    public void setPgradeName(String pgradeName) {
+        this.pgradeName = pgradeName;
     }
 
-    public String getRealName() {
-        return realName==null?"":realName;
+    public String getPlevel() {
+        return plevel;
     }
 
-    public void setRealName(String realName) {
-        this.realName = realName;
+    public void setPlevel(String plevel) {
+        this.plevel = plevel;
     }
 
-    public Integer getRegisterType() {
-        return registerType;
+    public Integer getGoddessFlag() {
+        return goddessFlag;
     }
 
-    public void setRegisterType(Integer registerType) {
-        this.registerType = registerType;
+    public void setGoddessFlag(Integer goddessFlag) {
+        this.goddessFlag = goddessFlag;
+    }
+
+    public Integer getPracticeFlag() {
+        return practiceFlag;
+    }
+
+    public void setPracticeFlag(Integer practiceFlag) {
+        this.practiceFlag = practiceFlag;
+    }
+
+    public Integer getRealnameFlag() {
+        return realnameFlag;
+    }
+
+    public void setRealnameFlag(Integer realnameFlag) {
+        this.realnameFlag = realnameFlag;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     public Integer getSex() {
@@ -298,64 +308,64 @@ public class UserInfoVO {
         this.sex = sex;
     }
 
-    public String getSignature() {
-        return signature==null?"":signature;
+    public Integer getRegisterType() {
+        return registerType;
     }
 
-    public void setSignature(String signature) {
-        this.signature = signature;
+    public void setRegisterType(Integer registerType) {
+        this.registerType = registerType;
     }
 
-    public String getStarSign() {
-        return starSign==null?"":starSign;
+    public String getIdcard() {
+        return idcard;
     }
 
-    public void setStarSign(String starSign) {
-        this.starSign = starSign;
+    public void setIdcard(String idcard) {
+        this.idcard = idcard;
+    }
+
+    public String getIdcardFrontUrl() {
+        return idcardFrontUrl;
+    }
+
+    public void setIdcardFrontUrl(String idcardFrontUrl) {
+        this.idcardFrontUrl = idcardFrontUrl;
+    }
+
+    public String getIdcardOppositeUrl() {
+        return idcardOppositeUrl;
+    }
+
+    public void setIdcardOppositeUrl(String idcardOppositeUrl) {
+        this.idcardOppositeUrl = idcardOppositeUrl;
+    }
+
+    public List<PhotographPO> getPhotograph() {
+        return photograph;
+    }
+
+    public void setPhotograph(List<PhotographPO> photograph) {
+        this.photograph = photograph;
     }
 
     public String getToken() {
-        return token==null?"":token;
+        return token;
     }
 
     public void setToken(String token) {
         this.token = token;
     }
 
-    public String getUgradeName() {
-        return ugradeName==null?"":ugradeName;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setUgradeName(String ugradeName) {
-        this.ugradeName = ugradeName;
-    }
-
-    public String getUlevel() {
-        return ulevel==null?"":ulevel;
-    }
-
-    public void setUlevel(String ulevel) {
-        this.ulevel = ulevel;
-    }
-
-    public String getUserName() {
-        return userName==null?"":userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserPwd() {
-        return userPwd==null?"":userPwd;
-    }
-
-    public void setUserPwd(String userPwd) {
-        this.userPwd = userPwd;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String getUserSign() {
-        return userSign==null?"":userSign;
+        return userSign;
     }
 
     public void setUserSign(String userSign) {

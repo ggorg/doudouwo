@@ -22,7 +22,7 @@
 
             <div id="contentwrapper" class="contentwrapper">
                 <div class="contenttitle2">
-                    <h3>游戏列表</h3>
+                    <h3>段位列表</h3>
 
                 </div><!--contenttitle-->
 
@@ -44,7 +44,7 @@
                 </div>
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('400px','200px','新增游戏','to-edit')" title="table2">新增游戏</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('400px','200px','新增段位','to-edit')" title="table2">新增段位</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -69,7 +69,7 @@
                         <td th:text="${obj['createTime']!=null ? #dates.format(obj['createTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'400px\',\'200px\',\'修改游戏\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'400px\',\'200px\',\'修改名称\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
                             <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
                             </div>
                         </td>

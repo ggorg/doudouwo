@@ -77,7 +77,7 @@ public class GameController {
     @GetMapping("rank/list")
     public String rankList(String gameId,Model model){
         try {
-            model.addAttribute("gradeList",rankService.findList(gameId));
+            model.addAttribute("gameList",rankService.findList(gameId));
         }catch (Exception e){
             logger.error("GameController->rankList",e);
         }

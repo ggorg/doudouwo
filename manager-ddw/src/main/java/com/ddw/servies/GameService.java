@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ import java.util.Map;
 public class GameService extends CommonService {
 
     public Page findList()throws Exception{
-        return super.commonPage("ddw_game","createTime",1,999,new HashMap());
+        return super.commonPage("ddw_game","createTime desc",1,999,new HashMap());
     }
 
     public GamePO selectById(String id){
@@ -37,6 +38,7 @@ public class GameService extends CommonService {
             Map updatePoMap= BeanToMapUtil.beanToMap(gamePO);
             return super.commonUpdateBySingleSearchParam("ddw_game",updatePoMap,"id",gamePO.getId());
         }else{
+            gamePO.setCreateTime(new Date());
             return super.commonInsert("ddw_game",gamePO);
         }
     }
