@@ -15,7 +15,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -448,7 +447,26 @@ public class Tools {
 		return null;
 	}
 
-	public static void main(String[] args) {
+    public static String getGameName(int id,List<Map> gameList){
+        for(Map map :gameList){
+            if(map.containsKey("id") && map.containsKey("gameName") && (Integer)map.get("id") == id){
+                return (String)map.get("gameName");
+            }
+        }
+        return null;
+    }
+
+    public static String getRankName(int id, List<Map>rankList){
+        for(Map map :rankList){
+            if(map.containsKey("id") && map.containsKey("rank") && (Integer)map.get("id") == id){
+                return (String)map.get("rank");
+            }
+        }
+        return null;
+    }
+
+
+    public static void main(String[] args) {
 		Map map=xmlCastMap("<xml><appid><![CDATA[wx0c0f25470c893a03]]></appid>\n" +
 				"<bank_type><![CDATA[CFT]]></bank_type>\n" +
 				"<cash_fee><![CDATA[1]]></cash_fee>\n" +
