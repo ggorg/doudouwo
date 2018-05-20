@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * 竞价
@@ -38,6 +40,9 @@ public class BiddingService extends CommonService {
     private CacheService cacheService;
     @Autowired
     private ReviewGoddessService goddessService;
+
+    @Autowired
+    private UserInfoService userInfoService;
     private String getSurplusTimeStr(Map m){
         Date endTime=(Date)m.get("endTime");
         long l=endTime.getTime()-System.currentTimeMillis();
@@ -61,7 +66,38 @@ public class BiddingService extends CommonService {
         insertMap.put("bidEndTime",DateUtils.addMinutes(new Date(),this.bidEndTimeMinute));
         return this.commonInsertMap("ddw_goddess_bidding",insertMap);
     }
+    public ResponseApiVO  biddingSuccess(String groupId,String openId)throws Exception{
+        List<BiddingVO> list=(List)CacheUtil.get("commonCache","groupId-"+groupId);
+        for(BiddingVO bv:list){
+            if(bv.getOpenId().equals(openId)){
+                Map searchMap=new HashMap();
+                searchMap.put("groupId",groupId);
+                List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
+                Map map=bidList.get(0);
+                //map.get("id");
+                Map updateMap=new HashMap();
+                updateMap.put("endTime",DateUtils.addHours(new Date(),1));
+                updateMap.put("luckDogUserId",bv.getUserId());
+                updateMap.put("price",bv.getPrice());
+                updateMap.put("updateTime",new Date());
+                this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",map.get("id"));
+                Map m=new HashMap();
+                m.put("msg","恭喜"+bv.getUserName()+"竞价成功");
+                IMApiUtil.sendGroupMsg(groupId,new ResponseVO(2,"竞价成功",m));
 
+                return new ResponseApiVO(1,"成功",null);
+            }
+        }
+        return null;
+    }
+    public ResponseApiVO chooseBidding(String openId,String token)throws Exception{
+       // GoddessPO  gpo=this.goddessService.getAppointment(TokenUtil.getGroupId(token));
+        LiveRadioPO po=this.liveRadioService.getLiveRadio(TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
+        return biddingSuccess(po.getGroupId(),openId);
+
+
+
+    }
     public ResponseApiVO getCurrentMaxPrice(String token)throws Exception{
         String groupId=TokenUtil.getGroupId(token);
 
@@ -150,7 +186,7 @@ public class BiddingService extends CommonService {
                Map earnestMap=new HashMap();
                earnestMap.put("creater",TokenUtil.getUserId(token));
                earnestMap.put("biddingId",bidId);
-               Map mapPO=this.commonObjectBySearchCondition("ddw_order_bidding_earnest",earnestMap);
+               Map mapPO=this.commonObjectBySearchCondition("ddw_order_bidding_pay",earnestMap);
                if(mapPO!=null){
                   Integer orderId=(Integer) mapPO.get("orderId");
                    OrderPO orderPO=this.commonObjectBySingleParam("ddw_order","id",orderId,OrderPO.class);
@@ -223,6 +259,7 @@ public class BiddingService extends CommonService {
                 vo.setPrice(dto.getPrice()+"");
                 vo.setOpenId(TokenUtil.getUserObject(token).toString());
                 vo.setUserName(TokenUtil.getUserName(token));
+                vo.setUserId(TokenUtil.getUserId(token));
                 list.add(vo);
                 cacheService.set("groupId-"+groupId,list);
             }
@@ -232,7 +269,7 @@ public class BiddingService extends CommonService {
             vo.setPrice(dto.getPrice()+"");
             vo.setOpenId(TokenUtil.getUserObject(token).toString());
             vo.setUserName(TokenUtil.getUserName(token));
-
+            vo.setUserId(TokenUtil.getUserId(token));
             list.add(vo);
             list.remove("handling");
             cacheService.set("groupId-"+groupId,list);
@@ -248,7 +285,7 @@ public class BiddingService extends CommonService {
             return new ResponseApiVO(-2,"直播房间不存在",null);
         }
         List list=(List)CacheUtil.get("commonCache","groupId-"+po.getGroupId());
-        return new ResponseApiVO(1,"成功",list);
+        return new ResponseApiVO(1,"成功",new ListVO(list));
 
     }
     public static void main(String[] args) {

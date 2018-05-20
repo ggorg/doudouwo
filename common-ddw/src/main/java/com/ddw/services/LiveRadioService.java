@@ -58,7 +58,13 @@ public class LiveRadioService extends CommonService{
         condtion.put("userid",userid);
        // condtion.put("liveStatus", LiveStatusEnum.liveStatus0.getCode());
         condtion.put("endDate,>=", new Date());
-       return  this.commonObjectBySearchCondition("ddw_live_radio_space",condtion, LiveRadioPO.class);
+        List list=this.commonList("ddw_live_radio_space","createTime desc",1,1,condtion);
+        if(list!=null && !list.isEmpty()){
+            LiveRadioPO liveRadioPO=new LiveRadioPO();
+            PropertyUtils.copyProperties(liveRadioPO,list.get(0));
+            return liveRadioPO;
+        }
+        return null;
     }
 
     public LiveRadioPO getLiveRadioByIdAndStoreId(Integer id,Integer storeId)throws Exception{

@@ -57,7 +57,7 @@ public class BiddingController {
     @ApiOperation(value = "获取当前竞价列表",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/currentall/{token}")
     @ResponseBody
-    public ResponseApiVO<List<BiddingVO>> getCurrentAll(@PathVariable String token){
+    public ResponseApiVO<ListVO<List<BiddingVO>>> getCurrentAll(@PathVariable String token){
         try {
             return this.biddingService.getCurrentCacheBidding(token);
         }catch (Exception e){
@@ -68,9 +68,9 @@ public class BiddingController {
 
     @Token
     @ApiOperation(value = "选择某个竞价",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/select/bidding/{token}")
+    @PostMapping("/choose/bidding/{token}")
     @ResponseBody
-    public ResponseApiVO selectBidding(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserOpenIdDTO args){
+    public ResponseApiVO chooseBidding(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserOpenIdDTO args){
         try {
             return new ResponseApiVO(-1,"获取失败",null);
         }catch (Exception e){

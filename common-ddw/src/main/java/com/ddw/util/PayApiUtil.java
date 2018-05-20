@@ -45,7 +45,7 @@ public class PayApiUtil {
 
     private static DDWGlobals ddwGlobals;
     static{
-       ddwGlobals= Tools.getBean(DDWGlobals.class);
+      // ddwGlobals= Tools.getBean(DDWGlobals.class);
     }
 
     public static RequestWeiXinOrderVO requestWeiXinOrder(String body,String orderNo,Integer cost,String ip)throws Exception{
@@ -100,6 +100,7 @@ public class PayApiUtil {
 
             request.setNotifyUrl(URLEncoder.encode(ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/alipay/execute":ddwGlobals.getCallBackHost()+"/manager/alipay/execute","utf-8"));
             request.setBizModel(model);
+
             AlipayTradeAppPayResponse response =alipayClient.sdkExecute(request);
             if(response.isSuccess()){
                 RequestAliOrderVO vo=new RequestAliOrderVO();

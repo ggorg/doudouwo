@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -20,6 +21,17 @@ public class BiddingVO implements Serializable {
     @ApiModelProperty(name="price",value="价格，单位分",example="10000")
     @JsonProperty
     private String price;
+
+    @JsonIgnore
+    private Integer userId;
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
     public String getOpenId() {
         return openId;

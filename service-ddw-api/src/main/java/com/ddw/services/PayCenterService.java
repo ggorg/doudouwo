@@ -190,7 +190,7 @@ public class PayCenterService extends CommonService {
                         throw new GenException("调用支付宝接口失败");
 
                     }
-                    PropertyUtils.copyProperties(alipayVo,resVo);
+                    PropertyUtils.copyProperties(alipayVo,rvo);
                     CacheUtil.put("pay","alipay-pay-"+orderNo,orderType);
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
