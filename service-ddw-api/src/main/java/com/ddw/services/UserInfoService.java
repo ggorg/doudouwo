@@ -221,6 +221,13 @@ public class UserInfoService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO deletePhotograph(String photograph)throws Exception{
+        HashSet<String> hs = new HashSet<String>();
+        hs.add(photograph);
+        List<PhotographPO> photographPOList = photographMapper.findListByIds(hs);
+        //删除本地图片
+        for(PhotographPO photographPO : photographPOList){
+            UploadFileMoveUtil.delete(photographPO.getImgUrl());
+        }
         Map searchCondition = new HashMap<>();
         StringBuffer sb = new StringBuffer();
         for(String photo:photograph.split(",")){
@@ -230,6 +237,7 @@ public class UserInfoService extends CommonService {
             sb = sb.deleteCharAt(sb.length()-1);
         }
         searchCondition.put("id ","in ("+sb.toString()+")");
-        return this.commonDeleteByCombination("ddw_photograph",searchCondition);
+        ResponseVO responseVO = this.commonDeleteByCombination("ddw_photograph",searchCondition);
+        return responseVO;
     }
 }

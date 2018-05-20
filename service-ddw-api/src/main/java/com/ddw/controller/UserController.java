@@ -148,7 +148,6 @@ public class UserController {
                                            @RequestBody @ApiParam(name = "photograph",value="相册id,传入json格式,如:{\"photograph\":\"1,2,3\"}", required = true) JSONObject json){
         try {
             if(!json.isEmpty() && json.containsKey("photograph")){
-                //TODO 删除本地相册文件
                 return userInfoService.deletePhotograph(json.getString("photograph"));
             }else{
                 return new ResponseVO(-2,"photograph不能为空",null);

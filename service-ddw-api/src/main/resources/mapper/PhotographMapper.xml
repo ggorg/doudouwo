@@ -33,5 +33,16 @@
         </foreach>
     </select>
 
+    <select id="findListByIds" resultType="com.ddw.beans.PhotographPO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM ddw_photograph
+        WHERE
+        id in
+        <foreach collection="condition" item="value"  index="key" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+    </select>
+
 
 </mapper>
