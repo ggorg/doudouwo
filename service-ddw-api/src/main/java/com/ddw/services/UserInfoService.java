@@ -198,7 +198,7 @@ public class UserInfoService extends CommonService {
             this.fileService.saveFile(f);
 
             photographPO.setUserId(Integer.valueOf(id));
-            photographPO.setImgUrl(fileInfoVo.getUrlPath());
+            photographPO.setImgUrl(mainGlobals.getRsDir() + fileInfoVo.getUrlPath());
             photographPO.setImgName(idcardFrontImgName);
             photographPO.setCreateTime(new Date());
             photographPO.setUpdateTime(new Date());
@@ -226,7 +226,7 @@ public class UserInfoService extends CommonService {
         List<PhotographPO> photographPOList = photographMapper.findListByIds(hs);
         //删除本地图片
         for(PhotographPO photographPO : photographPOList){
-            UploadFileMoveUtil.delete(photographPO.getImgUrl());
+            UploadFileMoveUtil.delete(mainGlobals + photographPO.getImgName());
         }
         Map searchCondition = new HashMap<>();
         StringBuffer sb = new StringBuffer();
