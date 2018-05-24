@@ -30,22 +30,31 @@ public class LiveRadioApiUtil {
         return liveRadioUrlBean;
     }
     public static boolean closeLoveRadio(String streamId){
-        String t=DateUtils.addHours(new Date(),12).getTime()/1000+"";
-        StringBuilder builder=new StringBuilder();
-        builder.append("http://fcgi.video.qcloud.com/common_access?");
-        builder.append("appid=").append(LiveRadioConstant.API_ID).append("&");
-        builder.append("interface=Live_Channel_SetStatus&");
-        builder.append("Param.s.channel_id=").append(streamId).append("&");
-        builder.append("Param.n.status=0&");
-        builder.append("t=").append(t).append("&");
-        builder.append("sign=").append(DigestUtils.md5Hex(LiveRadioConstant.API_KEY+t));
-        String str=HttpUtil.doGet(builder.toString());
-        if(str!=null){
-           JSONObject json= JSONObject.parseObject(str);
-           if(json.getInteger("ret")==0){
-               return true;
-           }
+        try{
+            for(int i=1;i<=5;i++){
+                String t=DateUtils.addHours(new Date(),12).getTime()/1000+"";
+                StringBuilder builder=new StringBuilder();
+                builder.append("http://fcgi.video.qcloud.com/common_access?");
+                builder.append("appid=").append(LiveRadioConstant.API_ID).append("&");
+                builder.append("interface=Live_Channel_SetStatus&");
+                builder.append("Param.s.channel_id=").append(streamId).append("&");
+                builder.append("Param.n.status=0&");
+                builder.append("t=").append(t).append("&");
+                builder.append("sign=").append(DigestUtils.md5Hex(LiveRadioConstant.API_KEY+t));
+                String str=HttpUtil.doGet(builder.toString());
+                if(str!=null){
+                    JSONObject json= JSONObject.parseObject(str);
+                    if(json.getInteger("ret")==0){
+                        return true;
+                    }
+                }
+                Thread.sleep(i*200);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
+
         return false;
 
     }

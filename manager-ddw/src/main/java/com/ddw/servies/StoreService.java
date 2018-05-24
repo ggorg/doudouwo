@@ -128,7 +128,7 @@ public class StoreService extends CommonService{
     public List getRelateSysUsers(String idStr)throws Exception{
         String id= MyEncryptUtil.getRealValue(idStr);
         if(id==null)return null;
-        List<Map> userList=this.commonList("baseUser","createTime desc",null,null,new HashMap<>());
+        List<Map> userList=this.commonList("base_user","createTime desc",null,null,new HashMap<>());
         List<Map> sslist=this.commonObjectsBySingleParam("ddw_store_sysuser","storeId",Integer.parseInt(id));
         if(sslist!=null && sslist.size()>0 && userList!=null){
             Integer userid=null;

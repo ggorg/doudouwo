@@ -4,7 +4,9 @@ import com.ddw.beans.*;
 import com.ddw.enums.PayTypeEnum;
 import com.ddw.services.PayCenterService;
 import com.ddw.services.ReviewService;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
+import com.gen.common.exception.GenException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,6 +45,7 @@ public class PayCenterController {
             return new ResponseApiVO(-1,"支付状态查询失败",null);
         }
     }
+    @Idemp
     @Token
     @ApiOperation(value = "提现申请",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/review/withdrawmoney/{token}")
@@ -58,6 +61,7 @@ public class PayCenterController {
         return new ResponseApiVO(-1,"提现申请失败",null);
 
     }
+    @Idemp
     @Token
     @ApiOperation(value = "统一支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/public/pay/{token}")
@@ -70,11 +74,16 @@ public class PayCenterController {
             logger.info("publicPay->response:"+vo);
             return vo;
         }catch (Exception e){
+            if(e instanceof GenException){
+                return new ResponseApiVO(-2,e.getMessage(),null);
+
+            }
             logger.error("PayCenterController-earnestMoney-》统一支付-》系统异常",e);
         }
         return new ResponseApiVO(-1,"支付失败",null);
 
     }
+    @Idemp
     @Token
     @ApiOperation(value = "微信支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/weixin/pay/{token}")
@@ -87,12 +96,19 @@ public class PayCenterController {
 
             return vo;
         }catch (Exception e){
+            if(e instanceof GenException){
+                return new ResponseApiVO(-2,e.getMessage(),null);
+
+            }
             logger.error("PayCenterController-weixinPay-》微信支付-》系统异常",e);
+
             return new ResponseApiVO(-1,"微信支付失败",null);
+
+
         }
     }
 
-
+    @Idemp
     @Token
     @ApiOperation(value = "支付宝支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/alipay/pay/{token}")
@@ -105,6 +121,10 @@ public class PayCenterController {
 
             return vo;
         }catch (Exception e){
+            if(e instanceof GenException){
+                return new ResponseApiVO(-2,e.getMessage(),null);
+
+            }
             logger.error("PayCenterController-aliPay-》支付宝支付-》系统异常",e);
             return new ResponseApiVO(-1,"支付宝支付失败",null);
         }

@@ -84,6 +84,7 @@ public class LiveRadioService extends CommonService{
         return this.commonOptimisticLockUpdateByParam("ddw_live_radio_space",param,condition,"version");
 
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO handleLiveRadioStatus(String streamId,Integer eventType)throws Exception{
         if(StringUtils.isNotBlank(streamId) && eventType!=null && StringUtils.isNotBlank(LiveEventTypeEnum.getName(eventType))){
             if(LiveEventTypeEnum.eventType0.getCode().equals(eventType)){

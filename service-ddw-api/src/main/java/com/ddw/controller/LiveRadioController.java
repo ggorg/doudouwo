@@ -2,9 +2,12 @@ package com.ddw.controller;
 
 import com.ddw.beans.*;
 import com.ddw.services.LiveRadioClientService;
+import com.ddw.services.LiveRadioService;
+import com.ddw.services.ReviewGoddessService;
 import com.ddw.services.ReviewService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.LiveRadioApiUtil;
 import io.swagger.annotations.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +63,7 @@ public class LiveRadioController {
     })
     public ResponseApiVO toLiveRadio(@PathVariable String token){
         try {
-            return this.liveRadioClientService.toLiveRadio((String) TokenUtil.getUserObject(token),TokenUtil.getStoreId(token));
+            return this.liveRadioClientService.toLiveRadio(token);
         }catch (Exception e){
             logger.error("LiveRadioController->applLiveRadio",e);
             return new ResponseApiVO(-1,"查看失败",null);
@@ -92,5 +95,19 @@ public class LiveRadioController {
             return new ResponseApiVO(-1,"选择直播房间",null);
         }
     }
+    @Token
+    @ApiOperation(value = "关闭直播房间",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/closeliveradio/{token}")
+    @ResponseBody
+    public ResponseApiVO closeLiveRadioRoom(@PathVariable String token){
+        try {
 
+
+            ResponseApiVO vo=this.liveRadioClientService.closeRoom(token);
+            return vo;
+        }catch (Exception e){
+            logger.error("LiveRadioController->closeLiveRadioRoom",e);
+            return new ResponseApiVO(-1,"关闭直播房间",null);
+        }
+    }
 }

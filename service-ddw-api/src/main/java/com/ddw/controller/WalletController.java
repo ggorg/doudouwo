@@ -42,6 +42,8 @@ public class WalletController {
                 if(createVo.getReCode()==1){
                     return vo;
                 }
+            }else if(vo.getReCode()==1){
+                return vo;
             }
 
         }catch (Exception e){

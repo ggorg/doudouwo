@@ -2,11 +2,13 @@ package com.ddw.token;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.ResponseApiVO;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -28,12 +30,24 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
 
     }
     class TokenInterceptor extends HandlerInterceptorAdapter {
+
         public void toWriteResponseVo(HttpServletResponse response,Integer code,String msg)throws Exception{
             response.setContentType("application/json;charset=utf-8");
             PrintWriter out=response.getWriter();
             out.print(JSONObject.toJSON(new ResponseApiVO(code,msg,null)));
             out.close();
             out.flush();
+        }
+        public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+            if(handler instanceof HandlerMethod){
+                HandlerMethod method = (HandlerMethod) handler;
+                if(method.hasMethodAnnotation(Token.class) && method.hasMethodAnnotation(Idemp.class)){
+                    Map<String,String> map=(Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+                    String base64Token=map.get("token");
+                    TokenUtil.putIdempotent(base64Token,"");
+                }
+            }
+
         }
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
                 throws Exception {
@@ -74,7 +88,19 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                         toWriteResponseVo(response,-1000,"token失效");
                         return false;
                     }
-
+                    if(method.hasMethodAnnotation(Idemp.class)){
+                        String idempStr=TokenUtil.getIdemp(base64Token);
+                        if(StringUtils.isBlank(idempStr)){
+                            toWriteResponseVo(response,-2,"无效的操作");
+                            return false;
+                        }else if("do".equals(idempStr)){
+                            TokenUtil.putIdempotent(base64Token,"doing");
+                            return true;
+                        }else if("doing".equals(idempStr)){
+                            toWriteResponseVo(response,-2,"处理中，请耐性等待");
+                            return false;
+                        }
+                    }
                     return true;
                 }
 
