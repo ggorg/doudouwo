@@ -31,6 +31,12 @@
                     <form class="layui-form" >
                         <div class="layui-form-item2 layui-form-item">
                         <div class="float-left-div" >
+                            <label class="layui-form-label" >游戏</label>
+                            <div class="layui-input-inline" >
+                                <select name="gameId" id="gameId" lay-filter="gameId">
+                                    <option th:each="game:${gameList.result}" th:value="${game?.id}" th:text="${game?.gameName}" th:selected="${gameId == game?.id}"> 游戏名称</option>
+                                </select>
+                            </div>
 
                             <label class="layui-form-label" >名称</label>
                             <div class="layui-input-inline" >
@@ -44,7 +50,7 @@
                 </div>
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('400px','200px','新增段位','to-edit')" title="table2">新增段位</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('400px','200px','新增段位','to-edit?id=-1&gameId='+jQuery('#gameId').val())" title="table2">新增段位</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -64,8 +70,8 @@
                     </thead>
 
                     <tbody>
-                    <tr th:each="obj:${gameList?.result}">
-                        <td th:text="${obj['gameName']}">Trident</td>
+                    <tr th:each="obj:${rankList?.result}">
+                        <td th:text="${obj['rank']}">Trident</td>
                         <td th:text="${obj['createTime']!=null ? #dates.format(obj['createTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
                         <td class="center">
                             <div class="layui-btn-group">
@@ -87,7 +93,21 @@
     <script type="text/javascript">
         layui.use('form', function(){
             var form = layui.form;
-
+            form.on('select(gameId)', function(data){
+                jQuery.post("list",{gameId:data.value},function(){
+                    var currentUrl=window.parent.location.href;
+                    if(currentUrl.indexOf("?")==-1){
+                        top.location.href=currentUrl+"?gameId="+data.value;
+                        return ;
+                    }else{
+                        if(currentUrl.indexOf("gameId")==-1){
+                            top.location.href=currentUrl+"&gameId="+data.value;
+                        }else{
+                            top.location.href=currentUrl.replace(/gameId=[^&]+/,"gameId="+data.value);
+                        }
+                    }
+                });
+            });
         })
 
         function del(obj) {

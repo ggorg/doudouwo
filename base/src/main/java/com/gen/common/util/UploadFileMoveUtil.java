@@ -47,4 +47,10 @@ public class UploadFileMoveUtil {
 
     }
 
+    public static void delete(String pathname){
+        File file = new File(pathname);
+        if(file.exists()){
+            file.delete();
+        }
+    }
 }

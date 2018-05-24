@@ -13,4 +13,5 @@ import java.util.List;
 @Mapper
 public interface PhotographMapper {
     public List<PhotographPO> findListByNames(@Param("condition") HashSet<String> condition);
+    public List<PhotographPO> findListByIds(@Param("condition") HashSet<String> condition);
 }

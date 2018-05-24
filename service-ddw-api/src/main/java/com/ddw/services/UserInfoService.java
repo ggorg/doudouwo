@@ -198,7 +198,7 @@ public class UserInfoService extends CommonService {
             this.fileService.saveFile(f);
 
             photographPO.setUserId(Integer.valueOf(id));
-            photographPO.setImgUrl(fileInfoVo.getUrlPath());
+            photographPO.setImgUrl(mainGlobals.getRsDir() + fileInfoVo.getUrlPath());
             photographPO.setImgName(idcardFrontImgName);
             photographPO.setCreateTime(new Date());
             photographPO.setUpdateTime(new Date());
@@ -221,6 +221,13 @@ public class UserInfoService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO deletePhotograph(String photograph)throws Exception{
+        HashSet<String> hs = new HashSet<String>();
+        hs.add(photograph);
+        List<PhotographPO> photographPOList = photographMapper.findListByIds(hs);
+        //删除本地图片
+        for(PhotographPO photographPO : photographPOList){
+            UploadFileMoveUtil.delete(mainGlobals + photographPO.getImgName());
+        }
         Map searchCondition = new HashMap<>();
         StringBuffer sb = new StringBuffer();
         for(String photo:photograph.split(",")){
@@ -230,6 +237,7 @@ public class UserInfoService extends CommonService {
             sb = sb.deleteCharAt(sb.length()-1);
         }
         searchCondition.put("id ","in ("+sb.toString()+")");
-        return this.commonDeleteByCombination("ddw_photograph",searchCondition);
+        ResponseVO responseVO = this.commonDeleteByCombination("ddw_photograph",searchCondition);
+        return responseVO;
     }
 }
