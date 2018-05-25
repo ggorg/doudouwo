@@ -13,11 +13,12 @@
 </head>
 <body style="padding:10px 10px 10px 10px">
 <form class="layui-form layui-form-pane" >
-  <input th:if="${gamePO!=null and gamePO['id']!=null}" th:name="id" th:value="${gamePO['id']}" type="hidden"/>
+  <input th:if="${rankPO!=null and rankPO['id']!=null}" th:name="id" th:value="${rankPO['id']}" type="hidden"/>
+  <input th:if="${rankPO!=null and rankPO['gameId']!=null}" th:name="gameId" th:value="${rankPO['gameId']}" type="hidden"/>
   <div class="layui-form-item">
     <label class="layui-form-label">名称</label>
     <div class="layui-input-block">
-      <input type="text" name="gameName" required="required" title="名称"  lay-verify="required|max20" th:value="${gamePO!=null? gamePO['gameName']:''}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
+      <input type="text" name="rank" required="required" title="名称"  lay-verify="required|max20" th:value="${rankPO!=null? rankPO['rank']:''}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
     </div>
   </div>
 

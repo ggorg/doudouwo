@@ -75,17 +75,19 @@ public class UserController {
     public ResponseApiVO<UserInfoVO> query(@PathVariable String token,
                                            @RequestBody @ApiParam(name = "id",value="会员id,传入json格式,如:{\"id\":\"1\"}", required = true) JSONObject json){
         try {
+            UserInfoVO userVO = new UserInfoVO();
             if(!json.isEmpty()){
-                UserInfoVO userVO = userInfoService.query(json.getString("id"));
-                List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
-                userVO.setPhotograph(photographList);
-                userVO.setToken(token);
-                userVO.setIdentifier(userVO.getOpenid());
-                userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                return new ResponseApiVO(1,"成功",userVO);
+                userVO = userInfoService.query(json.getString("id"));
             }else{
-                return new ResponseApiVO(-2,"用户id不能为空",null);
+                String openid = TokenUtil.getUserObject(token).toString();
+                userVO = userInfoService.queryByOpenid(openid);
             }
+            List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
+            userVO.setPhotograph(photographList);
+            userVO.setToken(token);
+            userVO.setIdentifier(userVO.getOpenid());
+            userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+            return new ResponseApiVO(1,"成功",userVO);
         }catch (Exception e){
             logger.error("UserController->query",e);
             return new ResponseApiVO(-1,"提交失败",null);
