@@ -15,7 +15,7 @@ public class CacheUtil {
         cache.put(element);
 
     }
-    public static Object  get(String cacheName,Object key){
+    public static Object get(String cacheName,Object key){
         Cache cache=createCache(cacheName);
         if(cache.isKeyInCache(key)){
             Element element=cache.getQuiet(key);

@@ -16,6 +16,7 @@ import com.gen.common.util.HttpUtil;
 import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +50,9 @@ public class CallBackController {
 
     @Value("${ProxyCallBackHost:}")
     private String proxyCallBackHost;
+
+    @Value("${pay.sign.close:}")
+    private String paySignClose;
     /**
      1	recv rtmp deleteStream	主播端主动断流
      2	recv rtmp closeStream	主播端主动断流
@@ -127,7 +131,7 @@ public class CallBackController {
             logger.info("weiXinPayExecute-request："+xmlStr);
             Map<String,String> map=Tools.xmlCastMap(xmlStr);
             if(map!=null && "SUCCESS".equals(map.get("return_code"))&& "SUCCESS".equals(map.get("result_code")) ){
-               if(!SignUtil.wxPaySign(map)){
+               if(StringUtils.isBlank(paySignClose) && !SignUtil.wxPaySign(map)){
                     logger.info("微信支付回调验签不成功");
 
                     CacheUtil.put("pay","order-"+map.get("out_trade_no"),"fail");
@@ -158,6 +162,56 @@ public class CallBackController {
 
         return new WeiXinPayCallBackVO("FAIL","ok");
     }
+    /**
+     * 微信申请退款回调
+
+     * @return
+     */
+    @PostMapping("/weixin/refund/execute")
+    @ResponseBody
+    public WeiXinPayCallBackVO weiXinRefundExecute(HttpServletRequest request){
+        InputStream is=null;
+        try{
+            is=request.getInputStream();
+            String xmlStr= IOUtils.toString(is);
+            logger.info("weiXinRefundExecute->request："+xmlStr);
+            Map<String,String> map=Tools.xmlCastMap(xmlStr);
+            if(map!=null && "SUCCESS".equals(map.get("return_code")) ){
+               if(StringUtils.isBlank(paySignClose) && !SignUtil.wxPaySign(map)){
+                    logger.info("微信申请退款回调验签不成功");
+
+                    CacheUtil.put("pay","refund-"+map.get("out_trade_no"),"fail");
+
+                    return new WeiXinPayCallBackVO("FAIL","ok");
+
+                }
+                Object data =(Object) CacheUtil.get("pay","weixin-refund-"+map.get("out_trade_no"));
+               logger.info("weiXinRefundExecute->weixin-refund-"+map.get("out_trade_no")+"->"+data);
+                if(data!=null){
+                    ResponseVO res=orderService.updateSimpleOrderPayStatus(PayStatusEnum.PayStatus2,map.get("out_trade_no"));
+                    logger.info("weiXinRefundExecute->更新支付状态->"+res);
+                    if(res.getReCode()==1){
+                        CacheUtil.put("pay","refund-"+map.get("out_trade_no"),"success");
+                        return new WeiXinPayCallBackVO("SUCCESS","ok");
+
+                    }else{
+                        CacheUtil.put("pay","refund-"+map.get("out_trade_no"),"fail");
+
+                    }
+                }else{
+                    CacheUtil.put("pay","refund-"+map.get("out_trade_no"),"fail");
+                }
+
+            }
+
+        }catch (Exception e){
+            logger.error("微信退款回调失败");
+        }finally {
+            IOUtils.closeQuietly(is);
+        }
+
+        return new WeiXinPayCallBackVO("FAIL","ok");
+    }
 
     /**
      * 支付宝支付回调
@@ -171,7 +225,7 @@ public class CallBackController {
         try {
             logger.info("aliPayExecute->request："+dto);
             if(dto!=null && ("TRADE_FINISHED".equals(dto.get("trade_status")) || "TRADE_SUCCESS".equals(dto.get("trade_status")))){
-                if(!SignUtil.aliPaySign(dto)){
+                if(StringUtils.isBlank(paySignClose) && !SignUtil.aliPaySign(dto)){
                     logger.info("支付宝回调验签不成功");
                     CacheUtil.put("pay","order-"+dto.get("out_trade_no"),"fail");
                     return "fail";

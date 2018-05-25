@@ -13,7 +13,7 @@ public class PublicPayDTO {
     @ApiModelProperty(name="payType",value="支付类型,微信：1，支付宝：2",example="1")
     private Integer payType;
 
-    @ApiModelProperty(name="orderType",value="订单类型,充值：3，竞价定金：4",example="3")
+    @ApiModelProperty(name="orderType",value="订单类型,充值：3，竞价定金：4，竞价金额：5",example="3")
     private Integer orderType;
 
     public Integer getMoney() {

@@ -4,14 +4,19 @@ import com.ddw.beans.*;
 import com.ddw.enums.GoddessFlagEnum;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.LiveRadioApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.Page;
+import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +27,13 @@ public class LiveRadioClientService  extends CommonService{
     @Autowired
     private LiveRadioService liveRadioService;
 
-    public ResponseApiVO toLiveRadio(String userOpenId, Integer storeId)throws Exception{
+    @Autowired
+    private ReviewGoddessService reviewGoddessService;
+
+
+    public ResponseApiVO toLiveRadio(String token)throws Exception{
+        Integer storeId=TokenUtil.getStoreId(token);
+        String userOpenId=(String)TokenUtil.getUserObject(token);
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择一个门店",null);
 
@@ -41,7 +52,7 @@ public class LiveRadioClientService  extends CommonService{
             LiveRadioPushVO liveRadioPushVO=new LiveRadioPushVO();
 
             PropertyUtils.copyProperties(liveRadioPushVO,liveRadioPO);
-
+            TokenUtil.putStreamId(token,liveRadioPO.getStreamid());
 
             return new ResponseApiVO(1,"成功",liveRadioPushVO);
         }else{
@@ -80,10 +91,36 @@ public class LiveRadioClientService  extends CommonService{
             TokenUtil.putGroupId(token,po.getGroupId());
             SelectLiveRadioVO svo=new SelectLiveRadioVO();
             PropertyUtils.copyProperties(svo,po);
+            TokenUtil.putStreamId(token,po.getStreamid());
             return new ResponseApiVO(1,"成功",svo);
         }
         return new ResponseApiVO(-2,"选择直播房间",null);
 
+
+
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO closeRoom(String token)throws Exception{
+        GoddessPO gpo= reviewGoddessService.getAppointment(TokenUtil.getUserId(token));
+        if(gpo==null){
+            return new ResponseApiVO(-2,"权限不足",null);
+        }
+        String streamId=TokenUtil.getStreamId(token);
+        if(StringUtils.isBlank(streamId)){
+            return new ResponseApiVO(-2,"操作异常",null);
+
+        }
+        boolean flag=LiveRadioApiUtil.closeLoveRadio(streamId);
+        if(!flag){
+            ResponseVO res=liveRadioService.handleLiveRadioStatus(streamId,0);
+            if(res.getReCode()==1){
+                return new ResponseApiVO(1,"成功",null);
+            }
+        }else{
+            return new ResponseApiVO(1,"成功",null);
+
+        }
+        return new ResponseApiVO(-2,"失败",null);
 
 
     }

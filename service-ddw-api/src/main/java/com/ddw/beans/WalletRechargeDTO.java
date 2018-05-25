@@ -9,7 +9,7 @@ public class WalletRechargeDTO {
     @ApiModelProperty(name="money",value="金额,单位分",example="1000")
     private Integer money;
 
-    @ApiModelProperty(name="orderType",value="订单类型,充值：3，竞价定金：4",example="3")
+    @ApiModelProperty(name="orderType",value="订单类型,充值：3，竞价定金：4，竞价金额：5",example="3")
     private Integer orderType;
 
 

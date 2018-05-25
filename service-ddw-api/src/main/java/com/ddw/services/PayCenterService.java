@@ -38,6 +38,8 @@ public class PayCenterService extends CommonService {
     @Autowired
     private BiddingService biddingService;
 
+
+
     @Autowired
     private DDWGlobals ddwGlobals;
     public ResponseApiVO searchPayStatus(String token,PayStatusDTO dto)throws Exception{
@@ -107,6 +109,10 @@ public class PayCenterService extends CommonService {
             return new ResponseApiVO(-2,"请选择有效的订单类型",null);
 
         }
+        if(cost==null || cost<0){
+            return new ResponseApiVO(-2,"金额参数异常，不能小于或者等于0",null);
+
+        }
         OrderPO orderPO=new OrderPO();
         orderPO.setCreateTime(new Date());
         orderPO.setUpdateTime(new Date());
@@ -121,6 +127,7 @@ public class PayCenterService extends CommonService {
         orderPO.setDoCustomerType(OrderCustomerTypeEnum.OrderCustomerType0.getCode());
         orderPO.setDoType(orderType);
         orderPO.setCreater(TokenUtil.getUserName(token));
+        orderPO.setDoCost(cost);
         ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
         if(insertResponseVO.getReCode()==1){
             Map m=new HashMap();
@@ -134,19 +141,38 @@ public class PayCenterService extends CommonService {
                 m.put("creater",TokenUtil.getUserId(token));
                 m.put("dorCost",cost);
                 resVo=this.commonInsertMap("ddw_order_recharge",m);
-            }if(orderType.equals(OrderTypeEnum.OrderType4.getCode())){
+            }if(orderType.equals(OrderTypeEnum.OrderType4.getCode()) ||orderType.equals(OrderTypeEnum.OrderType5.getCode())){
+
+                //            CacheUtil.put("appShoppingCart","bidding-pay-"+groupId,payMap);
                 m.put("orderId",insertResponseVO.getData());
                 m.put("orderNo",orderNo);
                 m.put("createTime",new Date());
                 m.put("updateTime",new Date());
                 m.put("creater",TokenUtil.getUserId(token));
                 m.put("dorCost",cost);
-                Map bidMap=this.biddingService.getCurrentBidMap(TokenUtil.getGroupId(token));
-                if(bidMap==null){
-                    return new ResponseApiVO(-2,"支付竞价定金失败，当前竞价已经结束",null);
+                Map bidMap=null;
+                if(orderType.equals(OrderTypeEnum.OrderType5.getCode())){
+                    bidMap=this.biddingService.getCurrentBidMapNoBidEndTime(TokenUtil.getGroupId(token));
+                    if(bidMap==null){
+                        throw new GenException("没找到当前竞价的记录");
+                    }
+                    Map<Integer,BiddingPayVO> payMap=(Map) CacheUtil.get("pay","bidding-pay-"+TokenUtil.getGroupId(token));
+                    if(payMap==null){
+                        throw new GenException("竞价支付超时");
+                    }
+                    BiddingPayVO vo=payMap.get((Integer) bidMap.get("luckyDogUserId"));
+                    if(!cost.equals(Integer.parseInt(vo.getNeedPayPrice()))){
+                        throw new GenException("支付的金额与竞价的金额不一致");
+                    }
+                }else{
+                    bidMap=this.biddingService.getCurrentBidMap(TokenUtil.getGroupId(token));
+                    if(bidMap==null){
+                        throw new GenException("支付竞价定金失败，当前竞价已经结束");
+                    }
                 }
+
                 m.put("biddingId",bidMap.get("id"));
-                resVo=this.commonInsertMap("ddw_order_bidding_earnest",m);
+                resVo=this.commonInsertMap("ddw_order_bidding_pay",m);
             }
 
             if(resVo.getReCode()==1){
@@ -200,5 +226,50 @@ public class PayCenterService extends CommonService {
         return new ResponseApiVO(-2,"支付失败",null);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO exitOrder(List<String> orders)throws Exception{
+        if(orders==null){
+            return new ResponseApiVO(-2,"参数异常",null);
 
+        }
+        OrderPO orderPO=null;
+        ExitOrderPO exitOrderPO=null;
+        for(String o:orders){
+            orderPO=this.commonObjectBySingleParam("ddw_order","id",OrderUtil.getOrderId(o),OrderPO.class);
+            exitOrderPO=new ExitOrderPO();
+            exitOrderPO.setCreater(orderPO.getDoCustomerUserId());
+            exitOrderPO.setCreaterName(orderPO.getCreater());
+            exitOrderPO.setCreateTime(new Date());
+            exitOrderPO.setExitCost(orderPO.getDoCost());
+            exitOrderPO.setTotalCost(orderPO.getDoCost());
+            exitOrderPO.setOrderId(orderPO.getId());
+            exitOrderPO.setOrderNo(OrderUtil.createOrderNo(orderPO.getDoOrderDate(),orderPO.getDoType(),orderPO.getDoPayType(),orderPO.getId()));
+            exitOrderPO.setExitOrderNo(DateFormatUtils.format(new Date(),"yyyyMMddHHmmss")+RandomStringUtils.randomNumeric(6));
+            ResponseVO inserRes=this.commonInsert("ddw_exit_order",exitOrderPO);
+            if(inserRes.getReCode()!=1){
+                throw new GenException("新建退订单失败");
+            }
+            if(PayTypeEnum.PayType1.getCode().equals(orderPO.getDoPayType())){
+                Map<String,String> callMap= PayApiUtil.reqeustWeiXinExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitOrderNo(),orderPO.getDoCost(),orderPO.getDoCost());
+                if(callMap!=null && "FAIL".equals(callMap.get("return_code"))){
+                    throw new GenException("申请退款失败");
+                }else if(callMap!=null && "SUCCESS".equals(callMap.get("return_code")) && "SUCCESS".equals(callMap.get("result_code"))){
+                    CacheUtil.put("pay","weixin-refund-"+o,exitOrderPO.getExitOrderNo());
+                }
+
+            }else if(PayTypeEnum.PayType2.getCode().equals(orderPO.getDoPayType())){
+                ResponseVO resvo=PayApiUtil.requestAliExitOrder(o,orderPO.getDoCost());
+                if(resvo.getReCode()==1){
+                    Map map=new HashMap();
+                    map.put("doPayStatus",PayStatusEnum.PayStatus2.getCode());
+                    ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",orderPO.getId());
+
+                }
+            }
+            //ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
+
+        }
+
+        return new ResponseApiVO(1,"成功",null);
+    }
 }

@@ -1,5 +1,6 @@
 package com.ddw.token;
 
+import com.gen.common.exception.GenException;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CacheUtil;
 import org.apache.commons.codec.binary.Hex;
@@ -64,6 +65,19 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
+    public static void putStreamId(String base64Token,String streamId){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("streamId",streamId);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
+    public static void putIdempotent(String base64Token,String idemp){
+
+        CacheUtil.put("idemp",base64Token,idemp);
+
+    }
     public static void putUseridAndName(String base64Token,Integer userId,String name){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){
@@ -78,6 +92,21 @@ public class TokenUtil {
         if(obj!=null){
             Map map=(Map)obj;
             return (String) map.get("name");
+        }
+        return null;
+    }
+    public static String getStreamId(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (String) map.get("streamId");
+        }
+        return null;
+    }
+    public static String getIdemp(String base64Token){
+        Object obj=CacheUtil.get("idemp",base64Token);
+        if(obj!=null){
+            return (String) obj;
         }
         return null;
     }
@@ -166,5 +195,6 @@ public class TokenUtil {
         String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
         System.out.println(base64Token);
         System.out.println(Hex.encodeHexString(base64Token.getBytes()));
+
     }
 }

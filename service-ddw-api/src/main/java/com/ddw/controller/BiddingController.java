@@ -26,7 +26,7 @@ public class BiddingController {
 
 
     @Token
-    @ApiOperation(value = "获取当前最高价位",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "获取当前最高价位（普通用户）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/maxprice/{token}")
     @ResponseBody
     public ResponseApiVO queryMaxPrice(@PathVariable String token){
@@ -40,7 +40,7 @@ public class BiddingController {
 
 
     @Token
-    @ApiOperation(value = "提交竞价价位",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "提交竞价金额（普通用户）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/submit/price/{token}")
     @ResponseBody
     public ResponseApiVO submitPrice(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingDTO args){
@@ -54,28 +54,40 @@ public class BiddingController {
 
 
     @Token
-    @ApiOperation(value = "获取当前竞价列表",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "获取当前竞价列表（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/currentall/{token}")
     @ResponseBody
     public ResponseApiVO<ListVO<List<BiddingVO>>> getCurrentAll(@PathVariable String token){
         try {
-            return this.biddingService.getCurrentCacheBidding(token);
+            return this.biddingService.getCurrentAllBidding(token);
         }catch (Exception e){
             logger.error("BiddingController->getCurrentAll-》获取当前竞价列表-》系统异常",e);
-            return new ResponseApiVO(-1,"获取失败",null);
+            return new ResponseApiVO(-1,"失败",null);
         }
     }
 
     @Token
-    @ApiOperation(value = "选择某个竞价",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "选择某个用户的竞价（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/choose/bidding/{token}")
     @ResponseBody
     public ResponseApiVO chooseBidding(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserOpenIdDTO args){
         try {
-            return new ResponseApiVO(-1,"获取失败",null);
+            return this.biddingService.chooseBidding(args.getOpenId(),token);
         }catch (Exception e){
             logger.error("BiddingController->getCurrentAll-》获取当前竞价列表-》系统异常",e);
-            return new ResponseApiVO(-1,"获取失败",null);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "查询待支付的竞价金额(普通用户)",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/bidding/waitpay/{token}")
+    @ResponseBody
+    public ResponseApiVO waitpay(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GroupIdDTO args){
+        try {
+            return this.biddingService.searchWaitPayByUser(args.getGroupId(),token);
+        }catch (Exception e){
+            logger.error("BiddingController->waitpay-》查看竞价待支付金额-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
         }
     }
 }
