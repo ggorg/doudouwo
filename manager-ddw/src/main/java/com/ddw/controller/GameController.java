@@ -84,7 +84,7 @@ public class GameController {
             }else{
                 cacheService.set("gameId",gameId);
             }
-            model.addAttribute("gameId",gameId);
+            model.addAttribute("gameId",Integer.valueOf(gameId));
             model.addAttribute("rankList",rankService.findList(gameId));
         }catch (Exception e){
             logger.error("GameController->rankList",e);

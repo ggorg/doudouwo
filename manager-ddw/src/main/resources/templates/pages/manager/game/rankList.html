@@ -34,7 +34,7 @@
                             <label class="layui-form-label" >游戏</label>
                             <div class="layui-input-inline" >
                                 <select name="gameId" id="gameId" lay-filter="gameId">
-                                    <option th:each="game:${gameList.result}" th:value="${game?.id}" th:text="${game?.gameName}" th:selected="${gameId == game?.id}"> 游戏名称</option>
+                                    <option th:each="game:${gameList.result}" th:value="${game?.id}" th:text="${game?.gameName}" th:selected="${game?.id == gameId}"> 游戏名称</option>
                                 </select>
                             </div>
 
