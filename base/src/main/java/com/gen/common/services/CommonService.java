@@ -121,28 +121,33 @@ public abstract class CommonService {
      * @param setParams 修改的参数
      * @param searchCondition 查询的参数
      * @param versionName 版本字段名
-     * @param calculateName 要计算的字段名（加法计算）（比如金额字段）
+     * @param calculatesName 要计算的字段名（加法计算）（比如金额字段）
      * @return
      */
-    protected  ResponseVO commonCalculateOptimisticLockUpdateByParam(String tableName,Map setParams,Map searchCondition,String versionName,String calculateName)throws Exception{
+    protected  ResponseVO commonCalculateOptimisticLockUpdateByParam(String tableName,Map setParams,Map searchCondition,String versionName,String[] calculatesName)throws Exception{
         Map map=null;
         Integer version=null;
         Integer num=null;
         Map vSetMap=null;
         Map vSearchMap=null;
         ResponseVO res=null;
-        Integer cn=(Integer) setParams.get(calculateName);
-        if(cn==null)cn=0;
-        setParams.remove(calculateName);
+        Integer cn=null;
+
+        //setParams.remove(calculateName);
         for(int i=1;i<=5;i++){
             map=this.commonObjectBySearchCondition(tableName,searchCondition);
             if(map==null || map.isEmpty()){
                 return new ResponseVO(-2,"更新失败",null);
             }else{
                 version=(Integer)map.get(versionName);
-                num=(Integer)map.get(calculateName);
-                num=(num==null?0:num)+cn;
-                setParams.put(calculateName,num);
+                for(String calculateName:calculatesName){
+                    cn=(Integer)setParams.get(calculateName);
+                    if(cn==null)cn=0;
+                    num=(Integer)map.get(calculateName);
+                    num=(num==null?0:num)+cn;
+                    setParams.put(calculateName,num);
+                }
+
                 vSearchMap=new HashMap(searchCondition);
                 if(version==null){
                     version=1;
@@ -233,6 +238,22 @@ public abstract class CommonService {
         Page page=new Page(pageNum,pageSize);
 
         CommonSearchBean csb=new CommonSearchBean(tableName,ordername,null, page.getStartRow(),page.getEndRow(),searchCondition);
+        CommonCountBean ccb = new CommonCountBean();
+
+        PropertyUtils.copyProperties(ccb, csb);
+        long count = commonMapper.selectCount(ccb);
+        if(count>0){
+            List list=this.commonMapper.selectObjects(csb);
+            page.setResult(list);
+            page.setTotal(count);
+        }
+
+        return page;
+    }
+    protected Page commonPage(Integer pageNo,Integer pageSize,CommonSearchBean csb)throws Exception{
+        Page page=new Page(pageNo,pageSize);
+        csb.setStartNum(page.getStartRow());
+        csb.setEndNum(page.getEndRow());
         CommonCountBean ccb = new CommonCountBean();
 
         PropertyUtils.copyProperties(ccb, csb);

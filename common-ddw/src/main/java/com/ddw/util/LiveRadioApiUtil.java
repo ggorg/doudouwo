@@ -2,6 +2,7 @@ package com.ddw.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.LiveRadioUrlBean;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.HttpUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -31,6 +32,7 @@ public class LiveRadioApiUtil {
     }
     public static boolean closeLoveRadio(String streamId){
         try{
+            CacheUtil.put("publicCache","closeCmd-"+streamId,streamId);
             for(int i=1;i<=5;i++){
                 String t=DateUtils.addHours(new Date(),12).getTime()/1000+"";
                 StringBuilder builder=new StringBuilder();

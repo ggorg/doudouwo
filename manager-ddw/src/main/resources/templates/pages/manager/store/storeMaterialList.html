@@ -4,7 +4,7 @@
         <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
         <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
         <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${mPage!=null?mPage.total:0}]]*/ );
+           initPage(/*[[${smpage!=null?smpage.total:0}]]*/ );
         </script>
 	</head>
     <body class="withvernav">
@@ -22,7 +22,7 @@
 
             <div id="contentwrapper" class="contentwrapper">
                 <div class="contenttitle2">
-                    <h3>原材料列表</h3>
+                    <h3>材料列表</h3>
 
                 </div><!--contenttitle-->
 
@@ -67,8 +67,9 @@
                     <tr>
                         <th class="head1">材料图</th>
                         <th class="head1">材料名称</th>
-                        <th class="head1">价格(元)</th>
-                        <th class="head1">净含量</th>
+                        <th class="head1">单价(元)</th>
+                        <th class="head1">总价(元)</th>
+                        <th class="head1">总含量</th>
                         <th class="head1">库存数</th>
                         <th class="head1">创建时间</th>
 
@@ -77,19 +78,19 @@
                     </thead>
 
                     <tbody>
-                    <tr th:each="obj:${mPage?.result}" th:with="pn=${obj['dmCurrentCount']-#toolsddw.getPrestoreByM(obj['id'],om)}">
+                    <tr th:each="obj:${smpage?.result}" th:with="pn=${obj['dsCountNumber']}">
                         <td ><img th:src="${obj['dmIcoImgPath']}" style="width:70px;height:60px" /></td>
                         <td th:text="${obj['dmName']}">Trident</td>
                         <td th:text="${#toolsddw.divided(obj['dmSales'],100)}">Trident</td>
-                        <td th:text="${obj['dmNetWeight']+obj['dmUnit']}">Trident</td>
+                        <td th:text="${#toolsddw.divided(obj['dmSales']*pn,100)}">Trident</td>
+                        <td th:text="${obj['dsCountNetWeight']+obj['dsUnit']}">Trident</td>
                         <td th:text="${pn<1?'库存不足':pn}">Trident</td>
 
                         <td th:text="${obj['createTime']}">Win 95+</td>
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button th:if="${pn<1}" class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'850px\',\'530px\',\'查看\',\'to-material-info?id='+${obj['id']}+'\')'"  >查看</button>
-                            <button th:if="${pn>0}"  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'850px\',\'530px\',\'去进货\',\'to-material-info?id='+${obj['id']}+'\')'"  >去进货</button>
+                            <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'850px\',\'530px\',\'去进货\',\'/manager/hq/material/to-material-info?id='+${obj['materialId']}+'\')'"  >去进货</button>
                             </div>
                         </td>
                     </tr>

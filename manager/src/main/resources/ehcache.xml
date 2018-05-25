@@ -2,7 +2,7 @@
 <ehcache>
     <diskStore path="/data/cache/manager"/>
     <cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=manual,rmiUrls=//127.0.0.1:9002/onlinePersonNum|//127.0.0.1:9002/stores|//127.0.0.1:9002/pay|//127.0.0.1:9002/review" />
+            properties="peerDiscovery=manual,rmiUrls=//127.0.0.1:9002/publicCache|//127.0.0.1:9002/stores|//127.0.0.1:9002/pay|//127.0.0.1:9002/review" />
 
     <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
@@ -20,7 +20,7 @@
    <cache name="orderInfo"  maxElementsInMemory="1000" timeToLiveSeconds="900" diskPersistent="true" maxElementsOnDisk="0" />
     <cache name="appShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="7200" diskPersistent="true" />
     <cache name="imSign"  maxElementsInMemory="10" timeToLiveSeconds="86400" diskPersistent="true" />
-    <cache name="onlinePersonNum"  maxElementsInMemory="1000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
+    <cache name="publicCache"  maxElementsInMemory="1000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
         <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
     </cache>

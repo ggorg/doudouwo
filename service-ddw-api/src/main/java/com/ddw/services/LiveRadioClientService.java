@@ -8,6 +8,7 @@ import com.ddw.util.LiveRadioApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
@@ -120,6 +121,7 @@ public class LiveRadioClientService  extends CommonService{
             return new ResponseApiVO(1,"成功",null);
 
         }
+        CacheUtil.delete("publicCache","closeCmd-"+streamId);
         return new ResponseApiVO(-2,"失败",null);
 
 

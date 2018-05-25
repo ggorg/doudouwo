@@ -1,7 +1,10 @@
 package com.ddw.servies;
 
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -64,5 +67,13 @@ public class StoreMaterialService extends CommonService {
 
         return new ResponseVO(-2,"门店材料入库失败",null);
     }
+    public Page findPage(Integer pageNo,Integer storeId)throws Exception{
 
+        Map condtion=new HashMap();
+        condtion.put("storeId",storeId);
+        CommonChildBean cb=new CommonChildBean("ddw_material","id","materialId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_store_material","updateTime desc","t1.*,ct0.dmName,ct0.dmSales,ct0.dmIcoImgPath",null,null,condtion,cb);
+
+        return this.commonPage(pageNo,10,csb);
+    }
 }

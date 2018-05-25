@@ -38,7 +38,6 @@ public class LiveRadioBackRoomTimerTask {
         if(list!=null){
             String streamId=null;
             Integer num=null;
-            System.out.println(list);
             for(Map m:list){
                streamId=(String)m.get("streamid");
                 num= backRoomMap.get(streamId);

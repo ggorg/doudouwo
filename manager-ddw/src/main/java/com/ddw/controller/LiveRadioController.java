@@ -7,6 +7,7 @@ import com.ddw.services.LiveRadioService;
 import com.ddw.servies.StoreService;
 import com.ddw.util.LiveRadioApiUtil;
 import com.ddw.util.Toolsddw;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
@@ -65,6 +66,8 @@ public class LiveRadioController {
             if(flag){
                 return new ResponseVO(1,"禁用直播成功",null);
 
+            }else{
+                CacheUtil.delete("publicCache","closeCmd-"+streamId);
             }
         }catch (Exception e){
             logger.error("LiveRadioController->doCreateLiveRadio",e);

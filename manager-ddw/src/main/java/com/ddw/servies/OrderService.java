@@ -542,7 +542,7 @@ public class OrderService extends CommonService {
                 setParams.put("money",dorCost);
                 Map condition=new HashMap();
                 condition.put("userId",userid);
-                ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version","money");
+                ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version",new String[]{"money"});
                 if(wres.getReCode()!=1){
                     CacheUtil.put("pay","order-"+orderNo,"fail");
                     throw new GenException("更新支付状态失败");
