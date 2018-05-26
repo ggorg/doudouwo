@@ -225,6 +225,38 @@ public class Toolsddw extends Tools {
             }
         }*/
     }
+
+    public static String  createStoreMaterialSelect(List<Map> materials,Integer materialId){
+        Integer dsCountNetWeight=0;
+        String dsUnit="";
+        StringBuilder builder=new StringBuilder();
+        builder.append("<td>");
+        builder.append("<select name='materialId' required='required'>");
+        builder.append("<option value=''></option>");
+        if(materials!=null){
+            Integer id=null;
+            String name=null;
+            for(Map m:materials){
+                id=(Integer) m.get("id");
+                name=(String) m.get("dmName");
+                dsCountNetWeight=(Integer) m.get("dsCountNetWeight");
+                dsUnit=(String) m.get("dsUnit");
+                builder.append("<option selected=");
+                builder.append(id.equals(materialId));
+                builder.append(" data-weight='").append(dsCountNetWeight).append(dsUnit).append("'");
+                builder.append(" value='");
+                builder.append(id);
+                builder.append("' >");
+                builder.append(name);
+                builder.append("</option>");
+            }
+        }
+        builder.append("</select>");
+        builder.append("</td>");
+        builder.append("<td>").append(dsCountNetWeight).append(dsUnit).append("</td>");
+        return builder.toString();
+
+    }
     public static String createLiveRadioUrl(){
         String refererKey="bb136f00754697b5ea85bb6ee69a1946";
         String apiKey="aaceb72fe5a8a474bcca9c2576b92a58";

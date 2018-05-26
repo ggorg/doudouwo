@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -75,5 +76,13 @@ public class StoreMaterialService extends CommonService {
         CommonSearchBean csb=new CommonSearchBean("ddw_store_material","updateTime desc","t1.*,ct0.dmName,ct0.dmSales,ct0.dmIcoImgPath",null,null,condtion,cb);
 
         return this.commonPage(pageNo,10,csb);
+    }
+    public List getAll(Integer storeId){
+        Map condtion=new HashMap();
+        condtion.put("storeId",storeId);
+        CommonChildBean cb=new CommonChildBean("ddw_material","id","materialId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_store_material","updateTime desc","t1.*,ct0.dmName,ct0.dmSales,ct0.dmIcoImgPath",null,null,condtion,cb);
+
+        return this.getCommonMapper().selectObjects(csb);
     }
 }

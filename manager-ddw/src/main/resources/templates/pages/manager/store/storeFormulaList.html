@@ -51,7 +51,7 @@
                 </div><!--tableoptions-->
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('850px','530px','新增配方','to-edit')" title="table2">新增配方</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('550px','430px','新增配方','to-edit')" title="table2">新增配方</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -85,7 +85,7 @@
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'850px\',\'530px\',\'去进货\',\'/manager/hq/material/to-material-info?id='+${obj['materialId']}+'\')'"  >去进货</button>
+                            <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'550px\',\'430px\',\'修改\',\'to-edit?idStr='+${obj['id']}+'\')'"  >修改</button>
                             </div>
                         </td>
                     </tr>

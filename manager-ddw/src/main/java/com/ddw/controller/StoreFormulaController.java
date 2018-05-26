@@ -26,6 +26,8 @@ public class StoreFormulaController {
 
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private StoreMaterialService storeMaterialService;
 
     @GetMapping("to-paging")
     public String  toPaging(@RequestParam(defaultValue = "1") Integer pageNo, Model model){
@@ -38,6 +40,21 @@ public class StoreFormulaController {
             logger.error("StoreFormulaController->toPaging->系统异常");
         }
     return "pages/manager/store/storeFormulaList";
+    }
+
+
+    @GetMapping("to-edit")
+    public String  toEdit(String idStr, Model model){
+        try{
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                model.addAttribute("formula",this.storeFormulaService.getFormula(idStr));
+                model.addAttribute("materialList",this.storeMaterialService.getAll(spo.getId()));
+            }
+        }catch (Exception e){
+            logger.error("StoreFormulaController->toEdit->系统异常");
+        }
+        return "pages/manager/store/storeFormulaEdit";
     }
 
 }
