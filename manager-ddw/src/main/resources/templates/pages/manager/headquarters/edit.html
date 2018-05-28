@@ -33,11 +33,11 @@
       <select name="dmUnit" required="required" placeholder="请选择适合单位" lay-verify="required" >
 
         <option value="">请选择</option>
-        <option value="ml" th:selected="${dm['dmUnit']=='ml'}">毫升</option>
-        <option value="g" th:selected="${dm['dmUnit']=='g'}">克</option>
-        <option value="包" th:selected="${dm['dmUnit']=='包'}">包</option>
-        <option value="个" th:selected="${dm['dmUnit']=='个'}">个</option>
-        <option value="块" th:selected="${dm['dmUnit']=='块'}">块</option>
+        <option value="ml" th:selected="${dm!=null && dm['dmUnit']=='ml'}">毫升</option>
+        <option value="g" th:selected="${dm!=null && dm['dmUnit']=='g'}">克</option>
+        <option value="包" th:selected="${dm!=null && dm['dmUnit']=='包'}">包</option>
+        <option value="个" th:selected="${dm!=null && dm['dmUnit']=='个'}">个</option>
+        <option value="块" th:selected="${dm!=null && dm['dmUnit']=='块'}">块</option>
       </select>
     </div>
   </div>
