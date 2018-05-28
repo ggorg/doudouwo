@@ -18,6 +18,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -229,20 +230,26 @@ public class Toolsddw extends Tools {
     public static String  createStoreMaterialSelect(List<Map> materials,Integer materialId){
         Integer dsCountNetWeight=0;
         String dsUnit="";
+        String tdText="";
         StringBuilder builder=new StringBuilder();
+
         builder.append("<td>");
-        builder.append("<select name='materialId' required='required'>");
+        builder.append("<select name='materialId' required='required' lay-filter='select'>");
         builder.append("<option value=''></option>");
         if(materials!=null){
             Integer id=null;
             String name=null;
+
             for(Map m:materials){
                 id=(Integer) m.get("id");
                 name=(String) m.get("dmName");
                 dsCountNetWeight=(Integer) m.get("dsCountNetWeight");
                 dsUnit=(String) m.get("dsUnit");
-                builder.append("<option selected=");
-                builder.append(id.equals(materialId));
+                builder.append("<option");
+                if(id.equals(materialId)||id==materialId){
+                    builder.append(" selected='selected'");
+                    tdText=dsCountNetWeight.toString()+dsUnit;
+                }
                 builder.append(" data-weight='").append(dsCountNetWeight).append(dsUnit).append("'");
                 builder.append(" value='");
                 builder.append(id);
@@ -253,7 +260,9 @@ public class Toolsddw extends Tools {
         }
         builder.append("</select>");
         builder.append("</td>");
-        builder.append("<td>").append(dsCountNetWeight).append(dsUnit).append("</td>");
+        builder.append("<td>");
+        if(StringUtils.isNotBlank(tdText))builder.append(tdText);
+        builder.append("</td>");
         return builder.toString();
 
     }

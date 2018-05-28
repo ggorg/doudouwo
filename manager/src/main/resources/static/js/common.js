@@ -43,9 +43,19 @@ function initPage(count,callBackFun){
 
     })
 }
-function initForm(url,formObject){
+
+
+
+function initForm(url,formObject,evenfunction){
+
+
     layui.use('form', function(){
-        var form = layui.form;
+
+        var form= layui.form;
+        lf=form;
+        if(evenfunction!=undefined){
+            evenfunction(form);
+        }
         form.verify({
             required:function(value,item){
                 var msg=item.getAttribute("placeholder");
@@ -57,8 +67,11 @@ function initForm(url,formObject){
                 return msg==null?"请输入必填项":msg;
             }
         })
+
         $(formObject==undefined?".layui-form":formObject).submit(function(){
+
             return  commonSubmit(url,formObject);
+
         })
         //各种基于事件的操作，下面会有进一步介绍
     });
@@ -130,10 +143,28 @@ function commonSubmit(url,formObject,reqData){
 }
 function openDialog(width,height,title,url){
     layer.open({
+        id:"mydialog",
         type: 2,
         area: [width,height],
         title:title,
-        content:url //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+        content:url, //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+        btn:["提交","重置"],
+        yes:function(index, layero){
+            j=(isFunction(jQuery)?jQuery:$)
+            var win=j("#mydialog iframe").get(0).contentWindow
+            var subbtn=j(win.document).find("[lay-submit='lay-submit']");
+            subbtn.click();
+            return false;
+
+        },
+        btn2:function(index, layero){
+            j=(isFunction(jQuery)?jQuery:$)
+            var win=j("#mydialog iframe").get(0).contentWindow
+            var subbtn=j(win.document).find("[type='reset']");
+            subbtn.click()
+            return false;
+        }
+
     });
 }
 function isFunction(fn) {
