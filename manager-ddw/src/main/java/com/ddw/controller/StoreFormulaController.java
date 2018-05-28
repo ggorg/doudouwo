@@ -1,17 +1,17 @@
 package com.ddw.controller;
 
+import com.ddw.beans.StoreFormulaDTO;
 import com.ddw.beans.StorePO;
 import com.ddw.servies.StoreFormulaService;
 import com.ddw.servies.StoreMaterialService;
 import com.ddw.servies.StoreService;
 import com.ddw.util.Toolsddw;
+import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 门店商口配方
@@ -55,6 +55,20 @@ public class StoreFormulaController {
             logger.error("StoreFormulaController->toEdit->系统异常");
         }
         return "pages/manager/store/storeFormulaEdit";
+    }
+    @PostMapping("do-save")
+    @ResponseBody
+    public ResponseVO doSave(StoreFormulaDTO dto){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                return this.storeFormulaService.saveFormula(dto,spo.getId());
+            }
+        }catch (Exception e){
+            logger.error("StoreFormulaController->doSave->系统异常",e);
+
+        }
+        return new ResponseVO(-1,"失败",null);
     }
 
 }
