@@ -8,11 +8,12 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(value = "我的关注用例对象",description = "我的关注用例对象")
 public class MyAttentionDTO {
-    @ApiModelProperty(name = "userId",value = "用户表关联ID",example = "1")
-    private int userId;
 
     @ApiModelProperty(name = "goddessId",value = "女神ID，关联ddw_goddess表",example = "1")
     private int goddessId;
+
+    @ApiModelProperty(name = "practiceId",value = "代练ID，关联ddw_practice表",example = "1")
+    private int practiceId;
 
     public int getGoddessId() {
         return goddessId;
@@ -22,11 +23,11 @@ public class MyAttentionDTO {
         this.goddessId = goddessId;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getPracticeId() {
+        return practiceId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setPracticeId(int practiceId) {
+        this.practiceId = practiceId;
     }
 }

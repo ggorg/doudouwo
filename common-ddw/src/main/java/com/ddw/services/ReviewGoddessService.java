@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.beans.GoddessPO;
 import com.ddw.beans.ReviewPO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +56,13 @@ public class ReviewGoddessService extends CommonService {
         searchCondition.put("id",reviewPO.getDrProposer());
         //删除审核拒绝缓存
         CacheUtil.delete("review","goddess"+reviewPO.getDrProposer());
+        //插入女神表
+        GoddessPO goddessPO = new GoddessPO();
+        goddessPO.setUserId(reviewPO.getDrProposer());
+        goddessPO.setStoreId(reviewPO.getDrBelongToStoreId());
+        goddessPO.setCreateTime(new Date());
+        goddessPO.setUpdateTime(new Date());
+        this.commonInsert("ddw_goddess",goddessPO);
         return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
     }
 }

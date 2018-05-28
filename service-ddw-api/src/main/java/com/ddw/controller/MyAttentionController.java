@@ -3,8 +3,11 @@ package com.ddw.controller;
 
 import com.ddw.beans.MyAttentionDTO;
 import com.ddw.beans.MyAttentionPO;
+import com.ddw.beans.UserInfoVO;
 import com.ddw.services.MyAttentionService;
+import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
+import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,42 +26,38 @@ public class MyAttentionController {
     private final Logger logger = Logger.getLogger(MyAttentionController.class);
     @Autowired
     private MyAttentionService myAttentionService;
+    @Autowired
+    private UserInfoService userInfoService;
 
     @Token
     @ApiOperation(value = "关注添加")
-    @PostMapping("/save/{token}")
-    public ResponseVO save(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)MyAttentionDTO args){
+    @PostMapping("/saveOrdelete/{token}")
+    public ResponseVO saveOrdelete(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,女神id和代练id只传其一",required=true)MyAttentionDTO args){
         try {
-            MyAttentionPO myAttentionPO = myAttentionService.query(args);
+            String openid = TokenUtil.getUserObject(token).toString();
+            UserInfoVO userVO = userInfoService.queryByOpenid(openid);
+            MyAttentionPO myAttentionPO = myAttentionService.query(userVO.getId(),args);
+            //添加关注
             if(myAttentionPO == null){
-                return myAttentionService.save(args);
+                return myAttentionService.save(userVO.getId(),args);
+            //取消关注
             }else{
-                return new ResponseVO(-2,"已关注",null);
+                return myAttentionService.delete(userVO.getId(),args);
             }
         }catch (Exception e){
-            logger.error("MyAttentionController->save",e);
+            logger.error("MyAttentionController->saveOrdelete",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }
 
     @Token
-    @ApiOperation(value = "取消关注")
-    @PostMapping("/delete/{token}")
-    public ResponseVO delete(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)MyAttentionDTO args){
-        try {
-            return myAttentionService.delete(args);
-        }catch (Exception e){
-            logger.error("MyAttentionController->save",e);
-            return new ResponseVO(-1,"提交失败",null);
-        }
-    }
-
-    @Token
-    @ApiOperation(value = "根据用户id查询关注的女神列表")
+    @ApiOperation(value = "当前会员关注的女神列表")
     @PostMapping("/query/{token}")
-    public ResponseVO queryGoddessByUserId(@PathVariable String token,@RequestParam @ApiParam(name = "userId",value="会员id", required = true) int userId){
+    public ResponseVO queryGoddessByUserId(@PathVariable String token){
         try {
-            return new ResponseVO(1,"成功",myAttentionService.queryGoddessByUserId(userId));
+            String openid = TokenUtil.getUserObject(token).toString();
+            UserInfoVO userVO = userInfoService.queryByOpenid(openid);
+            return new ResponseVO(1,"成功",myAttentionService.queryGoddessByUserId(userVO.getId()));
         }catch (Exception e){
             logger.error("MyAttentionController->queryGoddessByUserId",e);
             return new ResponseVO(-1,"提交失败",null);

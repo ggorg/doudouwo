@@ -9,24 +9,9 @@ public class MyAttentionPO {
     private int id;
     private int userId;
     private int goddessId;
+    private int practiceId;
     private Date createTime;
     private Date updateTime;
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public int getGoddessId() {
-        return goddessId;
-    }
-
-    public void setGoddessId(int goddessId) {
-        this.goddessId = goddessId;
-    }
 
     public int getId() {
         return id;
@@ -34,14 +19,6 @@ public class MyAttentionPO {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
     }
 
     public int getUserId() {
@@ -52,4 +29,35 @@ public class MyAttentionPO {
         this.userId = userId;
     }
 
+    public int getGoddessId() {
+        return goddessId;
+    }
+
+    public void setGoddessId(int goddessId) {
+        this.goddessId = goddessId;
+    }
+
+    public int getPracticeId() {
+        return practiceId;
+    }
+
+    public void setPracticeId(int practiceId) {
+        this.practiceId = practiceId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 }
