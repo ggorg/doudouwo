@@ -21,6 +21,11 @@ public class StoreFormulaService extends CommonService {
         return this.commonPage("ddw_formula","updateTime desc",pageNo,10,condtion);
 
     }
+    public List getAllByStore(Integer storeId){
+        Map condition=new HashMap();
+        condition.put("storeId",storeId);
+        return this.commonList("ddw_formula","updateTime desc",null,null,condition);
+    }
 
     public Map getFormula(String idStr)throws Exception{
         if(StringUtils.isNotBlank(idStr)){

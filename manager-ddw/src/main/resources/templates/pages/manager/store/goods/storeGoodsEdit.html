@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/sysframe2/css/style.default.css" type="text/css" />
+
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+  <style type="text/css">
+    .mystyle1{
+      line-height: 35px;
+    }
+    .dmImg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form">
+  <input type="hidden" th:if="${goods!=null && goods['id']!=null}" name="id" th:value="${goods!=null?goods['id']:''}"/>
+
+    <div  class="layui-form-pane">
+      <div class="layui-form-item">
+        <label class="layui-form-label">商品标题</label>
+        <div class="layui-input-block">
+          <input type="text" name="dgTitle" required="required" title="商品标题"  lay-verify="required|max20" th:value="${goods!=null? goods['dgTitle']:''}" placeholder="请输商品标题" autocomplete="off" class="layui-input" />
+
+
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">商品类别</label>
+        <div class="layui-input-block">
+          <select name="dgType" >
+            <th:block th:unless="${#lists.isEmpty(goodsType)}">
+              <option value="">请选择</option>
+              <option th:each="g:${goodsType}" th:value="${g['id']}" th:text="${g['dgtName']}" th:selected="${g['id']==goods['dgType']}"></option>
+            </th:block>
+          </select>
+
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">序号</label>
+        <div class="layui-input-block">
+          <input type="text" name="dgSort" title="序号"  lay-verify="number" th:value="${goods!=null? goods['dgSort']:''}" placeholder="请输商品序号" autocomplete="off" class="layui-input" />
+
+
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">商品图片</label>
+        <div class="layui-input-block">
+          <button type="button" class="layui-btn myupload1"  style="width: 143.52px;height: 93.83px;" >
+            <span  style="z-index: 1000;position: relative">上传图片</span>
+            <img th:if="${goods!=null and goods['fileImgIcoPath']!=null}" th:src="${goods['fileImgIcoPath']}" class="dmImg" />
+            <input th:if="${goods!=null and goods['id']!=null}" type="hidden" name="isUpdateImg" value="dmImgFile"/>
+          </button>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">商品描述</label>
+        <div class="layui-input-block">
+          <textarea placeholder="请输入商品描述" name="dgDetail" th:text="${goods!=null? goods['dgDetail']:''}" class="layui-textarea"></textarea>
+        </div>
+      </div>
+
+
+    <div class="layui-form-item layui-form-text">
+      <label class="layui-form-label">货品</label>
+      <div class="layui-input-block" >
+        <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+          <colgroup>
+            <col class="con0" style="width: 20%"  />
+            <col class="con0" style="width: 10%"  />
+            <col class="con0" style="width: 10%"  />
+            <col class="con0" style="width: 10%"  />
+            <col class="con0" style="width: 25%"  />
+            <col class="con0" style="width: 15%"  />
+            <col class="con0" style="width: 10%"  />
+
+          </colgroup>
+          <thead>
+          <tr>
+
+            <th class="head1">货品名称</th>
+            <th class="head1">成本价格</th>
+            <th class="head1">销售价格</th>
+            <th class="head1">活动价格</th>
+            <th class="head1">配方</th>
+            <th class="head1">状态</th>
+            <th class="head1">操作</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr th:if="${goods!=null and #maps.containsKey(goods,'child')}" th:each="obj:${goods['child']}">
+
+              <td>
+                <input type="hidden" name="dghId" th:value="${obj['id']}" />
+                <input  class="layui-input" required="required" th:value="${obj['dghName']}"   lay-verify="required" autocomplete="off"   name="dghName" style="background-color: peachpuff;"/>
+              </td>
+            <td>
+
+              <input  class="layui-input" required="required" th:value="${obj['dghCost']}"   lay-verify="required" autocomplete="off"   name="dghCost" style="background-color: peachpuff;"/>
+            </td>
+            <td>
+
+              <input  class="layui-input" required="required" th:value="${obj['dghSalesPrice']}"   lay-verify="required"  autocomplete="off"   name="dghSalesPrice" style="background-color: peachpuff;"/>
+            </td>
+            <td>
+
+              <input  class="layui-input" required="required" th:value="${obj['dghActivityPrice']}"   lay-verify="required"  autocomplete="off"   name="dghActivityPrice" style="background-color: peachpuff;"/>
+            </td>
+            <td>
+              <select name="dghFormulaId">
+                <option value=""></option>
+                <option th:each="f:${formulaList}" th:selected="${f['id']==obj['dghFormulaId']}" th:value="${f['id']}" th:text="${f['dfName']}"></option>
+              </select>
+
+            </td>
+            <td>
+              <select name="dghStatus">
+                <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.GoodsStatusEnum',obj['dghStatus'])}"></th:block>
+
+              </select>
+
+            </td>
+            <td>
+              <button type="button"   class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+
+
+            </td>
+          </tr>
+          <tr th:if="${goods==null or #lists.isEmpty(goods['child'])}">
+            <td>
+              <input type="hidden" name="dghId" value="-1" />
+
+              <input  class="layui-input" required="required"    lay-verify="required" autocomplete="off"   name="dghName" style="background-color: peachpuff;"/>
+            </td>
+            <td>
+
+              <input  class="layui-input" required="required"    lay-verify="required" autocomplete="off"   name="dghCost" style="background-color: peachpuff;"/>
+            </td>
+            <td>
+
+              <input  class="layui-input" required="required"   lay-verify="required"  autocomplete="off"   name="dghSalesPrice" style="background-color: peachpuff;"/>
+            </td>
+            <td>
+
+              <input  class="layui-input" required="required"   lay-verify="required" autocomplete="off"   name="dghActivityPrice" style="background-color: peachpuff;"/>
+            </td>
+            <td>
+              <select name="dghFormulaId">
+                <option value=""></option>
+                <option th:each="f:${formulaList}" th:value="${f['id']}" th:text="${f['dfName']}"></option>
+              </select>
+
+            </td>
+            <td>
+              <select name="dghStatus">
+                <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.GoodsStatusEnum',null)}"></th:block>
+
+              </select>
+
+            </td>
+            <td>
+              <button  type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+
+            </td>
+          </tr>
+          <tr id="addtr">
+            <td colspan="6" align="center">
+
+              <i class="layui-icon" onclick="add()">&#xe654;</i>
+            </td>
+          </tr>
+
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+      <div class="layui-form-item" style="display: none">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+      </div>
+  </div>
+</form>
+</body>
+<script type="text/javascript">
+  var form1;
+
+
+
+  layui.use(['upload','form','layer'], function(){
+      var upload = layui.upload;
+      form1=layui.form;
+      initProForm(layui);
+
+      //执行实例
+      var uploadInst1 = upload.render(initUpload(".myupload1","fileImgShow","dmImg"));
+
+
+  });
+  function initProForm(layui){
+      var form = layui.form;
+      form.verify({
+          required:function(value,item){
+              var msg=item.getAttribute("placeholder");
+              if(value!=null && value.replace(/[ ]/g,"")==""){
+                  return msg==null?"请输入必填项":msg;
+              }else{
+                  return false;
+              }
+              return msg==null?"请输入必填项":msg;
+          },
+          max20:function(value,item){
+              if(value.length>20){
+                  return '标题至多得20个字符啊';
+              }
+          },
+          max200:function(value,item){
+              if(value.length>200){
+                  return '活动描述至多得200个字符啊';
+              }
+          }
+      })
+      $(".layui-form").submit(function(){
+          window.setTimeout(function(){
+              $.ajax( commonAjaxFunction("do-save",new FormData($('form')[0]),true));
+          },300)
+
+          //return  commonSubmit(url,formObject);
+          return false;
+      })
+  }
+  function initUpload(classname,filename,imgcn){
+      return {
+          elem: classname, //绑定元素
+          url: '/upload/', //上传接口
+          accept:'images',
+          auto:false,
+          field:filename,
+          choose:function(obj){
+
+              obj.preview(function(index, file, result){
+                  $(classname).find("."+imgcn).remove()
+                  $(classname).find("[name='isUpdateImg']").remove();
+                  $(classname).append("<img src=\""+result+"\" class=\""+imgcn+"\"/>")
+              });
+          },
+          done: function(res){
+              //上传完毕回调
+          }
+          ,error: function(){
+              //请求异常回调
+          }
+      }
+  }
+    function add(){
+        var cloneObj=$("tbody tr").eq(0).clone();
+        cloneObj.find("input").val("");
+        cloneObj.find("select option").eq(0).attr("selected","selected");
+        cloneObj.find("[type='hidden']").val("-1");
+       $("#addtr").before(cloneObj);
+       form1.render("select");
+    }
+
+    function toDelete(obj){
+        if($("tbody tr").length>2){
+            $(obj).parent().parent().remove()
+        }else{
+            $("tbody tr input").val("");
+            $("tbody tr input[type='hidden']").val("-1");
+        }
+
+    }
+</script>
+</html>

@@ -88,7 +88,7 @@
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button th:if="${pn<1}" class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'850px\',\'530px\',\'查看\',\'to-material-info?id='+${obj['id']}+'\')'"  >查看</button>
+                            <button th:if="${pn<1}" class="layui-btn layui-btn-sm" th:onclick="'viewDialog(\'850px\',\'530px\',\'查看\',\'to-material-info?id='+${obj['id']}+'\')'"  >查看</button>
                             <button th:if="${pn>0}"  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'850px\',\'530px\',\'去进货\',\'to-material-info?id='+${obj['id']}+'\')'"  >去进货</button>
                             </div>
                         </td>

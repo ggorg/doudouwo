@@ -24,7 +24,7 @@ public class RechargeService extends CommonService {
     }
     @Cacheable(value ="commonCache",key="'recharge-all-'+#key" )
     public List getRechargeList(){
-        CommonSearchBean csb=new CommonSearchBean("ddw_recharge","drSort asc","t1.id,t1.drName name,t1.drDesc desc",null,null,null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_recharge","drSort asc","t1.id,t1.drName 'name',t1.drDesc 'desc'",null,null,null);
         return  this.getCommonMapper().selectObjects(csb);
     }
 }
