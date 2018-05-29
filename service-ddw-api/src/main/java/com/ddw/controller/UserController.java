@@ -73,7 +73,7 @@ public class UserController {
     @ApiOperation(value = "会员资料查询用例")
     @PostMapping("/query/{token}")
     public ResponseApiVO<UserInfoVO> query(@PathVariable String token,
-                                           @RequestBody @ApiParam(name = "id",value="会员id,传入json格式,如:{\"id\":\"1\"}", required = true) JSONObject json){
+                                           @RequestBody @ApiParam(name = "id",value="会员id,传入json格式,如:{\"id\":\"1\"}", required = false) JSONObject json){
         try {
             UserInfoVO userVO = new UserInfoVO();
             if(!json.isEmpty()){
@@ -81,6 +81,9 @@ public class UserController {
             }else{
                 String openid = TokenUtil.getUserObject(token).toString();
                 userVO = userInfoService.queryByOpenid(openid);
+            }
+            if (userVO == null) {
+                return new ResponseApiVO(-2,"账号不存在",null);
             }
             List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
             userVO.setPhotograph(photographList);

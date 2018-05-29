@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.beans.PracticePO;
 import com.ddw.beans.ReviewPO;
 import com.ddw.beans.ReviewPracticePO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,13 @@ public class ReviewPracticeService extends CommonService {
         searchCondition.put("id",reviewPO.getDrProposer());
         //删除审核拒绝缓存
         CacheUtil.delete("review","practice"+reviewPO.getDrProposer());
+        //插入代练表
+        PracticePO practicePO = new PracticePO();
+        practicePO.setUserId(reviewPO.getDrProposer());
+        practicePO.setStoreId(reviewPO.getDrBelongToStoreId());
+        practicePO.setCreateTime(new Date());
+        practicePO.setUpdateTime(new Date());
+        this.commonInsert("ddw_practice",practicePO);
         return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
     }
 

@@ -3,13 +3,14 @@ package com.ddw.beans;
 import java.util.Date;
 
 /**
- * Created by Jacky on 2018/4/19.
+ * Created by Jacky on 2018/5/28.
  */
-public class MyAttentionPO {
+public class PracticePO {
     private int id;
     private int userId;
-    private int goddessId;
-    private int practiceId;
+    private int appointment;
+    private int storeId;
+    private String tableNo;
     private Date createTime;
     private Date updateTime;
 
@@ -29,20 +30,28 @@ public class MyAttentionPO {
         this.userId = userId;
     }
 
-    public int getGoddessId() {
-        return goddessId;
+    public int getAppointment() {
+        return appointment;
     }
 
-    public void setGoddessId(int goddessId) {
-        this.goddessId = goddessId;
+    public void setAppointment(int appointment) {
+        this.appointment = appointment;
     }
 
-    public int getPracticeId() {
-        return practiceId;
+    public int getStoreId() {
+        return storeId;
     }
 
-    public void setPracticeId(int practiceId) {
-        this.practiceId = practiceId;
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
+    public String getTableNo() {
+        return tableNo;
+    }
+
+    public void setTableNo(String tableNo) {
+        this.tableNo = tableNo;
     }
 
     public Date getCreateTime() {
