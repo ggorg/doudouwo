@@ -46,15 +46,21 @@ public class LiveRadioBackRoomTimerTask {
                 }
                if(!LiveRadioApiUtil.isActLiveRoom(streamId)){
                     if(num==2){
+                        logger.info("关闭直播间："+streamId);
+
                         LiveRadioApiUtil.closeLoveRadio(streamId);
                         num=num+1;
                         backRoomMap.put(streamId,num);
-                    }else if(num==3){
+                    }else if(num>=3){
                         try {
-                            this.liveRadioService.handleLiveRadioStatus(streamId, LiveEventTypeEnum.eventType0.getCode());
-                            backRoomMap.remove(streamId);
+                            boolean flag=LiveRadioApiUtil.closeLoveRadio(streamId);
+                            if(!flag){
+                                logger.info("强制更新数据库直播间："+streamId);
+                                this.liveRadioService.handleLiveRadioStatus(streamId, LiveEventTypeEnum.eventType0.getCode());
+                                backRoomMap.remove(streamId);
+                            }
                         }catch (Exception e){
-                            logger.error("定时清理黑房间更新数据库状态失败");
+                            logger.error("定时清理黑房间更新数据库状态失败",e);
                         }
                     }else{
                         num=num+1;

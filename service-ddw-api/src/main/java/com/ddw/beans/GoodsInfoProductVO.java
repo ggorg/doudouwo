@@ -8,6 +8,9 @@ import java.util.List;
 
 @ApiModel
 public class GoodsInfoProductVO<T> {
+    @ApiModelProperty(name="code",value="标识号",example="1")
+    @JsonProperty("code")
+    private Integer id;
 
     @ApiModelProperty(name="name",value="规格名称",example="奶茶")
     @JsonProperty("name")
@@ -23,6 +26,15 @@ public class GoodsInfoProductVO<T> {
 
     @ApiModelProperty(name="salesNum",value="销量",example="0")
     private Integer dghSaleNumber;
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getDghName() {
         return dghName;

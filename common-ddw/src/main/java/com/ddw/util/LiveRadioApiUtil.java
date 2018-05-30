@@ -1,5 +1,6 @@
 package com.ddw.util;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.LiveRadioUrlBean;
 import com.gen.common.util.CacheUtil;
@@ -73,14 +74,19 @@ public class LiveRadioApiUtil {
         String str=HttpUtil.doGet(builder.toString());
         if(str!=null){
             JSONObject json= JSONObject.parseObject(str);
-            if(json.getInteger("ret")==20601){
+            JSONArray array=json.getJSONArray("output");
+            JSONObject output=array.getJSONObject(0);
+            Integer status=output.getInteger("status");
+            if(json.getInteger("ret")==20601 || status==0 || status==3){
               return false;
             }
+
         }
         return true;
     }
 
     public static void main(String[] args) {
-        isActLiveRoom("23115_1_8_1805040133649");
+        System.out.println(        isActLiveRoom("23115_1_41_180529215021"));
+        System.out.println(        isActLiveRoom("23115_1_41_180530120124"));
     }
 }

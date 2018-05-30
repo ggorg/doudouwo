@@ -137,12 +137,63 @@ public class PayCenterService extends CommonService {
         orderPO.setDoCustomerType(OrderCustomerTypeEnum.OrderCustomerType0.getCode());
         orderPO.setDoType(orderType);
         orderPO.setCreater(TokenUtil.getUserName(token));
+        Map<Integer,Map> buyInProMap=null;
+        //定金与竞价金额
         if(OrderTypeEnum.OrderType5.getCode().equals(orderType) || OrderTypeEnum.OrderType4.getCode().equals(orderType)){
             orderPO.setDoCost(cost);
+        //计算充值
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
             orderPO.setDoCost(rechargeService.getRechargeCost(codes[0]));
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
+            }
+        //计算货品
+        }else if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
+            buyInProMap=new HashMap();
+            List<Integer> codesList=Arrays.asList(codes);
+            Map search=new HashMap();
+            search.put("storeId",TokenUtil.getStoreId(token));
+            search.put("dghStatus",GoodsStatusEnum.goodsStatus1.getCode());
+            search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+            List<Map> goodsPruductList= this.commonObjectsBySearchCondition("ddw_goods_product",search);
+            if(goodsPruductList==null || goodsPruductList.isEmpty()){
+                return new ResponseApiVO(-2,"货品不存在",null);
+            }
+            Map<Integer,Map> handleMap=new HashMap();
+            goodsPruductList.forEach(a->{handleMap.put((Integer) a.get("id"),a);});
+
+            Map dataMap=null;
+            Integer countPrice=0;
+            Map mVo=null;
+            for(Integer code:codesList){
+                if(!handleMap.containsKey(code)){
+                    return new ResponseApiVO(-2,handleMap.get(code).get("dghDesc")+"可能已下架",null);
+                }
+                if(buyInProMap.containsKey(code)){
+                    dataMap=buyInProMap.get(code);
+                    Integer sale=(Integer) dataMap.get("productUnitPrice");
+                    countPrice=countPrice+sale;
+                    dataMap.put("productCountPrice",(Integer)dataMap.get("productCountPrice")+sale);
+                    dataMap.put("productBuyNumber",(Integer)dataMap.get("productBuyNumber")+1);
+                }else{
+                    mVo=handleMap.get(code);
+                    dataMap=new HashMap();
+                    dataMap.put("productId",code);
+                    Integer sale=mVo.get("dghActivityPrice")==null?(Integer)mVo.get("dghSalesPrice"):(Integer)mVo.get("dghActivityPrice");
+                    countPrice=countPrice+sale;
+                    dataMap.put("productCountPrice",sale);
+                    dataMap.put("productUnitPrice",sale);
+                    dataMap.put("productBuyNumber",1);
+                    dataMap.put("updateTime",new Date());
+                    dataMap.put("createTime",new Date());
+                    dataMap.put("productName",mVo.get("dghDesc"));
+                    buyInProMap.put(code,dataMap);
+                }
+
+            }
+           orderPO.setDoCost(countPrice);
+            if(countPrice==null || countPrice<=0){
+                return new ResponseApiVO(-2,"支付失败",null);
             }
         }
 
@@ -193,6 +244,25 @@ public class PayCenterService extends CommonService {
 
                 m.put("biddingId",bidMap.get("id"));
                 resVo=this.commonInsertMap("ddw_order_bidding_pay",m);
+            }else if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
+                if(buyInProMap==null){
+                    throw new GenException("商品支付失败");
+                }
+                Collection collection=buyInProMap.values();
+                Iterator<Map> iterator=collection.iterator();
+                Map insertM=null;
+
+                while(iterator.hasNext()){
+                    insertM=iterator.next();
+                    insertM.put("orderNo",orderNo);
+                    insertM.put("orderId",insertResponseVO.getData());
+                    resVo=this.commonInsertMap("ddw_order_product",insertM);
+                    if(resVo.getReCode()!=1){
+                        throw new GenException("商品支付失败");
+
+                    }
+                }
+                CacheUtil.put("pay","goodsPru-order-"+orderNo,new ArrayList(collection));
             }
 
             if(resVo.getReCode()==1){
@@ -201,7 +271,7 @@ public class PayCenterService extends CommonService {
                     vo.setReturn_code("SUCCESS");
                     vo.setResult_code("SUCCESS");
                     vo.setPrepay_id(RandomStringUtils.randomAlphabetic(10));*/
-                    RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,cost, Tools.getIpAddr());
+                    RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,orderPO.getDoCost(), Tools.getIpAddr());
                     if(vo!=null && "SUCCESS".equals(vo.getReturn_code()) && "SUCCESS".equals(vo.getResult_code())){
                         TreeMap treeMap=new TreeMap();
                         treeMap.put("appid", PayApiConstant.WEI_XIN_PAY_APP_ID);
@@ -291,5 +361,10 @@ public class PayCenterService extends CommonService {
         }
 
         return new ResponseApiVO(1,"成功",null);
+    }
+
+    public static void main(String[] args) {
+        Integer[] id={1,2,3,4};
+        System.out.println(Arrays.asList(id).toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
     }
 }

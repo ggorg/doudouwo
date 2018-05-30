@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,7 @@ public class LiveRadioClientService  extends CommonService{
         Map condition=new HashMap();
         condition.put("storeid",storeId);
         condition.put("liveStatus",LiveStatusEnum.liveStatus1.getCode());
+        condition.put("endDate,>=",new Date());
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id code,ct0.userName,ct0.nickName,ct0.city,ct0.headImgUrl,ct0.label",page.getStartRow(),page.getEndRow(),condition,cb);
         List Map=this.getCommonMapper().selectObjects(csb);

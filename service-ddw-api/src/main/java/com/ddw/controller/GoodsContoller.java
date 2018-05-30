@@ -1,9 +1,6 @@
 package com.ddw.controller;
 
-import com.ddw.beans.BiddingDTO;
-import com.ddw.beans.CodeDTO;
-import com.ddw.beans.ListVO;
-import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.*;
 import com.ddw.enums.GoodsTypeEnum;
 import com.ddw.services.GoodsClientService;
 import com.ddw.token.Token;
@@ -38,7 +35,7 @@ public class GoodsContoller {
     @Token
     @ApiOperation(value = "商品详情")
     @PostMapping("/info/{token}")
-    public ResponseApiVO<ListVO> toGoodsInfo(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
+    public ResponseApiVO<GoodsInfoVO<GoodsInfoProductVO>> toGoodsInfo(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
         try {
             return this.goodsClientService.getInfo(token,args);
         }catch (Exception e){

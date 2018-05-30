@@ -547,16 +547,38 @@ public class OrderService extends CommonService {
                     CacheUtil.put("pay","order-"+orderNo,"fail");
                     throw new GenException("更新支付状态失败");
                 }
-            }else if(OrderTypeEnum.OrderType5.getCode().equals(doType)){
+            }else if(OrderTypeEnum.OrderType5.getCode().equals(doType) || OrderTypeEnum.OrderType4.getCode().equals(doType)){
                 Map csearch=new HashMap();
                 csearch.put("orderNo",orderNo);
                 List list=this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_goddess_bidding",null,new CommonChildBean("ddw_order_bidding_pay","biddingId","id",csearch)));
                 if(list==null || list.isEmpty()){
+                    CacheUtil.put("pay","order-"+orderNo,"fail");
+
                     throw new GenException("更新支付状态失败");
                 }
                 Map bMap=(Map)list.get(0);
                 String groupid=(String)bMap.get("groupId");
                 CacheUtil.delete("pay","bidding-pay-"+groupid);
+
+            }else if(OrderTypeEnum.OrderType1.getCode().equals(doType)){
+                List<Map> list=getGoodsPruduct(orderNo);
+                Map search=null;
+                Map setMap=null;
+                for(Map m:list){
+                    setMap=new HashMap();
+                    setMap.put("dghSaleNumber",m.get("productBuyNumber"));
+                    setMap.put("updateTime",new Date());
+                    search=new HashMap();
+                    search.put("id",m.get("productId"));
+                    ResponseVO r=this.commonCalculateOptimisticLockUpdateByParam("ddw_goods_product",setMap,search,"dghVersion",new String[]{"dghSaleNumber"});
+                    if(r.getReCode()!=1){
+                        CacheUtil.put("pay","order-"+orderNo,"fail");
+
+                        throw new GenException("更新货品销量失败");
+                    }
+
+                }
+                CacheUtil.delete("pay","goodsPru-order-"+orderNo);
 
             }
             CacheUtil.put("pay","order-"+orderNo,"success");
@@ -568,7 +590,11 @@ public class OrderService extends CommonService {
 
 
     }
-
+    public List getGoodsPruduct(String orderNo)throws Exception{
+        List list=(ArrayList) CacheUtil.get("pay","goodsPru-order-"+orderNo);
+        if(list!=null)return list;
+        return this.commonObjectsBySingleParam("ddw_order_product","orderNo",orderNo);
+    }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateOrderStatus(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
         if(StringUtils.isBlank(orderNoEncypt)){

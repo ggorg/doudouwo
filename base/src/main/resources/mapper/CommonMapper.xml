@@ -63,7 +63,16 @@
 					<if test="auto">
 					and 
 					</if>
-					t1.${key.split(",")[0]} ${key.split(",")[1]} #{value} 
+					<choose>
+						<when test="key.matches('^([a-zA-Z0-9]+),in$')">
+							t1.${key.split(",")[0]} ${key.split(",")[1]} ${value}
+
+						</when>
+						<otherwise>
+							t1.${key.split(",")[0]} ${key.split(",")[1]} #{value}
+						</otherwise>
+					</choose>
+
 					</otherwise>
 				</choose>
 				
@@ -142,7 +151,15 @@
 					<if test="auto">
 					and 
 					</if>
-					t1.${key.split(",")[0]} ${key.split(",")[1]} #{value} 
+					<choose>
+						<when test="key.matches('^([a-zA-Z0-9]+),in$')">
+							t1.${key.split(",")[0]} ${key.split(",")[1]} ${value}
+
+						</when>
+						<otherwise>
+							t1.${key.split(",")[0]} ${key.split(",")[1]} #{value}
+						</otherwise>
+					</choose>
 					</otherwise>
 				</choose>
 				

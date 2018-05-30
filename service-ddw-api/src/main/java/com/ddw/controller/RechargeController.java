@@ -1,5 +1,6 @@
 package com.ddw.controller;
 
+import com.ddw.beans.ListVO;
 import com.ddw.beans.RechargeVO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.WalletBalanceVO;
@@ -34,9 +35,9 @@ public class RechargeController {
     @ApiOperation(value = "获取充值卷列表",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/list/{token}")
     @ResponseBody
-    public ResponseApiVO<RechargeVO> list(@PathVariable String token ){
+    public ResponseApiVO<ListVO<RechargeVO>> list(@PathVariable String token ){
         try {
-            return new ResponseApiVO(1,"成功",this.rechargeService.getRechargeList());
+            return new ResponseApiVO(1,"成功",new ListVO(this.rechargeService.getRechargeList()));
 
 
         }catch (Exception e){

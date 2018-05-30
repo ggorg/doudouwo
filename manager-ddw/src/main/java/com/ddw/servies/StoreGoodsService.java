@@ -181,6 +181,7 @@ public class StoreGoodsService extends CommonService {
         gPruductMap.put("dghGoodsId",goodsId);
         gPruductMap.put("updateTime",new Date());
         gPruductMap.put("storeId",storeId);
+        gPruductMap.put("dghDesc",dto.getDgTitle()+"-"+dto.getDghName()[i]);
 
 
         if(isInsert){
