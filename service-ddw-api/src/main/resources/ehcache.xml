@@ -13,7 +13,7 @@
     <cache name="reviewInfo"  maxElementsInMemory="1000" timeToLiveSeconds="86400" diskPersistent="false" maxElementsOnDisk="0" />
    <cache name="pcShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="86400" diskPersistent="true" maxElementsOnDisk="0" />
    <cache name="orderInfo"  maxElementsInMemory="1000" timeToLiveSeconds="900" diskPersistent="true" maxElementsOnDisk="0" />
-   <cache name="idemp"  maxElementsInMemory="1000" timeToLiveSeconds="900" diskPersistent="true" maxElementsOnDisk="0" />
+   <cache name="idemp"  maxElementsInMemory="1000" timeToLiveSeconds="120" diskPersistent="true" maxElementsOnDisk="0" />
     <cache name="appShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="7200" diskPersistent="true" />
     <cache name="imSign"  maxElementsInMemory="10" timeToLiveSeconds="86400"  />
     <cache name="publicCache"  maxElementsInMemory="1000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">

@@ -98,7 +98,7 @@
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm"  th:onclick="'openDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >查 看</button>
+                            <button class="layui-btn layui-btn-sm"  th:onclick="'viewDialog(\'650px\',\'580px\',\'订单详情\',\'/manager/order/to-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >查 看</button>
                             <th:block th:utext="${#toolsddw.getBtnMsg(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}"></th:block>
 
                             </div>

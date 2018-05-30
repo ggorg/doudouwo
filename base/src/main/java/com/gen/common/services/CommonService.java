@@ -57,6 +57,11 @@ public abstract class CommonService {
         List<Map> list=this.commonMapper.selectObjects(new CommonSearchBean(tableName,condition));
         return list;
     }
+    protected List commonObjectsBySearchCondition(String tableName,Map<String,Object> searchCondition)throws Exception{
+
+        List<Map> list=this.commonMapper.selectObjects(new CommonSearchBean(tableName,searchCondition));
+        return list;
+    }
     protected long commonCountBySearchCondition(String tableName,Map<String,Object> searchCondition){
 
         return this.commonMapper.selectCount( new CommonCountBean(tableName,searchCondition));

@@ -37,7 +37,7 @@ public class LiveRadioApiUtil {
                 String t=DateUtils.addHours(new Date(),12).getTime()/1000+"";
                 StringBuilder builder=new StringBuilder();
                 builder.append("http://fcgi.video.qcloud.com/common_access?");
-                builder.append("appid=").append(LiveRadioConstant.API_ID).append("&");
+                builder.append("appid=").append(LiveRadioConstant.APP_ID).append("&");
                 builder.append("interface=Live_Channel_SetStatus&");
                 builder.append("Param.s.channel_id=").append(streamId).append("&");
                 builder.append("Param.n.status=0&");
@@ -65,7 +65,7 @@ public class LiveRadioApiUtil {
         String t=DateUtils.addHours(new Date(),12).getTime()/1000+"";
         StringBuilder builder=new StringBuilder();
         builder.append("http://fcgi.video.qcloud.com/common_access?");
-        builder.append("appid=").append(LiveRadioConstant.API_ID).append("&");
+        builder.append("appid=").append(LiveRadioConstant.APP_ID).append("&");
         builder.append("interface=Live_Channel_GetStatus&");
         builder.append("Param.s.channel_id=").append(streamId).append("&");
         builder.append("t=").append(t).append("&");
