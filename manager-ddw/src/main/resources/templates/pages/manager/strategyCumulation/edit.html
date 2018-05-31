@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+  <style type="text/css">
+    .dmImge{z-index:10;width: 353px;height: 93.83px;position:absolute;top:0;left:0}
+    .dmImg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane" >
+  <input th:if="${strategy!=null and strategy['id']!=null}" th:name="id" th:value="${strategy['id']}" type="hidden"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="name" required="required" title="名称"  lay-verify="required|max20" th:value="${strategy!=null? strategy['name']:''}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">会员等级</label>
+    <div class="layui-input-inline">
+      <select name="levelId" id="levelId" lay-filter="type">
+          <option th:each="grade:${gradePage.result}" th:value="${grade?.id}" th:text="${grade?.gradeName}" th:selected="${strategy?.levelId == grade?.id}"> 会员等级</option>
+      </select>
+    </div>
+  </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">金额（分）</label>
+        <div class="layui-input-block">
+            <input type="text" name="money" required="required" title="金额（单位分）"  lay-verify="required|number" th:value="${strategy!=null? strategy['money']:''}" placeholder="请输入金额（分）" autocomplete="off" class="layui-input" />
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">赠送逗币</label>
+        <div class="layui-input-block">
+            <input type="text" name="coin" required="required" title="赠送逗币"  lay-verify="required|number" th:value="${strategy!=null? strategy['coin']:''}" placeholder="请输入赠送逗币" autocomplete="off" class="layui-input" />
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="margin-top: 15px">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-block">
+            <textarea name="describe" th:text="${strategy?.describe}" placeholder="描述" autocomplete="off" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+  <div class="layui-form-item" style="display: none">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    initForm("do-edit",".layui-form")
+</script>
+</body>
+</html>
