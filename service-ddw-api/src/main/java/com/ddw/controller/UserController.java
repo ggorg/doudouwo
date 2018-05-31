@@ -89,7 +89,7 @@ public class UserController {
             userVO.setPhotograph(photographList);
             userVO.setToken(token);
             userVO.setIdentifier(userVO.getOpenid());
-            userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+//            userVO.setUserSign(ts.createSign(userVO.getOpenid()));
             return new ResponseApiVO(1,"成功",userVO);
         }catch (Exception e){
             logger.error("UserController->query",e);

@@ -4,7 +4,7 @@
         <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
         <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
         <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${rankList!=null?rankList.total:0}]]*/ );
+           initPage(/*[[${strategyPage!=null?strategyPage.total:0}]]*/ );
         </script>
 	</head>
     <body class="withvernav">
@@ -22,7 +22,7 @@
 
             <div id="contentwrapper" class="contentwrapper">
                 <div class="contenttitle2">
-                    <h3>段位列表</h3>
+                    <h3>会员单笔充值策略列表</h3>
 
                 </div><!--contenttitle-->
 
@@ -31,12 +31,6 @@
                     <form class="layui-form" >
                         <div class="layui-form-item2 layui-form-item">
                         <div class="float-left-div" >
-                            <label class="layui-form-label" >游戏</label>
-                            <div class="layui-input-inline" >
-                                <select name="gameId" id="gameId" lay-filter="gameId">
-                                    <option th:each="game:${gameList.result}" th:value="${game?.id}" th:text="${game?.gameName}" th:selected="${game?.id == gameId}"> 游戏名称</option>
-                                </select>
-                            </div>
 
                             <label class="layui-form-label" >名称</label>
                             <div class="layui-input-inline" >
@@ -50,7 +44,7 @@
                 </div>
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('400px','200px','新增段位','to-edit?id=-1&gameId='+jQuery('#gameId').val())" title="table2">新增段位</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('500px','580px','新增策略','to-edit?id=-1')" title="table2">新增策略</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -59,23 +53,34 @@
                         <col class="con0" />
                         <col class="con1" />
                         <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
                     </colgroup>
                     <thead>
-
                     <tr>
                         <th class="head0">名称</th>
+                        <th class="head1">会员等级</th>
+                        <th class="head0">金额（单位分）</th>
+                        <th class="head1">赠送逗币</th>
+                        <th class="head0">描述</th>
                         <th class="head1">创建时间</th>
                         <th class="head0">操作</th>
                     </tr>
                     </thead>
 
                     <tbody>
-                    <tr th:each="obj:${rankList?.result}">
-                        <td th:text="${obj['rank']}">Trident</td>
+                    <tr th:each="obj:${strategyPage?.result}">
+                        <td th:text="${obj['name']}">Trident</td>
+                        <td th:text="${#TdTool.getGradeName(obj['levelId'],gradePage.result)}">Win 95+</td>
+                        <td th:text="${obj['money']}">Trident</td>
+                        <td th:text="${obj['coin']}">Trident</td>
+                        <td th:text="${obj['describe']}">Trident</td>
                         <td th:text="${obj['createTime']!=null ? #dates.format(obj['createTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'400px\',\'200px\',\'修改名称\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'580px\',\'修改策略\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
                             <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
                             </div>
                         </td>
@@ -93,21 +98,7 @@
     <script type="text/javascript">
         layui.use('form', function(){
             var form = layui.form;
-            form.on('select(gameId)', function(data){
-                jQuery.post("list",{gameId:data.value},function(){
-                    var currentUrl=window.parent.location.href;
-                    if(currentUrl.indexOf("?")==-1){
-                        top.location.href=currentUrl+"?gameId="+data.value;
-                        return ;
-                    }else{
-                        if(currentUrl.indexOf("gameId")==-1){
-                            top.location.href=currentUrl+"&gameId="+data.value;
-                        }else{
-                            top.location.href=currentUrl.replace(/gameId=[^&]+/,"gameId="+data.value);
-                        }
-                    }
-                });
-            });
+
         })
 
         function del(obj) {
