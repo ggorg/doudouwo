@@ -51,7 +51,7 @@ public class ReviewPracticeService extends CommonService {
             if(realPO != null){
                 return new ResponseApiVO(-2,"不允许重复提交申请",null);
             }
-            //更新会员女神状态为审核中
+            //更新会员代练状态为审核中
             Map setConditionMap = new HashMap<>();
             setConditionMap.put("practiceFlag",2);
             this.commonUpdateBySingleSearchParam("ddw_userinfo",setConditionMap,"id",user.getId());
@@ -69,35 +69,35 @@ public class ReviewPracticeService extends CommonService {
             reviewPO.setDrApplyDesc("申请成为代练");
             reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.practiceFlag5.getCode());
             ResponseApiVO responseApiVO = new ResponseApiVO(this.commonReviewService.submitAppl(reviewPO));
-            //插入会员实名认证审核表
+            //插入代练认证审核表
             if(responseApiVO.getReCode()>0){
-                ReviewPracticePO reviewRealNamePO = new ReviewPracticePO();
-                reviewRealNamePO.setUserId(Integer.valueOf(user.getId()));
-                reviewRealNamePO.setDrBusinessCode(bussinessCode);
-                reviewRealNamePO.setGameId(Integer.valueOf(gameId));
-                reviewRealNamePO.setRankId(Integer.valueOf(rankId));
-                reviewRealNamePO.setCreateTime(new Date());
-                reviewRealNamePO.setStatus(0);
+                ReviewPracticePO reviewPracticePO = new ReviewPracticePO();
+                reviewPracticePO.setUserId(Integer.valueOf(user.getId()));
+                reviewPracticePO.setDrBusinessCode(bussinessCode);
+                reviewPracticePO.setGameId(Integer.valueOf(gameId));
+                reviewPracticePO.setRankId(Integer.valueOf(rankId));
+                reviewPracticePO.setCreateTime(new Date());
+                reviewPracticePO.setStatus(0);
                 String ImgName1= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph1.getOriginalFilename());
                 FileInfoVo fileInfoVo1= UploadFileMoveUtil.move( photograph1,mainGlobals.getRsDir(), ImgName1);
-                reviewRealNamePO.setPicUrl1(fileInfoVo1.getUrlPath());
+                reviewPracticePO.setPicUrl1(mainGlobals.getServiceUrl()+fileInfoVo1.getUrlPath());
                 CommonBeanFiles f1=this.fileService.createCommonBeanFiles(fileInfoVo1);
                 this.fileService.saveFile(f1);
 
                 String ImgName2= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph1.getOriginalFilename());
                 FileInfoVo fileInfoVo2= UploadFileMoveUtil.move( photograph1,mainGlobals.getRsDir(), ImgName1);
-                reviewRealNamePO.setPicUrl2(fileInfoVo2.getUrlPath());
+                reviewPracticePO.setPicUrl2(mainGlobals.getServiceUrl()+fileInfoVo2.getUrlPath());
                 CommonBeanFiles f2=this.fileService.createCommonBeanFiles(fileInfoVo2);
                 this.fileService.saveFile(f2);
 
                 String ImgName3= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph1.getOriginalFilename());
                 FileInfoVo fileInfoVo3= UploadFileMoveUtil.move( photograph1,mainGlobals.getRsDir(), ImgName3);
-                reviewRealNamePO.setPicUrl3(fileInfoVo3.getUrlPath());
+                reviewPracticePO.setPicUrl3(mainGlobals.getServiceUrl()+fileInfoVo3.getUrlPath());
                 CommonBeanFiles f3=this.fileService.createCommonBeanFiles(fileInfoVo3);
                 this.fileService.saveFile(f3);
 
 
-                Map updatePoMap= BeanToMapUtil.beanToMap(reviewRealNamePO);
+                Map updatePoMap= BeanToMapUtil.beanToMap(reviewPracticePO);
                 this.commonInsertMap("ddw_review_practice",updatePoMap);
             }
             return responseApiVO;

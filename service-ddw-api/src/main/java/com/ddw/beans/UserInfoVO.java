@@ -53,6 +53,8 @@ public class UserInfoVO {
     private String pgradeName;
     @ApiModelProperty(name="plevel",value="代练等级水平",example="VIP0")
     private String plevel;
+    @ApiModelProperty(name="liveRadioFlag",value="直播审核标记，0未申请，1审核中",example="1")
+    private Integer liveRadioFlag;
     @ApiModelProperty(name="goddessFlag",value="女神标记，0非女神，1女神,2审核中,3拒绝",example="1")
     private Integer goddessFlag;
     @ApiModelProperty(name="practiceFlag",value="代练标记，0非代练，1代练,2审核中,3拒绝",example="1")
@@ -258,6 +260,14 @@ public class UserInfoVO {
 
     public void setPlevel(String plevel) {
         this.plevel = plevel;
+    }
+
+    public Integer getLiveRadioFlag() {
+        return liveRadioFlag;
+    }
+
+    public void setLiveRadioFlag(Integer liveRadioFlag) {
+        this.liveRadioFlag = liveRadioFlag;
     }
 
     public Integer getGoddessFlag() {

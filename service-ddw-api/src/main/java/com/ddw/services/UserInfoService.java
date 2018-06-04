@@ -198,7 +198,7 @@ public class UserInfoService extends CommonService {
             this.fileService.saveFile(f);
 
             photographPO.setUserId(Integer.valueOf(id));
-            photographPO.setImgUrl(mainGlobals.getRsDir() + fileInfoVo.getUrlPath());
+            photographPO.setImgUrl(mainGlobals.getServiceUrl() + fileInfoVo.getUrlPath());
             photographPO.setImgName(idcardFrontImgName);
             photographPO.setCreateTime(new Date());
             photographPO.setUpdateTime(new Date());
