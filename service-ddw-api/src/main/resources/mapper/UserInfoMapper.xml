@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ddw.dao.UserInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.ddw.beans.UserInfoVO">
+        <id property="id" column="id"/>
+        <result property="userName" column="userName"/>
+        <result property="openid" column="openid"/>
+        <result property="realName" column="realName"/>
+        <result property="nickName" column="nickName"/>
+        <result property="headImgUrl" column="headImgUrl"/>
+        <result property="phone" column="phone"/>
+        <result property="label" column="label"/>
+        <result property="starSign" column="starSign"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="area" column="area"/>
+        <result property="gradeId" column="gradeId"/>
+        <result property="ugradeName" column="ugradeName"/>
+        <result property="ulevel" column="ulevel"/>
+        <result property="goddessGradeId" column="goddessGradeId"/>
+        <result property="ggradeName" column="ggradeName"/>
+        <result property="glevel" column="glevel"/>
+        <result property="practiceGradeId" column="practiceGradeId"/>
+        <result property="pgradeName" column="pgradeName"/>
+        <result property="plevel" column="plevel"/>
+        <result property="liveRadioFlag" column="liveRadioFlag"/>
+        <result property="goddessFlag" column="goddessFlag"/>
+        <result property="practiceFlag" column="practiceFlag"/>
+        <result property="realnameFlag" column="realnameFlag"/>
+        <result property="inviteCode" column="inviteCode"/>
+        <result property="signature" column="signature"/>
+        <result property="sex" column="sex"/>
+        <result property="registerType" column="registerType"/>
+        <result property="idcard" column="idcard"/>
+        <result property="idcardFrontUrl" column="idcardFrontUrl"/>
+        <result property="idcardOppositeUrl" column="idcardOppositeUrl"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t1.id,userName,openid,realName,nickName,headImgUrl,phone,label,
+        starSign,province,city,area,gradeId,t2.gradeName ugradeName,t2.`level` ulevel,goddessGradeId,t3.gradeName ggradeName, t3.`level` glevel,
+        practiceGradeId,t4.gradeName pgradeName,t4.`level`,goddessFlag,practiceFlag,inviteCode,
+        signature,sex,registerType,idcard,idcardFrontUrl,idcardOppositeUrl
+    </sql>
+
+    <select id="getUserInfoList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM ddw_userinfo t1 left JOIN ddw_grade t2 on t2.id=t1.gradeId
+        left join ddw_goddess_grade t3 on t3.id=t1.goddessGradeId LEFT JOIN ddw_practice_grade t4 on t4.id=t1.practiceGradeId
+        WHERE
+        t1.id in
+        <foreach collection="userId" item="value"  index="key" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+    </select>
+
+</mapper>

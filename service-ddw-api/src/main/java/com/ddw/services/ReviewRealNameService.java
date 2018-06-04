@@ -79,13 +79,13 @@ public class ReviewRealNameService extends CommonService {
                 String idcardFrontImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( idcardFront.getOriginalFilename());
                 FileInfoVo fileInfoVo= UploadFileMoveUtil.move( idcardFront,mainGlobals.getRsDir(), idcardFrontImgName);
 
-                reviewRealNamePO.setIdcardFrontUrl(fileInfoVo.getUrlPath());
+                reviewRealNamePO.setIdcardFrontUrl(mainGlobals.getServiceUrl()+fileInfoVo.getUrlPath());
                 CommonBeanFiles f=this.fileService.createCommonBeanFiles(fileInfoVo);
                 this.fileService.saveFile(f);
 
                 String idcardOppositeImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( idcardOpposite.getOriginalFilename());
                 FileInfoVo fileInfoVo2= UploadFileMoveUtil.move( idcardOpposite,mainGlobals.getRsDir(), idcardOppositeImgName);
-                reviewRealNamePO.setIdcardOppositeUrl(fileInfoVo2.getUrlPath());
+                reviewRealNamePO.setIdcardOppositeUrl(mainGlobals.getServiceUrl()+fileInfoVo2.getUrlPath());
                 CommonBeanFiles f2=this.fileService.createCommonBeanFiles(fileInfoVo2);
                 this.fileService.saveFile(f2);
                 Map updatePoMap= BeanToMapUtil.beanToMap(reviewRealNamePO);
