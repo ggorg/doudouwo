@@ -465,6 +465,15 @@ public class Tools {
         return null;
     }
 
+	public static String getGradeName(int id, List<Map>gradeList){
+		for(Map map :gradeList){
+			if(map.containsKey("id") && map.containsKey("gradeName") && (Integer)map.get("id") == id){
+				return (String)map.get("gradeName");
+			}
+		}
+		return null;
+	}
+
 
     public static void main(String[] args) {
 		Map map=xmlCastMap("<xml><appid><![CDATA[wx0c0f25470c893a03]]></appid>\n" +

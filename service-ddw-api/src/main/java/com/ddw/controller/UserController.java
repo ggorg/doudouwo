@@ -41,28 +41,30 @@ public class UserController {
     @PostMapping("/save")
     public ResponseApiVO<UserInfoVO> save(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserInfoDTO userInfoDTO){
         try {
-            if(!StringUtils.isBlank(userInfoDTO.getOpenid())){
+            if(StringUtils.isBlank(userInfoDTO.getOpenid())) {
+                return new ResponseApiVO(-2,"用户openid不能为空",null);
+            }else if(userInfoDTO.getRegisterType() == null){
+                return new ResponseApiVO(-3,"registerType注册类型不能为空",null);
+            }else{
                 UserInfoVO userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                 String token = TokenUtil.createToken(userInfoDTO.getOpenid());
-                if(userVO == null){
+                if (userVO == null) {
                     userInfoService.save(userInfoDTO);
                     userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                    TokenUtil.putUseridAndName(token,userVO.getId(),userVO.getNickName());
-                    return new ResponseApiVO(1,"注册成功",userVO);
-                }else{
+                    TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
+                    return new ResponseApiVO(1, "注册成功", userVO);
+                } else {
                     List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                    TokenUtil.putUseridAndName(token,userVO.getId(),userVO.getNickName());
-                    return new ResponseApiVO(2,"账号已存在",userVO);
+                    TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
+                    return new ResponseApiVO(2, "账号已存在", userVO);
                 }
-            }else{
-                return new ResponseApiVO(-2,"用户openid不能为空",null);
             }
         }catch (Exception e){
             logger.error("UserController->save",e);
@@ -89,7 +91,7 @@ public class UserController {
             userVO.setPhotograph(photographList);
             userVO.setToken(token);
             userVO.setIdentifier(userVO.getOpenid());
-            userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+//            userVO.setUserSign(ts.createSign(userVO.getOpenid()));
             return new ResponseApiVO(1,"成功",userVO);
         }catch (Exception e){
             logger.error("UserController->query",e);
