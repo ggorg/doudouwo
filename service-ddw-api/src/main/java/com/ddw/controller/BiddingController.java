@@ -3,6 +3,7 @@ package com.ddw.controller;
 import com.ddw.beans.*;
 import com.ddw.services.BiddingService;
 import com.ddw.token.Token;
+import com.gen.common.exception.GenException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -29,7 +30,7 @@ public class BiddingController {
     @ApiOperation(value = "获取当前最高价位（普通用户）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/maxprice/{token}")
     @ResponseBody
-    public ResponseApiVO queryMaxPrice(@PathVariable String token){
+    public ResponseApiVO<BiddingVO> queryMaxPrice(@PathVariable String token){
         try {
             return this.biddingService.getCurrentMaxPrice(token);
         }catch (Exception e){
@@ -48,7 +49,13 @@ public class BiddingController {
             return this.biddingService.putPrice(token,args);
         }catch (Exception e){
             logger.error("BiddingController->submitPrice-》提交竞价价位-》系统异常",e);
-            return new ResponseApiVO(-1,"提交竞价价位失败",null);
+            if(e instanceof GenException){
+                return new ResponseApiVO(-2,e.getMessage(),null);
+
+            }else{
+                return new ResponseApiVO(-1,"提交竞价价位失败",null);
+
+            }
         }
     }
 
@@ -57,7 +64,7 @@ public class BiddingController {
     @ApiOperation(value = "获取当前竞价列表（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/currentall/{token}")
     @ResponseBody
-    public ResponseApiVO<ListVO<List<BiddingVO>>> getCurrentAll(@PathVariable String token){
+    public ResponseApiVO<ListVO<BiddingVO>> getCurrentAll(@PathVariable String token){
         try {
             return this.biddingService.getCurrentAllBidding(token);
         }catch (Exception e){
@@ -82,7 +89,7 @@ public class BiddingController {
     @ApiOperation(value = "查询待支付的竞价金额(普通用户)",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/bidding/waitpay/{token}")
     @ResponseBody
-    public ResponseApiVO waitpay(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GroupIdDTO args){
+    public ResponseApiVO<BiddingPayVO> waitpay(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GroupIdDTO args){
         try {
             return this.biddingService.searchWaitPayByUser(args.getGroupId(),token);
         }catch (Exception e){

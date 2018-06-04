@@ -74,9 +74,9 @@ public class LiveRadioController {
     @ApiOperation(value = "获取女神直播列表",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/queryLiveRadioList/{token}")
     @ResponseBody
-    public ResponseApiVO<ListVO<LiveRadioListVO>> toLiveRadioList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+    public ResponseApiVO<ListVO<LiveRadioListVO>> toLiveRadioList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)LiveRadioListDTO args){
         try {
-            return this.liveRadioClientService.getLiveRadioListByStore(args.getPageNo(),TokenUtil.getStoreId(token));
+            return this.liveRadioClientService.getLiveRadioListByStore(args,TokenUtil.getStoreId(token));
         }catch (Exception e){
             logger.error("LiveRadioController->toLiveRadioList",e);
             return new ResponseApiVO(-1,"获取直播列表失败",null);

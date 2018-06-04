@@ -22,8 +22,32 @@ public class BiddingVO implements Serializable {
     @JsonProperty
     private String price;
 
+    @ApiModelProperty(name="time",value="时长，单位：时",example="1")
+    private Integer time;
+
+    @ApiModelProperty(name="bidEndTime",value="竞价结束时间",example="yyyy-MM-dd HH:mm:ss")
+    private String bidEndTime;
+
+    public String getBidEndTime() {
+        return bidEndTime;
+    }
+
+    public void setBidEndTime(String bidEndTime) {
+        this.bidEndTime = bidEndTime;
+    }
+
     @JsonIgnore
     private Integer userId;
+
+
+
+    public Integer getTime() {
+        return time;
+    }
+
+    public void setTime(Integer time) {
+        this.time = time;
+    }
 
     public Integer getUserId() {
         return userId;

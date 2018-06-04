@@ -72,28 +72,17 @@ public class CallBackController {
             if(proxyCallBackHost!=null){
                 asyncService.requestProxyHost(proxyCallBackHost+"/manager/live/execute", JSON.toJSONString(dto));
             }
+            if(dto.getEvent_type().equals(LiveEventTypeEnum.eventType1.getCode())){
+                ResponseVO responseVO=this.liveRadioService.handleLiveRadioStatus(dto.getStream_id(),dto.getEvent_type());
+                if(responseVO.getReCode()==1){
 
-            if(dto.getEvent_type().equals(LiveEventTypeEnum.eventType0.getCode())){
-                Object obj=CacheUtil.get("publicCache","closeCmd-"+dto.getStream_id());
-                if(obj==null){
                     return "{ \"code\":0 }";
-                }else{
-                    CacheUtil.delete("publicCache","closeCmd-"+dto.getStream_id());
                 }
-            }
+            }else if(dto.getEvent_type().equals(LiveEventTypeEnum.eventType0.getCode())){
+                logger.info("publicCache:"+CacheUtil.get("publicCache","closeCmd-"+dto.getStream_id()));
 
-            ResponseVO responseVO=this.liveRadioService.handleLiveRadioStatus(dto.getStream_id(),dto.getEvent_type());
-            if(responseVO.getReCode()==1){
-                if(dto.getEvent_type().equals(LiveEventTypeEnum.eventType0.getCode())){
-                    Map<String,Integer> map=(Map<String,Integer>)cacheService.get("backRoom");
-                    if(map.containsKey(dto.getStream_id())){
-                        map.remove(dto.getStream_id());
-                        cacheService.set("backRoom",map);
-                    }
-                }
                 return "{ \"code\":0 }";
             }
-
 
         }catch (Exception e){
             logger.error("liveExecute",e);

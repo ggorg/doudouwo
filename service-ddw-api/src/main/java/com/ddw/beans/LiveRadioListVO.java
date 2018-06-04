@@ -28,6 +28,17 @@ public class LiveRadioListVO {
     @ApiModelProperty(name="city",value="所在城市",example="成都")
     private String city;
 
+    @ApiModelProperty(name="distance",value="距离",example="1km")
+    private String distance;
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
     public Integer getId() {
         return id;
     }

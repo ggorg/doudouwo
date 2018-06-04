@@ -12,6 +12,7 @@ public class GoodsEditDTO {
     private ArrayList isUpdateImg;
     private MultipartFile fileImgShow;
     private String dgDetail;
+    private Integer dgRecommend;
     private Integer[] dghId;
     private String[] dghName;
     private Integer[] dghCost;
@@ -19,6 +20,14 @@ public class GoodsEditDTO {
     private Integer[] dghActivityPrice;
     private Integer[] dghFormulaId;
     private Integer[] dghStatus;
+
+    public Integer getDgRecommend() {
+        return dgRecommend;
+    }
+
+    public void setDgRecommend(Integer dgRecommend) {
+        this.dgRecommend = dgRecommend;
+    }
 
     public Integer[] getDghStatus() {
         return dghStatus;

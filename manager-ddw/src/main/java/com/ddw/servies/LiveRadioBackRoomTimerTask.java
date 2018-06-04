@@ -5,6 +5,7 @@ import com.ddw.enums.LiveStatusEnum;
 import com.ddw.services.LiveRadioService;
 import com.ddw.util.LiveRadioApiUtil;
 import com.gen.common.services.CacheService;
+import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -45,23 +46,18 @@ public class LiveRadioBackRoomTimerTask {
                     num=0;
                 }
                if(!LiveRadioApiUtil.isActLiveRoom(streamId)){
-                    if(num==2){
+                    if(num>=2){
                         logger.info("关闭直播间："+streamId);
+                        try{
+                            ResponseVO vo=this.liveRadioService.handleLiveRadioStatus(streamId, LiveEventTypeEnum.eventType0.getCode());
+                            if(vo.getReCode()==1){
+                                LiveRadioApiUtil.closeLoveRadio(streamId);
 
-                        LiveRadioApiUtil.closeLoveRadio(streamId);
-                        num=num+1;
-                        backRoomMap.put(streamId,num);
-                    }else if(num>=3){
-                        try {
-                            boolean flag=LiveRadioApiUtil.closeLoveRadio(streamId);
-                            if(!flag){
-                                logger.info("强制更新数据库直播间："+streamId);
-                                this.liveRadioService.handleLiveRadioStatus(streamId, LiveEventTypeEnum.eventType0.getCode());
-                                backRoomMap.remove(streamId);
                             }
                         }catch (Exception e){
                             logger.error("定时清理黑房间更新数据库状态失败",e);
                         }
+                        backRoomMap.remove(streamId);
                     }else{
                         num=num+1;
                         backRoomMap.put(streamId,num);

@@ -22,13 +22,24 @@ public class GoodsContoller {
     private GoodsClientService goodsClientService;
 
     @Token
-    @ApiOperation(value = "商品列表")
+    @ApiOperation(value = "商品首页")
     @PostMapping("/index/{token}")
     public ResponseApiVO<ListVO> toGoodsIndex(@PathVariable String token){
         try {
-            return this.goodsClientService.index(token);
+            return this.goodsClientService.appIndex(token);
         }catch (Exception e){
-            logger.error("GoodsContoller->toGoodsIndex-商列表-》异常",e);
+            logger.error("GoodsContoller->toGoodsIndex-商品首页-》异常",e);
+        }
+        return new ResponseApiVO(-1,"失败",null);
+    }
+    @Token
+    @ApiOperation(value = "商品列表")
+    @PostMapping("/list/{token}")
+    public ResponseApiVO<ListVO> toGoodsList(@PathVariable String token){
+        try {
+            return this.goodsClientService.goodsIndex(token);
+        }catch (Exception e){
+            logger.error("GoodsContoller->toGoodsList-商列表-》异常",e);
         }
         return new ResponseApiVO(-1,"失败",null);
     }

@@ -64,7 +64,7 @@
 					and 
 					</if>
 					<choose>
-						<when test="key.matches('^([a-zA-Z0-9]+),in$')">
+						<when test="key.matches('^([a-zA-Z0-9]+),(in|is)$')">
 							t1.${key.split(",")[0]} ${key.split(",")[1]} ${value}
 
 						</when>
@@ -152,7 +152,7 @@
 					and 
 					</if>
 					<choose>
-						<when test="key.matches('^([a-zA-Z0-9]+),in$')">
+						<when test="key.matches('^([a-zA-Z0-9]+),(in|is)$')">
 							t1.${key.split(",")[0]} ${key.split(",")[1]} ${value}
 
 						</when>

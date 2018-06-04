@@ -6,6 +6,7 @@ import com.ddw.beans.LiveRadioPO;
 import com.ddw.beans.LiveRadioUrlBean;
 import com.ddw.beans.ReviewPO;
 import com.ddw.beans.UserInfoPO;
+import com.ddw.config.DDWGlobals;
 import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.enums.ReviewStatusEnum;
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ import java.util.Map;
 
 @Service
 public class LiveRadioService extends CommonService{
+    @Autowired
+    private DDWGlobals ddwGlobals;
     public Page findPage(Integer pageNo,Integer storeid)throws Exception{
 
         Map condtion=new HashMap();
@@ -90,6 +94,7 @@ public class LiveRadioService extends CommonService{
             if(LiveEventTypeEnum.eventType0.getCode().equals(eventType)){
                 ResponseVO res=this.updateLiveRadioStatus(streamId,LiveStatusEnum.liveStatus2);
                 if(res.getReCode()==1){
+                    IMApiUtil.setDdwGlobals(ddwGlobals);
                     boolean flag=IMApiUtil.destoryGroup(streamId.replace(LiveRadioConstant.BIZID+"_",""));
                     if(flag){
                         return new ResponseVO(1,"关闭直播成功",null);

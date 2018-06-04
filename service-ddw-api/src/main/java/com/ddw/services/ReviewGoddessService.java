@@ -26,14 +26,17 @@ public class ReviewGoddessService extends CommonService {
     @Autowired
     private CacheService cacheService;
 
-    public GoddessPO getAppointment(Integer userid)throws Exception{
-        GoddessPO obj=(GoddessPO)cacheService.get("goddess-"+userid);
+    public GoddessPO getAppointment(Integer userid,Integer storeId)throws Exception{
+        GoddessPO obj=(GoddessPO)cacheService.get("goddess-"+storeId+"-"+userid);
         if(obj==null){
-            GoddessPO po= this.commonObjectBySingleParam("ddw_goddess","userId",userid,GoddessPO.class);
+            Map searchMap=new HashMap();
+            searchMap.put("storeId",storeId);
+            searchMap.put("userId",userid);
+            GoddessPO po= this.commonObjectBySearchCondition("ddw_goddess",searchMap,GoddessPO.class);
             if(po!=null){
                 Integer ap=po.getAppointment()==null?0:po.getAppointment();
                 po.setAppointment(ap);
-                cacheService.set("goddess-"+userid,po);
+                cacheService.set("goddess-"+storeId+"-"+userid,po);
                 return po;
             }
         }else{

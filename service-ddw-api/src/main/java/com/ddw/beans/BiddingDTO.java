@@ -10,9 +10,19 @@ public class BiddingDTO implements Serializable {
 
 
 
-    @ApiModelProperty(name="price",value="价格",example="xxx，分单位")
+    @ApiModelProperty(name="price",value="价格，单位：分",example="xxx")
     private Integer price;
 
+    @ApiModelProperty(name="time",value="时间,单位：分钟",example="1")
+    private Integer time;
+
+    public Integer getTime() {
+        return time;
+    }
+
+    public void setTime(Integer time) {
+        this.time = time;
+    }
 
     public Integer getPrice() {
         return price;

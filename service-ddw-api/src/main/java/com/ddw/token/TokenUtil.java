@@ -57,6 +57,22 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
+    public static String getStoreLongLat(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (String)map.get("longLat");
+        }
+        return null;
+    }
+    public static void putStoreLongLat(String base64Token,String storeLongLat){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("longLat",storeLongLat);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
     public static void putGroupId(String base64Token,String groupId){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){

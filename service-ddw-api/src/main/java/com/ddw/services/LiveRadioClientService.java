@@ -4,6 +4,8 @@ import com.ddw.beans.*;
 import com.ddw.enums.GoddessFlagEnum;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.Distance;
+import com.ddw.util.LanglatComparator;
 import com.ddw.util.LiveRadioApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -19,10 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class LiveRadioClientService  extends CommonService{
@@ -63,20 +64,55 @@ public class LiveRadioClientService  extends CommonService{
         }
 
     }
-    public ResponseApiVO getLiveRadioListByStore(Integer pageNo,Integer storeId){
+    public ResponseApiVO getLiveRadioListByStore(LiveRadioListDTO dto,Integer storeId)throws Exception{
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择一个门店",null);
 
         }
-        Page page=new Page(pageNo==null?1:pageNo,10);
+
+        String[] lls=null;
+        if(StringUtils.isBlank(dto.getLanglat())){
+            return new ResponseApiVO(-2,"坐标不能为空",null);
+
+        }else{
+             lls=dto.getLanglat().split(",");
+            if(lls.length!=2 || !dto.getLanglat().matches("^[0-9]+[.][^,]+,[0-9]+[.][0-9]+$")){
+                return new ResponseApiVO(-2,"坐标格式有误",null);
+
+            }
+        }
+        List<Map> obj=(List)CacheUtil.get("stores","store");
+        if(obj==null || obj.isEmpty()){
+            return new ResponseApiVO(-2,"请先加载门店列表",null);
+        }
+        List storeObj=obj.stream().filter(m->m.get("id").equals(storeId)).collect(Collectors.toList());
+        if(storeObj==null ||  storeObj.isEmpty()){
+            return new ResponseApiVO(-2,"门店不存在",null);
+
+        }
+        Map store=(Map)storeObj.get(0);
+        double longitude=Double.parseDouble((String)store.get("dsLongitude"));
+        double latitude=Double.parseDouble((String)store.get("dsLatitude"));
+        String city=(String)store.get("dsCity");
+        Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
         Map condition=new HashMap();
         condition.put("storeid",storeId);
         condition.put("liveStatus",LiveStatusEnum.liveStatus1.getCode());
         condition.put("endDate,>=",new Date());
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id code,ct0.userName,ct0.nickName,ct0.city,ct0.headImgUrl,ct0.label",page.getStartRow(),page.getEndRow(),condition,cb);
-        List Map=this.getCommonMapper().selectObjects(csb);
-        ListVO list=new ListVO(Map);
+        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id code,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label",page.getStartRow(),page.getEndRow(),condition,cb);
+        List lists=this.getCommonMapper().selectObjects(csb);
+        LiveRadioListVO vo=null;
+        List newList=new ArrayList();
+        for(Object o:lists){
+            vo=new LiveRadioListVO();
+            PropertyUtils.copyProperties(vo,o);
+            vo.setCity(city);
+            vo.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
+            newList.add(vo);
+        }
+        lists.clear();
+        ListVO list=new ListVO(newList);
         return new ResponseApiVO(1,"成功",list);
     }
     public ResponseApiVO selectLiveRadio(CodeDTO dto, String token)throws Exception{
@@ -94,7 +130,6 @@ public class LiveRadioClientService  extends CommonService{
             TokenUtil.putGroupId(token,po.getGroupId());
             SelectLiveRadioVO svo=new SelectLiveRadioVO();
             PropertyUtils.copyProperties(svo,po);
-            TokenUtil.putStreamId(token,po.getStreamid());
             return new ResponseApiVO(1,"成功",svo);
         }
         return new ResponseApiVO(-2,"选择直播房间",null);
@@ -104,7 +139,7 @@ public class LiveRadioClientService  extends CommonService{
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO closeRoom(String token)throws Exception{
-        GoddessPO gpo= reviewGoddessService.getAppointment(TokenUtil.getUserId(token));
+        GoddessPO gpo= reviewGoddessService.getAppointment(TokenUtil.getStoreId(token),TokenUtil.getUserId(token));
         if(gpo==null){
             return new ResponseApiVO(-2,"权限不足",null);
         }
@@ -113,19 +148,22 @@ public class LiveRadioClientService  extends CommonService{
             return new ResponseApiVO(-2,"操作异常",null);
 
         }
-        boolean flag=LiveRadioApiUtil.closeLoveRadio(streamId);
-        if(!flag){
-            ResponseVO res=liveRadioService.handleLiveRadioStatus(streamId,0);
-            if(res.getReCode()==1){
+        ResponseVO res=liveRadioService.handleLiveRadioStatus(streamId,0);
+        CacheUtil.put("publicCache","closeCmd-"+streamId,streamId);
+
+        if(res.getReCode()==1){
+            boolean flag=LiveRadioApiUtil.closeLoveRadio(streamId);
+            if(flag){
                 return new ResponseApiVO(1,"成功",null);
             }
         }else{
-            return new ResponseApiVO(1,"成功",null);
+            return new ResponseApiVO(-2,"关闭失败",null);
 
         }
-        CacheUtil.delete("publicCache","closeCmd-"+streamId);
         return new ResponseApiVO(-2,"失败",null);
 
 
     }
+
+
 }

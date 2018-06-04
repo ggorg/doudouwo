@@ -33,7 +33,6 @@ public class LiveRadioApiUtil {
     }
     public static boolean closeLoveRadio(String streamId){
         try{
-            CacheUtil.put("publicCache","closeCmd-"+streamId,streamId);
             for(int i=1;i<=5;i++){
                 String t=DateUtils.addHours(new Date(),12).getTime()/1000+"";
                 StringBuilder builder=new StringBuilder();
@@ -74,11 +73,19 @@ public class LiveRadioApiUtil {
         String str=HttpUtil.doGet(builder.toString());
         if(str!=null){
             JSONObject json= JSONObject.parseObject(str);
+
+
+            if(json.getInteger("ret")==20601){
+              return false;
+            }
             JSONArray array=json.getJSONArray("output");
+            if(array.isEmpty()){
+                return false;
+            }
             JSONObject output=array.getJSONObject(0);
             Integer status=output.getInteger("status");
-            if(json.getInteger("ret")==20601 || status==0 || status==3){
-              return false;
+            if(status==0 || status==3){
+                return false;
             }
 
         }
@@ -86,7 +93,7 @@ public class LiveRadioApiUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(        isActLiveRoom("23115_1_41_180529215021"));
-        System.out.println(        isActLiveRoom("23115_1_41_180530120124"));
+       // System.out.println(        isActLiveRoom("23115_1_41_180529215021"));
+        System.out.println(        isActLiveRoom("23115_1_59_1805302218245"));
     }
 }

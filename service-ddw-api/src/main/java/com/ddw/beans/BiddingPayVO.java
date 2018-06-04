@@ -24,6 +24,17 @@ public class BiddingPayVO implements Serializable {
     @ApiModelProperty(name="bidPrice",value="某轮竞价的金额",example="")
     private String  bidPrice;
 
+    @ApiModelProperty(name="time",value="时长，单位：分钟",example="")
+    private Integer  time;
+
+    public Integer getTime() {
+        return time;
+    }
+
+    public void setTime(Integer time) {
+        this.time = time;
+    }
+
     @Override
     public String toString() {
         return "BiddingPayVO{" +

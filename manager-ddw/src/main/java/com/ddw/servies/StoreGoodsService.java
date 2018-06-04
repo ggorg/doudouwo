@@ -3,6 +3,7 @@ package com.ddw.servies;
 import com.ddw.beans.GoodsEditDTO;
 import com.ddw.beans.GoodsTypeDTO;
 import com.ddw.config.DDWGlobals;
+import com.ddw.enums.GoodsRecommendEnum;
 import com.ddw.enums.GoodsStatusEnum;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.config.MainGlobals;
@@ -15,6 +16,7 @@ import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import net.coobird.thumbnailator.Thumbnails;
+import net.sf.ehcache.transaction.xa.commands.StoreRemoveCommand;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -96,6 +98,10 @@ public class StoreGoodsService extends CommonService {
         goodsMap.put("dgType",dto.getDgType());
         goodsMap.put("updateTime",new Date());
         goodsMap.put("storeId",storeId);
+
+        if(StringUtils.isNotBlank(GoodsRecommendEnum.getName(dto.getDgRecommend()))){
+            goodsMap.put("dgRecommend",dto.getDgRecommend());
+        }
         if(!dto.getFileImgShow().isEmpty()){
             String dmImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( dto.getFileImgShow().getOriginalFilename());
             FileInfoVo fileInfoVo= UploadFileMoveUtil.move( dto.getFileImgShow(),mainGlobals.getRsDir(), dmImgName);
@@ -175,9 +181,19 @@ public class StoreGoodsService extends CommonService {
         gPruductMap.put("dghName",dto.getDghName()[i]);
         gPruductMap.put("dghCost",dto.getDghCost()[i]);
         gPruductMap.put("dghSalesPrice",dto.getDghSalesPrice()[i]);
-        gPruductMap.put("dghActivityPrice",dto.getDghActivityPrice()[i]);
-        gPruductMap.put("dghFormulaId",dto.getDghFormulaId()[i]);
-        gPruductMap.put("dghStatus",dto.getDghStatus()[i]);
+        if(dto.getDghActivityPrice()!=null && dto.getDghActivityPrice().length>0){
+            gPruductMap.put("dghActivityPrice",dto.getDghActivityPrice()[i]);
+
+        }
+        if(dto.getDghFormulaId()!=null && dto.getDghFormulaId().length>0){
+            gPruductMap.put("dghFormulaId",dto.getDghFormulaId()[i]);
+        }
+        if(dto.getDghStatus()!=null && dto.getDghStatus().length>0){
+            gPruductMap.put("dghStatus",dto.getDghStatus()[i]);
+        }else{
+            gPruductMap.put("dghStatus",GoodsStatusEnum.goodsStatus0.getCode());
+
+        }
         gPruductMap.put("dghGoodsId",goodsId);
         gPruductMap.put("updateTime",new Date());
         gPruductMap.put("storeId",storeId);

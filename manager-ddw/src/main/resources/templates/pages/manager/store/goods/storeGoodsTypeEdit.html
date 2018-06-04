@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/sysframe2/css/style.default.css" type="text/css" />
+
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+  <style type="text/css">
+    .mystyle1{
+      line-height: 35px;
+    }
+    .dmImg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form">
+  <input type="hidden" th:if="${goodsType!=null && goodsType['id']!=null}" name="id" th:value="${goodsType!=null?goodsType['id']:''}"/>
+
+    <div  class="layui-form-pane">
+      <div class="layui-form-item">
+        <label class="layui-form-label">类型名称</label>
+        <div class="layui-input-block">
+          <input type="text" name="dgtName" required="required" title="类型名称"  lay-verify="required|max20" th:value="${goodsType!=null? goodsType['dgtName']:''}" placeholder="请输类型名称" autocomplete="off" class="layui-input" />
+
+
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">序号</label>
+        <div class="layui-input-block">
+          <input type="text" name="dgtSort" title="序号"  lay-verify="number" th:value="${goodsType!=null? goodsType['dgtSort']:''}" placeholder="请输入序号" autocomplete="off" class="layui-input" />
+
+
+        </div>
+      </div>
+
+
+      <div class="layui-form-item" style="display: none">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+      </div>
+  </div>
+</form>
+</body>
+<script type="text/javascript">
+    initForm("do-save",".layui-form")
+
+</script>
+</html>

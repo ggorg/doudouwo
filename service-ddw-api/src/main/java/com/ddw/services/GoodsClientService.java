@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.enums.GoodsRecommendEnum;
 import com.ddw.enums.GoodsStatusEnum;
 import com.ddw.enums.GoodsTypeEnum;
 import com.ddw.token.TokenUtil;
@@ -23,7 +24,103 @@ public class GoodsClientService extends CommonService {
     @Autowired
     private StoreGoodsTypeService storeGoodsTypeService;
 
-    public ResponseApiVO index(String token)throws Exception{
+   public ResponseApiVO appIndex(String token)throws Exception{
+       Integer storeId= TokenUtil.getStoreId(token);
+       if(storeId==null){
+           return new ResponseApiVO(-2,"请选择门店",null);
+       }
+       Map search=new HashMap();
+       search.put("storeId",storeId);
+       search.put("dgStatus", GoodsStatusEnum.goodsStatus1.getCode());
+       List<Map> gList=this.commonList("ddw_goods","dgRecommend desc,dgSalesNumber desc,dgSort asc",null,null,search);
+       if(gList==null){
+           return new ResponseApiVO(-2,"没有商品上架",null);
+       }
+       search=new HashMap();
+       search.put("storeId",storeId);
+       search.put("dghStatus",GoodsStatusEnum.goodsStatus1.getCode());
+       List<Map> pList=this.commonList("ddw_goods_product","dghSalesPrice asc,dghActivityPrice asc",null,null,search);
+       if(gList==null){
+           return new ResponseApiVO(-2,"没有产品上架",null);
+       }
+       List<Map> gtypeList=this.storeGoodsTypeService.getGoodsType(storeId);
+       if(gtypeList==null){
+           return new ResponseApiVO(-2,"没有商品类型",null);
+
+       }
+       GoodsItemVO vo=null;
+       Integer dgType=null;
+       Integer typeId=null;
+
+       List<Map> listData=new ArrayList();
+       Map  typeMap=new HashMap();
+       Map<Integer,List> pos=new HashMap();
+       List goodsList=new ArrayList();
+       typeMap.put("name","限时折扣");
+       typeMap.put("list",goodsList);
+       listData.add(typeMap);
+       pos.put(-2000,goodsList);
+
+       goodsList=new ArrayList();
+       typeMap=new HashMap();
+       typeMap.put("name","为你优选");
+       typeMap.put("list",goodsList);
+       listData.add(typeMap);
+       pos.put(-3000,goodsList);
+
+       goodsList=new ArrayList();
+       typeMap=new HashMap();
+       typeMap.put("name","餐饮商城");
+       typeMap.put("list",goodsList);
+       listData.add(typeMap);
+       pos.put(-4000,goodsList);
+
+       Integer dgRecommend=null;
+       Integer actPrice=null;
+       Map<Integer,Integer> discountPosMap=new HashMap();
+       for(Map gmap:gList){
+           vo=new GoodsItemVO();
+           PropertyUtils.copyProperties(vo,gmap);
+           vo.setProducts(new ArrayList());
+           dgRecommend=(Integer) gmap.get("dgRecommend");
+           if(GoodsRecommendEnum.goodsRecommend1.getCode().equals(dgRecommend) && pos.get(-2000).size()<5){
+               pos.get(-3000).add(vo);
+           }
+           if(pos.get(-4000).size()<7){
+               pos.get(-4000).add(vo);
+           }
+           for(Map p:pList){
+               if(p.get("dghGoodsId").equals(vo.getId())){
+                   Map pmap=new HashMap();
+                   pmap.put("name",p.get("dghName"));
+                   pmap.put("price",p.get("dghSalesPrice"));
+                   actPrice=(Integer) p.get("dghActivityPrice");
+                   pmap.put("actPrice",actPrice);
+                   pmap.put("code",p.get("id"));
+                   vo.getProducts().add(pmap);
+                   if(actPrice!=null && actPrice>0){
+                       if(discountPosMap.containsKey(vo.getId())){
+                           ((GoodsItemVO)pos.get(-2000).get(discountPosMap.get(vo.getId()))).getProducts().add(pmap);
+                       }else{
+
+                           GoodsItemVO discountGI=new GoodsItemVO();
+                           PropertyUtils.copyProperties(discountGI,vo);
+                           discountGI.setProducts(new ArrayList());
+                           discountGI.getProducts().add(pmap);
+
+                           pos.get(-2000).add(discountGI);
+                           discountPosMap.put(vo.getId(),discountGI.getProducts().size()-1);
+                       }
+                   }
+               }
+           }
+       }
+       return new ResponseApiVO(1,"成功",new ListVO(listData));
+
+   }
+
+
+    public ResponseApiVO goodsIndex(String token)throws Exception{
         Integer storeId= TokenUtil.getStoreId(token);
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择门店",null);
@@ -58,11 +155,17 @@ public class GoodsClientService extends CommonService {
         Map  typeMap=new HashMap();
         Map<Integer,List> pos=new HashMap();
         List goodsList=new ArrayList();
-
+        typeMap.put("name","限时折扣");
+        typeMap.put("list",goodsList);
+        listData.add(typeMap);
+        pos.put(-2000,goodsList);
+        goodsList=new ArrayList();
+        typeMap=new HashMap();
         typeMap.put("name","热销");
         typeMap.put("list",goodsList);
         listData.add(typeMap);
         pos.put(-1000,goodsList);
+
         for(Map gt:gtypeList){
             typeMap=new HashMap();
             goodsList=new ArrayList();
@@ -71,7 +174,9 @@ public class GoodsClientService extends CommonService {
             typeMap.put("list",goodsList);
             pos.put((Integer) gt.get("id"),goodsList);
         }
+        Map<Integer,Integer> discountPosMap=new HashMap();
         Integer gid=null;
+        Integer actPrice=null;
         for(Map m:gList){
             dgType=(Integer) m.get("dgType");
             gid=(Integer) m.get("id");
@@ -89,9 +194,25 @@ public class GoodsClientService extends CommonService {
                             Map pmap=new HashMap();
                             pmap.put("name",p.get("dghName"));
                             pmap.put("price",p.get("dghSalesPrice"));
-                            pmap.put("actPrice",p.get("dghActivityPrice"));
+                            actPrice=(Integer) p.get("dghActivityPrice");
+                            pmap.put("actPrice",actPrice);
                             pmap.put("code",p.get("id"));
                             vo.getProducts().add(pmap);
+                            if(actPrice!=null && actPrice>0){
+                                if(discountPosMap.containsKey(gid)){
+                                    ((GoodsItemVO)pos.get(-2000).get(discountPosMap.get(gid))).getProducts().add(pmap);
+                                }else{
+
+                                    GoodsItemVO discountGI=new GoodsItemVO();
+                                    PropertyUtils.copyProperties(discountGI,vo);
+                                    discountGI.setProducts(new ArrayList());
+                                    discountGI.getProducts().add(pmap);
+
+                                    pos.get(-2000).add(discountGI);
+                                    discountPosMap.put(gid,discountGI.getProducts().size()-1);
+                                }
+                            }
+
                         }
                     }
                 }

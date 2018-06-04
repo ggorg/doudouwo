@@ -1,10 +1,13 @@
 package com.ddw.services;
 
 import com.ddw.beans.GoodsTypeDTO;
+import com.ddw.enums.DisabledEnum;
+import com.ddw.enums.GoodsStatusEnum;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
+import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,10 +22,24 @@ import java.util.Map;
 
 @Service
 public class StoreGoodsTypeService extends CommonService {
+
+    public Page page(Integer pageNo, Integer storeId)throws Exception{
+
+        Map map=new HashMap();
+        map.put("storeId",storeId);
+        return this.commonPage("ddw_goods_type","updateTime desc,dgtSort asc",pageNo,10,map);
+    }
+    public Map getGoodsType(Integer id,Integer storeId)throws Exception{
+        Map map=new HashMap();
+        map.put("storeId",storeId);
+        map.put("id",id);
+        return this.commonObjectBySearchCondition("ddw_goods_type",map);
+    }
     @Cacheable(value = "publicCache",key = "'goodsType-'+#storeId")
     public List getGoodsType(Integer storeId)throws Exception{
         Map map=new HashMap();
         map.put("storeId",storeId);
+        map.put("dgtDistabled",DisabledEnum.disabled0.getCode());
         return this.commonList("ddw_goods_type","dgtSort asc",null,null,map);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -68,5 +85,31 @@ public class StoreGoodsTypeService extends CommonService {
             CacheUtil.delete("publicCache","goodsType-"+storeId);
         }
         return vo;
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updateStatus(String idStr,Integer status,Integer storeId){
+        String ids= MyEncryptUtil.getRealValue(idStr);
+        if(StringUtils.isBlank(ids)){
+            return new ResponseVO(-2,"参数异常",null);
+        }
+        if(StringUtils.isBlank(DisabledEnum.getName(status))){
+            return new ResponseVO(-2,"状态值异常",null);
+
+        }
+        Integer id=Integer.parseInt(ids);
+        Map map= new HashMap();
+        map.put("dgtDistabled",status);
+        ResponseVO ret=this.commonUpdateBySingleSearchParam("ddw_goods_type",map,"id",id);
+        if(ret.getReCode()==1){
+            if(DisabledEnum.disabled0.getCode().equals(status)){
+                return new ResponseVO(1,"启用成功",null);
+            }else if(GoodsStatusEnum.goodsStatus1.getCode().equals(status)){
+                return new ResponseVO(1,"停用成功",null);
+            }
+            //@Cacheable(value = "publicCache",key = "'goodsType-'+#storeId")
+            CacheUtil.delete("publicCache","goodsType-"+storeId);
+
+        }
+        return new ResponseVO(-2,"操作失败",null);
     }
 }

@@ -50,6 +50,17 @@
         </div>
       </div>
       <div class="layui-form-item">
+        <label class="layui-form-label">是否推荐</label>
+        <div class="layui-input-block">
+          <select name="dgRecommend">
+            <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.GoodsRecommendEnum',goods['dgRecommend'])}"></th:block>
+          </select>
+
+
+
+        </div>
+      </div>
+      <div class="layui-form-item">
         <label class="layui-form-label">商品图片</label>
         <div class="layui-input-block">
           <button type="button" class="layui-btn myupload1"  style="width: 143.52px;height: 93.83px;" >
@@ -111,7 +122,7 @@
             </td>
             <td>
 
-              <input  class="layui-input" required="required" th:value="${obj['dghActivityPrice']}"   lay-verify="required"  autocomplete="off"   name="dghActivityPrice" style="background-color: peachpuff;"/>
+              <input  class="layui-input" th:value="${obj['dghActivityPrice']}"     autocomplete="off"   name="dghActivityPrice" />
             </td>
             <td>
               <select name="dghFormulaId">
@@ -149,7 +160,7 @@
             </td>
             <td>
 
-              <input  class="layui-input" required="required"   lay-verify="required" autocomplete="off"   name="dghActivityPrice" style="background-color: peachpuff;"/>
+              <input  class="layui-input"  autocomplete="off"   name="dghActivityPrice" style="background-color: peachpuff;"/>
             </td>
             <td>
               <select name="dghFormulaId">
@@ -171,7 +182,7 @@
             </td>
           </tr>
           <tr id="addtr">
-            <td colspan="6" align="center">
+            <td colspan="7" align="center">
 
               <i class="layui-icon" onclick="add()">&#xe654;</i>
             </td>
