@@ -3,6 +3,8 @@ package com.ddw.token;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CacheUtil;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -14,21 +16,32 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TokenUtil {
     private static final Logger logger = Logger.getLogger(TokenUtil.class);
 
-    public static String createToken(Object userobj){
+    public static String createToken(String openId){
         CacheService cs=getCacheService();
         String tokenStr= DateFormatUtils.format(new Date(),RandomStringUtils.randomNumeric(10)+"yyyyMMdd"+ RandomStringUtils.randomNumeric(10)+"HHmm");
         String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
         base64Token=base64Token.replace("+","-").replace("/","_");
         Map map=new HashMap();
-        map.put("user",userobj);
+        map.put("user",openId);
+        Cache cache=CacheUtil.createCache("tokenCache");
+        List<String> keys=cache.getKeys();
+        if(keys!=null && !keys.isEmpty()){
+            Map cacheMap=null;
+            Element element=null;
+            for(String key:keys){
+                element=cache.getQuiet(key);
+                cacheMap=(Map) element.getObjectValue();
+                if(openId.equals(cacheMap.get("user"))){
+                    cache.remove(key);
+                    break;
+                }
+            }
+        }
         CacheUtil.put("tokenCache",base64Token,map);
        // cs.set(base64Token,map);
         return base64Token;

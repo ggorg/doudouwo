@@ -42,6 +42,9 @@ public class PayCenterService extends CommonService {
     @Autowired
     private RechargeService rechargeService;
 
+    @Autowired
+    private LiveRadioService liveRadioService;
+
 
     @Autowired
     private DDWGlobals ddwGlobals;
@@ -130,7 +133,7 @@ public class PayCenterService extends CommonService {
         orderPO.setDoOrderDate(DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
         orderPO.setDoPayStatus(PayStatusEnum.PayStatus0.getCode());
         orderPO.setDoCustomerUserId(TokenUtil.getUserId(token));
-        orderPO.setDoSellerId(-1);
+
         orderPO.setDoCustomerStoreId(-1);
         orderPO.setDoPayType(payType);
         orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus0.getCode());
@@ -138,17 +141,22 @@ public class PayCenterService extends CommonService {
         orderPO.setDoType(orderType);
         orderPO.setCreater(TokenUtil.getUserName(token));
         Map<Integer,Map> buyInProMap=null;
+        GiftPO gift=null;
         //定金与竞价金额
         if(OrderTypeEnum.OrderType5.getCode().equals(orderType) || OrderTypeEnum.OrderType4.getCode().equals(orderType)){
+            orderPO.setDoSellerId(-1);
             orderPO.setDoCost(cost);
         //计算充值
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
+            orderPO.setDoSellerId(-1);
             orderPO.setDoCost(rechargeService.getRechargeCost(codes[0]));
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
             }
         //计算货品
         }else if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
+            orderPO.setDoSellerId(TokenUtil.getStoreId(token));
+
             buyInProMap=new HashMap();
             List<Integer> codesList=Arrays.asList(codes);
             Map search=new HashMap();
@@ -195,6 +203,16 @@ public class PayCenterService extends CommonService {
             if(countPrice==null || countPrice<=0){
                 return new ResponseApiVO(-2,"支付失败",null);
             }
+        }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
+            orderPO.setDoSellerId(-1);
+            Map search=new HashMap();
+            search.put("id",codes[0]);
+            search.put("dgDisabled",DisabledEnum.disabled0.getCode());
+            gift=this.commonObjectBySearchCondition("ddw_gift",search,GiftPO.class);
+            if(gift==null){
+                return new ResponseApiVO(-2,"礼物不存在",null);
+            }
+            orderPO.setDoCost(gift.getDgActPrice()!=null && gift.getDgActPrice()>0?gift.getDgActPrice():gift.getDgPrice());
         }
 
         ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
@@ -263,6 +281,22 @@ public class PayCenterService extends CommonService {
                     }
                 }
                 CacheUtil.put("pay","goodsPru-order-"+orderNo,new ArrayList(collection));
+            }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
+                Map insertM=new HashMap();
+                insertM.put("orderNo",orderNo);
+                insertM.put("orderId",insertResponseVO.getData());
+                insertM.put("createTime",new Date());
+                insertM.put("updateTime",new Date());
+                insertM.put("giftId",gift.getId());
+                insertM.put("giftName",gift.getDgName());
+                insertM.put("giftPrice",orderPO.getDoCost());
+                insertM.put("goddessUserId",this.liveRadioService.getLiveRadioByGroupId(TokenUtil.getGroupId(token)).getUserid());
+
+                resVo=this.commonInsertMap("ddw_order_gift",insertM);
+                if(resVo.getReCode()!=1){
+                    throw new GenException("礼物支付失败");
+
+                }
             }
 
             if(resVo.getReCode()==1){

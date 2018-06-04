@@ -11,11 +11,12 @@ public class WalletRechargeDTO {
     @ApiModelProperty(name="money",value="金额,单位分,竞价定金和竞价金额必须传金额，其它不用",example="1000")
     private Integer money;
 
-    @ApiModelProperty(name="orderType",value="订单类型,商品：1，充值：3，竞价定金：4，竞价金额：5",example="3")
+    @ApiModelProperty(name="orderType",value="订单类型,商品：1，充值：3，竞价定金：4，竞价金额：5，礼物：6",example="3")
     private Integer orderType;
 
 
     @ApiModelProperty(name="codes",value="所购买的多个物品编号（充值卷的ID，商品ID，礼物ID，竞价ID，定金ID等）,",example="[1]")
+
     private Integer codes[];
 
     public Integer[] getCodes() {
