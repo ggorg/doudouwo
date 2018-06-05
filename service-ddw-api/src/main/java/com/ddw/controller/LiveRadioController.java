@@ -40,9 +40,9 @@ public class LiveRadioController {
             @ApiResponse(code= -2002,message="直播房间已开，请关闭再申请"),
             @ApiResponse(code= -2003,message="正在审核中，请耐心等待")
     })
-    public ResponseApiVO applLiveRadio(@PathVariable String token){
+    public ResponseApiVO applLiveRadio(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)LiveRadioApplDTO args){
         try {
-            return this.reviewService.applyLiveRadio((String) TokenUtil.getUserObject(token),TokenUtil.getStoreId(token));
+            return this.reviewService.applyLiveRadio((String) TokenUtil.getUserObject(token),TokenUtil.getStoreId(token),args);
         }catch (Exception e){
             logger.error("LiveRadioController->applLiveRadio",e);
             return new ResponseApiVO(-1,"提交申请失败",null);
@@ -76,7 +76,7 @@ public class LiveRadioController {
     @ResponseBody
     public ResponseApiVO<ListVO<LiveRadioListVO>> toLiveRadioList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)LiveRadioListDTO args){
         try {
-            return this.liveRadioClientService.getLiveRadioListByStore(args,TokenUtil.getStoreId(token));
+            return this.liveRadioClientService.getLiveRadioListByStore(args,TokenUtil.getStoreId(token),token);
         }catch (Exception e){
             logger.error("LiveRadioController->toLiveRadioList",e);
             return new ResponseApiVO(-1,"获取直播列表失败",null);

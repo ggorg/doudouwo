@@ -28,7 +28,7 @@ public class TicketVO implements Serializable {
     private String dtDesc;
     @ApiModelProperty(name="type",value="类型，白天票：0，晚上票：1，通票：2，狼人杀：3",example="xxxx")
     @JsonProperty("type")
-    private String dtType;
+    private Integer dtType;
 
     @ApiModelProperty(name="typeName",value="类型名称",example="白天票")
     @JsonProperty("typeName")
@@ -79,12 +79,20 @@ public class TicketVO implements Serializable {
         this.dtDesc = dtDesc;
     }
 
-    public String getDtType() {
+    public Integer getDtType() {
         return dtType;
     }
 
-    public void setDtType(String dtType) {
+    public void setDtType(Integer dtType) {
         this.dtType = dtType;
+    }
+
+    public String getDtActiveTime() {
+        return dtActiveTime;
+    }
+
+    public void setDtActiveTime(String dtActiveTime) {
+        this.dtActiveTime = dtActiveTime;
     }
 
     public String getTypeName() {

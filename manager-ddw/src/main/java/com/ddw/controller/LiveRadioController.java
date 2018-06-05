@@ -46,7 +46,7 @@ public class LiveRadioController {
     public ResponseVO doCreateLiveRadio(String liveRadioBusinessCode){
         try {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
-            return this.liveRadioService.createLiveRadioRoom(liveRadioBusinessCode,spo.getId());
+            return this.liveRadioService.createLiveRadioRoom(liveRadioBusinessCode,spo.getId(),null);
 
         }catch (Exception e){
             logger.error("LiveRadioController->doCreateLiveRadio",e);

@@ -114,11 +114,14 @@ public class LiveRadioService extends CommonService{
 
     }*/
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO createLiveRadioRoom(String liveRadioBusinessCode,Integer storeId)throws Exception{
+    public ResponseVO createLiveRadioRoom(String liveRadioBusinessCode,Integer storeId,ReviewPO reviewPO)throws Exception{
         Date date= new Date();
         Date endDate=DateUtils.addHours(date,12);
        // String txTime=Long.toHexString(endDate.getTime()/1000).toUpperCase();
-        ReviewPO reviewPO=this.commonObjectBySingleParam("ddw_review","drBusinessCode",liveRadioBusinessCode, ReviewPO.class);
+        if(reviewPO==null){
+            reviewPO=this.commonObjectBySingleParam("ddw_review","drBusinessCode",liveRadioBusinessCode, ReviewPO.class);
+
+        }
         if(reviewPO==null){
             return new ResponseVO(-2,"创建直播间失败",null);
         }
@@ -133,7 +136,12 @@ public class LiveRadioService extends CommonService{
 
 
         UserInfoPO upo=this.commonObjectBySingleParam("ddw_userinfo","id",reviewPO.getDrProposer(), UserInfoPO.class);
-        String spaceName=StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName()+"直播间";
+        String spaceName=null;
+        if(StringUtils.isNotBlank(reviewPO.getDrExtend())){
+            spaceName=reviewPO.getDrExtend();
+        }else{
+            spaceName= StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName()+"直播间";
+        }
         String callBack=IMApiUtil.createGroup(reviewPO.getDrProposer().toString(),streamIdExt,spaceName);
         JSONObject jsonObject=JSON.parseObject(callBack);
         Integer errorCode=jsonObject.getInteger("ErrorCode");

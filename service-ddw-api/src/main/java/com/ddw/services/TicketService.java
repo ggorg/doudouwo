@@ -4,6 +4,7 @@ import com.ddw.beans.GiftVO;
 import com.ddw.beans.ListVO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.TicketVO;
+import com.ddw.enums.TicketTypeEnum;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -33,6 +34,7 @@ public class TicketService extends CommonService{
             for(Object o:list){
                 vo=new TicketVO();
                 PropertyUtils.copyProperties(vo,o);
+                vo.setTypeName(TicketTypeEnum.getName(vo.getDtType()));
                 newList.add(vo);
             }
             CacheUtil.put("publicCache","allGift",newList);

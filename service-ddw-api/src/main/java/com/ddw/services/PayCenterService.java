@@ -246,8 +246,8 @@ public class PayCenterService extends BaseOrderService {
             search.put("dtDisabled",DisabledEnum.disabled0.getCode());
             search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
             List<Map> tocketList=this.commonObjectsBySearchCondition("ddw_ticket",search);
-            if(voData==null){
-                return new ResponseApiVO(-2,"礼物不存在",null);
+            if(tocketList==null){
+                return new ResponseApiVO(-2,"门票不存在",null);
             }
             final Map<Integer,Map> buyInTicketMap=new HashMap();
             for(Map vd:tocketList){

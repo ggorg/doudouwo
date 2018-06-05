@@ -31,6 +31,17 @@ public class LiveRadioListVO {
     @ApiModelProperty(name="distance",value="距离",example="1km")
     private String distance;
 
+    @ApiModelProperty(name="age",value="年龄",example="18岁")
+    private String age;
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
     public String getDistance() {
         return distance;
     }

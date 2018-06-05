@@ -52,6 +52,7 @@ public class CommonReviewService extends CommonService {
             ReviewCallBackBean rb=new ReviewCallBackBean();
             rb.setBusinessCode(businessCode);
             rb.setStoreId(rpo.getDrBelongToStoreId());
+            rb.setReviewPO(rpo);
             //回调处理
             if(StringUtils.isNotBlank(ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()))){
                 ResponseVO callBackRes=(ResponseVO) ReviewCallBackUtil.invoke(reviewCallBackService, ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()), rb);

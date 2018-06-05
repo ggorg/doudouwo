@@ -24,7 +24,7 @@ public class ReviewCallBackService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeLiveRadio(ReviewCallBackBean rb)throws Exception{
-        return liveRadioService.createLiveRadioRoom(rb.getBusinessCode(),rb.getStoreId());
+        return liveRadioService.createLiveRadioRoom(rb.getBusinessCode(),rb.getStoreId(),rb.getReviewPO());
 
     }
 

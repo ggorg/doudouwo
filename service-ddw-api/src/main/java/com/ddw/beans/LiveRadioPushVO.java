@@ -11,7 +11,7 @@ public class LiveRadioPushVO {
     @ApiModelProperty(name="pushUrl",value="推流地址",example="rtmp://xxxxxx")
     private String pushUrl;//推流地址
 
-    @ApiModelProperty(name="spaceName",value="房名字",example="")
+    @ApiModelProperty(name="roomName",value="房名字",example="")
     @JsonProperty("roomName")
     private String spaceName;
 

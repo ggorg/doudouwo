@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.beans.LiveRadioApplDTO;
 import com.ddw.beans.LiveRadioPO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.ReviewPO;
@@ -37,7 +38,7 @@ public class ReviewService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO applyLiveRadio(String userOpenId, Integer storeId)throws Exception{
+    public ResponseApiVO applyLiveRadio(String userOpenId, Integer storeId, LiveRadioApplDTO dto)throws Exception{
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择一个门店",null);
 
@@ -78,6 +79,7 @@ public class ReviewService extends CommonService {
         reviewPO.setDrProposer(userid);
         reviewPO.setDrApplyDesc("申请开通直播空间");
         reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.liveRadio10.getCode());
+        reviewPO.setDrExtend(dto.getRoomName());
         return new ResponseApiVO(this.commonReviewService.submitAppl(reviewPO));
 
     }

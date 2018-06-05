@@ -22,6 +22,16 @@ public class ReviewPO implements Serializable {
     private String drApplyDesc ;//申请人说明
     private Integer drBelongToStoreId;//所属门店，门店ID号，空值表示属于总店
 
+    private String drExtend;//扩展字段
+
+    public String getDrExtend() {
+        return drExtend;
+    }
+
+    public void setDrExtend(String drExtend) {
+        this.drExtend = drExtend;
+    }
+
     public Integer getDrBelongToStoreId() {
         return drBelongToStoreId;
     }

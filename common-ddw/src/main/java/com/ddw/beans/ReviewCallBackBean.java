@@ -8,6 +8,19 @@ public class ReviewCallBackBean {
      */
     private Integer storeId;
 
+    /**
+     * 审批字段
+     */
+    private ReviewPO reviewPO;
+
+    public ReviewPO getReviewPO() {
+        return reviewPO;
+    }
+
+    public void setReviewPO(ReviewPO reviewPO) {
+        this.reviewPO = reviewPO;
+    }
+
     public String getBusinessCode() {
         return businessCode;
     }

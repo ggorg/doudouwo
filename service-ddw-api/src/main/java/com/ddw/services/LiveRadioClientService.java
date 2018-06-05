@@ -64,7 +64,7 @@ public class LiveRadioClientService  extends CommonService{
         }
 
     }
-    public ResponseApiVO getLiveRadioListByStore(LiveRadioListDTO dto,Integer storeId)throws Exception{
+    public ResponseApiVO getLiveRadioListByStore(LiveRadioListDTO dto,Integer storeId,String token)throws Exception{
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择一个门店",null);
 
@@ -99,6 +99,7 @@ public class LiveRadioClientService  extends CommonService{
         condition.put("storeid",storeId);
         condition.put("liveStatus",LiveStatusEnum.liveStatus1.getCode());
         condition.put("endDate,>=",new Date());
+        condition.put("userid,!=",TokenUtil.getUserId(token));
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label",page.getStartRow(),page.getEndRow(),condition,cb);
         List lists=this.getCommonMapper().selectObjects(csb);
@@ -108,6 +109,7 @@ public class LiveRadioClientService  extends CommonService{
             vo=new LiveRadioListVO();
             PropertyUtils.copyProperties(vo,o);
             vo.setCity(city);
+            vo.setAge("20岁");
             vo.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
             newList.add(vo);
         }
