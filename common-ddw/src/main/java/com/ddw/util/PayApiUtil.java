@@ -54,9 +54,19 @@ public class PayApiUtil {
 
     private static DDWGlobals ddwGlobals;
     static{
-      // ddwGlobals= Tools.getBean(DDWGlobals.class);
+       ddwGlobals= Tools.getBean(DDWGlobals.class);
     }
-
+    public static RequestWeiXinOrderVO weiXinOrderQuery(String orderNo){
+        //
+        Map map=new HashMap();
+        map.put("out_trade_no",orderNo);
+        String callBackStr= HttpUtil.sendHtpps("https://api.mch.weixin.qq.com/pay/orderquery",wxSign(map));
+        if(callBackStr!=null){
+            RequestWeiXinOrderVO vo= Tools.xmlCastObject(callBackStr,RequestWeiXinOrderVO.class);
+            return vo;
+        }
+        return null;
+    }
     public static RequestWeiXinOrderVO requestWeiXinOrder(String body,String orderNo,Integer cost,String ip)throws Exception{
 
         Map<String,String> map=new HashMap();
@@ -181,8 +191,9 @@ public class PayApiUtil {
       // RequestWeiXinOrderVO vo= PayApiUtil.requestWeiXinOrder("充值","123123123",1,"0.0.0.0");
        // System.out.println(vo);
       // System.out.println((double) 859/100);
-        System.out.println(       requestAliPayOrder(OrderTypeEnum.OrderType3.getName(),"123456789321321","0.01","127.0.0.1"));
 
+        //System.out.println(       requestAliPayOrder(OrderTypeEnum.OrderType3.getName(),"123456789321321","0.01","127.0.0.1"));
+        System.out.println(weiXinOrderQuery("01201806052237560301000000000241"));
     }
 
 }

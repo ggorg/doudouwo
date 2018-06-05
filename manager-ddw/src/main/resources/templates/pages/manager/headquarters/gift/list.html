@@ -86,14 +86,15 @@
                         <td th:text="${obj['dgName']}">Trident</td>
                         <td th:text="${obj['dgPrice']}">Trident</td>
                         <td th:text="${obj['dgActPrice']}">Trident</td>
-                        <td th:text="${obj['dgDisabled']==0||obj['dgDisabled']==null?'已启用':'已禁用'}">Trident</td>
+                        <td th:text="${obj['dgDisabled']==1||obj['dgDisabled']==null?'未发布':'已发布'}">Trident</td>
 
                         <td th:text="${obj['createTime']}">Win 95+</td>
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改门店\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
-                            <button  th:class="'layui-btn layui-btn-sm '+${obj['dgDisabled']==2?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dgDisabled']==1?0:1}+',\''+${obj['dgDisabled']==1?'是否启用':'是否禁用'}+'\')'" th:text="${obj['dgDisabled']==1?'启 用':'禁 用'}"></button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
+
+                                <button  th:class="'layui-btn layui-btn-sm '+${obj['dgDisabled']==2?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dgDisabled']==1?0:1}+',\''+${obj['dgDisabled']==1?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['dgDisabled']==1?'发 布':'撤回发布'}"></button>
                             </div>
                         </td>
                     </tr>

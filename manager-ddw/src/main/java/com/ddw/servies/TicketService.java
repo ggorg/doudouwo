@@ -2,8 +2,8 @@ package com.ddw.servies;
 
 import com.ddw.beans.GiftDTO;
 import com.ddw.beans.GiftPO;
-import com.ddw.beans.StoreDTO;
-import com.ddw.beans.StorePO;
+import com.ddw.beans.TicketDTO;
+import com.ddw.beans.TicketPO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.DisabledEnum;
 import com.gen.common.beans.CommonBeanFiles;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class GiftService extends CommonService {
+public class TicketService extends CommonService {
 
     @Autowired
     private FileService fileService;
@@ -42,13 +42,13 @@ public class GiftService extends CommonService {
 
 
         // condtion.put("dmStatus",dmStatus);
-        return this.commonPage("ddw_gift","dgSort asc,updateTime desc",pageNo,10,null);
+        return this.commonPage("ddw_ticket","updateTime desc",pageNo,10,null);
     }
     public Map getById(Integer id)throws Exception{
-        return this.commonObjectBySingleParam("ddw_gift","id",id);
+        return this.commonObjectBySingleParam("ddw_ticket","id",id);
     }
-    public GiftPO getBeanById(Integer id)throws Exception{
-        return this.commonObjectBySingleParam("ddw_gift","id",id,GiftPO.class);
+    public TicketPO getBeanById(Integer id)throws Exception{
+        return this.commonObjectBySingleParam("ddw_ticket","id",id,TicketPO.class);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO update(String idStr,Integer status){
@@ -60,15 +60,16 @@ public class GiftService extends CommonService {
             return new ResponseVO(-2,"状态值异常",null);
         }
         Map map=new HashMap();
-        map.put("dgDisabled",status);
-        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_gift",map,"id",Integer.parseInt(ids));
+        map.put("dtDisabled",status);
+        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_ticket",map,"id",Integer.parseInt(ids));
         if(res.getReCode()==1){
-            CacheUtil.delete("publicCache","allGift");
+            CacheUtil.delete("publicCache","allTicket");
+
             if(DisabledEnum.disabled0.getCode().equals(status)){
-                return new ResponseVO(1,"发布成功",null);
+                return new ResponseVO(1,"启用成功",null);
 
             }else if(DisabledEnum.disabled1.getCode().equals(status)){
-                return new ResponseVO(1,"撤回成功",null);
+                return new ResponseVO(1,"停用成功",null);
 
             }
         }
@@ -77,61 +78,41 @@ public class GiftService extends CommonService {
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO save(GiftDTO dto)throws Exception{
+    public ResponseVO save(TicketDTO dto)throws Exception{
         if(dto==null){
             return new ResponseVO(-2,"参数异常",null);
 
         }
-        if(StringUtils.isBlank(dto.getDgName())){
-            return new ResponseVO(-2,"请填写礼物名称",null);
+        if(StringUtils.isBlank(dto.getDtName())){
+            return new ResponseVO(-2,"请填写文票名称",null);
 
         }
-        if(dto.getDgPrice()==null ||dto.getDgPrice()<0){
+        if(dto.getDtPrice()==null ||dto.getDtPrice()<0){
             return new ResponseVO(-2,"请填写有效的价格",null);
 
         }
-        if(dto.getDgActPrice()!=null && dto.getDgActPrice()<0){
+        if(dto.getDtActPrice()!=null && dto.getDtActPrice()<0){
             return new ResponseVO(-2,"请填写有效的活动价格",null);
 
         }
-
-
-
-
-        Map voMap=null;
-        GiftPO giftPO=new GiftPO();
-        if(dto.getId()!=null){
-            voMap=this.getById(dto.getId());
-            PropertyUtils.copyProperties(giftPO,voMap);
-
-        }
-
-        PropertyUtils.copyProperties(giftPO,dto);
-
-        if(!dto.getDgImg().isEmpty()){
-            String dmImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( dto.getDgImg().getOriginalFilename());
-            FileInfoVo fileInfoVo= UploadFileMoveUtil.move(dto.getDgImg(),mainGlobals.getRsDir(), dmImgName);
-
-            giftPO.setDgImgPath(ddwGlobals.getCallBackHost()+fileInfoVo.getUrlPath());
-            CommonBeanFiles f=this.fileService.createCommonBeanFiles(fileInfoVo);
-            this.fileService.saveFile(f);
-
-        }else if(dto.getIsUpdateImg()!=null && dto.getIsUpdateImg().contains("dsImgFile")){
-            giftPO.setDgImgPath(giftPO.getDgImgPath());
-
-        }
-        giftPO.setUpdateTime(new Date());
-        if(voMap!=null){
-
-            Map updatePoMap= BeanToMapUtil.beanToMap(giftPO);
-            CacheUtil.delete("publicCache","allGift");
-            return this.commonUpdateBySingleSearchParam("ddw_gift",updatePoMap,"id",giftPO.getId());
-
-
+        Map map=BeanToMapUtil.beanToMap(dto,true);
+        map.put("updateTime",new Date());
+        if(dto.getId()==null){
+            map.put("createTime",new Date());
+            map.put("dtDisabled",DisabledEnum.disabled0.getCode());
+            ResponseVO res=this.commonInsertMap("ddw_ticket",map);
+            if(res.getReCode()==1){
+                CacheUtil.delete("publicCache","allTicket");
+                return new ResponseVO(1,"提交成功",null);
+            }
         }else{
-            CacheUtil.delete("publicCache","allGift");
-            giftPO.setCreateTime(new Date());
-            return this.commonInsert("ddw_gift",giftPO);
+            ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_ticket",map,"id",dto.getId());
+            if(res.getReCode()==1){
+                CacheUtil.delete("publicCache","allTicket");
+                return new ResponseVO(1,"提交成功",null);
+            }
         }
+        return new ResponseVO(-2,"提交失败",null);
+
     }
 }

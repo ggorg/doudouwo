@@ -32,7 +32,7 @@ import java.io.InputStream;
 import java.util.*;
 
 @Service
-public class PayCenterService extends CommonService {
+public class PayCenterService extends BaseOrderService {
     private final Logger logger = Logger.getLogger(PayCenterService.class);
 
     @Autowired
@@ -54,7 +54,7 @@ public class PayCenterService extends CommonService {
 
         }
         String paystatus=null;
-        for(int i=1;i<=3;i++){
+        for(int i=1;i<=4;i++){
             paystatus=(String)CacheUtil.get("pay","order-"+dto.getOrderNo());
             if(paystatus==null){
                 Thread.sleep(i*200);
@@ -76,13 +76,33 @@ public class PayCenterService extends CommonService {
                 return new ResponseApiVO(-2,"支付记录不存在",null);
 
             }
-            Date endTime=(Date)voMap.get("doEndTime");
+            /*Date endTime=(Date)voMap.get("doEndTime");
             if(endTime.before(new Date())){
                 return new ResponseApiVO(-3,"支付失败，已超时",null);
-            }
+            }*/
             Integer doPayStatus=(Integer) voMap.get("doPayStatus");
             if(PayStatusEnum.PayStatus1.getCode().equals(doPayStatus)){
                 return new ResponseApiVO(1,"支付成功",null);
+
+            }else{
+               Integer payType=(Integer) voMap.get("doPayType");
+               if(PayTypeEnum.PayType1.getCode().equals(payType)){
+                   logger.info("请求微信支付-》查看订单情况->"+dto);
+                   RequestWeiXinOrderVO res= PayApiUtil.weiXinOrderQuery(dto.getOrderNo());
+                   logger.info("微信支付响应-》查看订单情况->"+res);
+                   if(res!=null && "SUCCESS".equals(res.getReturn_code()) && "SUCCESS".equals(res.getResult_code())){
+                       Map param=new HashMap();
+                       param.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
+                       ResponseVO orderRes=this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOrderNo());
+                        if(orderRes.getReCode()!=1){
+                            logger.info("更新订单表-》失败->"+orderRes);
+                        }else{
+                            logger.info("更新订单表-》成功->"+orderRes);
+
+                        }
+                       return new ResponseApiVO(1,"支付成功",null);
+                   }
+               }
 
             }
 
@@ -141,7 +161,9 @@ public class PayCenterService extends CommonService {
         orderPO.setDoType(orderType);
         orderPO.setCreater(TokenUtil.getUserName(token));
         Map<Integer,Map> buyInProMap=null;
-        GiftPO gift=null;
+        //GiftPO gift=null;
+        Map voData=null;
+        List<Map> insertList=null;
         //定金与竞价金额
         if(OrderTypeEnum.OrderType5.getCode().equals(orderType) || OrderTypeEnum.OrderType4.getCode().equals(orderType)){
             orderPO.setDoSellerId(-1);
@@ -203,16 +225,53 @@ public class PayCenterService extends CommonService {
             if(countPrice==null || countPrice<=0){
                 return new ResponseApiVO(-2,"支付失败",null);
             }
+        //礼物
         }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
             orderPO.setDoSellerId(-1);
             Map search=new HashMap();
             search.put("id",codes[0]);
             search.put("dgDisabled",DisabledEnum.disabled0.getCode());
-            gift=this.commonObjectBySearchCondition("ddw_gift",search,GiftPO.class);
-            if(gift==null){
+            voData=this.commonObjectBySearchCondition("ddw_gift",search);
+            if(voData==null){
                 return new ResponseApiVO(-2,"礼物不存在",null);
             }
-            orderPO.setDoCost(gift.getDgActPrice()!=null && gift.getDgActPrice()>0?gift.getDgActPrice():gift.getDgPrice());
+            Integer actPrice=(Integer)voData.get("dgActPrice");
+            Integer price=(Integer)voData.get("dgPrice");
+            orderPO.setDoCost(actPrice!=null && actPrice>0?actPrice:price);
+        }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
+
+            orderPO.setDoSellerId(-1);
+            List<Integer> codesList=Arrays.asList(codes);
+            Map search=new HashMap();
+            search.put("dtDisabled",DisabledEnum.disabled0.getCode());
+            search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+            List<Map> tocketList=this.commonObjectsBySearchCondition("ddw_ticket",search);
+            if(voData==null){
+                return new ResponseApiVO(-2,"礼物不存在",null);
+            }
+            final Map<Integer,Map> buyInTicketMap=new HashMap();
+            for(Map vd:tocketList){
+                buyInTicketMap.put((Integer) vd.get("id"),vd);
+            }
+            insertList=new ArrayList();
+            Map orderTicket=null;
+            Map ticketMap=null;
+            Integer sumPrice=0;
+            Integer price=0;
+            for(Integer id:codesList){
+                orderTicket=new HashMap();
+                ticketMap=buyInTicketMap.get(id);
+                price= ticketMap.get("dtActPrice")==null?(Integer)ticketMap.get("dtPrice"):(Integer)ticketMap.get("dtActPrice");
+                sumPrice=sumPrice+price;
+                orderTicket.put("ticketId",id);
+                orderTicket.put("storeId",TokenUtil.getStoreId(token));
+                orderTicket.put("ticketName",ticketMap.get("dtName"));
+                orderTicket.put("ticketPrice",price);
+                insertList.add(orderTicket);
+            }
+            orderPO.setDoCost(sumPrice);
+
+
         }
 
         ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
@@ -287,14 +346,26 @@ public class PayCenterService extends CommonService {
                 insertM.put("orderId",insertResponseVO.getData());
                 insertM.put("createTime",new Date());
                 insertM.put("updateTime",new Date());
-                insertM.put("giftId",gift.getId());
-                insertM.put("giftName",gift.getDgName());
+                insertM.put("giftId",voData.get("id"));
+                insertM.put("giftName",voData.get("dgName").toString());
                 insertM.put("giftPrice",orderPO.getDoCost());
                 insertM.put("goddessUserId",this.liveRadioService.getLiveRadioByGroupId(TokenUtil.getGroupId(token)).getUserid());
 
                 resVo=this.commonInsertMap("ddw_order_gift",insertM);
                 if(resVo.getReCode()!=1){
                     throw new GenException("礼物支付失败");
+
+                }
+            }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
+                for(Map im:insertList){
+                    im.put("orderId",insertResponseVO.getData());
+                    im.put("orderNo",orderNo);
+                    im.put("createTime",new Date());
+                    im.put("updateTime",new Date());
+                    resVo=this.commonInsertMap("ddw_order_ticket",im);
+                    if(resVo.getReCode()!=1){
+                        throw new GenException("门票支付失败");
+                    }
 
                 }
             }

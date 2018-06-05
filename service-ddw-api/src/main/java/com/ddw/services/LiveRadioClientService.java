@@ -100,7 +100,7 @@ public class LiveRadioClientService  extends CommonService{
         condition.put("liveStatus",LiveStatusEnum.liveStatus1.getCode());
         condition.put("endDate,>=",new Date());
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id code,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label",page.getStartRow(),page.getEndRow(),condition,cb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label",page.getStartRow(),page.getEndRow(),condition,cb);
         List lists=this.getCommonMapper().selectObjects(csb);
         LiveRadioListVO vo=null;
         List newList=new ArrayList();
