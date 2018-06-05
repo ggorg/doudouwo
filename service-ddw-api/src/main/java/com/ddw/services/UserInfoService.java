@@ -139,7 +139,7 @@ public class UserInfoService extends CommonService {
                         userInfoVO.setGoddessFlag(3);
                     }
                 }else {
-                    userInfoVO.setRealnameFlag((Integer) CacheUtil.get("review","goddess"+userInfoVO.getId()));
+                    userInfoVO.setGoddessFlag((Integer) CacheUtil.get("review","goddess"+userInfoVO.getId()));
                 }
             }
             //代练状态
@@ -156,8 +156,25 @@ public class UserInfoService extends CommonService {
                         userInfoVO.setPracticeFlag(3);
                     }
                 }else {
-                    userInfoVO.setRealnameFlag((Integer) CacheUtil.get("review","practice"+userInfoVO.getId()));
+                    userInfoVO.setPracticeFlag((Integer) CacheUtil.get("review","practice"+userInfoVO.getId()));
                 }
+            }
+            //直播状态
+            //判断审核缓存是否存在
+            if(CacheUtil.get("review","liveRadio"+userInfoVO.getId()) == null){
+                Map condition1=new HashMap();
+                condition1.put("drProposer",userInfoVO.getId());
+                condition1.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
+                condition1.put("drReviewStatus",ReviewStatusEnum.ReviewStatus2.getCode());
+                List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review",condition1));
+                if(list1.size()>0){
+                    CacheUtil.put("review","liveRadio"+userInfoVO.getId(),3);
+                    userInfoVO.setLiveRadioFlag(3);
+                }else{
+                    userInfoVO.setLiveRadioFlag(0);
+                }
+            }else {
+                userInfoVO.setLiveRadioFlag((Integer) CacheUtil.get("review","liveRadio"+userInfoVO.getId()));
             }
             if(userInfoVO.getIdcard() != null){
                 userInfoVO.setRealnameFlag(1);

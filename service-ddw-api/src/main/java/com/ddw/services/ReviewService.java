@@ -1,28 +1,19 @@
 package com.ddw.services;
 
-import com.ddw.beans.*;
+import com.ddw.beans.LiveRadioPO;
+import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.ReviewPO;
 import com.ddw.enums.*;
 import com.ddw.util.BusinessCodeUtil;
-import com.ddw.util.IMApiUtil;
-import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
-import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
-import com.gen.common.util.Page;
-import com.gen.common.vo.ResponseVO;
-import com.tls.sigcheck.tls_sigcheck;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,6 +60,8 @@ public class ReviewService extends CommonService {
         }
         boolean hasReview=this.hasLiveRadioReviewFromGoddess(userid,storeId);
         if(hasReview){
+            //直播审核中
+            CacheUtil.put("review","liveRadio"+userid,2);
             return new ResponseApiVO(-2003,"正在审核中，请耐心等待",null);
 
         }
