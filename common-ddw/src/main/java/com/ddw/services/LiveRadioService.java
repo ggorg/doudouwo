@@ -18,9 +18,7 @@ import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
-import com.tls.sigcheck.tls_sigcheck;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -127,6 +125,8 @@ public class LiveRadioService extends CommonService{
         if(!ReviewStatusEnum.ReviewStatus1.getCode().equals(reviewPO.getDrReviewStatus())){
             return new ResponseVO(-2,"没有审批通过",null);
         }
+        //直播审核中
+        CacheUtil.put("review","liveRadio"+reviewPO.getDrProposer(),1);
         String streamIdExt=storeId+"_"+reviewPO.getDrProposer()+"_"+ DateFormatUtils.format(date,"yyMMddHHmmss");
         //创建推流拉流地址
         LiveRadioUrlBean liveRadioUrlBean= LiveRadioApiUtil.createLiveUrl(streamIdExt,endDate);
