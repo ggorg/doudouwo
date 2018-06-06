@@ -132,6 +132,10 @@ public class CallBackController {
             Map<String,String> map=Tools.xmlCastMap(xmlStr);
             if(!map.containsKey("out_trade_no"))return new WeiXinPayCallBackVO("FAIL","ok");
             orderNo=map.get("out_trade_no");
+            String paystatus=(String)CacheUtil.get("pay","order-"+orderNo);
+            if(StringUtils.isNotBlank(paystatus) && "success".equals(paystatus)){
+                return new WeiXinPayCallBackVO("SUCCESS","ok");
+            }
             if(map!=null && "SUCCESS".equals(map.get("return_code"))&& "SUCCESS".equals(map.get("result_code")) ){
                if(StringUtils.isBlank(paySignClose) && !SignUtil.wxPaySign(map)){
                     logger.info("微信支付回调验签不成功");
@@ -146,7 +150,7 @@ public class CallBackController {
                 if(data!=null){
                     ResponseVO res=orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo);
                     logger.info("weiXinPayExecute->weiXinPayExecute->更新支付状态->"+res);
-                    if(res.getReCode()==1){
+                    if(res.getReCode()==1 || res.getReCode().equals(1)){
                         return new WeiXinPayCallBackVO("SUCCESS","ok");
 
                     }
@@ -230,6 +234,10 @@ public class CallBackController {
             logger.info("aliPayExecute->request："+dto);
             if(!dto.containsKey("out_trade_no") || StringUtils.isBlank(dto.get("out_trade_no")))return "fail";
             orderNo=dto.get("out_trade_no");
+            String paystatus=(String)CacheUtil.get("pay","order-"+orderNo);
+            if(StringUtils.isNotBlank(paystatus) && "success".equals(paystatus)){
+                return "success";
+            }
             if(dto!=null && ("TRADE_FINISHED".equals(dto.get("trade_status")) || "TRADE_SUCCESS".equals(dto.get("trade_status")))){
                 if(StringUtils.isBlank(paySignClose) && !SignUtil.aliPaySign(dto)){
                     logger.info("支付宝回调验签不成功");

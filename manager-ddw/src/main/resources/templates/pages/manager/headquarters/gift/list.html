@@ -94,7 +94,7 @@
                             <div class="layui-btn-group">
                             <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
 
-                                <button  th:class="'layui-btn layui-btn-sm '+${obj['dgDisabled']==2?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dgDisabled']==1?0:1}+',\''+${obj['dgDisabled']==1?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['dgDisabled']==1?'发 布':'撤回发布'}"></button>
+                                <button  th:class="'layui-btn layui-btn-sm '+${obj['dgDisabled']==1 or obj['dgDisabled']==null?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dgDisabled']==1 or obj['dgDisabled']==null?0:1}+',\''+${obj['dgDisabled']==1 or obj['dgDisabled']==null?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['dgDisabled']==1 or obj['dgDisabled']==null?'发 布':'撤回发布'}"></button>
                             </div>
                         </td>
                     </tr>

@@ -86,22 +86,30 @@ public class PayCenterService extends BaseOrderService {
 
             }else{
                Integer payType=(Integer) voMap.get("doPayType");
+               boolean flag=false;
                if(PayTypeEnum.PayType1.getCode().equals(payType)){
                    logger.info("请求微信支付-》查看订单情况->"+dto);
                    RequestWeiXinOrderVO res= PayApiUtil.weiXinOrderQuery(dto.getOrderNo());
                    logger.info("微信支付响应-》查看订单情况->"+res);
-                   if(res!=null && "SUCCESS".equals(res.getReturn_code()) && "SUCCESS".equals(res.getResult_code())){
-                       Map param=new HashMap();
-                       param.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
-                       ResponseVO orderRes=this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOrderNo());
-                        if(orderRes.getReCode()!=1){
-                            logger.info("更新订单表-》失败->"+orderRes);
-                        }else{
-                            logger.info("更新订单表-》成功->"+orderRes);
+                   flag=res!=null && "SUCCESS".equals(res.getReturn_code()) && "SUCCESS".equals(res.getResult_code());
 
-                        }
-                       return new ResponseApiVO(1,"支付成功",null);
+               }else if(PayTypeEnum.PayType2.getCode().equals(payType)){
+                   logger.info("请求阿里支付-》查看订单情况->"+dto);
+                   ResponseVO res= PayApiUtil.aliPayOrderQuery(dto.getOrderNo());
+                   logger.info("阿里支付响应-》查看订单情况->"+res);
+                   flag=res!=null && (res.getReCode()==1 || res.getReCode().equals(1));
+               }
+               if(flag){
+                   Map param=new HashMap();
+                   param.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
+                   ResponseVO orderRes=this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOrderNo());
+                   if(orderRes.getReCode()!=1){
+                       logger.info("更新订单表-》失败->"+orderRes);
+                   }else{
+                       logger.info("更新订单表-》成功->"+orderRes);
+
                    }
+                   return new ResponseApiVO(1,"支付成功",null);
                }
 
             }

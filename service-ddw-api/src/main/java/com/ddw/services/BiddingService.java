@@ -233,7 +233,7 @@ public class BiddingService extends CommonService {
 
         }
         String useridStr=groupId.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2");
-        GoddessPO gpo=this.goddessService.getAppointment(storeId,Integer.parseInt(useridStr));
+        GoddessPO gpo=this.goddessService.getAppointment(Integer.parseInt(useridStr),storeId);
         if(GoddessAppointmentEnum.status0.getCode().equals(gpo.getAppointment())){
             return new ResponseApiVO(-3,"抱歉约玩已被关闭，没法竞价",null);
 
@@ -413,5 +413,8 @@ public class BiddingService extends CommonService {
         BigDecimal point=v.subtract(BigDecimal.valueOf(part)).multiply(BigDecimal.valueOf(60));
         System.out.println(part+"分"+point.intValue()+"秒");
         System.out.println(new ArrayList().remove("125"));
+        String useridStr="1_41_180606213932".replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2");
+        System.out.println(useridStr);
+
     }
 }

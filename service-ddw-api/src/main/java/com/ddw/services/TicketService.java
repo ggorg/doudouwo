@@ -5,6 +5,7 @@ import com.ddw.beans.ListVO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.TicketVO;
 import com.ddw.enums.TicketTypeEnum;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -27,19 +28,11 @@ public class TicketService extends CommonService{
         if(cacheList!=null){
             return new ResponseApiVO(1,"成功",new ListVO(cacheList));
         }
-        List list=this.commonList("ddw_ticket","updateTime desc",null,null,searchMap);
+        CommonSearchBean csb=new CommonSearchBean("ddw_ticket","updateTime desc","t1.id code,t1.dtName name,t1.dtPrice price,t1.dtActPrice actPrice,t1.dtDesc 'desc',t1.dtType type",null,null,searchMap);
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && !list.isEmpty()){
-            List newList=new ArrayList();
-            TicketVO vo=null;
-            for(Object o:list){
-                vo=new TicketVO();
-                PropertyUtils.copyProperties(vo,o);
-                vo.setTypeName(TicketTypeEnum.getName(vo.getDtType()));
-                newList.add(vo);
-            }
-            CacheUtil.put("publicCache","allGift",newList);
-            return new ResponseApiVO(1,"成功",new ListVO(newList));
-
+            list.forEach(a->a.put("typeName",TicketTypeEnum.getName((Integer) a.get("type"))));
+            return new ResponseApiVO(1,"成功",new ListVO(list));
         }
         return new ResponseApiVO(-2,"失败",new ListVO(new ArrayList()));
 

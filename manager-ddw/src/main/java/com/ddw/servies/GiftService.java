@@ -130,6 +130,7 @@ public class GiftService extends CommonService {
 
         }else{
             CacheUtil.delete("publicCache","allGift");
+            //giftPO.setDgDisabled(DisabledEnum.disabled0);
             giftPO.setCreateTime(new Date());
             return this.commonInsert("ddw_gift",giftPO);
         }
