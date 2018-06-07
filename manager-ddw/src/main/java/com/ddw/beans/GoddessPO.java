@@ -5,10 +5,11 @@ import java.util.Date;
 /**
  * Created by Jacky on 2018/5/10.
  */
-public class GoddessPO{
+public class GoddessPO {
     private int id;
     private int userId;
     private int storeId;
+    private int appointment;
     private String tableNo;
     private int bidPrice;
     private int earnest;
@@ -37,6 +38,14 @@ public class GoddessPO{
 
     public void setStoreId(int storeId) {
         this.storeId = storeId;
+    }
+
+    public int getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(int appointment) {
+        this.appointment = appointment;
     }
 
     public String getTableNo() {

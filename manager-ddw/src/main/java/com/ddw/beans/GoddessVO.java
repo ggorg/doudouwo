@@ -5,14 +5,16 @@ import java.util.Date;
 /**
  * Created by Jacky on 2018/5/10.
  */
-public class GoddessPO{
+public class GoddessVO {
     private int id;
     private int userId;
+    private String userName;
+    private String nickName;
     private int storeId;
+    private int appointment;
     private String tableNo;
     private int bidPrice;
     private int earnest;
-    private Date createTime;
     private Date updateTime;
 
     public int getId() {
@@ -31,12 +33,36 @@ public class GoddessPO{
         this.userId = userId;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
     public int getStoreId() {
         return storeId;
     }
 
     public void setStoreId(int storeId) {
         this.storeId = storeId;
+    }
+
+    public int getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(int appointment) {
+        this.appointment = appointment;
     }
 
     public String getTableNo() {
@@ -61,14 +87,6 @@ public class GoddessPO{
 
     public void setEarnest(int earnest) {
         this.earnest = earnest;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public Date getUpdateTime() {
