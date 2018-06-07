@@ -68,8 +68,6 @@ public class UserController {
                     if (storeid == null){
                         storeid = 1;
                     }
-                    boolean radioflag = reviewService.hasLiveRadioReviewFromGoddess(userVO.getId(),storeid);
-                    userVO.setLiveRadioFlag(radioflag == true?1:0);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
                     return new ResponseApiVO(2, "账号已存在", userVO);
