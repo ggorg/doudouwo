@@ -64,10 +64,6 @@ public class UserController {
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
-                    Integer storeid =  TokenUtil.getStoreId(token);
-                    if (storeid == null){
-                        storeid = 1;
-                    }
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
                     return new ResponseApiVO(2, "账号已存在", userVO);
@@ -98,9 +94,6 @@ public class UserController {
             userVO.setPhotograph(photographList);
             userVO.setToken(token);
             userVO.setIdentifier(userVO.getOpenid());
-            int storeid =  TokenUtil.getStoreId(token);
-            boolean radioflag = reviewService.hasLiveRadioReviewFromGoddess(userVO.getId(),storeid);
-            userVO.setLiveRadioFlag(radioflag == true?1:0);
             userVO.setUserSign(ts.createSign(userVO.getOpenid()));
             return new ResponseApiVO(1,"成功",userVO);
         }catch (Exception e){
