@@ -18,8 +18,8 @@ public class BiddingPayVO implements Serializable {
     @ApiModelProperty(name="needPayPrice",value="需要支付的金额",example="")
     private String needPayPrice;
 
-    @ApiModelProperty(name="biddingId",value="某轮竞价的标识号",example="")
-    private Integer biddingId;
+    @ApiModelProperty(name="code",value="某轮竞价的编号",example="")
+    private Integer code;
 
     @ApiModelProperty(name="bidPrice",value="某轮竞价的金额",example="")
     private String  bidPrice;
@@ -35,16 +35,7 @@ public class BiddingPayVO implements Serializable {
         this.time = time;
     }
 
-    @Override
-    public String toString() {
-        return "BiddingPayVO{" +
-                "msg='" + msg + '\'' +
-                ", openid='" + openid + '\'' +
-                ", needPayPrice=" + needPayPrice +
-                ", biddingId=" + biddingId +
-                ", bidPrice=" + bidPrice +
-                '}';
-    }
+
 
     public String getMsg() {
         return msg;
@@ -70,13 +61,7 @@ public class BiddingPayVO implements Serializable {
         this.needPayPrice = needPayPrice;
     }
 
-    public Integer getBiddingId() {
-        return biddingId;
-    }
 
-    public void setBiddingId(Integer biddingId) {
-        this.biddingId = biddingId;
-    }
 
     public String getBidPrice() {
         return bidPrice;

@@ -91,13 +91,13 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                     if(method.hasMethodAnnotation(Idemp.class)){
                         String idempStr=TokenUtil.getIdemp(base64Token);
                         if(StringUtils.isBlank(idempStr)){
-                            toWriteResponseVo(response,-2,"无效的操作");
+                            toWriteResponseVo(response,-20,"无效的操作");
                             return false;
                         }else if("do".equals(idempStr)){
                             TokenUtil.putIdempotent(base64Token,"doing");
                             return true;
                         }else if("doing".equals(idempStr)){
-                            toWriteResponseVo(response,-2,"处理中，请耐性等待");
+                            toWriteResponseVo(response,-21,"处理中，请耐性等待");
                             return false;
                         }
                     }

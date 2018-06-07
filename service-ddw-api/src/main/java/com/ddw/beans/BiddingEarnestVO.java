@@ -12,8 +12,8 @@ public class BiddingEarnestVO {
     @ApiModelProperty(name="price",value="定金金额，单位：分",example="")
     private Integer price;
 
-    @ApiModelProperty(name="bidCode",value="竞价标识号",example="xxxxxxxx")
-    private String bidCode;
+    @ApiModelProperty(name="code",value="竞价编号，支付时候需要",example="xxxxxxxx")
+    private Integer code;
 
     public Integer getPrice() {
         return price;
@@ -23,11 +23,12 @@ public class BiddingEarnestVO {
         this.price = price;
     }
 
-    public String getBidCode() {
-        return bidCode;
+    public Integer getCode() {
+        return code;
     }
 
-    public void setBidCode(String bidCode) {
-        this.bidCode = bidCode;
+    public void setCode(Integer code) {
+        this.code = code;
     }
+
 }

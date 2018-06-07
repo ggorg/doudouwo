@@ -10,6 +10,7 @@ import com.gen.common.util.CacheUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,20 +47,32 @@ public class BaseOrderService extends CommonService {
                 ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version",new String[]{"money"});
                 if(wres.getReCode()!=1){
                     CacheUtil.put("pay","order-"+orderNo,"fail");
-                    throw new GenException("更新支付状态失败");
+                    throw new GenException("更新钱包充值状态失败");
                 }
-            }else if(OrderTypeEnum.OrderType5.getCode().equals(doType) || OrderTypeEnum.OrderType4.getCode().equals(doType)){
-                Map csearch=new HashMap();
-                csearch.put("orderNo",orderNo);
-                List list=this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_goddess_bidding",null,new CommonChildBean("ddw_order_bidding_pay","biddingId","id",csearch)));
-                if(list==null || list.isEmpty()){
-                    CacheUtil.put("pay","order-"+orderNo,"fail");
+            }else if(OrderTypeEnum.OrderType4.getCode().equals(doType)){
+                String ub =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
+                CacheUtil.delete("pay","bidding-earnest-pay-"+ub);
+                CacheUtil.delete("pay","pre-pay-"+orderNo);
 
-                    throw new GenException("更新支付状态失败");
+            }else if(OrderTypeEnum.OrderType5.getCode().equals(doType)){
+
+                List<String> ubs =(List) CacheUtil.get("pay","pre-pay-"+orderNo);
+                if(ubs==null){
+                    throw new GenException("更新竞价金额支付状态失败");
                 }
-                Map bMap=(Map)list.get(0);
-                String groupid=(String)bMap.get("groupId");
-                CacheUtil.delete("pay","bidding-pay-"+groupid);
+                Map payMap=null;
+                Map updateMap=null;
+                for(String ub:ubs){
+                    payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
+                    if(payMap==null){
+                        throw new GenException("更新竞价金额支付状态失败");
+                    }
+                    updateMap=new HashMap();
+                    updateMap.put("endTime",DateUtils.addMinutes(new Date(),(Integer) payMap.get("time")));
+                    this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",payMap.get("code"));
+                }
+                ubs.forEach(a->CacheUtil.delete("pay","bidding-pay-"+a));
+                CacheUtil.delete("pay","pre-pay-"+orderNo);
 
             }else if(OrderTypeEnum.OrderType1.getCode().equals(doType)){
                 List<Map> list=getGoodsPruduct(orderNo);

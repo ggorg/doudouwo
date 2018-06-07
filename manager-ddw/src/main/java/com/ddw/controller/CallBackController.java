@@ -145,8 +145,8 @@ public class CallBackController {
                     return new WeiXinPayCallBackVO("FAIL","ok");
 
                 }
-                Object data =(Object) CacheUtil.get("pay","weixin-pay-"+orderNo);
-               logger.info("weiXinPayExecute->weixin-pay-"+orderNo+"->"+data);
+                Object data =(Object) CacheUtil.get("pay","pre-pay-"+orderNo);
+               logger.info("weiXinPayExecute->pre-pay-"+orderNo+"->"+data);
                 if(data!=null){
                     ResponseVO res=orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo);
                     logger.info("weiXinPayExecute->weiXinPayExecute->更新支付状态->"+res);
@@ -244,8 +244,8 @@ public class CallBackController {
                     CacheUtil.put("pay","order-"+orderNo,"fail");
                     return "fail";
                 }
-                Object data =(Object) CacheUtil.get("pay","alipay-pay-"+orderNo);
-                logger.info("weiXinPayExecute->alipay-pay-"+dto.get("out_trade_no")+"->"+data);
+                Object data =(Object) CacheUtil.get("pay","pre-pay-"+orderNo);
+                logger.info("weiXinPayExecute->pre-pay-"+dto.get("out_trade_no")+"->"+data);
 
                 if(data!=null){
                     ResponseVO rs=this.orderService.updateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo);
