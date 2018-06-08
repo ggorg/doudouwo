@@ -4,6 +4,7 @@ import com.ddw.beans.*;
 import com.ddw.dao.PhotographMapper;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewStatusEnum;
+import com.ddw.token.TokenUtil;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
@@ -41,6 +42,8 @@ public class UserInfoService extends CommonService {
     private MainGlobals mainGlobals;
     @Autowired
     private PhotographMapper photographMapper;
+    @Autowired
+    private ReviewService reviewService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(UserInfoDTO userInfoDTO)throws Exception{
@@ -48,6 +51,7 @@ public class UserInfoService extends CommonService {
         PropertyUtils.copyProperties(userInfoPO,userInfoDTO);
         userInfoPO.setId(null);
         userInfoPO.setGradeId(1);
+        userInfoPO.setUserName(userInfoDTO.getNickName());
         userInfoPO.setGoddessGradeId(1);
         userInfoPO.setPracticeGradeId(1);
         userInfoPO.setGoddessFlag(0);
@@ -167,7 +171,21 @@ public class UserInfoService extends CommonService {
                     userInfoVO.setPracticeFlag((Integer) CacheUtil.get("review","practice"+userInfoVO.getId()));
                 }
             }
-            //直播状态
+            return userInfoVO;
+        }
+        return null;
+    }
+
+    //直播状态
+    public void setLiveRadioFlag(UserInfoVO userInfoVO,String token)throws Exception{
+        ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(userInfoVO.getId(), TokenUtil.getStoreId(token));
+        if(rav.getReCode() == 2 || rav.getReCode() == -2002){
+            userInfoVO.setLiveRadioFlag(1);
+        }else if(rav.getReCode() == -2003){
+            userInfoVO.setLiveRadioFlag(2);
+        }else if(rav.getReCode() == 1){
+            userInfoVO.setLiveRadioFlag(0);
+        }else{
             //判断审核缓存是否存在
             if(CacheUtil.get("review","liveRadio"+userInfoVO.getId()) == null){
                 Map condition1=new HashMap();
@@ -178,15 +196,11 @@ public class UserInfoService extends CommonService {
                 if(list1.size()>0){
                     CacheUtil.put("review","liveRadio"+userInfoVO.getId(),3);
                     userInfoVO.setLiveRadioFlag(3);
-                }else{
-                    userInfoVO.setLiveRadioFlag(0);
                 }
             }else {
                 userInfoVO.setLiveRadioFlag((Integer) CacheUtil.get("review","liveRadio"+userInfoVO.getId()));
             }
-            return userInfoVO;
         }
-        return null;
     }
 
     /**

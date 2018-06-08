@@ -4,7 +4,6 @@ package com.ddw.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.ReviewRealNameService;
-import com.ddw.services.ReviewService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
@@ -33,8 +32,6 @@ public class UserController {
     private UserInfoService userInfoService;
     @Autowired
     private ReviewRealNameService reviewRealNameService;
-    @Autowired
-    private ReviewService reviewService;
 
     @Autowired
     private tls_sigcheck ts;
@@ -56,6 +53,7 @@ public class UserController {
                     userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
+                    userInfoService.setLiveRadioFlag(userVO,token);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
                     return new ResponseApiVO(1, "注册成功", userVO);
@@ -64,6 +62,7 @@ public class UserController {
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
+                    userInfoService.setLiveRadioFlag(userVO,token);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
                     return new ResponseApiVO(2, "账号已存在", userVO);
@@ -90,6 +89,7 @@ public class UserController {
             if (userVO == null) {
                 return new ResponseApiVO(-2,"账号不存在",null);
             }
+            userInfoService.setLiveRadioFlag(userVO,token);
             List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
             userVO.setPhotograph(photographList);
             userVO.setToken(token);
