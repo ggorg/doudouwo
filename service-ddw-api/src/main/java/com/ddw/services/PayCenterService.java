@@ -143,16 +143,12 @@ public class PayCenterService extends BaseOrderService {
             return new ResponseApiVO(-2,"请选择有效的订单类型",null);
 
         }
-        if(OrderTypeEnum.OrderType5.getCode().equals(orderType) || OrderTypeEnum.OrderType4.getCode().equals(orderType)){
-            if(cost==null || cost<0){
-                return new ResponseApiVO(-2,"金额参数异常，不能小于或者等于0",null);
-            }
-        }else{
-            if(codes==null){
-                return new ResponseApiVO(-2,"业务编号不能是空",null);
 
-            }
+        if(codes==null){
+            return new ResponseApiVO(-2,"业务编号不能是空",null);
+
         }
+        Integer userId=TokenUtil.getUserId(token);
 
         OrderPO orderPO=new OrderPO();
         orderPO.setCreateTime(new Date());
@@ -160,7 +156,7 @@ public class PayCenterService extends BaseOrderService {
         orderPO.setDoEndTime(DateUtils.addHours(new Date(),1));
         orderPO.setDoOrderDate(DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
         orderPO.setDoPayStatus(PayStatusEnum.PayStatus0.getCode());
-        orderPO.setDoCustomerUserId(TokenUtil.getUserId(token));
+        orderPO.setDoCustomerUserId(userId);
 
         orderPO.setDoCustomerStoreId(-1);
         orderPO.setDoPayType(payType);
@@ -172,10 +168,30 @@ public class PayCenterService extends BaseOrderService {
         //GiftPO gift=null;
         Map voData=null;
         List<Map> insertList=null;
-        //定金与竞价金额
-        if(OrderTypeEnum.OrderType5.getCode().equals(orderType) || OrderTypeEnum.OrderType4.getCode().equals(orderType)){
+        //定金
+        if(OrderTypeEnum.OrderType4.getCode().equals(orderType)){
             orderPO.setDoSellerId(-1);
-            orderPO.setDoCost(cost);
+            Integer earnest=(Integer)CacheUtil.get("pay","bidding-earnest-pay-"+userId+"-"+codes[0]);
+            if(earnest==null){
+                return new ResponseApiVO(-2,"定金支付失败",null);
+            }
+            orderPO.setDoCost(earnest);
+       // 竞价金额
+        }else if(OrderTypeEnum.OrderType5.getCode().equals(orderType)){
+            orderPO.setDoSellerId(-1);
+            Integer bidCost=0;
+            Map bidMap=null;
+            for(Integer code:codes){
+                bidMap=(Map)CacheUtil.get("pay","bidding-pay-"+userId+"-"+codes[0]);
+                if(bidMap==null){
+                    return new ResponseApiVO(-2,"竞价金额支付失败",null);
+
+                }else{
+                    bidCost=bidCost+(Integer) bidMap.get("needPayPrice");
+                }
+
+            }
+            orderPO.setDoCost(bidCost);
         //计算充值
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
             orderPO.setDoSellerId(-1);
@@ -283,52 +299,67 @@ public class PayCenterService extends BaseOrderService {
         }
 
         ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
+
         if(insertResponseVO.getReCode()==1){
-            Map m=new HashMap();
+            Object orderCacheData=orderType;
             String orderNo= OrderUtil.createOrderNo(orderPO.getDoOrderDate(),orderType,payType,insertResponseVO.getData());
             ResponseVO<Integer> resVo=null;
             if(orderType.equals(OrderTypeEnum.OrderType3.getCode())){
+                Map m=new HashMap();
                 m.put("orderId",insertResponseVO.getData());
                 m.put("orderNo",orderNo);
                 m.put("createTime",new Date());
                 m.put("updateTime",new Date());
-                m.put("creater",TokenUtil.getUserId(token));
+                m.put("creater",userId);
                 m.put("dorCost",orderPO.getDoCost());
                 m.put("rechargeId",codes[0]);
                 resVo=this.commonInsertMap("ddw_order_recharge",m);
-            }if(orderType.equals(OrderTypeEnum.OrderType4.getCode()) ||orderType.equals(OrderTypeEnum.OrderType5.getCode())){
+            }else if(orderType.equals(OrderTypeEnum.OrderType4.getCode()) ){
+                String ub=userId+"-"+codes[0];
+                Integer earnest=(Integer)CacheUtil.get("pay","bidding-earnest-pay-"+ub);
+                if(earnest==null){
+                    throw new GenException("定金支付超时");
 
-                //            CacheUtil.put("appShoppingCart","bidding-pay-"+groupId,payMap);
+                }
+                Map m=new HashMap();
                 m.put("orderId",insertResponseVO.getData());
                 m.put("orderNo",orderNo);
                 m.put("createTime",new Date());
                 m.put("updateTime",new Date());
-                m.put("creater",TokenUtil.getUserId(token));
-                m.put("dorCost",orderPO.getDoCost());
-
-                Map bidMap=null;
-                if(orderType.equals(OrderTypeEnum.OrderType5.getCode())){
-                    bidMap=this.biddingService.getCurrentBidMapNoBidEndTime(TokenUtil.getGroupId(token));
-                    if(bidMap==null){
-                        throw new GenException("没找到当前竞价的记录");
-                    }
-                    Map<Integer,BiddingPayVO> payMap=(Map) CacheUtil.get("pay","bidding-pay-"+TokenUtil.getGroupId(token));
-                    if(payMap==null){
-                        throw new GenException("竞价支付超时");
-                    }
-                    BiddingPayVO vo=payMap.get((Integer) bidMap.get("luckyDogUserId"));
-                    if(!orderPO.getDoCost().equals(Integer.parseInt(vo.getNeedPayPrice()))){
-                        throw new GenException("支付的金额与竞价的金额不一致");
-                    }
-                }else{
-                    bidMap=this.biddingService.getCurrentBidMap(TokenUtil.getGroupId(token));
-                    if(bidMap==null){
-                        throw new GenException("支付竞价定金失败，当前竞价已经结束");
-                    }
-                }
-
-                m.put("biddingId",bidMap.get("id"));
+                m.put("creater",userId);
+                m.put("dorCost",earnest);
+                m.put("biddingId",codes[0]);
                 resVo=this.commonInsertMap("ddw_order_bidding_pay",m);
+                orderCacheData=ub;
+            }else if(orderType.equals(OrderTypeEnum.OrderType5.getCode())){
+                Map payMap=null;
+                Map m=null;
+                List list=new ArrayList();
+                String ub=null;
+                for(Integer code:codes){
+                    ub=userId+"-"+code;
+                    payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
+                    if(payMap==null){
+                        throw new GenException("竞价金额支付超时");
+                    }
+                    m=new HashMap();
+                    m.put("orderId",insertResponseVO.getData());
+                    m.put("orderNo",orderNo);
+                    m.put("createTime",new Date());
+                    m.put("updateTime",new Date());
+                    m.put("creater",userId);
+                    m.put("dorCost",payMap.get("needPayPrice"));
+                    m.put("biddingId",code);
+                    resVo=this.commonInsertMap("ddw_order_bidding_pay",m);
+                    if(resVo.getReCode()!=1){
+                        throw new GenException("竞价金额支付失败");
+
+                    }
+                    list.add(ub);
+
+                }
+                orderCacheData=list;
+
             }else if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
                 if(buyInProMap==null){
                     throw new GenException("商品支付失败");
@@ -406,12 +437,12 @@ public class PayCenterService extends BaseOrderService {
                         PayCenterWeixinPayVO wxVo=new PayCenterWeixinPayVO();
                         PropertyUtils.copyProperties(wxVo,treeMap);
                         wxVo.setOrderNo(orderNo);
-                        CacheUtil.put("pay","weixin-pay-"+orderNo,orderType);
+                        CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
                         return new ResponseApiVO(1,"成功",wxVo);
                     }else{
                         throw new GenException("调用微信支付接口失败");
                     }
-                } if(PayTypeEnum.PayType2.getCode().equals(payType)){
+                }else if(PayTypeEnum.PayType2.getCode().equals(payType)){
                     String dcost=(double)orderPO.getDoCost()/100+"";
                     PayCenterAliPayVO alipayVo=new PayCenterAliPayVO();
                     RequestAliOrderVO rvo=PayApiUtil.requestAliPayOrder(OrderTypeEnum.getName(orderType),orderNo,dcost,Tools.getIpAddr());
@@ -420,10 +451,13 @@ public class PayCenterService extends BaseOrderService {
 
                     }
                     PropertyUtils.copyProperties(alipayVo,rvo);
-                    CacheUtil.put("pay","alipay-pay-"+orderNo,orderType);
+                    CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
                 }
+            }else{
+                throw new GenException("支付失败");
+
             }
         }
         return new ResponseApiVO(-2,"支付失败",null);

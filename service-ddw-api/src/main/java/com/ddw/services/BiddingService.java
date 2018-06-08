@@ -81,7 +81,7 @@ public class BiddingService extends CommonService {
         Map map=bidList.get(0);
         //map.get("id");
         Map updateMap=new HashMap();
-        updateMap.put("endTime",DateUtils.addMinutes(new Date(),bv.getTime()));
+       // updateMap.put("endTime",DateUtils.addMinutes(new Date(),bv.getTime()));
         updateMap.put("luckyDogUserId",bv.getUserId());
         updateMap.put("price",bv.getPrice());
         updateMap.put("updateTime",new Date());
@@ -90,6 +90,7 @@ public class BiddingService extends CommonService {
         m.put("msg","恭喜"+bv.getUserName()+"以"+Double.parseDouble(bv.getPrice())/100+"元竞价成功");
         m.put("openid",bv.getOpenId());
         m.put("bidPrice",bv.getPrice());
+        m.put("time",bv.getTime());
 
         IMApiUtil.sendGroupMsg(groupId,new ResponseVO(2,"竞价成功",m));
         Map searchOrderBidMap=new HashMap();
@@ -99,13 +100,16 @@ public class BiddingService extends CommonService {
         if(orderBidding!=null && orderBidding.containsKey("dorCost")){
            Integer dorCost=(Integer) orderBidding.get("dorCost");
             m.put("needPayPrice",Integer.parseInt(bv.getPrice())-dorCost+"");
-            BiddingPayVO payVO=new BiddingPayVO();
+            m.put("code",map.get("id"));
+
+            /*BiddingPayVO payVO=new BiddingPayVO();
             PropertyUtils.copyProperties(payVO,m);
             payVO.setBiddingId((Integer)map.get("id"));
             Map payMap=new HashMap();
-            payMap.put(bv.getUserId(),payVO);
+            payMap.put(bv.getUserId(),payVO);*/
 
-            CacheUtil.put("pay","bidding-pay-"+groupId,payMap);
+            CacheUtil.put("pay","bidding-pay-"+bv.getUserId()+"-"+map.get("id"),m);
+            CacheUtil.put("pay","bidding-success-"+groupId,bv.getUserId()+"-"+map.get("id"));
             CacheUtil.delete("commonCache","groupId-"+groupId);
            return  new ResponseApiVO(1,"成功",m);
         }
@@ -134,7 +138,14 @@ public class BiddingService extends CommonService {
     }
     public ResponseApiVO chooseBidding(String openId,String token)throws Exception{
        // GoddessPO  gpo=this.goddessService.getAppointment(TokenUtil.getGroupId(token));
+
+
         LiveRadioPO po=this.liveRadioService.getLiveRadio(TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
+        String ub=(String)CacheUtil.get("pay","bidding-success-"+po.getGroupId());
+        if(ub!=null){
+            return new ResponseApiVO(1,"成功",CacheUtil.get("pay","bidding-pay-"+ub));
+
+        }
         List<BiddingVO> list=(List)CacheUtil.get("commonCache","groupId-"+po.getGroupId());
         ResponseApiVO vo=null;
         if(list!=null){
@@ -169,14 +180,15 @@ public class BiddingService extends CommonService {
         }
         String useridStr=groupId.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2");
 
-        GoddessPO gpo=this.goddessService.getAppointment(storeId,Integer.parseInt(useridStr));
+        GoddessPO gpo=this.goddessService.getAppointment(Integer.parseInt(useridStr),storeId);
         if(GoddessAppointmentEnum.status0.getCode().equals(gpo.getAppointment())){
             return new ResponseApiVO(-3,"约玩已关闭",null);
 
         }
-        Map<Integer,BiddingPayVO> payMap=(Map) CacheUtil.get("pay","bidding-pay-"+groupId);
-        if(payMap!=null && payMap.containsKey(TokenUtil.getUserId(token))){
-            return new ResponseApiVO(4,"本轮竞价已经结束，"+payMap.get(TokenUtil.getUserId(token)).getMsg(),null);
+        String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
+        if(userIdBidId!=null ){
+            Map payMap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
+            return new ResponseApiVO(-2,"本轮竞价已经结束，"+payMap.get("msg"),null);
         }
         //查询竞价表是否有记录，若有或者未过期的就表示陪玩中，否则就是空闲
         Map searchMap=new HashMap();
@@ -197,7 +209,15 @@ public class BiddingService extends CommonService {
             return new ResponseApiVO(2,"目前还没人竞价,起投金额为："+(double)bidPrice/100+"元",vo);
         }
         list.remove("handling");
-        return new ResponseApiVO(1,"成功",list.get(list.size()-1));
+        return new ResponseApiVO(1,"成功",new ListVO(list));
+    }
+    public Map getBidMapById(Integer bidId){
+        Map searchMap=new HashMap();
+        //searchMap.put("bidEndTime,>=",new Date());
+        searchMap.put("id",bidId);
+        searchMap.put("bidEndTime,>=",new Date());
+        return this.commonObjectBySearchCondition("ddw_goddess_bidding",searchMap);
+
     }
     public Map getCurrentBidMap(String groupId){
         Map searchMap=new HashMap();
@@ -238,9 +258,10 @@ public class BiddingService extends CommonService {
             return new ResponseApiVO(-3,"抱歉约玩已被关闭，没法竞价",null);
 
         }
-        Map<Integer,BiddingPayVO> payMap=(Map) CacheUtil.get("pay","bidding-pay-"+groupId);
-        if(payMap!=null && payMap.containsKey(TokenUtil.getUserId(token))){
-            return new ResponseApiVO(4,"本轮竞价已经结束，"+payMap.get(TokenUtil.getUserId(token)).getMsg(),null);
+        String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
+        if(userIdBidId!=null ){
+            Map payMap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
+            return new ResponseApiVO(-2,"本轮竞价已经结束，"+payMap.get("msg"),null);
         }
         Map searchMap=new HashMap();
         //searchMap.put("bidEndTime,>=",new Date());
@@ -259,8 +280,6 @@ public class BiddingService extends CommonService {
             }
             bidId=res.getData();
             flag=true;
-            Timer timer=new Timer();
-            timer.schedule(new BiddingTimer(this,groupId),DateUtils.addMinutes(new Date(),this.bidEndTimeMinute));
            // return new ResponseApiVO(-2,"竞价时间已经结束，请",null);
         }else{
             Date currentDate=new Date();
@@ -294,8 +313,6 @@ public class BiddingService extends CommonService {
                 }
                 bidId=res.getData();
                 flag=true;
-                Timer timer=new Timer();
-                timer.schedule(new BiddingTimer(this,groupId),bidEndTime);
             }
 
 
@@ -303,12 +320,16 @@ public class BiddingService extends CommonService {
 
         if(flag){
             if(gpo.getEarnest()==null){
-                throw new GenException("定金为空");
+                throw new GenException("请联系管理员配置定金额度");
             }
-            BiddingEarnestVO be=new BiddingEarnestVO();
-            be.setBidCode(MyEncryptUtil.encry(bidId+""));
-            be.setPrice(gpo.getEarnest());
-            return new ResponseApiVO(-2,"请完成定金支付",be);
+            /*BiddingEarnestVO be=new BiddingEarnestVO();
+            be.setCode(bidId);
+            be.setPrice(gpo.getEarnest());*/
+            Map earnestMap=new HashMap();
+            earnestMap.put("code",bidId);
+            earnestMap.put("price",gpo.getEarnest());
+            CacheUtil.put("pay","bidding-earnest-pay-"+TokenUtil.getUserId(token)+"-"+bidId,gpo.getEarnest());
+            return new ResponseApiVO(4,"请完成定金支付",earnestMap);
         }
 
         if(dto.getPrice()==null ||  dto.getPrice()<=0 ){
@@ -370,22 +391,24 @@ public class BiddingService extends CommonService {
             list.remove("handling");
             cacheService.set("groupId-"+groupId,list);
         }
-        IMApiUtil.sendGroupMsg(groupId,new ResponseVO(1,"成功",vo));
+       // IMApiUtil.sendGroupMsg(groupId,new ResponseVO(1,"成功",vo));
         //liveRadioService.getLiveRadioByIdAndStoreId(TokenUtil.getStoreId(token))
        // this.commonSingleFieldBySingleSearchParam()
           return new ResponseApiVO(1,"成功",null);
     }
     public ResponseApiVO searchWaitPayByGoddess(String groupId){
-        Map<Integer,BiddingPayVO> payMap=(Map) CacheUtil.get("pay","bidding-pay-"+groupId);
-        if(payMap==null){
-            return new ResponseApiVO(2,"没有待付款的竞价金额",null);
-        }else{
-            Set<Integer> keys=payMap.keySet();
-            for(Integer id:keys){
-                return new ResponseApiVO(1,"成功",payMap.get(id));
-            }
+        String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
+        if(userIdBidId==null){
+            return new ResponseApiVO(-2,"没有待付款的用户",null);
+
         }
-        return new ResponseApiVO(-2,"失败",null);
+        Map map=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
+        if(map==null){
+            return new ResponseApiVO(-2,"没有待付款的竞价金额",null);
+        }else{
+            return new ResponseApiVO(1,"成功",map);
+
+        }
     }
     public ResponseApiVO searchWaitPayByUser(String groupId,String token){
         if(StringUtils.isBlank(groupId)){

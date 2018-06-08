@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @ApiModel
 public class WalletRechargeDTO {
-    @ApiModelProperty(name="money",value="金额,单位分,竞价定金和竞价金额必须传金额，其它不用",example="1000")
+    @ApiModelProperty(name="money",value="金额,单位分",example="1000")
     private Integer money;
 
     @ApiModelProperty(name="orderType",value="订单类型,商品：1，充值：3，竞价定金：4，竞价金额：5，礼物：6，门票：7",example="3")
