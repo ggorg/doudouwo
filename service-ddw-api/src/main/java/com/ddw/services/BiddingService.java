@@ -188,7 +188,7 @@ public class BiddingService extends CommonService {
         String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
         if(userIdBidId!=null ){
             Map payMap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
-            return new ResponseApiVO(-2,"本轮竞价已经结束，"+payMap.get("msg"),null);
+            return new ResponseApiVO(6,"本轮竞价已经结束，"+payMap.get("msg"),null);
         }
         //查询竞价表是否有记录，若有或者未过期的就表示陪玩中，否则就是空闲
         Map searchMap=new HashMap();
@@ -209,7 +209,10 @@ public class BiddingService extends CommonService {
             return new ResponseApiVO(2,"目前还没人竞价,起投金额为："+(double)bidPrice/100+"元",vo);
         }
         list.remove("handling");
-        return new ResponseApiVO(1,"成功",new ListVO(list));
+        Map map=new HashMap();
+        map.put("bidEndTime",list.get(0).getBidEndTime());
+        map.put("list",list);
+        return new ResponseApiVO(1,"成功",map);
     }
     public Map getBidMapById(Integer bidId){
         Map searchMap=new HashMap();
@@ -261,7 +264,7 @@ public class BiddingService extends CommonService {
         String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
         if(userIdBidId!=null ){
             Map payMap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
-            return new ResponseApiVO(-2,"本轮竞价已经结束，"+payMap.get("msg"),null);
+            return new ResponseApiVO(6,"本轮竞价已经结束，"+payMap.get("msg"),null);
         }
         Map searchMap=new HashMap();
         //searchMap.put("bidEndTime,>=",new Date());

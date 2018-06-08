@@ -27,10 +27,10 @@ public class AppIndexController {
     @ApiOperation(value = "首页",produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Token
-    public ResponseApiVO<AppIndexVO> toIndex(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)AppIndexDTO args){
+    public ResponseApiVO<AppIndexVO> toIndex(@PathVariable String token){
 
         List array=new ArrayList();
-        return this.appIndexService.toIndex(token,args);
+        return this.appIndexService.toIndex(token);
 
     }
 }

@@ -27,10 +27,10 @@ public class BiddingController {
 
 
     @Token
-    @ApiOperation(value = "获取当前最高价位（普通用户）",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "获取本轮竞价列表（普通用户）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/maxprice/{token}")
     @ResponseBody
-    public ResponseApiVO<BiddingVO> queryMaxPrice(@PathVariable String token){
+    public ResponseApiVO<BiddingDataVO<BiddingVO>> queryBidPrice(@PathVariable String token){
         try {
             return this.biddingService.getCurrentMaxPrice(token);
         }catch (Exception e){

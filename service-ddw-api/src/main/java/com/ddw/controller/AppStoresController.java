@@ -3,6 +3,7 @@ package com.ddw.controller;
 import com.ddw.beans.*;
 import com.ddw.services.AppStoresService;
 import com.ddw.token.Token;
+import com.ddw.token.TokenUtil;
 import io.swagger.annotations.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ddwapp/stores")
@@ -35,6 +37,20 @@ public class AppStoresController {
         }catch (Exception e){
             logger.error("AppStoresController->showNearbyStores",e);
             return new ResponseApiVO<>(-1,"展示门店失败",null);
+        }
+    }
+
+    @Token
+    @PostMapping("/choose/{token}")
+    @ApiOperation(value = "选择门店",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseApiVO chooseStore(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)StoreDTO args){
+        try{
+
+            return this.appStoresService.chooseStore(token,args);
+        }catch (Exception e){
+            logger.error("AppStoresController->chooseStore",e);
+            return new ResponseApiVO<>(-1,"选择门店失败",null);
         }
     }
 

@@ -1,10 +1,8 @@
 package com.ddw.services;
 
 import com.alibaba.druid.sql.PagerUtils;
-import com.ddw.beans.AppStoresShowNearbyDTO;
-import com.ddw.beans.AppStoresShowNearbyVO;
-import com.ddw.beans.ListVO;
-import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.*;
+import com.ddw.token.TokenUtil;
 import com.ddw.util.Distance;
 import com.ddw.util.LanglatComparator;
 import com.gen.common.services.CommonService;
@@ -21,18 +19,36 @@ import java.util.stream.Collectors;
 @Service
 public class AppStoresService extends CommonService {
 
+    public ResponseApiVO chooseStore(String token,StoreDTO dto){
+        Integer id=null;
+        List<Map> obj=getStoreList();
+        for(Map m:obj){
+            id=(Integer) m.get("id");
+            if(id.equals(dto.getStoreId())){
+                TokenUtil.putStoreid(token,dto.getStoreId());
+                //TokenUtil.putStoreLongLat(token,m.get("dsLongitude")+","+m.get("dsLatitude"));
+                return new ResponseApiVO(1,"成功",null);
+            }
+        }
+        return new ResponseApiVO(-2,"失败",null);
+
+    }
+    public List getStoreList(){
+        List<Map> obj=(List)CacheUtil.get("stores","store");
+        if(obj==null){
+            obj= this.commonList("ddw_store","dsSort asc",null,null,null);
+            CacheUtil.put("stores","store",obj);
+        }
+        return obj;
+    }
     public ResponseApiVO showNearby( AppStoresShowNearbyDTO dto)throws Exception{
-        Map search=new HashMap();
+
 
         if(StringUtils.isBlank(dto.getLanglat()) || StringUtils.isBlank(dto.getDsCity())){
            // search.put("dsCity","成都");
             dto.setDsCity("成都");
         }
-        List<Map> obj=(List)CacheUtil.get("stores","store");
-        if(obj==null){
-            obj= this.commonList("ddw_store","dsSort asc",null,null,search);
-            CacheUtil.put("stores","store",obj);
-        }
+        List<Map> obj=getStoreList();
         Page p=new Page(dto.getPageNo(),10);
 
         List filterList=obj.stream().filter(m->((String)m.get("dsCity")).equals(dto.getDsCity())).collect(Collectors.toList());

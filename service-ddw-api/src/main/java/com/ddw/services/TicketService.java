@@ -21,20 +21,30 @@ public class TicketService extends CommonService{
 
 
     public ResponseApiVO getAllTicket()throws Exception{
+
+        List list=getTicketList();
+        if(list!=null){
+            return new ResponseApiVO(1,"成功",new ListVO(list));
+
+        }
+        return new ResponseApiVO(-2,"失败",new ListVO(new ArrayList()));
+    }
+    public List getTicketList(){
         Map searchMap=new HashMap();
         searchMap.put("dtDisabled",0);
         //@Cacheable(value="publicCache",key="'allGift'")
         List cacheList=(List)CacheUtil.get("publicCache","allTicket");
         if(cacheList!=null){
-            return new ResponseApiVO(1,"成功",new ListVO(cacheList));
+            return cacheList;
         }
-        CommonSearchBean csb=new CommonSearchBean("ddw_ticket","updateTime desc","t1.id code,t1.dtName name,t1.dtPrice price,t1.dtActPrice actPrice,t1.dtDesc 'desc',t1.dtType type",null,null,searchMap);
+        CommonSearchBean csb=new CommonSearchBean("ddw_ticket","updateTime desc","t1.id code,t1.dtName name,t1.dtPrice price,t1.dtActPrice actPrice,t1.dtDesc 'desc',t1.dtType type,t1.dtActiveTime activeTime",null,null,searchMap);
         List<Map> list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && !list.isEmpty()){
             list.forEach(a->a.put("typeName",TicketTypeEnum.getName((Integer) a.get("type"))));
-            return new ResponseApiVO(1,"成功",new ListVO(list));
+            CacheUtil.put("publicCache","allTicket",list);
+            return list;
         }
-        return new ResponseApiVO(-2,"失败",new ListVO(new ArrayList()));
+        return null;
 
     }
 }
