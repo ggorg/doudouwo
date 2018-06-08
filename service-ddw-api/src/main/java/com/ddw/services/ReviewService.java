@@ -8,6 +8,7 @@ import com.ddw.enums.*;
 import com.ddw.util.BusinessCodeUtil;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -36,7 +37,26 @@ public class ReviewService extends CommonService {
     public boolean hasLiveRadioReviewFromGoddess(Integer userid,Integer storeId){
         return this.hasReview(userid,storeId,ReviewBusinessTypeEnum.ReviewBusinessType3,ReviewBusinessStatusEnum.liveRadio10,ReviewReviewerTypeEnum.ReviewReviewerType1);
     }
+    public ResponseApiVO getLiveRadioReviewStatus(Integer userid,Integer storeId)throws Exception{
 
+        LiveRadioPO liveRadioPO=liveRadioService.getLiveRadio(userid,storeId);
+        if(liveRadioPO!=null && liveRadioPO.getLiveStatus()==LiveStatusEnum.liveStatus0.getCode()) {
+            return new ResponseApiVO(2,"直播等待中，请前往直播房间",null);
+
+        }
+        if(liveRadioPO!=null && liveRadioPO.getLiveStatus()==LiveStatusEnum.liveStatus1.getCode()){
+            return new ResponseApiVO(-2002,"直播房间已开，请关闭再申请",null);
+        }
+        boolean hasReview=this.hasLiveRadioReviewFromGoddess(userid,storeId);
+        if(hasReview){
+            //直播审核中
+            CacheUtil.put("review","liveRadio"+userid,2);
+            return new ResponseApiVO(-2003,"正在审核中，请耐心等待",null);
+
+        }
+        return new ResponseApiVO(1,"未申请",null);
+
+    }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO applyLiveRadio(String userOpenId, Integer storeId, LiveRadioApplDTO dto)throws Exception{
         if(storeId==null){
@@ -51,26 +71,25 @@ public class ReviewService extends CommonService {
             return new ResponseApiVO(-2001,"请先申请当女神",null);
         }
         Integer userid=(Integer) upo.get("id");
-        LiveRadioPO liveRadioPO=liveRadioService.getLiveRadio(userid,storeId);
-        if(liveRadioPO!=null && liveRadioPO.getLiveStatus()==LiveStatusEnum.liveStatus0.getCode()) {
-            return new ResponseApiVO(1,"直播等待中，请前往直播房间",null);
-
-        }
-        if(liveRadioPO!=null && liveRadioPO.getLiveStatus()==LiveStatusEnum.liveStatus1.getCode()){
-            return new ResponseApiVO(-2002,"直播房间已开，请关闭再申请",null);
-        }
-        boolean hasReview=this.hasLiveRadioReviewFromGoddess(userid,storeId);
-        if(hasReview){
-            //直播审核中
-            CacheUtil.put("review","liveRadio"+userid,2);
-            return new ResponseApiVO(-2003,"正在审核中，请耐心等待",null);
-
+        ResponseApiVO apiVO=getLiveRadioReviewStatus(userid,storeId);
+        if(apiVO.getReCode()!=1){
+            return apiVO;
         }
         ReviewPO reviewPO=new ReviewPO();
         reviewPO.setDrBusinessCode(BusinessCodeUtil.createLiveRadioCode(userid,storeId));
         reviewPO.setDrBelongToStoreId(storeId);
         reviewPO.setCreateTime(new Date());
-        reviewPO.setDrProposerName((String) upo.get("userName"));
+        StringBuilder nameBuild=new StringBuilder();
+
+        if(StringUtils.isNotBlank((String)upo.get("userName"))){
+            nameBuild.append((String)upo.get("userName"));
+        }else if(StringUtils.isNotBlank((String)upo.get("nickName"))){
+            nameBuild.append((String)upo.get("nickName"));
+        }
+        if(StringUtils.isNotBlank((String)upo.get("realName"))){
+            nameBuild.append("(").append((String)upo.get("realName")).append(")");
+        }
+        reviewPO.setDrProposerName(nameBuild.toString());
         reviewPO.setDrBusinessType(ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
         reviewPO.setDrReviewStatus(ReviewStatusEnum.ReviewStatus0.getCode());
         reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
@@ -79,7 +98,7 @@ public class ReviewService extends CommonService {
         reviewPO.setDrProposer(userid);
         reviewPO.setDrApplyDesc("申请开通直播空间");
         reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.liveRadio10.getCode());
-        reviewPO.setDrExtend(dto.getRoomName());
+        reviewPO.setDrExtend("房间名称-"+dto.getRoomName());
         return new ResponseApiVO(this.commonReviewService.submitAppl(reviewPO));
 
     }
