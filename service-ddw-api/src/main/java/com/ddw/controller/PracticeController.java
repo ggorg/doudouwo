@@ -63,4 +63,18 @@ public class PracticeController {
         }
     }
 
+    @Token
+    @ApiOperation(value = "代练列表查询")
+    @PostMapping("/queryList/{token}")
+    public ResponseVO queryList(@PathVariable String token,
+                                @RequestParam(value = "pageNum") @ApiParam(name = "pageNum",value="页码", required = true) Integer pageNum,
+                                @RequestParam(value = "pageSize") @ApiParam(name = "pageSize",value="显示数量", required = true) Integer pageSize){
+        try {
+            return reviewPracticeService.practiceList(token,pageNum,pageSize);
+        }catch (Exception e){
+            logger.error("GoddessController->queryList",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
 }

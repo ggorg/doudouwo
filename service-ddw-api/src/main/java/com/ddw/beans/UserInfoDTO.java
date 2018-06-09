@@ -7,8 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 public class UserInfoDTO{
     @ApiModelProperty(name="userName",value="账号（微信、QQ登录时，为空）",example="某某某")
     private String userName;
-    @ApiModelProperty(name="userPwd",value="密码（微信、QQ登录时，为空）",example="123456")
-    private String userPwd;
     @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
     private String openid;
     @ApiModelProperty(name="nickName",value="昵称",example="某某某")
@@ -88,11 +86,4 @@ public class UserInfoDTO{
         this.userName = userName;
     }
 
-    public String getUserPwd() {
-        return userPwd;
-    }
-
-    public void setUserPwd(String userPwd) {
-        this.userPwd = userPwd;
-    }
 }
