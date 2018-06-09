@@ -85,6 +85,8 @@ public class UserInfoVO {
 
     @ApiModelProperty(name="userSign",value="IM签名",example="xxxx")
     private String userSign;
+    @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
+    private boolean followed;
 
     public Integer getId() {
         return id;
@@ -380,5 +382,13 @@ public class UserInfoVO {
 
     public void setUserSign(String userSign) {
         this.userSign = userSign;
+    }
+
+    public boolean isFollowed() {
+        return followed;
+    }
+
+    public void setFollowed(boolean followed) {
+        this.followed = followed;
     }
 }

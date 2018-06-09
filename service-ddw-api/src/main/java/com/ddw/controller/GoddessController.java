@@ -9,13 +9,11 @@ import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 访问地址：/swagger-ui.html
@@ -60,6 +58,20 @@ public class GoddessController {
             return new ResponseVO(1,"成功",user);
         }catch (Exception e){
             logger.error("GoddessController->query",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @Token
+    @ApiOperation(value = "女神列表查询")
+    @PostMapping("/queryList/{token}")
+    public ResponseVO queryList(@PathVariable String token,
+                                @RequestParam(value = "pageNum") @ApiParam(name = "pageNum",value="页码", required = true) Integer pageNum,
+                                @RequestParam(value = "pageSize") @ApiParam(name = "pageSize",value="显示数量", required = true) Integer pageSize){
+        try {
+            return reviewGoddessService.goddessList(token,pageNum,pageSize);
+        }catch (Exception e){
+            logger.error("GoddessController->queryList",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }

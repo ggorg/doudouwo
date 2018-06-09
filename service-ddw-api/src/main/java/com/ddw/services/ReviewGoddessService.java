@@ -1,7 +1,9 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.dao.UserInfoMapper;
 import com.ddw.enums.*;
+import com.ddw.token.TokenUtil;
 import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.vo.ResponseVO;
@@ -10,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 女神
@@ -22,9 +22,13 @@ import java.util.Map;
 public class ReviewGoddessService extends CommonService {
     @Autowired
     private CommonReviewService commonReviewService;
-
+    @Autowired
+    private MyAttentionService myAttentionService;
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+
 
     public GoddessPO getAppointment(Integer userid,Integer storeId)throws Exception{
         GoddessPO obj=(GoddessPO)cacheService.get("goddess-"+storeId+"-"+userid);
@@ -99,4 +103,43 @@ public class ReviewGoddessService extends CommonService {
         return this.commonReviewService.submitAppl(reviewPO);
     }
 
+    /**
+     * 当前门店女神列表
+     * @param token
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    public ResponseVO goddessList(String token,Integer pageNum,Integer pageSize)throws Exception{
+        if(pageNum == null || pageSize == null){
+            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+        }
+        Integer userId = TokenUtil.getUserId(token);
+        Integer storeId = TokenUtil.getStoreId(token);
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("storeId",storeId);
+        List<Map> list = this.commonList("ddw_goddess","bidPrice desc",pageNum,pageSize,searchCondition);
+        List<String>userIdList = new ArrayList<String>();
+        for(Map map:list){
+            userIdList.add(map.get("userId").toString());
+        }
+        if(!list.isEmpty()){
+            List<UserInfoVO> goddessUserInfoList = userInfoMapper.getUserInfoList(userIdList);
+            MyAttentionVO myAttentionVO = myAttentionService.queryGoddessByUserId(userId);
+            List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
+            ListIterator<UserInfoVO> goddessUserInfoIterator = goddessUserInfoList.listIterator();
+            while (goddessUserInfoIterator.hasNext()){
+                UserInfoVO goddessUserInfo = goddessUserInfoIterator.next();
+                for(UserInfoVO myAttentionGoddess:myAttentionGoddessList){
+                    if(myAttentionGoddess.getId() == goddessUserInfo.getId()){
+                        goddessUserInfo.setFollowed(true);
+                        break;
+                    }
+                }
+            }
+            return new ResponseVO(1,"成功",goddessUserInfoList);
+        }
+        return new ResponseVO(1,"成功",null);
+    }
 }
