@@ -19,6 +19,7 @@ import java.util.Map;
  * 审批
  */
 @Service
+@Transactional(readOnly = true)
 public class ReviewRealNameService extends CommonService {
 
 

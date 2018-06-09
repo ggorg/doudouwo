@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 public class TicketService extends CommonService {
 
     @Autowired

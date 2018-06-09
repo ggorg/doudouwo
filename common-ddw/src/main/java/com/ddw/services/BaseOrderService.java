@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.enums.OrderTypeEnum;
 import com.ddw.enums.PayStatusEnum;
 import com.gen.common.beans.CommonChildBean;
@@ -11,6 +12,7 @@ import com.gen.common.util.OrderUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,9 @@ import java.util.*;
 
 
 public class BaseOrderService extends CommonService {
+
+    @Autowired
+    private IncomeService incomeService;
     /**
      * 调用微信或者支付宝支付接口回调时候执行的
      * @param payStatusEnum
@@ -62,6 +67,7 @@ public class BaseOrderService extends CommonService {
                 }
                 Map payMap=null;
                 Map updateMap=null;
+                //goddessUserId
                 for(String ub:ubs){
                     payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
                     if(payMap==null){
@@ -70,6 +76,8 @@ public class BaseOrderService extends CommonService {
                     updateMap=new HashMap();
                     updateMap.put("endTime",DateUtils.addMinutes(new Date(),(Integer) payMap.get("time")));
                     this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",payMap.get("code"));
+                    this.incomeService.commonIncome((Integer) payMap.get("goddessUserId"),Integer.parseInt((String) payMap.get("needPayPrice")), IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType5,orderNo);
+
                 }
                 ubs.forEach(a->CacheUtil.delete("pay","bidding-pay-"+a));
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
@@ -94,6 +102,16 @@ public class BaseOrderService extends CommonService {
                 }
                 CacheUtil.delete("pay","goodsPru-order-"+orderNo);
 
+            }else if(OrderTypeEnum.OrderType6.getCode().equals(doType)){
+                String useridCost =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
+                if(useridCost==null){
+                    throw new GenException("更新礼物支付状态失败");
+                }
+                String strs[]=useridCost.split("-");
+                Integer goddUserId=Integer.parseInt(strs[0]);
+                Integer cost=Integer.parseInt(strs[1]);
+                this.incomeService.commonIncome(goddUserId,cost,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,orderNo);
+                CacheUtil.delete("pay","pre-pay-"+orderNo);
             }
             CacheUtil.put("pay","order-"+orderNo,"success");
             return new ResponseVO(1,"更新支付状态成功",null);

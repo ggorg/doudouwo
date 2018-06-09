@@ -26,6 +26,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class LiveRadioClientService  extends CommonService{
     @Autowired
     private LiveRadioService liveRadioService;

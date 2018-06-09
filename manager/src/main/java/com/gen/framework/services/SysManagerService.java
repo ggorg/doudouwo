@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class SysManagerService extends CommonService {
 
     @Autowired

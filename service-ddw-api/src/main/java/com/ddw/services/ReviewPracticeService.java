@@ -27,6 +27,7 @@ import java.util.Map;
  * Created by Jacky on 2018/4/16.
  */
 @Service
+@Transactional(readOnly = true)
 public class ReviewPracticeService extends CommonService {
     @Autowired
     private FileService fileService;

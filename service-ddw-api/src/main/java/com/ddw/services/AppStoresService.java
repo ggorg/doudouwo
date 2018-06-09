@@ -11,12 +11,15 @@ import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class AppStoresService extends CommonService {
 
     public ResponseApiVO chooseStore(String token,StoreDTO dto){

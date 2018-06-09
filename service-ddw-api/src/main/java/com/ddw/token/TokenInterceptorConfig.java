@@ -22,7 +22,7 @@ import java.util.Map;
 public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
     private final Logger logger = Logger.getLogger(TokenInterceptorConfig.class);
 
-    @Value("${tokenLiveHour}")
+    @Value("${tokenLiveHour:-1}")
     private Integer tokenLiveHour;
     public void addInterceptors(InterceptorRegistry registry) {
         //System.out.println(	123);

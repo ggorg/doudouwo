@@ -97,4 +97,28 @@ public class BiddingController {
             return new ResponseApiVO(-1,"失败",null);
         }
     }
+    @Token
+    @ApiOperation(value = "取消支付(普通用户)",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/cancel/pay/user/{token}")
+    @ResponseBody
+    public ResponseApiVO<BiddingPayVO> cancelByUser(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GroupIdDTO args){
+        try {
+            return this.biddingService.cancelBidPayByUserId(token,args,true);
+        }catch (Exception e){
+            logger.error("BiddingController->cancelByUser-》用户取消支付-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "取消支付(女神)",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/cancel/pay/goddess/{token}")
+    @ResponseBody
+    public ResponseApiVO<BiddingPayVO> cancelByGoddess(@PathVariable String token){
+        try {
+            return this.biddingService.cancelBidPayByGoddess(token);
+        }catch (Exception e){
+            logger.error("BiddingController->cancelByGoddess-》女神取消支付-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
 }

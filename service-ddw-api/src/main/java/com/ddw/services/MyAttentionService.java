@@ -20,6 +20,7 @@ import java.util.*;
  * Created by Jacky on 2018/4/16.
  */
 @Service
+@Transactional(readOnly = true)
 public class MyAttentionService extends CommonService {
     @Autowired
     private UserInfoMapper userInfoMapper;

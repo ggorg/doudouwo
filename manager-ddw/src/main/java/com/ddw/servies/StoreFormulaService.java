@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Service
+@Transactional(readOnly = true)
 public class StoreFormulaService extends CommonService {
 
     public Page findPage(Integer pageNo,Integer storeId)throws Exception{

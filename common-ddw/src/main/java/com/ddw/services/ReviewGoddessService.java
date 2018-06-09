@@ -20,6 +20,7 @@ import java.util.Map;
  * 成为女神审批
  */
 @Service
+@Transactional(readOnly = true)
 public class ReviewGoddessService extends CommonService {
 
     public Page findPage(Integer pageNo,Map condtion)throws Exception{

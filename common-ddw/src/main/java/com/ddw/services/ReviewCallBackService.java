@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 审批回调类
  */
 @Service
+@Transactional(readOnly = true)
 public class ReviewCallBackService {
 
     @Autowired

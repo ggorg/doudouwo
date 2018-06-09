@@ -61,6 +61,7 @@
                         <col class="con0" />
                         <col class="con0" />
                         <col class="con0" />
+                        <col class="con0" />
 
                         <col class="con0" />
                     </colgroup>
@@ -75,6 +76,7 @@
                         <th class="head1">审批人名称</th>
                         <th class="head1">审批时间</th>
                         <th class="head1">审批状态</th>
+                        <th class="head1">业务信息</th>
 
                         <th class="head1">操作</th>
                     </tr>
@@ -90,6 +92,7 @@
                         <td th:text="${obj['drReviewerName']}">Trident</td>
                         <td th:text="${obj['updateTime']==null?'':#dates.format(obj['updateTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.ReviewStatusEnum',obj['drReviewStatus'])}"></td>
+                        <td th:text="${obj['drExtend']}">Trident</td>
 
 
                         <td class="center">

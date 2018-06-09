@@ -94,6 +94,7 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
+
     public static void putStreamId(String base64Token,String streamId){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){

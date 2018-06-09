@@ -34,6 +34,7 @@ import java.util.*;
  * Created by Jacky on 2018/4/12.
  */
 @Service
+@Transactional(readOnly = true)
 public class UserInfoService extends CommonService {
     @Autowired
     private FileService fileService;

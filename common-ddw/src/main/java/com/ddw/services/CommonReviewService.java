@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Transactional(readOnly = true)
 public class CommonReviewService extends CommonService {
 
     @Autowired

@@ -37,6 +37,7 @@ import static javafx.scene.input.KeyCode.L;
  * 原材料
  */
 @Service
+@Transactional(readOnly = true)
 public class MaterialService  extends CommonService {
 
     @Autowired

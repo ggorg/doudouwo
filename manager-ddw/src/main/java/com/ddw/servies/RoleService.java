@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 public class RoleService extends CommonService{
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO modifyRoleType(String ridStr, String roleType)throws Exception {

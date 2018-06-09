@@ -16,6 +16,7 @@ import java.util.Map;
  * Created by Jacky on 2018/5/16.
  */
 @Service
+@Transactional(readOnly = true)
 public class RankService extends CommonService {
 
     public Page findList(String gameId)throws Exception{

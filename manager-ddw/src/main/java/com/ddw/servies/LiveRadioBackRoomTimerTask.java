@@ -10,12 +10,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Component
+@Transactional(readOnly = true)
 public class LiveRadioBackRoomTimerTask {
     private final Logger logger = Logger.getLogger(LiveRadioBackRoomTimerTask.class);
 
@@ -30,6 +33,7 @@ public class LiveRadioBackRoomTimerTask {
      */
     //private Map<String,Integer> backRoomMap=new HashMap();
     @Scheduled(cron = "0 0/10 * * * *")
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public void handleBackRoom(){
         List<Map> list=liveRadioService.getAllActLiveRadio();
         Map<String,Integer> backRoomMap=(Map<String, Integer>) cacheService.get("backRoom");

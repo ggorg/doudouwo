@@ -17,6 +17,7 @@ import java.util.Map;
  * Created by Jacky on 2018/5/16.
  */
 @Service
+@Transactional(readOnly = true)
 public class GameService extends CommonService {
 
     public Page findList()throws Exception{

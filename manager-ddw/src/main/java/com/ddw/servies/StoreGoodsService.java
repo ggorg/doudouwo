@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
+@Transactional(readOnly = true)
 public class StoreGoodsService extends CommonService {
 
     @Autowired

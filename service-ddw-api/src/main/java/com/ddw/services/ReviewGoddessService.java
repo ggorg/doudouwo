@@ -19,6 +19,7 @@ import java.util.Map;
  * Created by Jacky on 2018/4/16.
  */
 @Service
+@Transactional(readOnly = true)
 public class ReviewGoddessService extends CommonService {
     @Autowired
     private CommonReviewService commonReviewService;

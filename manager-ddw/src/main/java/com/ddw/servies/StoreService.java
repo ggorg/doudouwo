@@ -30,6 +30,7 @@ import java.util.Map;
  * 门店
  */
 @Service
+@Transactional(readOnly = true)
 public class StoreService extends CommonService{
     @Autowired
     private FileService fileService;

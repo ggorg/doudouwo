@@ -22,6 +22,7 @@ import java.util.Map;
  * 成为代练审批
  */
 @Service
+@Transactional(readOnly = true)
 public class ReviewPracticeService extends CommonService {
 
     public Page findPage(Integer pageNo,Map condtion)throws Exception{

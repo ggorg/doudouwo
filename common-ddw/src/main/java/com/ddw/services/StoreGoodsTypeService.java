@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 public class StoreGoodsTypeService extends CommonService {
 
     public Page page(Integer pageNo, Integer storeId)throws Exception{

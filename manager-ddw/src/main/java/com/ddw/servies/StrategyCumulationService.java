@@ -19,6 +19,7 @@ import java.util.Map;
  * Created by Jacky on 2018/5/29.
  */
 @Service
+@Transactional(readOnly = true)
 public class StrategyCumulationService extends CommonService {
     public Page findPage(Integer pageNo)throws Exception{
         Map condtion=new HashMap();

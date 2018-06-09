@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 public class LiveRadioService extends CommonService{
     @Autowired
     private DDWGlobals ddwGlobals;
@@ -138,7 +139,13 @@ public class LiveRadioService extends CommonService{
         UserInfoPO upo=this.commonObjectBySingleParam("ddw_userinfo","id",reviewPO.getDrProposer(), UserInfoPO.class);
         String spaceName=null;
         if(StringUtils.isNotBlank(reviewPO.getDrExtend())){
-            spaceName=reviewPO.getDrExtend();
+            if(reviewPO.getDrExtend().startsWith("房间名称-")){
+                spaceName=reviewPO.getDrExtend().replaceFirst("房间名称-","");
+
+            }else{
+                spaceName=reviewPO.getDrExtend();
+
+            }
         }else{
             spaceName= StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName()+"直播间";
         }
