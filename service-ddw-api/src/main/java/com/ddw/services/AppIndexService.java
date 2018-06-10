@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,8 +57,7 @@ public class AppIndexService {
         }
         appIndexVO.setGoddessList(appIndexGoddessList);
         appIndexVO.setDaiLianList(appIndexDaiLianVOList);
-        Map map=new HashMap();
-        map.put("ticketList",ticketService.getTicketList());
+        appIndexVO.setTicketList(ticketService.getTicketList());
         return new ResponseApiVO(1,"成功",appIndexVO);
 
     }
