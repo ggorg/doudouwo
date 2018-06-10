@@ -7,6 +7,7 @@ import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -53,10 +54,13 @@ public class GoddessService extends CommonService {
     public ResponseVO saveOrUpdate(GoddessDTO goddessDTO)throws Exception{
         GoddessPO goddessPO = new GoddessPO();
         if(goddessDTO.getId() > 0){
-            PropertyUtils.copyProperties(goddessPO,this.getById(goddessDTO.getId()));
+            GoddessVO oldGoddessVo=this.getById(goddessDTO.getId());
+            PropertyUtils.copyProperties(goddessPO,oldGoddessVo);
             PropertyUtils.copyProperties(goddessPO,goddessDTO);
             goddessPO.setUpdateTime(new Date());
             Map updatePoMap= BeanToMapUtil.beanToMap(goddessPO);
+            CacheUtil.delete("publicCache","goddess-"+oldGoddessVo.getStoreId()+"-"+oldGoddessVo.getUserId());
+
             return super.commonUpdateBySingleSearchParam("ddw_goddess",updatePoMap,"id",goddessPO.getId());
         }else{
             goddessPO.setCreateTime(new Date());

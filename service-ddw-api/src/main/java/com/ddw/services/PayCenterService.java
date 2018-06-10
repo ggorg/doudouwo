@@ -8,6 +8,8 @@ import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.PayApiConstant;
 import com.ddw.util.PayApiUtil;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
@@ -210,7 +212,9 @@ public class PayCenterService extends BaseOrderService {
             search.put("storeId",TokenUtil.getStoreId(token));
             search.put("dghStatus",GoodsStatusEnum.goodsStatus1.getCode());
             search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
-            List<Map> goodsPruductList= this.commonObjectsBySearchCondition("ddw_goods_product",search);
+            CommonSearchBean csb=new CommonSearchBean("ddw_goods_product",null,"t1.dghActivityPrice,t1.dghSalesPrice,t1.dghDesc,t1.id,ct0.fileImgIcoPath headImg",null,null,search,new CommonChildBean("ddw_goods","id","dghGoodsId",null));
+            List<Map> goodsPruductList=this.getCommonMapper().selectObjects(csb);
+           // List<Map> goodsPruductList= this.commonObjectsBySearchCondition("ddw_goods_product",search);
             if(goodsPruductList==null || goodsPruductList.isEmpty()){
                 return new ResponseApiVO(-2,"货品不存在",null);
             }
@@ -242,6 +246,7 @@ public class PayCenterService extends BaseOrderService {
                     dataMap.put("updateTime",new Date());
                     dataMap.put("createTime",new Date());
                     dataMap.put("productName",mVo.get("dghDesc"));
+                    dataMap.put("headImg",mVo.get("headImg"));
                     buyInProMap.put(code,dataMap);
                 }
 
@@ -368,16 +373,19 @@ public class PayCenterService extends BaseOrderService {
                 Collection collection=buyInProMap.values();
                 Iterator<Map> iterator=collection.iterator();
                 Map insertM=null;
-
+                String headImg=null;
                 while(iterator.hasNext()){
                     insertM=iterator.next();
                     insertM.put("orderNo",orderNo);
                     insertM.put("orderId",insertResponseVO.getData());
+                    headImg=(String)insertM.get("headImg");
+                    insertM.remove("headImg");
                     resVo=this.commonInsertMap("ddw_order_product",insertM);
                     if(resVo.getReCode()!=1){
                         throw new GenException("商品支付失败");
 
                     }
+                    insertM.put("headImg",headImg);
                 }
                 CacheUtil.put("pay","goodsPru-order-"+orderNo,new ArrayList(collection));
             }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
@@ -397,8 +405,12 @@ public class PayCenterService extends BaseOrderService {
                     throw new GenException("礼物支付失败");
 
                 }
-
-                orderCacheData=goddessUserId+"-"+orderPO.getDoCost();
+                Map map=new HashMap();
+                map.put("goddessUserId",goddessUserId);
+                map.put("cost",orderPO.getDoCost());
+                map.put("headImg",voData.get("dgImgPath"));
+                map.put("name",voData.get("dgName").toString());
+                orderCacheData=JSONObject.toJSONString(map);
             }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
                 for(Map im:insertList){
                     im.put("orderId",insertResponseVO.getData());
@@ -442,6 +454,7 @@ public class PayCenterService extends BaseOrderService {
                         PropertyUtils.copyProperties(wxVo,treeMap);
                         wxVo.setOrderNo(orderNo);
                         CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
+                        CacheUtil.put("pay",".orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
                         return new ResponseApiVO(1,"成功",wxVo);
                     }else{
                         throw new GenException("调用微信支付接口失败");
@@ -456,6 +469,8 @@ public class PayCenterService extends BaseOrderService {
                     }
                     PropertyUtils.copyProperties(alipayVo,rvo);
                     CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
+                    CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
+
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
                 }

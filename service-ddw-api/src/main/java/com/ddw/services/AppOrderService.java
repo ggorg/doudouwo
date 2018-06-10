@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.ListVO;
+import com.ddw.beans.OrderViewDTO;
 import com.ddw.beans.PageNoDTO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.enums.AppOrderTypeEnum;
@@ -22,25 +23,19 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class AppOrderService extends CommonService {
 
-    public ResponseApiVO getOrderList(PageNoDTO dto, String token, Integer orderType)throws Exception{
-        if(orderType!=null && StringUtils.isBlank(AppOrderTypeEnum.getName(orderType))){
+    public ResponseApiVO getOrderList(String token,OrderViewDTO dto)throws Exception{
+        if(dto.getType()!=null && StringUtils.isBlank(AppOrderTypeEnum.getName(dto.getType()))){
             return new ResponseApiVO(-2,"订单类型错误",null);
         }
         Page p=new Page(dto.getPageNo(),10);
         Map map=new HashMap();
-        map.put("doCustomerUserId", TokenUtil.getUserId(token));
-        map.put("doPayStatus", PayStatusEnum.PayStatus1.getCode());
+        map.put("userId", TokenUtil.getUserId(token));
+        map.put("doPayStatus,>=", PayStatusEnum.PayStatus1.getCode());
         List<Map> orderList=this.commonList("ddw_order","updateTime desc",p.getStartRow(),p.getEndRow(),map);
         if(orderList==null && orderList.isEmpty()){
             return new ResponseApiVO(2,"没有订单数据",new ListVO(new ArrayList()));
         }else{
-            Integer ot=null;
-            for(Map o:orderList){
-                ot=(Integer) o.get("doPayType");
-
-            }
+            return new ResponseApiVO(1,"成功",new ListVO(orderList));
         }
-        return null;
-
     }
 }

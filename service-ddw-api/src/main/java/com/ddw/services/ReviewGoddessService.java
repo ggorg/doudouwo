@@ -6,6 +6,7 @@ import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class ReviewGoddessService extends CommonService {
 
 
     public GoddessPO getAppointment(Integer userid,Integer storeId)throws Exception{
-        GoddessPO obj=(GoddessPO)cacheService.get("goddess-"+storeId+"-"+userid);
+        GoddessPO obj=(GoddessPO) CacheUtil.get("publicCache","goddess-"+storeId+"-"+userid);
         if(obj==null){
             Map searchMap=new HashMap();
             searchMap.put("storeId",storeId);
@@ -41,7 +42,8 @@ public class ReviewGoddessService extends CommonService {
             if(po!=null){
                 Integer ap=po.getAppointment()==null?0:po.getAppointment();
                 po.setAppointment(ap);
-                cacheService.set("goddess-"+storeId+"-"+userid,po);
+                CacheUtil.put("publicCache","goddess-"+storeId+"-"+userid,po);
+
                 return po;
             }
         }else{
