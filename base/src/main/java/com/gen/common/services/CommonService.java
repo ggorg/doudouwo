@@ -142,7 +142,7 @@ public abstract class CommonService {
         for(int i=1;i<=5;i++){
             map=this.commonObjectBySearchCondition(tableName,searchCondition);
             if(map==null || map.isEmpty()){
-                return new ResponseVO(-2,"更新失败",null);
+                return new ResponseVO(-3,"更新失败",null);
             }else{
                 version=(Integer)map.get(versionName);
                 for(String calculateName:calculatesName){

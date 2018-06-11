@@ -81,7 +81,7 @@ public class BiddingController {
         try {
             return this.biddingService.chooseBidding(args.getOpenId(),token);
         }catch (Exception e){
-            logger.error("BiddingController->getCurrentAll-》获取当前竞价列表-》系统异常",e);
+            logger.error("BiddingController->chooseBidding-》选择某个用户的竞价（女神）-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
         }
     }

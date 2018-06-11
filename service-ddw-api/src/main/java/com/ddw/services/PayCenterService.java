@@ -270,7 +270,7 @@ public class PayCenterService extends BaseOrderService {
             orderPO.setDoCost(actPrice!=null && actPrice>0?actPrice:price);
         }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
 
-            orderPO.setDoSellerId(-1);
+            orderPO.setDoSellerId(TokenUtil.getStoreId(token));
             List<Integer> codesList=Arrays.asList(codes);
             Map search=new HashMap();
             search.put("dtDisabled",DisabledEnum.disabled0.getCode());

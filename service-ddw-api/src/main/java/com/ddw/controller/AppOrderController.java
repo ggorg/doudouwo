@@ -24,7 +24,7 @@ public class AppOrderController {
     @ApiOperation(value = "查询订单列表",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/list/{token}")
     @ResponseBody
-    public ResponseApiVO<ListVO> getOrderList(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)OrderViewDTO dto){
+    public ResponseApiVO<ListVO<OrderViewVO>> getOrderList(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)OrderViewDTO dto){
         try {
             return appOrderService.getOrderList(token,dto);
         }catch (Exception e){

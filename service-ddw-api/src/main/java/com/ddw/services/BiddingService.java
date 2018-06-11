@@ -484,6 +484,10 @@ public class BiddingService extends CommonService {
             return new ResponseApiVO(-2,"直播房间不存在",null);
         }
         List list=(List)CacheUtil.get("commonCache","groupId-"+po.getGroupId());
+        if(list==null || list.isEmpty()){
+            return new ResponseApiVO(2,"没有竞价数据",new ListVO(new ArrayList()));
+
+        }
         list.remove("handling");
         return new ResponseApiVO(1,"成功",new ListVO(list));
 

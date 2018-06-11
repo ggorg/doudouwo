@@ -3,8 +3,10 @@ package com.ddw.servies;
 import com.ddw.beans.MaterialPO;
 import com.ddw.beans.OrderMaterialPO;
 import com.ddw.beans.OrderPO;
+import com.ddw.controller.ClientOrderController;
 import com.ddw.enums.*;
 import com.ddw.services.BaseOrderService;
+import com.ddw.services.OrderViewService;
 import com.ddw.util.Constant;
 import com.ddw.util.Toolsddw;
 import com.gen.common.beans.CommonChildBean;
@@ -41,7 +43,10 @@ public class OrderService extends BaseOrderService {
 
     @Autowired
     private StoreMaterialService storeMaterialService;
-    //private Sysm
+
+    @Autowired
+    private OrderViewService orderViewService;
+
 
     /**
      * 确认订购
@@ -233,10 +238,10 @@ public class OrderService extends BaseOrderService {
     @Cacheable(value ="orderInfo",key="'store-order-'+#storeid+'-'+#orderNo" )
     public Map getOrderCacheByStoreAndOrderNo(Integer storeid,String orderNo)throws Exception{
 
-        return this.getOrderByStoreAndOrderNo(orderNo);
+        return this.getOrderByStoreAndOrderNo(orderNo,OrderTypeEnum.OrderType2);
     }
     //@Cacheable(value ="pcShoppingCart",key="'store-order-'+#storeid+'-'+#orderNo" )
-    public Map getOrderByStoreAndOrderNo(String orderNo)throws Exception{
+    public Map getOrderByStoreAndOrderNo(String orderNo,OrderTypeEnum orderTypeEnum)throws Exception{
         Integer orderid=OrderUtil.getOrderId(orderNo);
         String orderTime=OrderUtil.getOrderTime(orderNo);
         Map condition=new HashMap();
@@ -249,16 +254,33 @@ public class OrderService extends BaseOrderService {
         cacheMap.put("orderNo",orderNo);
         List morder=new ArrayList();
         cacheMap.put("list",morder);
-        List<Map> list=this.commonObjectsBySingleParam("ddw_order_material","orderNo",orderNo);
-        OrderMaterialPO orderMaterialPO=null;
-        Integer countPrice=0;
-        for(Map map:list){
-            orderMaterialPO=new OrderMaterialPO();
-            PropertyUtils.copyProperties(orderMaterialPO,map);
-            morder.add(orderMaterialPO);
-            countPrice=countPrice+orderMaterialPO.getMaterialCountPrice();
+        if(OrderTypeEnum.OrderType2.getCode().equals(orderTypeEnum.getCode())){
+            List<Map> list=this.commonObjectsBySingleParam("ddw_order_material","orderNo",orderNo);
+            OrderMaterialPO orderMaterialPO=null;
+            Integer countPrice=0;
+            for(Map map:list){
+                orderMaterialPO=new OrderMaterialPO();
+                PropertyUtils.copyProperties(orderMaterialPO,map);
+                morder.add(orderMaterialPO);
+                countPrice=countPrice+orderMaterialPO.getMaterialCountPrice();
+            }
+            cacheMap.put("countPrice",countPrice);
+        }else if(OrderTypeEnum.OrderType1.getCode().equals(orderTypeEnum.getCode())){
+
+            List<Map> list=this.commonObjectsBySingleParam("ddw_order_product","orderNo",orderNo);
+            morder.addAll(list);
+            cacheMap.put("countPrice",orderPO.getDoCost());
+
+        }else if(OrderTypeEnum.OrderType7.getCode().equals(orderTypeEnum.getCode())){
+
+            List<Map> list=this.commonObjectsBySingleParam("ddw_order_ticket","orderNo",orderNo);
+            morder.addAll(list);
+            cacheMap.put("countPrice",orderPO.getDoCost());
+
         }
-        cacheMap.put("countPrice",countPrice);
+
+
+
         return cacheMap;
     }
     /**
@@ -312,10 +334,25 @@ public class OrderService extends BaseOrderService {
      * @return
      * @throws Exception
      */
-    public Page findOrderBySellerStore(Integer storeId,Integer pageNo)throws Exception{
+    public Page findGoodsOrderByStore(Integer storeId,Integer pageNo)throws Exception{
         Map condition=new HashMap();
         condition.put("doType",OrderTypeEnum.OrderType1.getCode());
         condition.put("doSellerId",storeId);
+
+        return this.commonPage("ddw_order","updateTime desc ",pageNo,10,condition);
+
+    }
+    /**
+     * 根据卖家门店查询
+     * @param pageNo
+     * @return
+     * @throws Exception
+     */
+    public Page findOrder(Integer storeId,Integer pageNo,OrderTypeEnum orderTypeEnum)throws Exception{
+        Map condition=new HashMap();
+        condition.put("doType",orderTypeEnum.getCode());
+        if(storeId!=null)condition.put("doSellerId",storeId);
+
 
         return this.commonPage("ddw_order","updateTime desc ",pageNo,10,condition);
 
@@ -528,7 +565,18 @@ public class OrderService extends BaseOrderService {
     public ResponseVO updateOrderPayStatus(PayStatusEnum payStatusEnum,String orderNo)throws Exception{
        return this.pulbicUpdateOrderPayStatus(payStatusEnum,orderNo);
     }
-
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updateClientOrderStatus(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
+        ResponseVO vo=this.updateOrderStatus(payStatus,shipStatus,storeId,orderNoEncypt);
+        if(vo.getReCode()==1){
+             vo=this.orderViewService.updateOrderView(MyEncryptUtil.getRealValue(orderNoEncypt),shipStatus);
+             if(vo.getReCode()!=1){
+                 throw new GenException("更新订单状态失败");
+             }
+            return new ResponseVO(1,"操作成功",null);
+        }
+        return new ResponseVO(-2,"操作失败",null);
+    }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateOrderStatus(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
         if(StringUtils.isBlank(orderNoEncypt)){
