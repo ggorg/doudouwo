@@ -135,10 +135,12 @@ public class ReviewGoddessService extends CommonService {
             ListIterator<UserInfoVO> goddessUserInfoIterator = goddessUserInfoList.listIterator();
             while (goddessUserInfoIterator.hasNext()){
                 UserInfoVO goddessUserInfo = goddessUserInfoIterator.next();
-                for(UserInfoVO myAttentionGoddess:myAttentionGoddessList){
-                    if(myAttentionGoddess.getId() == goddessUserInfo.getId()){
-                        goddessUserInfo.setFollowed(true);
-                        break;
+                if(myAttentionGoddessList != null){
+                    for(UserInfoVO myAttentionGoddess:myAttentionGoddessList){
+                        if(myAttentionGoddess.getId() == goddessUserInfo.getId()){
+                            goddessUserInfo.setFollowed(true);
+                            break;
+                        }
                     }
                 }
             }
