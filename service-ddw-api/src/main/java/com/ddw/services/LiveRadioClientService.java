@@ -142,7 +142,7 @@ public class LiveRadioClientService  extends CommonService{
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO closeRoom(String token)throws Exception{
-        GoddessPO gpo= reviewGoddessService.getAppointment(TokenUtil.getStoreId(token),TokenUtil.getUserId(token));
+        GoddessPO gpo= reviewGoddessService.getAppointment(TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
         if(gpo==null){
             return new ResponseApiVO(-2,"权限不足",null);
         }

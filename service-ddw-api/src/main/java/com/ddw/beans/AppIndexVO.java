@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.ddw.beans.vo.AppIndexTicketVO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

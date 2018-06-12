@@ -3,6 +3,7 @@ package com.ddw.controller;
 import com.ddw.beans.*;
 import com.ddw.services.BiddingService;
 import com.ddw.token.Token;
+import com.ddw.token.TokenUtil;
 import com.gen.common.exception.GenException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -94,6 +95,18 @@ public class BiddingController {
             return this.biddingService.searchWaitPayByUser(args.getGroupId(),token);
         }catch (Exception e){
             logger.error("BiddingController->waitpay-》查看竞价待支付金额-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "查询待支付的竞价金额(女神)",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/bidding/waitpay/goddess/{token}")
+    @ResponseBody
+    public ResponseApiVO<BiddingPayVO> waitpayByGoddess(@PathVariable String token){
+        try {
+            return this.biddingService.searchWaitPayByGoddess(token);
+        }catch (Exception e){
+            logger.error("BiddingController->waitpayByGoddess-》查看竞价待支付金额-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
         }
     }

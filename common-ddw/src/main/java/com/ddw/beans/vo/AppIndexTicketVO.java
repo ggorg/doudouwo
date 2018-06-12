@@ -1,16 +1,18 @@
-package com.ddw.beans;
+package com.ddw.beans.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * 门票
  */
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AppIndexTicketVO {
+public class AppIndexTicketVO implements Serializable {
 
     @JsonProperty("name")
     @ApiModelProperty(name="name",value="门票名称",example="门票")

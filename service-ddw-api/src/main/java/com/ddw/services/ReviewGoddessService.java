@@ -64,7 +64,8 @@ public class ReviewGoddessService extends CommonService {
            ResponseVO vo=this.commonUpdateBySingleSearchParam("ddw_goddess",map,"userId",userid);
            if(vo.getReCode()==1){
                po.setAppointment(ap);
-               cacheService.set("goddess-"+userid,po);
+               CacheUtil.put("publicCache","goddess-"+po.getStoreId()+"-"+userid, JSONObject.toJSONString(po));
+
                return new ResponseApiVO(1,"修改成功",null);
            }
        }
