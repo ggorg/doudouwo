@@ -65,11 +65,23 @@ public class BiddingController {
     @ApiOperation(value = "获取当前竞价列表（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/currentall/{token}")
     @ResponseBody
-    public ResponseApiVO<ListVO<BiddingVO>> getCurrentAll(@PathVariable String token){
+    public ResponseApiVO<BidingGodessListVO> getCurrentAll(@PathVariable String token){
         try {
             return this.biddingService.getCurrentAllBidding(token);
         }catch (Exception e){
             logger.error("BiddingController->getCurrentAll-》获取当前竞价列表-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "确认完成（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/makesure/{token}")
+    @ResponseBody
+    public ResponseApiVO makeSure(@PathVariable String token){
+        try {
+            return this.biddingService.makeSureFinishPay(token);
+        }catch (Exception e){
+            logger.error("BiddingController->makeSure-》确认完成（女神）-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
         }
     }
