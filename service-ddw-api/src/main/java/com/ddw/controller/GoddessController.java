@@ -63,7 +63,7 @@ public class GoddessController {
     }
 
     @Token
-    @ApiOperation(value = "女神列表查询")
+    @ApiOperation(value = "女神排行榜")
     @PostMapping("/queryList/{token}")
     public ResponseVO queryList(@PathVariable String token,
                                 @RequestParam(value = "pageNum") @ApiParam(name = "pageNum",value="页码", required = true) Integer pageNum,

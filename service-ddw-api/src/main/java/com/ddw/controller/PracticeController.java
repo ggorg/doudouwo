@@ -64,7 +64,7 @@ public class PracticeController {
     }
 
     @Token
-    @ApiOperation(value = "代练列表查询")
+    @ApiOperation(value = "代练排行榜")
     @PostMapping("/queryList/{token}")
     public ResponseVO queryList(@PathVariable String token,
                                 @RequestParam(value = "pageNum") @ApiParam(name = "pageNum",value="页码", required = true) Integer pageNum,
