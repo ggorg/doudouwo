@@ -24,4 +24,8 @@
         limit #{start},#{end}
     </select>
 
+    <select id="getPracticeListCount" parameterType="int" resultType="int">
+        SELECT count(*) from ddw_practice where storeId = #{storeId}
+    </select>
+
 </mapper>

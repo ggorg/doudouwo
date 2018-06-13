@@ -22,6 +22,8 @@ public class AppIndexPracticeVO {
     private String label;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
     private Integer fans;
+    @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
+    private boolean followed;
 
     public Integer getId() {
         return id;
@@ -69,5 +71,13 @@ public class AppIndexPracticeVO {
 
     public void setFans(Integer fans) {
         this.fans = fans;
+    }
+
+    public boolean isFollowed() {
+        return followed;
+    }
+
+    public void setFollowed(boolean followed) {
+        this.followed = followed;
     }
 }

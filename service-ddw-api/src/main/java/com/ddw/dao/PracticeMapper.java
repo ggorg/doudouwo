@@ -12,4 +12,5 @@ import java.util.List;
 @Mapper
 public interface PracticeMapper {
     public List<AppIndexPracticeVO> getPracticeList(@Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end);
+    public Integer getPracticeListCount(@Param("storeId") Integer storeId);
 }

@@ -25,4 +25,8 @@
         limit #{start},#{end}
     </select>
 
+    <select id="getGoddessListCount" parameterType="int" resultType="int">
+        SELECT count(*) from ddw_goddess where storeId = #{storeId}
+    </select>
+
 </mapper>

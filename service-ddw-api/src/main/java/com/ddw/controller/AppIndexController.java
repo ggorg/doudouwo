@@ -1,5 +1,6 @@
 package com.ddw.controller;
 
+import com.ddw.beans.AppIndexVO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.services.AppIndexService;
 import com.ddw.token.Token;

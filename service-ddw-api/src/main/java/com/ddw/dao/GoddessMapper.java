@@ -12,4 +12,5 @@ import java.util.List;
 @Mapper
 public interface GoddessMapper {
     public List<AppIndexGoddessVO> getGoddessList(@Param("storeId") Integer storeId, @Param("start")Integer start, @Param("end")Integer end);
+    public Integer getGoddessListCount(@Param("storeId") Integer storeId);
 }

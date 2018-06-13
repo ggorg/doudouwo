@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.dao.PracticeMapper;
 import com.ddw.dao.UserInfoMapper;
@@ -114,7 +115,7 @@ public class ReviewPracticeService extends CommonService {
     }
 
     /**
-     * 当前门店代练列表
+     * 当前门店代练列表,包含关注状态
      * @param token
      * @param pageNum
      * @param pageSize
@@ -122,35 +123,33 @@ public class ReviewPracticeService extends CommonService {
      * @throws Exception
      */
     public ResponseVO practiceList(String token, Integer pageNum, Integer pageSize)throws Exception{
+        JSONObject json = new JSONObject();
         if(pageNum == null || pageSize == null){
             return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
         }
-        Integer userId = TokenUtil.getUserId(token);
         Integer storeId = TokenUtil.getStoreId(token);
-        Map searchCondition = new HashMap<>();
-        searchCondition.put("storeId",storeId);
-        List<Map> list = this.commonList("ddw_practice","id asc",pageNum,pageSize,searchCondition);
-        List<String>userIdList = new ArrayList<String>();
-        for(Map map:list){
-            userIdList.add(map.get("userId").toString());
-        }
-        if(!list.isEmpty()){
-            List<UserInfoVO> practiceUserInfoList = userInfoMapper.getUserInfoList(userIdList);
-            MyAttentionVO myAttentionVO = myAttentionService.queryGoddessByUserId(userId);
-            List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
-            ListIterator<UserInfoVO> practiceUserInfoIterator = practiceUserInfoList.listIterator();
-            while (practiceUserInfoIterator.hasNext()){
-                UserInfoVO practiceUserInfo = practiceUserInfoIterator.next();
-                for(UserInfoVO myAttentionGoddess:myAttentionGoddessList){
-                    if(myAttentionGoddess.getId() == practiceUserInfo.getId()){
-                        practiceUserInfo.setFollowed(true);
+        Integer userId = TokenUtil.getUserId(token);
+        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+        Integer endRow = pageSize;
+        List<AppIndexPracticeVO>AppIndexPracticeList = practiceMapper.getPracticeList(storeId,startRow,endRow);
+        int count = practiceMapper.getPracticeListCount(storeId);
+        MyAttentionVO myAttentionVO = myAttentionService.queryPracticeByUserId(userId);
+        List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
+        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = AppIndexPracticeList.listIterator();
+        while (appIndexPracticeIterator.hasNext()){
+            AppIndexPracticeVO appIndexPracticeVO = appIndexPracticeIterator.next();
+            if (myAttentionGoddessList != null) {
+                for(UserInfoVO userInfoVO:myAttentionGoddessList){
+                    if(userInfoVO.getId() == appIndexPracticeVO.getId()){
+                        appIndexPracticeVO.setFollowed(true);
                         break;
                     }
                 }
             }
-            return new ResponseVO(1,"成功",practiceUserInfoList);
         }
-        return new ResponseVO(1,"成功",null);
+        json.put("list",AppIndexPracticeList);
+        json.put("count",count);
+        return new ResponseVO(1,"成功",json);
     }
 
     /**
