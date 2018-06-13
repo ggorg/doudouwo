@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ddw.dao.GoddessMapper">
+
+    <resultMap id="BaseResultMap" type="com.ddw.beans.AppIndexGoddessVO">
+        <id property="id" column="id"/>
+        <result property="nickName" column="nickName"/>
+        <result property="headImgUrl" column="headImgUrl"/>
+        <result property="ggradeName" column="ggradeName"/>
+        <result property="label" column="label"/>
+        <result property="bidPrice" column="bidPrice"/>
+        <result property="fans" column="fans"/>
+    </resultMap>
+
+
+    <select id="getGoddessList" parameterType="int" resultMap="BaseResultMap">
+        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t4.gradeName ggradeName,count(1) AS fans
+        from ddw_goddess t1 left join ddw_my_attention t2 on t1.userId=t2.goddessId and t1.storeId = #{storeId}
+        LEFT join ddw_userinfo t3 on t1.userId = t3.id
+        left join ddw_goddess_grade t4 on t4.id=t3.goddessGradeId
+        group  by t1.userId,t1.bidPrice
+        order by count(1) desc
+        limit #{start},#{end}
+    </select>
+
+</mapper>

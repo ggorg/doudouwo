@@ -2,10 +2,7 @@ package com.ddw.services;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.ddw.beans.LiveRadioPO;
-import com.ddw.beans.LiveRadioUrlBean;
-import com.ddw.beans.ReviewPO;
-import com.ddw.beans.UserInfoPO;
+import com.ddw.beans.*;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.enums.LiveStatusEnum;
@@ -27,10 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,16 +90,35 @@ public class LiveRadioService extends CommonService{
                     IMApiUtil.setDdwGlobals(ddwGlobals);
                     boolean flag=IMApiUtil.destoryGroup(streamId.replace(LiveRadioConstant.BIZID+"_",""));
                     if(flag){
+                        this.updateAppIndexCache(streamId,2);
                         return new ResponseVO(1,"关闭直播成功",null);
                     }else{
                         return new ResponseVO(-2,"关闭直播失败",null);
                     }
                 }
             }else if(LiveEventTypeEnum.eventType1.getCode().equals(eventType)){
+                this.updateAppIndexCache(streamId,1);
                 return this.updateLiveRadioStatus(streamId,LiveStatusEnum.liveStatus1);
             }
         }
         return new ResponseVO(-2,"更新直播状态失败",null);
+    }
+    //更新缓存首页女神直播状态
+    public void updateAppIndexCache(String streamId,Integer flag){
+        String[] str = streamId.split("_");
+        String storeId = str[1];
+        Integer userId = Integer.getInteger(str[2]);
+        List<AppIndexGoddessVO> appIndexGoddessList= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndex"+storeId);
+        if(appIndexGoddessList != null){
+            ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
+            while (appIndexGoddessIterator.hasNext()){
+                AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
+                if(appIndexGoddessVO.getId() == userId){
+                    appIndexGoddessVO.setLiveRadioFlag(flag);
+                }
+            }
+            CacheUtil.put("publicCache","appIndexGoddess"+storeId,appIndexGoddessList);
+        }
     }
     /*public ResponseVO addPersonNum(String groupId){
         this.ad

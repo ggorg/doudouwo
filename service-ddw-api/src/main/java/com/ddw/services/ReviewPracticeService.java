@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.dao.PracticeMapper;
 import com.ddw.dao.UserInfoMapper;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
@@ -40,6 +41,8 @@ public class ReviewPracticeService extends CommonService {
     private MyAttentionService myAttentionService;
     @Autowired
     private UserInfoMapper userInfoMapper;
+    @Autowired
+    private PracticeMapper practiceMapper;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO apply(UserInfoVO user, String gameId, String rankId, MultipartFile photograph1,MultipartFile photograph2,MultipartFile photograph3)throws Exception{
@@ -148,6 +151,25 @@ public class ReviewPracticeService extends CommonService {
             return new ResponseVO(1,"成功",practiceUserInfoList);
         }
         return new ResponseVO(1,"成功",null);
+    }
+
+    /**
+     * 当前门店代练列表,不判断关注状态
+     * @param token
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    public ResponseVO practiceNoAttentionList(String token, Integer pageNum, Integer pageSize)throws Exception{
+        if(pageNum == null || pageSize == null){
+            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+        }
+        Integer storeId = TokenUtil.getStoreId(token);
+        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+        Integer endRow = pageSize;
+        List<AppIndexPracticeVO>AppIndexPracticeList = practiceMapper.getPracticeList(storeId,startRow,endRow);
+        return new ResponseVO(1,"成功",AppIndexPracticeList);
     }
 
 }

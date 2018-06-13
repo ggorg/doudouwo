@@ -1,16 +1,17 @@
 package com.ddw.services;
 
-import com.ddw.beans.*;
+import com.ddw.beans.AppIndexGoddessVO;
+import com.ddw.beans.AppIndexPracticeVO;
+import com.ddw.beans.AppIndexVO;
+import com.ddw.beans.ResponseApiVO;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,28 +36,23 @@ public class AppIndexService {
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择门店",null);
         }
-
         AppIndexVO appIndexVO = new AppIndexVO();
-        ResponseVO goddessList = reviewGoddessService.goddessList(token,1,4);
-        List<AppIndexGoddessVO> appIndexGoddessList = new ArrayList<AppIndexGoddessVO>();
-        if (goddessList.getData() != null) {
-            for(UserInfoVO userInfoVO:(List<UserInfoVO>)goddessList.getData()){
-                AppIndexGoddessVO appIndexGoddessVO = new AppIndexGoddessVO();
-                PropertyUtils.copyProperties(appIndexGoddessVO,userInfoVO);
-                appIndexGoddessList.add(appIndexGoddessVO);
-            }
+        Object obGoddess = CacheUtil.get("publicCache","appIndexGoddess"+storeId);
+        if(obGoddess == null){
+            ResponseVO goddessList = reviewGoddessService.goddessNoAttentionList(token,1,4);
+            appIndexVO.setGoddessList((List<AppIndexGoddessVO>)goddessList.getData());
+            CacheUtil.put("publicCache","appIndexGoddess"+storeId,appIndexVO.getGoddessList());
+        }else{
+            appIndexVO.setGoddessList((List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess"+storeId));
         }
-        ResponseVO practiceList = reviewPracticeService.practiceList(token,1,4);
-        List<AppIndexDaiLianVO> appIndexDaiLianVOList = new ArrayList<AppIndexDaiLianVO>();
-        if(practiceList.getData() != null){
-            for(UserInfoVO userInfoVO:(List<UserInfoVO>)practiceList.getData()){
-                AppIndexDaiLianVO appIndexDaiLianVO = new AppIndexDaiLianVO();
-                PropertyUtils.copyProperties(appIndexDaiLianVO,userInfoVO);
-                appIndexDaiLianVOList.add(appIndexDaiLianVO);
-            }
+        Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
+        if(obPractice == null){
+            ResponseVO practiceList = reviewPracticeService.practiceNoAttentionList(token,1,4);
+            appIndexVO.setPracticeList((List<AppIndexPracticeVO>)practiceList.getData());
+            CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
+        }else{
+            appIndexVO.setPracticeList((List<AppIndexPracticeVO>)CacheUtil.get("publicCache","appIndexPractice"+storeId));
         }
-        appIndexVO.setGoddessList(appIndexGoddessList);
-        appIndexVO.setDaiLianList(appIndexDaiLianVOList);
         appIndexVO.setTicketList(ticketService.getTicketList());
         return new ResponseApiVO(1,"成功",appIndexVO);
 

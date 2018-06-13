@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.dao.GoddessMapper;
 import com.ddw.dao.UserInfoMapper;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
@@ -30,6 +31,10 @@ public class ReviewGoddessService extends CommonService {
     private CacheService cacheService;
     @Autowired
     private UserInfoMapper userInfoMapper;
+    @Autowired
+    private GoddessMapper goddessMapper;
+    @Autowired
+    private ReviewService reviewService;
 
 
     public GoddessPO getAppointment(Integer userid,Integer storeId)throws Exception{
@@ -146,5 +151,51 @@ public class ReviewGoddessService extends CommonService {
             return new ResponseVO(1,"成功",goddessUserInfoList);
         }
         return new ResponseVO(1,"成功",null);
+    }
+
+    /**
+     * 当前门店女神列表,不判断关注状态
+     * @param token
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @throws Exception
+     */
+    public ResponseVO goddessNoAttentionList(String token,Integer pageNum,Integer pageSize)throws Exception{
+        if(pageNum == null || pageSize == null){
+            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+        }
+        Integer storeId = TokenUtil.getStoreId(token);
+        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+        Integer endRow = pageSize;
+        List<AppIndexGoddessVO>AppIndexGoddessList = goddessMapper.getGoddessList(storeId,startRow,endRow);
+        ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = AppIndexGoddessList.listIterator();
+        while (appIndexGoddessIterator.hasNext()){
+            AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
+            ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(appIndexGoddessVO.getId(),storeId);
+            if(rav.getReCode() == 2 || rav.getReCode() == -2002){
+                appIndexGoddessVO.setLiveRadioFlag(1);
+            }else if(rav.getReCode() == -2003){
+                appIndexGoddessVO.setLiveRadioFlag(2);
+            }else if(rav.getReCode() == 1){
+                appIndexGoddessVO.setLiveRadioFlag(0);
+//            }else {
+//                //判断审核缓存是否存在
+//                if (CacheUtil.get("review", "liveRadio" + appIndexGoddessVO.getId()) == null) {
+//                    Map condition1 = new HashMap();
+//                    condition1.put("drProposer", appIndexGoddessVO.getId());
+//                    condition1.put("drBusinessType", ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
+//                    condition1.put("drReviewStatus", ReviewStatusEnum.ReviewStatus2.getCode());
+//                    List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review", condition1));
+//                    if (list1.size() > 0) {
+//                        CacheUtil.put("review", "liveRadio" + appIndexGoddessVO.getId(), 3);
+//                        appIndexGoddessVO.setLiveRadioFlag(3);
+//                    }
+//                } else {
+//                    appIndexGoddessVO.setLiveRadioFlag((Integer) CacheUtil.get("review", "liveRadio" + appIndexGoddessVO.getId()));
+//                }
+            }
+        }
+        return new ResponseVO(1,"成功",AppIndexGoddessList);
     }
 }

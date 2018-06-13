@@ -24,8 +24,8 @@ public class AppIndexVO {
     @ApiModelProperty(name="goodFriendPlayList",value="好友约玩儿",example="")
     public List<AppIndexGoodFriendPlayVO> goodFriendPlayList;
 
-    @ApiModelProperty(name="daiLianList",value="代练",example="")
-    public List<AppIndexDaiLianVO> daiLianList;
+    @ApiModelProperty(name="practiceList",value="代练",example="")
+    public List<AppIndexPracticeVO> practiceList;
 
     public List<AppIndexTopImgsVO> getTopImgsList() {
         return topImgsList;
@@ -67,11 +67,11 @@ public class AppIndexVO {
         this.goodFriendPlayList = goodFriendPlayList;
     }
 
-    public List<AppIndexDaiLianVO> getDaiLianList() {
-        return daiLianList;
+    public List<AppIndexPracticeVO> getPracticeList() {
+        return practiceList;
     }
 
-    public void setDaiLianList(List<AppIndexDaiLianVO> daiLianList) {
-        this.daiLianList = daiLianList;
+    public void setPracticeList(List<AppIndexPracticeVO> practiceList) {
+        this.practiceList = practiceList;
     }
 }
