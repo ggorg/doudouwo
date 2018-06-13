@@ -524,7 +524,10 @@ public class PayCenterService extends BaseOrderService {
                     Map map=new HashMap();
                     map.put("doPayStatus",PayStatusEnum.PayStatus2.getCode());
                     ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",exitOrderPO.getOrderId());
-
+                    map=new HashMap();
+                    map.put("payStatus",PayStatusEnum.PayStatus2.getCode());
+                    map.put("shipStatus",ClientShipStatusEnum.ShipStatus4.getCode());
+                    this.commonUpdateBySingleSearchParam("ddw_order_view",map,"orderId",exitOrderPO.getOrderId());
                 }
             }
             //ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);

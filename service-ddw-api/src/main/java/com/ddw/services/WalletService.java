@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -40,6 +41,38 @@ public class WalletService extends CommonService {
 
     @Autowired
     private DDWGlobals ddwGlobals;
+
+    public ResponseApiVO getIncome(Integer incomeType,Integer pageNo,String token)throws Exception{
+        if(StringUtils.isBlank(IncomeTypeEnum.getName(incomeType))){
+            return new ResponseApiVO(-2,"参数异常",null);
+        }
+        if(pageNo==null){
+            pageNo=1;
+        }
+        Map search=new HashMap();
+        search.put("diType",incomeType);
+        search.put("userId",TokenUtil.getUserId(token));
+
+        List list=this.commonList("ddw_income_record","createTime desc","t1.diMoney money,t1.diType type,t1.createTime,t1.orderNo,t1.orderType",pageNo,10,search);
+        if(list==null || list.isEmpty()){
+            return new ResponseApiVO(2,"成功",new ListVO(new ArrayList()));
+
+        }
+        List dataList=new ArrayList();
+
+        list.forEach(a->{
+            IncomeVO incomeVO=new IncomeVO();
+            try {
+                PropertyUtils.copyProperties(incomeVO,a);
+                incomeVO.setOrderTypeName(OrderTypeEnum.getName(incomeVO.getOrderType()));
+                dataList.add(incomeVO);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+        });
+
+        return new ResponseApiVO(1,"成功",new ListVO(dataList));
+    }
 
     /**
      * 获取余额

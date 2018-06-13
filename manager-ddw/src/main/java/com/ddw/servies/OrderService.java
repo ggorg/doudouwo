@@ -552,6 +552,12 @@ public class OrderService extends BaseOrderService {
         Map map=new HashMap();
         map.put("doPayStatus",payStatusEnum.getCode());
         ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",OrderUtil.getOrderId(orderNo));
+
+        map=new HashMap();
+        map.put("payStatus",PayStatusEnum.PayStatus2.getCode());
+        map.put("shipStatus",ClientShipStatusEnum.ShipStatus4.getCode());
+        this.commonUpdateBySingleSearchParam("ddw_order_view",map,"orderNo",orderNo);
+
         return res;
     }
     /**

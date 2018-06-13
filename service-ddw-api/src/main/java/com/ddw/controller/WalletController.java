@@ -29,6 +29,19 @@ public class WalletController {
 
     @Autowired
     private PayCenterService payCenterService;
+    @Token
+    @ApiOperation(value = "查询收益明细",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/income/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<IncomeVO>> getIncome(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)IncomeDTO args){
+        try {
+            return this.walletService.getIncome(args.getIncomeType(),args.getPageNo(),token);
+        }catch (Exception e){
+            logger.error("WalletController-getIncome-》查询收益明细-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"查询失败",null);
+
+    }
 
     @Token
     @ApiOperation(value = "查询钱包余额",produces = MediaType.APPLICATION_JSON_VALUE)

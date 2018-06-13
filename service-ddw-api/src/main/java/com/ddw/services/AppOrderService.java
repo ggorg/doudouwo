@@ -1,10 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
-import com.ddw.enums.AppOrderTypeEnum;
-import com.ddw.enums.OrderTypeEnum;
-import com.ddw.enums.PayStatusEnum;
-import com.ddw.enums.ShipStatusEnum;
+import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.Page;
@@ -31,6 +28,9 @@ public class AppOrderService extends CommonService {
         map.put("userId", TokenUtil.getUserId(token));
         map.put("payStatus,>=", PayStatusEnum.PayStatus1.getCode());
         map.put("orderType,in",dto.getType()==null?AppOrderTypeEnum.OrderType3.getName():AppOrderTypeEnum.getName(dto.getType()));
+        if(dto.getShipStatus()!=null && StringUtils.isNotBlank(ShipStatusEnum.getName(dto.getShipStatus()))){
+            map.put("shipStatus", dto.getShipStatus());
+        }
         List<Map> orderList=this.commonList("ddw_order_view","createTime desc",p.getStartRow(),p.getEndRow(),map);
         OrderViewVO orderViewVO=null;
         List dataList=new ArrayList();
@@ -38,7 +38,7 @@ public class AppOrderService extends CommonService {
             orderViewVO=new OrderViewVO();
             PropertyUtils.copyProperties(orderViewVO,m);
             orderViewVO.setOrderTypeName(OrderTypeEnum.getName(orderViewVO.getOrderType()));
-            orderViewVO.setShipStatusName(ShipStatusEnum.getName(orderViewVO.getShipStatus()));
+            orderViewVO.setShipStatusName(ClientShipStatusEnum.getName(orderViewVO.getShipStatus()));
             dataList.add(orderViewVO);
 
         }
