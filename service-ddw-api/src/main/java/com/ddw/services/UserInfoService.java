@@ -5,10 +5,12 @@ import com.ddw.dao.PhotographMapper;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewStatusEnum;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
+import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
@@ -63,13 +65,13 @@ public class UserInfoService extends CommonService {
         userInfoPO.setCreateTime(new Date());
         userInfoPO.setUpdateTime(new Date());
         ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
-//        if(re.getReCode()==1){
-//            walletService.createWallet((Integer) re.getData());
-//            boolean flag= IMApiUtil.importUser(userInfoPO,0);
-//            if(!flag){
-//                throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
-//            }
-//        }
+        if(re.getReCode()==1){
+            walletService.createWallet((Integer) re.getData());
+            boolean flag= IMApiUtil.importUser(userInfoPO,0);
+            if(!flag){
+                throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
+            }
+        }
         return re;
     }
 
