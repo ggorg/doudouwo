@@ -39,11 +39,14 @@ public abstract class CommonService {
         return vo;
     }
     protected List commonList(String tableName,String ordername,Integer pageNum,Integer pageSize,Map<String,Object> searchCondition){
+        return commonList(tableName,ordername,null,pageNum,pageSize,searchCondition);
+    }
+    protected List commonList(String tableName,String ordername,String custom,Integer pageNum,Integer pageSize,Map<String,Object> searchCondition){
         Page page=null;
         if(pageNum!=null && pageSize!=null){
             page=new Page(pageNum,pageSize);
         }
-        CommonSearchBean csb=new CommonSearchBean(tableName,ordername,null, page==null?null:page.getStartRow(),page==null?null:page.getEndRow(),searchCondition);
+        CommonSearchBean csb=new CommonSearchBean(tableName,ordername,custom, page==null?null:page.getStartRow(),page==null?null:page.getEndRow(),searchCondition);
         return this.commonMapper.selectObjects(csb);
     }
     protected long commonCountBySingleParam(String tableName,String paramName,Object paramValue){
@@ -142,7 +145,7 @@ public abstract class CommonService {
         for(int i=1;i<=5;i++){
             map=this.commonObjectBySearchCondition(tableName,searchCondition);
             if(map==null || map.isEmpty()){
-                return new ResponseVO(-2,"更新失败",null);
+                return new ResponseVO(-3,"更新失败",null);
             }else{
                 version=(Integer)map.get(versionName);
                 for(String calculateName:calculatesName){

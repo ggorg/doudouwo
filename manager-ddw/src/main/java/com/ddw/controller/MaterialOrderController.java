@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 import com.ddw.beans.OrderPO;
+import com.ddw.enums.OrderTypeEnum;
 import com.ddw.enums.RoleTypeEnum;
 import com.ddw.enums.ShipStatusEnum;
 import com.ddw.servies.RoleService;
@@ -73,7 +74,7 @@ public class MaterialOrderController {
             if(spo!=null){
                 String orderno=MyEncryptUtil.getRealValue(orderNo);
                 if(orderno!=null){
-                    model.addAllAttributes(this.orderService.getOrderByStoreAndOrderNo(orderno));
+                    model.addAllAttributes(this.orderService.getOrderByStoreAndOrderNo(orderno, OrderTypeEnum.OrderType2));
                 }
             }
 
@@ -233,7 +234,7 @@ public class MaterialOrderController {
         }catch (Exception e){
             logger.error("MaterialOrderController->toAcceptOrder",e);
         }
-        return new ResponseVO(-1,"接受单子失败",null);
+        return new ResponseVO(-1,"接受订单失败",null);
     }
 
     /**
@@ -291,7 +292,7 @@ public class MaterialOrderController {
             if(roleList!=null && roleList.size()>0){
                 String orderno=MyEncryptUtil.getRealValue(orderNo);
                 if(orderno!=null){
-                    Map map=this.orderService.getOrderByStoreAndOrderNo(orderno);
+                    Map map=this.orderService.getOrderByStoreAndOrderNo(orderno,OrderTypeEnum.OrderType2);
                     OrderPO op=(OrderPO)map.get("order");
                     map.put("store",this.storeService.getBeanById(op.getDoCustomerStoreId()));
                     model.addAllAttributes(map);

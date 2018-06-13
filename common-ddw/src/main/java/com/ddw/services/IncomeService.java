@@ -18,6 +18,7 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class IncomeService extends CommonService{
 
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO commonIncome(Integer goddessUserId, Integer cost, IncomeTypeEnum incomeType, OrderTypeEnum orderType,String orderNo)throws Exception{
        Integer income=(int)(cost*0.6);

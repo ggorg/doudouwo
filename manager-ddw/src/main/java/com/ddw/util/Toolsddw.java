@@ -81,6 +81,21 @@ public class Toolsddw extends Tools {
         }
 
     }
+    public static String getBtnMsgByStore(Integer payStatus,Integer shipStatus,Date orderEndTime,String orderNo) {
+        StringBuilder btnBuilder=new StringBuilder();
+
+        if (PayStatusEnum.PayStatus1.getCode() == payStatus && ShipStatusEnum.ShipStatus0.getCode() == shipStatus) {
+            btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"toAccept('" + MyEncryptUtil.encry(orderNo) + "')\">接受订单</button>");
+
+        } else if (PayStatusEnum.PayStatus1.getCode() == payStatus && ShipStatusEnum.ShipStatus1.getCode() == shipStatus) {
+
+            btnBuilder.append("<button class=\"layui-btn layui-btn-sm\" onclick=\"toMakeSure('" + MyEncryptUtil.encry(orderNo) + "')\">确认发货</button>");
+
+
+
+        }
+        return btnBuilder.toString();
+    }
     public static String getBtnMsgByHq(Integer payStatus,Integer shipStatus,Date orderEndTime,String orderNo){
         boolean overflag=isOverTime(orderEndTime);
         StringBuilder btnBuilder=new StringBuilder();

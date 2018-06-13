@@ -270,7 +270,7 @@ public class PayCenterService extends BaseOrderService {
             orderPO.setDoCost(actPrice!=null && actPrice>0?actPrice:price);
         }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
 
-            orderPO.setDoSellerId(-1);
+            orderPO.setDoSellerId(TokenUtil.getStoreId(token));
             List<Integer> codesList=Arrays.asList(codes);
             Map search=new HashMap();
             search.put("dtDisabled",DisabledEnum.disabled0.getCode());
@@ -524,7 +524,10 @@ public class PayCenterService extends BaseOrderService {
                     Map map=new HashMap();
                     map.put("doPayStatus",PayStatusEnum.PayStatus2.getCode());
                     ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",exitOrderPO.getOrderId());
-
+                    map=new HashMap();
+                    map.put("payStatus",PayStatusEnum.PayStatus2.getCode());
+                    map.put("shipStatus",ClientShipStatusEnum.ShipStatus4.getCode());
+                    this.commonUpdateBySingleSearchParam("ddw_order_view",map,"orderId",exitOrderPO.getOrderId());
                 }
             }
             //ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);

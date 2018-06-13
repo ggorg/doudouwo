@@ -116,18 +116,25 @@ public class BaseOrderService extends CommonService {
                     throw new GenException("更新竞价金额支付状态失败");
                 }
                 Map payMap=null;
-                Map updateMap=null;
+
                 //goddessUserId
                 OrderViewPO po=null;
+                List goddessId=new ArrayList();
+                Integer gid=null;
                 for(String ub:ubs){
                     payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
                     if(payMap==null){
                         throw new GenException("更新竞价金额支付状态失败");
                     }
-                    updateMap=new HashMap();
+                   /*
+                    Map updateMap=null;updateMap=new HashMap();
                     updateMap.put("endTime",DateUtils.addMinutes(new Date(),(Integer) payMap.get("time")));
                     this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",payMap.get("code"));
-                    this.incomeService.commonIncome((Integer) payMap.get("goddessUserId"),Integer.parseInt((String) payMap.get("needPayPrice")), IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType5,orderNo);
+*/
+                    gid=(Integer) payMap.get("goddessUserId");
+                    goddessId.add(gid);
+                    this.incomeService.commonIncome(gid,Integer.parseInt((String) payMap.get("needPayPrice")), IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType5,orderNo);
+
                     po=new OrderViewPO();
                     po.setCreateTime(new Date());
                     po.setName(OrderTypeEnum.OrderType5.getName());
@@ -144,7 +151,10 @@ public class BaseOrderService extends CommonService {
                     po.setStoreId(cacheOrder.getDoSellerId());
                     this.orderViewService.saveOrderView(po);
                 }
-                ubs.forEach(a->CacheUtil.delete("pay","bidding-pay-"+a));
+                goddessId.forEach(a->{
+                    CacheUtil.put("pay","bidding-finish-pay-"+a,orderNo);
+                   // CacheUtil.delete("pay","bidding-pay-"+a);
+                });
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
 
             }else if(OrderTypeEnum.OrderType1.getCode().equals(doType)){

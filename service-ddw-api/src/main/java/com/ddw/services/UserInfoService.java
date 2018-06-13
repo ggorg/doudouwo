@@ -46,6 +46,9 @@ public class UserInfoService extends CommonService {
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private WalletService walletService;
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(UserInfoDTO userInfoDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
@@ -63,6 +66,7 @@ public class UserInfoService extends CommonService {
         userInfoPO.setUpdateTime(new Date());
         ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
         if(re.getReCode()==1){
+            walletService.createWallet((Integer) re.getData());
             boolean flag= IMApiUtil.importUser(userInfoPO,0);
             if(!flag){
                 throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");

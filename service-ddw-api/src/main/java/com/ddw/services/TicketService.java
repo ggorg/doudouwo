@@ -1,6 +1,6 @@
 package com.ddw.services;
 
-import com.ddw.beans.AppIndexTicketVO;
+import com.ddw.beans.vo.AppIndexTicketVO;
 import com.ddw.beans.ListVO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.enums.TicketTypeEnum;
@@ -47,6 +47,7 @@ public class TicketService extends CommonService{
                 AppIndexTicketVO at = new AppIndexTicketVO();
                 PropertyUtils.copyProperties(at,map);
                 at.setTypeName(TicketTypeEnum.getName(at.getType()));
+
                 appIndexTicketList.add(at);
             }
             CacheUtil.put("publicCache","allTicket",appIndexTicketList);

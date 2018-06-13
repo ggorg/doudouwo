@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.dao.GoddessMapper;
 import com.ddw.dao.UserInfoMapper;
@@ -38,7 +39,7 @@ public class ReviewGoddessService extends CommonService {
 
 
     public GoddessPO getAppointment(Integer userid,Integer storeId)throws Exception{
-        GoddessPO obj=(GoddessPO) CacheUtil.get("publicCache","goddess-"+storeId+"-"+userid);
+        String obj=(String) CacheUtil.get("publicCache","goddess-"+storeId+"-"+userid);
         if(obj==null){
             Map searchMap=new HashMap();
             searchMap.put("storeId",storeId);
@@ -47,12 +48,12 @@ public class ReviewGoddessService extends CommonService {
             if(po!=null){
                 Integer ap=po.getAppointment()==null?0:po.getAppointment();
                 po.setAppointment(ap);
-                CacheUtil.put("publicCache","goddess-"+storeId+"-"+userid,po);
+                CacheUtil.put("publicCache","goddess-"+storeId+"-"+userid, JSONObject.toJSONString(po));
 
                 return po;
             }
         }else{
-            return  obj;
+            return  JSONObject.parseObject(obj,GoddessPO.class);
         }
        return null;
     }
@@ -68,7 +69,8 @@ public class ReviewGoddessService extends CommonService {
            ResponseVO vo=this.commonUpdateBySingleSearchParam("ddw_goddess",map,"userId",userid);
            if(vo.getReCode()==1){
                po.setAppointment(ap);
-               cacheService.set("goddess-"+userid,po);
+               CacheUtil.put("publicCache","goddess-"+po.getStoreId()+"-"+userid, JSONObject.toJSONString(po));
+
                return new ResponseApiVO(1,"修改成功",null);
            }
        }

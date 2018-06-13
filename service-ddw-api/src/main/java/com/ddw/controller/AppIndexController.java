@@ -26,7 +26,7 @@ public class AppIndexController {
         try {
             return appIndexService.toIndex(token);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("AppIndexController->toIndex->首页->系统异常",e);
         }
         return new ResponseApiVO(-1,"失败",null);
 
