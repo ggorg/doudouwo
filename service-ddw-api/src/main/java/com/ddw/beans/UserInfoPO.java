@@ -13,6 +13,8 @@ public class UserInfoPO {
     private String phone;
     private String inviteCode;
     private String label;
+    private String interest;
+    private String job;
     private String starSign;
     private String signature;
     private String province;
@@ -31,52 +33,52 @@ public class UserInfoPO {
     private Date createTime;
     private Date updateTime;
 
-    public String getArea() {
-        return area;
+    public Integer getId() {
+        return id;
     }
 
-    public void setArea(String area) {
-        this.area = area;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getCity() {
-        return city;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public String getUserPwd() {
+        return userPwd;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setUserPwd(String userPwd) {
+        this.userPwd = userPwd;
     }
 
-    public Integer getGoddessFlag() {
-        return goddessFlag;
+    public String getOpenid() {
+        return openid;
     }
 
-    public void setGoddessFlag(Integer goddessFlag) {
-        this.goddessFlag = goddessFlag;
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 
-    public Integer getGoddessGradeId() {
-        return goddessGradeId;
+    public String getRealName() {
+        return realName;
     }
 
-    public void setGoddessGradeId(Integer goddessGradeId) {
-        this.goddessGradeId = goddessGradeId;
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 
-    public Integer getGradeId() {
-        return gradeId;
+    public String getNickName() {
+        return nickName;
     }
 
-    public void setGradeId(Integer gradeId) {
-        this.gradeId = gradeId;
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getHeadImgUrl() {
@@ -87,12 +89,124 @@ public class UserInfoPO {
         this.headImgUrl = headImgUrl;
     }
 
-    public Integer getId() {
-        return id;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getInterest() {
+        return interest;
+    }
+
+    public void setInterest(String interest) {
+        this.interest = interest;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
+
+    public String getStarSign() {
+        return starSign;
+    }
+
+    public void setStarSign(String starSign) {
+        this.starSign = starSign;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public Integer getRegisterType() {
+        return registerType;
+    }
+
+    public void setRegisterType(Integer registerType) {
+        this.registerType = registerType;
+    }
+
+    public Integer getGradeId() {
+        return gradeId;
+    }
+
+    public void setGradeId(Integer gradeId) {
+        this.gradeId = gradeId;
+    }
+
+    public Integer getGoddessGradeId() {
+        return goddessGradeId;
+    }
+
+    public void setGoddessGradeId(Integer goddessGradeId) {
+        this.goddessGradeId = goddessGradeId;
+    }
+
+    public Integer getPracticeGradeId() {
+        return practiceGradeId;
+    }
+
+    public void setPracticeGradeId(Integer practiceGradeId) {
+        this.practiceGradeId = practiceGradeId;
     }
 
     public String getIdcard() {
@@ -119,44 +233,12 @@ public class UserInfoPO {
         this.idcardOppositeUrl = idcardOppositeUrl;
     }
 
-    public String getInviteCode() {
-        return inviteCode;
+    public Integer getGoddessFlag() {
+        return goddessFlag;
     }
 
-    public void setInviteCode(String inviteCode) {
-        this.inviteCode = inviteCode;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public String getOpenid() {
-        return openid;
-    }
-
-    public void setOpenid(String openid) {
-        this.openid = openid;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setGoddessFlag(Integer goddessFlag) {
+        this.goddessFlag = goddessFlag;
     }
 
     public Integer getPracticeFlag() {
@@ -167,60 +249,12 @@ public class UserInfoPO {
         this.practiceFlag = practiceFlag;
     }
 
-    public Integer getPracticeGradeId() {
-        return practiceGradeId;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setPracticeGradeId(Integer practiceGradeId) {
-        this.practiceGradeId = practiceGradeId;
-    }
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
-    public Integer getRegisterType() {
-        return registerType;
-    }
-
-    public void setRegisterType(Integer registerType) {
-        this.registerType = registerType;
-    }
-
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
-    public String getStarSign() {
-        return starSign;
-    }
-
-    public void setStarSign(String starSign) {
-        this.starSign = starSign;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public Date getUpdateTime() {
@@ -229,21 +263,5 @@ public class UserInfoPO {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserPwd() {
-        return userPwd;
-    }
-
-    public void setUserPwd(String userPwd) {
-        this.userPwd = userPwd;
     }
 }

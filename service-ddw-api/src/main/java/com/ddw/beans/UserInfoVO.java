@@ -27,6 +27,10 @@ public class UserInfoVO {
     private String phone;
     @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
     private String label;
+    @ApiModelProperty(name="interest",value="兴趣",example="LOL/美食/旅游")
+    private String interest;
+    @ApiModelProperty(name="job",value="职业",example="文化/广告/传媒")
+    private String job;
     @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
     private String starSign;
     @ApiModelProperty(name="province",value="用户所在省份",example="广东省")
@@ -85,8 +89,6 @@ public class UserInfoVO {
 
     @ApiModelProperty(name="userSign",value="IM签名",example="xxxx")
     private String userSign;
-    @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
-    private boolean followed;
 
     public Integer getId() {
         return id;
@@ -158,6 +160,22 @@ public class UserInfoVO {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getInterest() {
+        return interest;
+    }
+
+    public void setInterest(String interest) {
+        this.interest = interest;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
     }
 
     public String getStarSign() {
@@ -382,13 +400,5 @@ public class UserInfoVO {
 
     public void setUserSign(String userSign) {
         this.userSign = userSign;
-    }
-
-    public boolean isFollowed() {
-        return followed;
-    }
-
-    public void setFollowed(boolean followed) {
-        this.followed = followed;
     }
 }

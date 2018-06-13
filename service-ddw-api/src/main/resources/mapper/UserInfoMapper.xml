@@ -13,6 +13,8 @@
         <result property="headImgUrl" column="headImgUrl"/>
         <result property="phone" column="phone"/>
         <result property="label" column="label"/>
+        <result property="interest" column="interest"/>
+        <result property="job" column="job"/>
         <result property="starSign" column="starSign"/>
         <result property="province" column="province"/>
         <result property="city" column="city"/>
@@ -40,7 +42,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        t1.id,userName,openid,realName,nickName,headImgUrl,phone,label,
+        t1.id,userName,openid,realName,nickName,headImgUrl,phone,label,interest,job,
         starSign,province,city,area,gradeId,t2.gradeName ugradeName,t2.`level` ulevel,goddessGradeId,t3.gradeName ggradeName, t3.`level` glevel,
         practiceGradeId,t4.gradeName pgradeName,t4.`level`,goddessFlag,practiceFlag,inviteCode,
         signature,sex,registerType,idcard,idcardFrontUrl,idcardOppositeUrl

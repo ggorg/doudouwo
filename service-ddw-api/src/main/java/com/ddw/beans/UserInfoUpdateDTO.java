@@ -15,6 +15,10 @@ public class UserInfoUpdateDTO {
     private String phone;
     @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
     private String label;
+    @ApiModelProperty(name="interest",value="兴趣",example="LOL/美食/旅游")
+    private String interest;
+    @ApiModelProperty(name="job",value="职业",example="文化/广告/传媒")
+    private String job;
     @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
     private String starSign;
     @ApiModelProperty(name="province",value="用户所在省份",example="广东省")
@@ -28,28 +32,20 @@ public class UserInfoUpdateDTO {
     @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
     private Integer sex;
 
-    public String getArea() {
-        return area;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setArea(String area) {
-        this.area = area;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getCity() {
-        return city;
+    public String getUserPwd() {
+        return userPwd;
     }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
+    public void setUserPwd(String userPwd) {
+        this.userPwd = userPwd;
     }
 
     public String getNickName() {
@@ -68,28 +64,28 @@ public class UserInfoUpdateDTO {
         this.phone = phone;
     }
 
-    public String getProvince() {
-        return province;
+    public String getLabel() {
+        return label;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
-    public Integer getSex() {
-        return sex;
+    public String getInterest() {
+        return interest;
     }
 
-    public void setSex(Integer sex) {
-        this.sex = sex;
+    public void setInterest(String interest) {
+        this.interest = interest;
     }
 
-    public String getSignature() {
-        return signature;
+    public String getJob() {
+        return job;
     }
 
-    public void setSignature(String signature) {
-        this.signature = signature;
+    public void setJob(String job) {
+        this.job = job;
     }
 
     public String getStarSign() {
@@ -100,19 +96,43 @@ public class UserInfoUpdateDTO {
         this.starSign = starSign;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getProvince() {
+        return province;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setProvince(String province) {
+        this.province = province;
     }
 
-    public String getUserPwd() {
-        return userPwd;
+    public String getCity() {
+        return city;
     }
 
-    public void setUserPwd(String userPwd) {
-        this.userPwd = userPwd;
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
     }
 }
