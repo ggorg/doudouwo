@@ -208,6 +208,33 @@ public class UserInfoService extends CommonService {
             }
         }
     }
+    public String getPhotograph(Integer userId) {
+        String imgUrl = (String) CacheUtil.get("commonCache", "goddess-photo-" + userId);
+        if (StringUtils.isBlank(imgUrl)) {
+            Map searchMap = new HashMap();
+            searchMap.put("userId", userId);
+            List<Map> list = this.commonList("ddw_photograph", "createTime desc", 1, 1, searchMap);
+            if (list != null && !list.isEmpty()) {
+                String imgUrlVo = (String) list.get(0).get("imgUrl");
+                CacheUtil.put("commonCache", "goddess-photo-" + userId, imgUrlVo);
+                return imgUrlVo;
+            }
+        }else{
+            return imgUrl;
+        }
+        return "";
+
+    }
+
+    public void resetCacheGoddessPhoto(Integer userId,String imgUrlVo,boolean isDelete){
+        if(isDelete){
+            CacheUtil.delete("commonCache","goddess-photo-"+userId);
+        }else{
+            CacheUtil.put("commonCache", "goddess-photo-" + userId, imgUrlVo);
+
+        }
+
+    }
 
     /**
      * 查询会员相册默认前十
@@ -275,6 +302,10 @@ public class UserInfoService extends CommonService {
         }
         if(!hs.isEmpty()){
             list = photographMapper.findListByNames(hs);
+            if(list!=null && !list.isEmpty()){
+                PhotographPO po=list.get(0);
+                this.resetCacheGoddessPhoto(po.getUserId(),po.getImgUrl(),false);
+            }
         }
         json.put("list",list);
         if(code == 1){
@@ -303,6 +334,10 @@ public class UserInfoService extends CommonService {
         }
         searchCondition.put("id ","in ("+sb.toString()+")");
         ResponseVO responseVO = this.commonDeleteByCombination("ddw_photograph",searchCondition);
+        if(responseVO.getReCode()==1){
+            PhotographPO po=photographPOList.get(0);
+            this.resetCacheGoddessPhoto(po.getUserId(),po.getImgUrl(),true);
+        }
         return responseVO;
     }
 }

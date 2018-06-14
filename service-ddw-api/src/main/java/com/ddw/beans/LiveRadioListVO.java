@@ -34,6 +34,17 @@ public class LiveRadioListVO {
     @ApiModelProperty(name="age",value="年龄",example="18岁")
     private String age;
 
+    @ApiModelProperty(name="backImgUrl",value="背景图",example="http://xxxx")
+    private String backImgUrl;
+
+    public String getBackImgUrl() {
+        return backImgUrl;
+    }
+
+    public void setBackImgUrl(String backImgUrl) {
+        this.backImgUrl = backImgUrl;
+    }
+
     public String getAge() {
         return age;
     }
