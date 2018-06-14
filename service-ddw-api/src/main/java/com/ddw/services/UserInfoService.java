@@ -219,7 +219,7 @@ public class UserInfoService extends CommonService {
         List<PhotographPO> photographList = new ArrayList<PhotographPO>();
         Map<String,Object> searchCondition = new HashedMap();
         searchCondition.put("userId",id);
-        List<Map> list = this.commonList("ddw_photograph","createTime desc",1,10,searchCondition);
+        List<Map> list = this.commonList("ddw_photograph","id desc",1,10,searchCondition);
         for(Map map:list){
             PhotographPO photographPO = new PhotographPO();
             PropertyUtils.copyProperties(photographPO,map);
@@ -241,7 +241,7 @@ public class UserInfoService extends CommonService {
         JSONObject json = new JSONObject();
         Map<String,Object> searchCondition = new HashedMap();
         searchCondition.put("userId",id);
-        Page page = this.commonPage("ddw_photograph","createTime desc",pageNum,pageSize,searchCondition);
+        Page page = this.commonPage("ddw_photograph","id desc",pageNum,pageSize,searchCondition);
         json.put("list",page.getResult());
         json.put("count",page.getTotal());
         return new ResponseVO(1,"成功",json);
