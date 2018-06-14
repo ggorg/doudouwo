@@ -40,8 +40,9 @@ public class PracticeController {
                                @RequestParam(value = "photograph3") @ApiParam(name = "photograph3",value="游戏截图", required = true) MultipartFile photograph3){
         try {
             String openid = TokenUtil.getUserObject(token).toString();
+
             UserInfoVO user = userInfoService.queryByOpenid(openid);
-            return reviewPracticeService.apply(user,gameId,rankId,photograph1,photograph2,photograph3);
+            return reviewPracticeService.apply(TokenUtil.getUserId(token),TokenUtil.getUserName(token),gameId,rankId,photograph1,photograph2,photograph3);
         }catch (Exception e){
             logger.error("UserController->realName",e);
             return new ResponseApiVO(-1,"提交失败",null);
@@ -54,8 +55,7 @@ public class PracticeController {
     @PostMapping("/query/{token}")
     public ResponseVO query(@PathVariable String token){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO user = userInfoService.queryByOpenid(openid);
+            UserInfoVO user = userInfoService.query(TokenUtil.getUserId(token));
             return new ResponseVO(1,"成功",user);
         }catch (Exception e){
             logger.error("GoddessController->query",e);

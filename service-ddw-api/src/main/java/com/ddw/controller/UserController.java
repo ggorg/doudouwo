@@ -81,10 +81,9 @@ public class UserController {
         try {
             UserInfoVO userVO = new UserInfoVO();
             if(!json.isEmpty()){
-                userVO = userInfoService.query(json.getString("id"));
+                userVO = userInfoService.query(Integer.valueOf(json.getString("id")));
             }else{
-                String openid = TokenUtil.getUserObject(token).toString();
-                userVO = userInfoService.queryByOpenid(openid);
+                userVO = userInfoService.query(TokenUtil.getUserId(token));
             }
             if (userVO == null) {
                 return new ResponseApiVO(-2,"账号不存在",null);
@@ -107,8 +106,7 @@ public class UserController {
     @PostMapping("/update/{token}")
     public ResponseVO update( @PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserInfoUpdateDTO userInfoUpdateDTO){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            return userInfoService.update(openid,userInfoUpdateDTO);
+            return userInfoService.update(TokenUtil.getUserId(token),userInfoUpdateDTO);
         }catch (Exception e){
             logger.error("UserController->update",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -124,9 +122,7 @@ public class UserController {
                                 @RequestParam(value = "idcardFront") @ApiParam(name = "idcardFront",value="身份证正面", required = true) MultipartFile idcardFront,
                                 @RequestParam(value = "idcardOpposite") @ApiParam(name = "idcardOpposite",value="身份证反面", required = true) MultipartFile idcardOpposite){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO user = userInfoService.queryByOpenid(openid);
-            return reviewRealNameService.realName(user.getId().toString(),realName,idcard,idcardFront,idcardOpposite);
+            return reviewRealNameService.realName(TokenUtil.getUserId(token),realName,idcard,idcardFront,idcardOpposite);
         }catch (Exception e){
             logger.error("UserController->realName",e);
             return new ResponseApiVO(-1,"提交失败",null);
@@ -140,9 +136,7 @@ public class UserController {
                                         @RequestParam(value = "photograph") @ApiParam(name = "photograph",value="上传照片,支持多张", required = true) MultipartFile[]photograph){
         try {
             if(photograph != null && photograph.length>0){
-                String openid = TokenUtil.getUserObject(token).toString();
-                UserInfoVO user = userInfoService.queryByOpenid(openid);
-                return userInfoService.uploadPhotograph(user.getId().toString(),photograph);
+                return userInfoService.uploadPhotograph(TokenUtil.getUserId(token).toString(),photograph);
             }else{
                 return new ResponseVO(-2,"参数有误",null);
             }
@@ -163,7 +157,20 @@ public class UserController {
                 return new ResponseVO(-2,"photograph不能为空",null);
             }
         }catch (Exception e){
-            logger.error("UserController->query",e);
+            logger.error("UserController->deletePhotograph",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @ApiOperation(value = "查询会员相册用例")
+    @PostMapping("/getPhotograph/{token}")
+    public ResponseVO getPhotograph(@PathVariable String token,
+                                    @RequestParam(value = "pageNum") @ApiParam(name = "pageNum",value="页码", required = true) Integer pageNum,
+                                    @RequestParam(value = "pageSize") @ApiParam(name = "pageSize",value="显示数量", required = true) Integer pageSize){
+        try {
+            return userInfoService.getPhotograph(TokenUtil.getUserId(token),pageNum,pageSize);
+        }catch (Exception e){
+            logger.error("UserController->getPhotograph",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }

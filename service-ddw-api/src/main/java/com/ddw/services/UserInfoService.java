@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.dao.PhotographMapper;
 import com.ddw.enums.ReviewBusinessTypeEnum;
@@ -15,10 +16,12 @@ import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.Page;
 import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -76,9 +79,9 @@ public class UserInfoService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO update(String openid,UserInfoUpdateDTO userInfoUpdateDTO)throws Exception{
+    public ResponseVO update(Integer id,UserInfoUpdateDTO userInfoUpdateDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
-        UserInfoVO user = this.queryByOpenid(openid);
+        UserInfoVO user = this.query(id);
         PropertyUtils.copyProperties(userInfoPO,user);
         PropertyUtils.copyProperties(userInfoPO,userInfoUpdateDTO);
         userInfoPO.setUpdateTime(new Date());
@@ -86,12 +89,10 @@ public class UserInfoService extends CommonService {
         return this.commonUpdateBySingleSearchParam("ddw_userinfo",updatePoMap,"id",userInfoPO.getId());
     }
 
-    public UserInfoVO query(String id)throws Exception{
+    public UserInfoVO query(Integer id)throws Exception{
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",id);
-
         Map conditon=new HashMap();
-
         CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.*,ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel,ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",conditon),
                 new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",conditon),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
         List list=this.getCommonMapper().selectObjects(csb);
@@ -209,14 +210,16 @@ public class UserInfoService extends CommonService {
     }
 
     /**
-     * 查询会员相册
+     * 查询会员相册默认前十
      * @param id 会员id
      * @return
      * @throws Exception
      */
     public List<PhotographPO>queryPhotograph(String id)throws Exception{
         List<PhotographPO> photographList = new ArrayList<PhotographPO>();
-        List<Map> list = this.commonObjectsBySingleParam("ddw_photograph","userId",id);
+        Map<String,Object> searchCondition = new HashedMap();
+        searchCondition.put("userId",id);
+        List<Map> list = this.commonList("ddw_photograph","createTime desc",1,10,searchCondition);
         for(Map map:list){
             PhotographPO photographPO = new PhotographPO();
             PropertyUtils.copyProperties(photographPO,map);
@@ -225,9 +228,29 @@ public class UserInfoService extends CommonService {
         return photographList;
     }
 
+    /**
+     * 查询会员相册,翻页
+     * @param id 会员id
+     * @return
+     * @throws Exception
+     */
+    public ResponseVO getPhotograph(Integer id, Integer pageNum, Integer pageSize)throws Exception{
+        if(pageNum == null || pageSize == null){
+            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+        }
+        JSONObject json = new JSONObject();
+        Map<String,Object> searchCondition = new HashedMap();
+        searchCondition.put("userId",id);
+        Page page = this.commonPage("ddw_photograph","createTime desc",pageNum,pageSize,searchCondition);
+        json.put("list",page.getResult());
+        json.put("count",page.getTotal());
+        return new ResponseVO(1,"成功",json);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO uploadPhotograph(String id,MultipartFile[]photograph)throws Exception{
         PhotographPO photographPO = new PhotographPO();
+        JSONObject json = new JSONObject();
         int code = 1;
         HashSet<String> hs = new HashSet<String>();
         List<PhotographPO> list = new ArrayList<PhotographPO>();
@@ -253,10 +276,11 @@ public class UserInfoService extends CommonService {
         if(!hs.isEmpty()){
             list = photographMapper.findListByNames(hs);
         }
+        json.put("list",list);
         if(code == 1){
-            return new ResponseVO(1,"上传成功",list);
+            return new ResponseVO(1,"上传成功",json);
         }else{
-            return new ResponseVO(-1,"上传失败",list);
+            return new ResponseVO(-1,"上传失败",json);
         }
     }
 

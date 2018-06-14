@@ -41,8 +41,8 @@ public class ReviewRealNameService extends CommonService {
     private CommonReviewService commonReviewService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO realName(String userId, String realName, String idcard, MultipartFile idcardFront, MultipartFile idcardOpposite)throws Exception{
-        if(StringUtils.isBlank(userId) || StringUtils.isBlank(realName) || idcardFront.isEmpty() || idcardOpposite.isEmpty()){
+    public ResponseApiVO realName(Integer userId, String realName, String idcard, MultipartFile idcardFront, MultipartFile idcardOpposite)throws Exception{
+        if(userId != null || StringUtils.isBlank(realName) || idcardFront.isEmpty() || idcardOpposite.isEmpty()){
             return new ResponseApiVO(-1,"参数不正确",null);
         }else{
             Map conditionMap = new HashMap<>();

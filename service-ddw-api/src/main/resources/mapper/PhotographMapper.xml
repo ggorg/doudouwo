@@ -31,6 +31,7 @@
         <foreach collection="condition" item="value"  index="key" open="(" separator="," close=")">
             #{value}
         </foreach>
+        ORDER BY createTime desc
     </select>
 
     <select id="findListByIds" resultType="com.ddw.beans.PhotographPO">
@@ -42,6 +43,7 @@
         <foreach collection="condition" item="value"  index="key" open="(" separator="," close=")">
             #{value}
         </foreach>
+        ORDER BY createTime desc
     </select>
 
 
