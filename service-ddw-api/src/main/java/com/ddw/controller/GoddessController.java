@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 
+import com.ddw.beans.PageDTO;
 import com.ddw.beans.UserInfoVO;
 import com.ddw.services.ReviewGoddessService;
 import com.ddw.services.UserInfoService;
@@ -64,11 +65,9 @@ public class GoddessController {
     @Token
     @ApiOperation(value = "女神排行榜")
     @PostMapping("/queryList/{token}")
-    public ResponseVO queryList(@PathVariable String token,
-                                @RequestParam(value = "pageNum") @ApiParam(name = "pageNum",value="页码", required = true) Integer pageNum,
-                                @RequestParam(value = "pageSize") @ApiParam(name = "pageSize",value="显示数量", required = true) Integer pageSize){
+    public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
-            return reviewGoddessService.goddessList(token,pageNum,pageSize);
+            return reviewGoddessService.goddessList(token,pageDTO.getPageNum(),pageDTO.getPageSize());
         }catch (Exception e){
             logger.error("GoddessController->queryList",e);
             return new ResponseVO(-1,"提交失败",null);

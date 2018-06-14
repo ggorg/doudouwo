@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * 代练
  */
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AppIndexPracticeVO {
+public class AppIndexPracticeVO implements Serializable {
     @ApiModelProperty(name="id",value="代练id,对应会员表id",example="1")
     private Integer id;
     @ApiModelProperty(name="nickName",value="昵称",example="代练大神")

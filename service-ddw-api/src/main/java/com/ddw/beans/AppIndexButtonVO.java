@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 /**
  * 按钮
  */
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AppIndexButtonVO {
+public class AppIndexButtonVO implements Serializable {
 
     @JsonProperty("title")
     @ApiModelProperty(name="title",value="按钮名称",example="")

@@ -3,8 +3,10 @@ package com.ddw.beans;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 @ApiModel(value="会员用例对象",description="用例对象UserInfoDTO")
-public class UserInfoDTO{
+public class UserInfoDTO implements Serializable {
     @ApiModelProperty(name="userName",value="账号（微信、QQ登录时，为空）",example="某某某")
     private String userName;
     @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")

@@ -5,11 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AppIndexVO {
+public class AppIndexVO implements Serializable {
     @ApiModelProperty(name="topImgsList",value="顶部图片",example="")
     public List<AppIndexTopImgsVO> topImgsList ;
 
