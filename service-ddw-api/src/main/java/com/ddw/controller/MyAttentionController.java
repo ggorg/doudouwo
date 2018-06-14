@@ -3,13 +3,14 @@ package com.ddw.controller;
 
 import com.ddw.beans.MyAttentionDTO;
 import com.ddw.beans.MyAttentionPO;
-import com.ddw.beans.UserInfoVO;
 import com.ddw.services.MyAttentionService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,15 +33,13 @@ public class MyAttentionController {
     @PostMapping("/saveOrdelete/{token}")
     public ResponseVO saveOrdelete(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,女神id和代练id只传其一",required=true)MyAttentionDTO args){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO userVO = userInfoService.queryByOpenid(openid);
-            MyAttentionPO myAttentionPO = myAttentionService.query(userVO.getId(),args);
+            MyAttentionPO myAttentionPO = myAttentionService.query(TokenUtil.getUserId(token),args);
             //添加关注
             if(myAttentionPO == null){
-                return myAttentionService.save(userVO.getId(),args);
+                return myAttentionService.save(TokenUtil.getUserId(token),args);
             //取消关注
             }else{
-                return myAttentionService.delete(userVO.getId(),args);
+                return myAttentionService.delete(TokenUtil.getUserId(token),args);
             }
         }catch (Exception e){
             logger.error("MyAttentionController->saveOrdelete",e);
@@ -53,9 +52,7 @@ public class MyAttentionController {
     @PostMapping("/queryGoddess/{token}")
     public ResponseVO queryGoddessByUserId(@PathVariable String token){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO userVO = userInfoService.queryByOpenid(openid);
-            return new ResponseVO(1,"成功",myAttentionService.queryGoddessByUserId(userVO.getId()));
+            return new ResponseVO(1,"成功",myAttentionService.queryGoddessByUserId(TokenUtil.getUserId(token)));
         }catch (Exception e){
             logger.error("MyAttentionController->queryGoddessByUserId",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -67,9 +64,7 @@ public class MyAttentionController {
     @PostMapping("/queryPractice/{token}")
     public ResponseVO queryPracticeByUserId(@PathVariable String token){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO userVO = userInfoService.queryByOpenid(openid);
-            return new ResponseVO(1,"成功",myAttentionService.queryPracticeByUserId(userVO.getId()));
+            return new ResponseVO(1,"成功",myAttentionService.queryPracticeByUserId(TokenUtil.getUserId(token)));
         }catch (Exception e){
             logger.error("MyAttentionController->queryPracticeByUserId",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -81,9 +76,7 @@ public class MyAttentionController {
     @PostMapping("/queryFansByGoddess/{token}")
     public ResponseVO queryFansByGoddess(@PathVariable String token){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO userVO = userInfoService.queryByOpenid(openid);
-            return new ResponseVO(1,"成功",myAttentionService.queryGoddessFansByUserId(userVO.getId()));
+            return new ResponseVO(1,"成功",myAttentionService.queryGoddessFansByUserId(TokenUtil.getUserId(token)));
         }catch (Exception e){
             logger.error("MyAttentionController->queryFansByGoddess",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -95,9 +88,7 @@ public class MyAttentionController {
     @PostMapping("/queryFansByPractice/{token}")
     public ResponseVO queryFansByPractice(@PathVariable String token){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO userVO = userInfoService.queryByOpenid(openid);
-            return new ResponseVO(1,"成功",myAttentionService.queryPracticeFansByUserId(userVO.getId()));
+            return new ResponseVO(1,"成功",myAttentionService.queryPracticeFansByUserId(TokenUtil.getUserId(token)));
         }catch (Exception e){
             logger.error("MyAttentionController->queryPracticeFansByUserId",e);
             return new ResponseVO(-1,"提交失败",null);

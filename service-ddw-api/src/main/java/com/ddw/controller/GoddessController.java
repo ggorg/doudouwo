@@ -53,8 +53,7 @@ public class GoddessController {
     @PostMapping("/query/{token}")
     public ResponseVO query(@PathVariable String token){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-            UserInfoVO user = userInfoService.queryByOpenid(openid);
+            UserInfoVO user = userInfoService.query(TokenUtil.getUserId(token));
             return new ResponseVO(1,"成功",user);
         }catch (Exception e){
             logger.error("GoddessController->query",e);
