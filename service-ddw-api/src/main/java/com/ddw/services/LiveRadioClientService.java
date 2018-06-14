@@ -15,6 +15,8 @@ import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.codec.StringEncoderComparator;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,9 @@ public class LiveRadioClientService  extends CommonService{
 
     @Autowired
     private ReviewGoddessService reviewGoddessService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
 
     public ResponseApiVO toLiveRadio(String token)throws Exception{
@@ -102,16 +107,17 @@ public class LiveRadioClientService  extends CommonService{
         condition.put("endDate,>=",new Date());
         condition.put("userid,!=",TokenUtil.getUserId(token));
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label",page.getStartRow(),page.getEndRow(),condition,cb);
-        List lists=this.getCommonMapper().selectObjects(csb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label,ct0.id userId",page.getStartRow(),page.getEndRow(),condition,cb);
+        List<Map> lists=this.getCommonMapper().selectObjects(csb);
         LiveRadioListVO vo=null;
         List newList=new ArrayList();
-        for(Object o:lists){
+        for(Map o:lists){
             vo=new LiveRadioListVO();
             PropertyUtils.copyProperties(vo,o);
             vo.setCity(city);
             vo.setAge("20岁");
             vo.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
+            vo.setBackImgUrl(userInfoService.getPhotograph((Integer) o.get("userId")));
             newList.add(vo);
         }
         lists.clear();

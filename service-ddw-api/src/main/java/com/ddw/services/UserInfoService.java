@@ -190,22 +190,51 @@ public class UserInfoService extends CommonService {
             userInfoVO.setLiveRadioFlag(2);
         }else if(rav.getReCode() == 1){
             userInfoVO.setLiveRadioFlag(0);
-        }else{
+        }else {
             //判断审核缓存是否存在
-            if(CacheUtil.get("review","liveRadio"+userInfoVO.getId()) == null){
-                Map condition1=new HashMap();
-                condition1.put("drProposer",userInfoVO.getId());
-                condition1.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
-                condition1.put("drReviewStatus",ReviewStatusEnum.ReviewStatus2.getCode());
-                List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review",condition1));
-                if(list1.size()>0){
-                    CacheUtil.put("review","liveRadio"+userInfoVO.getId(),3);
+            if (CacheUtil.get("review", "liveRadio" + userInfoVO.getId()) == null) {
+                Map condition1 = new HashMap();
+                condition1.put("drProposer", userInfoVO.getId());
+                condition1.put("drBusinessType", ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
+                condition1.put("drReviewStatus", ReviewStatusEnum.ReviewStatus2.getCode());
+                List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review", condition1));
+                if (list1.size() > 0) {
+                    CacheUtil.put("review", "liveRadio" + userInfoVO.getId(), 3);
                     userInfoVO.setLiveRadioFlag(3);
                 }
-            }else {
-                userInfoVO.setLiveRadioFlag((Integer) CacheUtil.get("review","liveRadio"+userInfoVO.getId()));
+            } else {
+                {
+                    userInfoVO.setLiveRadioFlag((Integer) CacheUtil.get("review", "liveRadio" + userInfoVO.getId()));
+                }
             }
         }
+    }
+    public String getPhotograph(Integer userId) {
+        String imgUrl = (String) CacheUtil.get("commonCache", "goddess-photo-" + userId);
+        if (StringUtils.isBlank(imgUrl)) {
+            Map searchMap = new HashMap();
+            searchMap.put("userId", userId);
+            List<Map> list = this.commonList("ddw_photograph", "createTime desc", 1, 1, searchMap);
+            if (list != null && !list.isEmpty()) {
+                String imgUrlVo = (String) list.get(0).get("imgUrl");
+                CacheUtil.put("commonCache", "goddess-photo-" + userId, imgUrlVo);
+                return imgUrlVo;
+            }
+        }else{
+            return imgUrl;
+        }
+        return "";
+
+    }
+
+    public void resetCacheGoddessPhoto(Integer userId,String imgUrlVo,boolean isDelete){
+        if(isDelete){
+            CacheUtil.delete("commonCache","goddess-photo-"+userId);
+        }else{
+            CacheUtil.put("commonCache", "goddess-photo-" + userId, imgUrlVo);
+
+        }
+
     }
 
     /**
@@ -224,6 +253,7 @@ public class UserInfoService extends CommonService {
         }
         return photographList;
     }
+
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO uploadPhotograph(String id,MultipartFile[]photograph)throws Exception{
@@ -252,6 +282,10 @@ public class UserInfoService extends CommonService {
         }
         if(!hs.isEmpty()){
             list = photographMapper.findListByNames(hs);
+            if(list!=null && !list.isEmpty()){
+                PhotographPO po=list.get(0);
+                this.resetCacheGoddessPhoto(po.getUserId(),po.getImgUrl(),false);
+            }
         }
         if(code == 1){
             return new ResponseVO(1,"上传成功",list);
@@ -279,6 +313,10 @@ public class UserInfoService extends CommonService {
         }
         searchCondition.put("id ","in ("+sb.toString()+")");
         ResponseVO responseVO = this.commonDeleteByCombination("ddw_photograph",searchCondition);
+        if(responseVO.getReCode()==1){
+            PhotographPO po=photographPOList.get(0);
+            this.resetCacheGoddessPhoto(po.getUserId(),po.getImgUrl(),true);
+        }
         return responseVO;
     }
 }
