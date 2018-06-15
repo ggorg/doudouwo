@@ -12,6 +12,7 @@ public enum ReviewBusinessStatusEnum implements Dictionary {
     liveRadio10("申请直播",10),
     realName11("实名认证申请",11),
     goddessFlag2("申请当女神",2),
+    banner7("banner申请",7),
     practiceFlag5("申请代练",5);
     private String name;
     private Integer code;

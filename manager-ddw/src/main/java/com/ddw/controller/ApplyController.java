@@ -1,18 +1,16 @@
 package com.ddw.controller;
 
-import com.ddw.beans.GradeDTO;
-import com.ddw.beans.GradePO;
-import com.ddw.servies.GradeService;
+import com.ddw.beans.BannerDTO;
+import com.ddw.beans.StorePO;
+import com.ddw.servies.BannerService;
+import com.ddw.servies.StoreService;
+import com.ddw.util.Toolsddw;
 import com.gen.common.vo.ResponseVO;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Jacky on 2018/4/20.
@@ -23,38 +21,34 @@ public class ApplyController {
     private final Logger logger = Logger.getLogger(ApplyController.class);
 
     @Autowired
-    private GradeService gradeService;
+    private BannerService bannerService;
+    @Autowired
+    private StoreService storeService;
 
-    @GetMapping("banner/list")
-    public String list(String gradeName,Model model){
+    @GetMapping("banner/to-paging")
+    public String list(@RequestParam(defaultValue = "1") Integer pageNo, Model model){
         try {
-            model.addAttribute("gradeList",gradeService.findList(gradeName));
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            model.addAttribute("bPage",bannerService.findList(spo.getId(),pageNo));
         }catch (Exception e){
-            logger.error("GradeController->list",e);
+            logger.error("ApplyController->list",e);
         }
-        return "pages/manager/grade/list";
+        return "pages/manager/banner/list";
     }
 
     @GetMapping("banner/to-edit")
-    public String toEdit(String id,Model model){
-        try {
-            if(StringUtils.isNotBlank(id)) {
-                GradePO gradePO = gradeService.selectById(id);
-                model.addAttribute("gradePO", gradePO);
-            }
-        }catch (Exception e){
-            logger.error("GradeController->update",e);
-        }
-        return "pages/manager/grade/edit";
+    public String toEdit(){
+        return "pages/manager/banner/edit";
     }
 
-    @PostMapping("banner/do-edit")
+    @PostMapping("banner/do-save")
     @ResponseBody
-    public ResponseVO doEdit(GradeDTO gradeDTO){
+    public ResponseVO doSave(BannerDTO bannerDTO){
         try {
-            return this.gradeService.saveOrUpdate(gradeDTO);
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            return this.bannerService.save(spo.getId(),bannerDTO);
         }catch (Exception e){
-            logger.error("GradeController->doEdit",e);
+            logger.error("ApplyController->doEdit",e);
             return new ResponseVO(-1,"提交失败",null);
         }
 
