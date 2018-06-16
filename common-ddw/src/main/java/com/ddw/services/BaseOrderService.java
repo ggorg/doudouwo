@@ -32,6 +32,9 @@ public class BaseOrderService extends CommonService {
     @Autowired
     private OrderViewService orderViewService;
 
+    @Autowired
+    private BaseConsumeRankingListService baseConsumeRankingListService;
+
     public OrderPO getCacheOrder(String orderNo)throws Exception{
         String objStr=(String) CacheUtil.get("pay","orderObject-"+orderNo);
         if(objStr!=null){
@@ -57,6 +60,7 @@ public class BaseOrderService extends CommonService {
         Map map=new HashMap();
         map.put("doPayStatus",payStatusEnum.getCode());
         OrderPO cacheOrder=this.getCacheOrder(orderNo);
+
         Integer doType=cacheOrder.getDoType();
         ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",OrderUtil.getOrderId(orderNo));
         if(res.getReCode()==1){
@@ -121,6 +125,7 @@ public class BaseOrderService extends CommonService {
                 OrderViewPO po=null;
                 List goddessId=new ArrayList();
                 Integer gid=null;
+                Integer needPayPrice=0;
                 for(String ub:ubs){
                     payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
                     if(payMap==null){
@@ -133,7 +138,10 @@ public class BaseOrderService extends CommonService {
 */
                     gid=(Integer) payMap.get("goddessUserId");
                     goddessId.add(gid);
-                    this.incomeService.commonIncome(gid,Integer.parseInt((String) payMap.get("needPayPrice")), IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType5,orderNo);
+                    needPayPrice=Integer.parseInt((String) payMap.get("needPayPrice"));
+                    this.incomeService.commonIncome(gid,needPayPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType5,orderNo);
+                    this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),gid,needPayPrice,IncomeTypeEnum.IncomeType1);
+
 
                     po=new OrderViewPO();
                     po.setCreateTime(new Date());
@@ -144,7 +152,7 @@ public class BaseOrderService extends CommonService {
                     po.setOrderNo(orderNo);
                     po.setOrderType(OrderTypeEnum.OrderType5.getCode());
 
-                    po.setPrice(Integer.parseInt((String) payMap.get("needPayPrice")));
+                    po.setPrice(needPayPrice);
                     po.setUserId(cacheOrder.getDoCustomerUserId());
                     po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
                     po.setShipStatus(ShipStatusEnum.ShipStatus0.getCode());
@@ -217,6 +225,7 @@ public class BaseOrderService extends CommonService {
                 po.setShipStatus(ShipStatusEnum.ShipStatus5.getCode());
                 po.setStoreId(cacheOrder.getDoSellerId());
                 this.orderViewService.saveOrderView(po);
+                this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),goddUserId,cost,IncomeTypeEnum.IncomeType1);
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
             }
             CacheUtil.put("pay","order-"+orderNo,"success");

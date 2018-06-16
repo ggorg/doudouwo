@@ -39,6 +39,9 @@ public class LiveRadioClientService  extends CommonService{
     @Autowired
     private UserInfoService userInfoService;
 
+    @Autowired
+    private MyAttentionService myAttentionService;
+
 
     public ResponseApiVO toLiveRadio(String token)throws Exception{
         Integer storeId=TokenUtil.getStoreId(token);
@@ -134,11 +137,20 @@ public class LiveRadioClientService  extends CommonService{
             return new ResponseApiVO(-2,"请选择一个直播房间",null);
 
         }
-        LiveRadioPO po=this.liveRadioService.getLiveRadioByIdAndStoreId(dto.getCode(),storeId);
+        Map po=this.liveRadioService.getLiveRadioGodessInfoByIdAndStoreId(dto.getCode(),storeId);
         if(po!=null){
-            TokenUtil.putGroupId(token,po.getGroupId());
+            TokenUtil.putGroupId(token,(String)po.get("groupId"));
+            MyAttentionDTO madto=new MyAttentionDTO();
+            madto.setGoddessId((Integer) po.get("userid"));
             SelectLiveRadioVO svo=new SelectLiveRadioVO();
             PropertyUtils.copyProperties(svo,po);
+            MyAttentionPO mapo=this.myAttentionService.query(TokenUtil.getUserId(token),madto);
+            if(mapo==null){
+                svo.setAttention(0);
+            }else{
+                svo.setAttention(1);
+            }
+
             return new ResponseApiVO(1,"成功",svo);
         }
         return new ResponseApiVO(-2,"选择直播房间",null);

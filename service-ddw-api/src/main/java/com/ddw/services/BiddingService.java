@@ -55,6 +55,9 @@ public class BiddingService extends CommonService {
     private UserInfoService userInfoService;
     @Autowired
     private IncomeService incomeService;
+
+    @Autowired
+    private ConsumeRankingListService consumeRankingListService;
     private String getSurplusTimeStr(Map m){
         Date endTime=(Date)m.get("endTime");
         long l=endTime.getTime()-System.currentTimeMillis();
@@ -252,9 +255,9 @@ public class BiddingService extends CommonService {
                     vo=this.refundBidding(po.getGroupId(),bv.getUserId());
                     Map bidPay=(Map)vo.getData();
                     Integer cost=(Integer)bidPay.get("dorCost");
-
                     inVo=this.incomeService.commonIncome(TokenUtil.getUserId(token),cost, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType4,(String)bidPay.get("orderNo"));
                     if(inVo.getReCode()==1){
+                        consumeRankingListService.save(bv.getUserId(),TokenUtil.getUserId(token),cost,IncomeTypeEnum.IncomeType1);
                         return biddingSuccess(po.getGroupId(),bv);
                     }
 
@@ -290,7 +293,10 @@ public class BiddingService extends CommonService {
         String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
         if(userIdBidId!=null ){
             Map payMap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
-            return new ResponseApiVO(6,"本轮竞价已经结束，"+payMap.get("msg"),null);
+            Map map=new HashMap();
+            map.put("status",2);
+            map.put("statusMsg","支付中");
+            return new ResponseApiVO(6,"本轮竞价已经结束，"+payMap.get("msg"),map);
         }
         //查询竞价表是否有记录，若有或者未过期的就表示陪玩中，否则就是空闲
         Map searchMap=new HashMap();
@@ -301,6 +307,8 @@ public class BiddingService extends CommonService {
             Map dataMap=(Map)bidList.get(0);
             Map voMap=new HashMap();
             voMap.put("endTime",DateFormatUtils.format((Date)dataMap.get("endTime"),"yyyy-MM-dd HH:mm:ss"));
+            voMap.put("status",5);
+            voMap.put("statusMsg","约玩中");
             return new ResponseApiVO(3,"陪玩中，空闲时间约在"+this.getSurplusTimeStr(dataMap)+"后",voMap);
         }
         //获取缓存中的最高竞价
@@ -308,13 +316,19 @@ public class BiddingService extends CommonService {
         if(list==null || list.isEmpty()){
 
             Integer bidPrice=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",Integer.parseInt(useridStr),"bidPrice",Integer.class);
-            BiddingVO vo=new BiddingVO();
-            vo.setPrice(bidPrice+"");
-            return new ResponseApiVO(2,"目前还没人竞价,起投金额为："+(double)bidPrice/100+"元",vo);
+           // BiddingVO vo=new BiddingVO();
+           // vo.setPrice(bidPrice+"");
+            Map map=new HashMap();
+            map.put("status",6);
+            map.put("statusMsg","空闲中");
+            map.put("price",bidPrice);
+            return new ResponseApiVO(2,"目前还没人竞价,起投金额为："+(double)bidPrice/100+"元",map);
         }
         list.remove("handling");
         Map map=new HashMap();
         map.put("bidEndTime",list.get(0).getBidEndTime());
+        map.put("status",1);
+        map.put("statusMsg","竞价中");
         map.put("list",list);
         return new ResponseApiVO(1,"成功",map);
     }
@@ -545,7 +559,10 @@ public class BiddingService extends CommonService {
         if(list==null || list.isEmpty()){
             Map bidMap=this.getCurrentBidMap(groupId);
             if(bidMap==null){
-                return new ResponseApiVO(3,"空闲中",null);
+                Map map=new HashMap();
+                map.put("status",6);
+                map.put("statusMsg","空闲中");
+                return new ResponseApiVO(3,"空闲中",map);
 
             }else{
                 Date currentDate=new Date();
@@ -553,6 +570,8 @@ public class BiddingService extends CommonService {
                 if(endTime!=null && endTime.after(currentDate)){
                     Map voMap=new HashMap();
                     voMap.put("endTime",DateFormatUtils.format((Date)bidMap.get("endTime"),"yyyy-MM-dd HH:mm:ss"));
+                    voMap.put("status",5);
+                    voMap.put("statusMsg","约玩中");
                     return new ResponseApiVO(4,"陪玩中，空闲时间约在"+this.getSurplusTimeStr(bidMap)+"后",voMap);
 
                 }

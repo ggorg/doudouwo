@@ -10,6 +10,8 @@ import com.ddw.enums.ReviewStatusEnum;
 import com.ddw.util.IMApiUtil;
 import com.ddw.util.LiveRadioApiUtil;
 import com.ddw.util.LiveRadioConstant;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
@@ -31,6 +33,7 @@ import java.util.*;
 public class LiveRadioService extends CommonService{
     @Autowired
     private DDWGlobals ddwGlobals;
+
     public Page findPage(Integer pageNo,Integer storeid)throws Exception{
 
         Map condtion=new HashMap();
@@ -71,6 +74,22 @@ public class LiveRadioService extends CommonService{
         condtion.put("endDate,>=", new Date());
         condtion.put("storeid", storeId);
         return  this.commonObjectBySearchCondition("ddw_live_radio_space",condtion, LiveRadioPO.class);
+    }
+    public Map getLiveRadioGodessInfoByIdAndStoreId(Integer id,Integer storeId)throws Exception{
+        Map condtion=new HashMap();
+        condtion.put("id",id);
+        condtion.put("liveStatus", LiveStatusEnum.liveStatus1.getCode());
+        condtion.put("endDate,>=", new Date());
+        condtion.put("storeid", storeId);
+
+        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.userid,t1.pullUrl,t1.groupId,ct0.nickName,ct0.headImgUrl",null,null,condtion,
+        new CommonChildBean("ddw_userinfo","id","userid",null)
+        );
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
+        if(list!=null && !list.isEmpty()){
+            return list.get(0);
+        }
+        return null;
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateLiveRadioStatus(String streamId,LiveStatusEnum liveStatusEnum)throws Exception{
