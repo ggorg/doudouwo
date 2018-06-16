@@ -1,52 +1,45 @@
 package com.ddw.beans;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
 /**
- * 按钮
+ * 菜单按钮
  */
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexButtonVO implements Serializable {
+    @ApiModelProperty(name="name",value="名称",example="女神直播")
+    private String name;
+    @ApiModelProperty(name="url",value="跳转URL",example="http://doudouwo.cn/")
+    private String url;
+    @ApiModelProperty(name="type",value="类型,0URL跳转,1女神直播,2今日餐点,3大神代表,4好友约战,5预约房间,6pc上机,7霸屏上墙,8车队上分,9游戏竞猜",example="1")
+    private int type;
 
-    @JsonProperty("title")
-    @ApiModelProperty(name="title",value="按钮名称",example="")
-    private String dbTitle;
-
-    @JsonProperty("iconUrl")
-    @ApiModelProperty(name="iconUrl",value="按钮图片",example="http://.........")
-    private String dbIconUrl;
-
-    @JsonProperty("iconLinkUrl")
-    @ApiModelProperty(name="iconLinkUrl",value="标识",example="")
-    private String dbIconLinkUrl;
-
-    public String getDbTitle() {
-        return dbTitle;
+    public String getName() {
+        return name;
     }
 
-    public void setDbTitle(String dbTitle) {
-        this.dbTitle = dbTitle;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDbIconUrl() {
-        return dbIconUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setDbIconUrl(String dbIconUrl) {
-        this.dbIconUrl = dbIconUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public String getDbIconLinkUrl() {
-        return dbIconLinkUrl;
+    public int getType() {
+        return type;
     }
 
-    public void setDbIconLinkUrl(String dbIconLinkUrl) {
-        this.dbIconLinkUrl = dbIconLinkUrl;
+    public void setType(int type) {
+        this.type = type;
     }
 }

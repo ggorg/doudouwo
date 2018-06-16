@@ -24,6 +24,8 @@ public class AppIndexService {
     private ReviewPracticeService reviewPracticeService;
     @Autowired
     private BannerService bannerService;
+    @Autowired
+    private ButtonService buttonService;
 
 
     public ResponseApiVO toIndex(String token)throws Exception{
@@ -56,9 +58,17 @@ public class AppIndexService {
         if(obBanner == null){
             List<AppIndexBannerVO> appIndexBannerList = bannerService.getBannerList(storeId);
             appIndexVO.setBannerList(appIndexBannerList);
-            CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexBannerList);
+            CacheUtil.put("publicCache","appIndexBanner"+storeId,appIndexBannerList);
         }else{
             appIndexVO.setBannerList((List<AppIndexBannerVO>)CacheUtil.get("publicCache","appIndexBanner"+storeId));
+        }
+        Object obButton = CacheUtil.get("publicCache","appIndexButton");
+        if(obButton == null){
+            List<AppIndexButtonVO> appIndexButtonList = buttonService.getButtonList();
+            appIndexVO.setButtonList(appIndexButtonList);
+            CacheUtil.put("publicCache","appIndexButton"+storeId,appIndexButtonList);
+        }else{
+            appIndexVO.setButtonList((List<AppIndexButtonVO>)CacheUtil.get("publicCache","appIndexButton"));
         }
         appIndexVO.setTicketList(ticketService.getTicketList());
         return new ResponseApiVO(1,"成功",appIndexVO);
