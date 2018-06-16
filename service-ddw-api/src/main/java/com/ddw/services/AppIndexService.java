@@ -1,9 +1,6 @@
 package com.ddw.services;
 
-import com.ddw.beans.AppIndexGoddessVO;
-import com.ddw.beans.AppIndexPracticeVO;
-import com.ddw.beans.AppIndexVO;
-import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.*;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
@@ -25,6 +22,8 @@ public class AppIndexService {
     private ReviewGoddessService reviewGoddessService;
     @Autowired
     private ReviewPracticeService reviewPracticeService;
+    @Autowired
+    private BannerService bannerService;
 
 
     public ResponseApiVO toIndex(String token)throws Exception{
@@ -52,6 +51,14 @@ public class AppIndexService {
             CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
         }else{
             appIndexVO.setPracticeList((List<AppIndexPracticeVO>)CacheUtil.get("publicCache","appIndexPractice"+storeId));
+        }
+        Object obBanner = CacheUtil.get("publicCache","appIndexBanner"+storeId);
+        if(obBanner == null){
+            List<AppIndexBannerVO> appIndexBannerList = bannerService.getBannerList(storeId);
+            appIndexVO.setBannerList(appIndexBannerList);
+            CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexBannerList);
+        }else{
+            appIndexVO.setBannerList((List<AppIndexBannerVO>)CacheUtil.get("publicCache","appIndexBanner"+storeId));
         }
         appIndexVO.setTicketList(ticketService.getTicketList());
         return new ResponseApiVO(1,"成功",appIndexVO);

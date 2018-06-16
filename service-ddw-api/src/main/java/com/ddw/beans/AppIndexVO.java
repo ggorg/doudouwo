@@ -29,6 +29,9 @@ public class AppIndexVO implements Serializable {
     @ApiModelProperty(name="practiceList",value="代练",example="")
     public List<AppIndexPracticeVO> practiceList;
 
+    @ApiModelProperty(name="bannerList",value="banner",example="")
+    public List<AppIndexBannerVO>bannerList;
+
     public List<AppIndexTopImgsVO> getTopImgsList() {
         return topImgsList;
     }
@@ -75,5 +78,13 @@ public class AppIndexVO implements Serializable {
 
     public void setPracticeList(List<AppIndexPracticeVO> practiceList) {
         this.practiceList = practiceList;
+    }
+
+    public List<AppIndexBannerVO> getBannerList() {
+        return bannerList;
+    }
+
+    public void setBannerList(List<AppIndexBannerVO> bannerList) {
+        this.bannerList = bannerList;
     }
 }
