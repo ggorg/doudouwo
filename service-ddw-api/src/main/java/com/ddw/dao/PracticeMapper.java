@@ -1,6 +1,6 @@
 package com.ddw.dao;
 
-import com.ddw.beans.AppIndexPracticeVO;
+import com.ddw.beans.vo.AppIndexPracticeVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

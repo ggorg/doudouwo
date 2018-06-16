@@ -79,6 +79,10 @@ public class UserInfoVO {
     private String idcardFrontUrl;
     @ApiModelProperty(name="idcardOppositeUrl",value="身份证背面图片URL",example="")
     private String idcardOppositeUrl;
+    @ApiModelProperty(name="fans",value="粉丝数",example="16253")
+    private long fans;
+    @ApiModelProperty(name="focus",value="关注数",example="232")
+    private long focus;
     @ApiModelProperty(name="photograph",value="相册列表",example="1")
     private List<PhotographPO> photograph;
     @ApiModelProperty(name="token",value="令牌",example="MjY5MTIxMjQ0MzIwMTgwNDMwOTUzOTM2MTUxNjE0NTU=")
@@ -400,5 +404,21 @@ public class UserInfoVO {
 
     public void setUserSign(String userSign) {
         this.userSign = userSign;
+    }
+
+    public long getFans() {
+        return fans;
+    }
+
+    public void setFans(long fans) {
+        this.fans = fans;
+    }
+
+    public long getFocus() {
+        return focus;
+    }
+
+    public void setFocus(long focus) {
+        this.focus = focus;
     }
 }

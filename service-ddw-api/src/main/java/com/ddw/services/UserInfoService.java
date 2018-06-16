@@ -177,6 +177,7 @@ public class UserInfoService extends CommonService {
                     userInfoVO.setPracticeFlag((Integer) CacheUtil.get("review","practice"+userInfoVO.getId()));
                 }
             }
+            this.setFansAndFocus(userInfoVO);
             return userInfoVO;
         }
         return null;
@@ -234,6 +235,19 @@ public class UserInfoService extends CommonService {
 
         }
 
+    }
+
+    /**
+     * 设置关注与粉丝
+     * @param userInfoVO
+     */
+    public void setFansAndFocus(UserInfoVO userInfoVO){
+        Map<String,Object> searchCondition = new HashedMap();
+        searchCondition.put("userId",userInfoVO.getId());
+        userInfoVO.setFocus(this.commonCountBySearchCondition("ddw_my_attention",searchCondition));
+        Map<String,Object> searchCondition2 = new HashedMap();
+        searchCondition2.put("(goddessId="+userInfoVO.getId()+" or practiceId="+userInfoVO.getId()+")",null);
+        userInfoVO.setFans(this.commonCountBySearchCondition("ddw_my_attention",searchCondition2));
     }
 
     /**

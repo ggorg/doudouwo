@@ -1,4 +1,4 @@
-package com.ddw.beans;
+package com.ddw.beans.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
@@ -18,7 +18,7 @@ public class AppIndexBannerVO implements Serializable{
     private String picUrl;
     @ApiModelProperty(name="url",value="跳转URL",example="http://doudouwo.cn/")
     private String url;
-    @ApiModelProperty(name="describe",value="描述",example="这是一直可爱的猫咪")
+    @ApiModelProperty(name="describe",value="描述",example="这是一只可爱的猫咪")
     private String describe;
 
     public String getName() {

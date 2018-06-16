@@ -1,6 +1,6 @@
 package com.ddw.dao;
 
-import com.ddw.beans.AppIndexGoddessVO;
+import com.ddw.beans.vo.AppIndexGoddessVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

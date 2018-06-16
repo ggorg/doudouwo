@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ddw.dao.GoddessMapper">
 
-    <resultMap id="BaseResultMap" type="com.ddw.beans.AppIndexGoddessVO">
+    <resultMap id="BaseResultMap" type="com.ddw.beans.vo.AppIndexGoddessVO">
         <id property="id" column="id"/>
         <result property="nickName" column="nickName"/>
         <result property="headImgUrl" column="headImgUrl"/>

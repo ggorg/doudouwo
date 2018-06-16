@@ -1,6 +1,11 @@
 package com.ddw.services;
 
-import com.ddw.beans.*;
+import com.ddw.beans.AppIndexVO;
+import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.vo.AppIndexBannerVO;
+import com.ddw.beans.vo.AppIndexButtonVO;
+import com.ddw.beans.vo.AppIndexGoddessVO;
+import com.ddw.beans.vo.AppIndexPracticeVO;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;

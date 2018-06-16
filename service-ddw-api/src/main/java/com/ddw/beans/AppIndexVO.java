@@ -1,5 +1,9 @@
 package com.ddw.beans;
 
+import com.ddw.beans.vo.AppIndexBannerVO;
+import com.ddw.beans.vo.AppIndexButtonVO;
+import com.ddw.beans.vo.AppIndexPracticeVO;
+import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.beans.vo.AppIndexTicketVO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;

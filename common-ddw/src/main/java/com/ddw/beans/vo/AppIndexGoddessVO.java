@@ -1,4 +1,4 @@
-package com.ddw.beans;
+package com.ddw.beans.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;

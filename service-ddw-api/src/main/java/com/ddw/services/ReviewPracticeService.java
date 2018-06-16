@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
+import com.ddw.beans.vo.AppIndexPracticeVO;
 import com.ddw.dao.PracticeMapper;
 import com.ddw.dao.UserInfoMapper;
 import com.ddw.enums.*;

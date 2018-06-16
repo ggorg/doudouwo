@@ -1,6 +1,6 @@
 package com.ddw.services;
 
-import com.ddw.beans.AppIndexButtonVO;
+import com.ddw.beans.vo.AppIndexButtonVO;
 import com.gen.common.services.CommonService;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Service;
