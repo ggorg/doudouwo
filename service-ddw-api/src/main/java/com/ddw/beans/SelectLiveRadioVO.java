@@ -22,6 +22,17 @@ public class SelectLiveRadioVO {
     @ApiModelProperty(name="attention",value="未关注：0，已关注：1",example="0")
     private Integer attention;
 
+    @ApiModelProperty(name="goddessCode",value="女神id",example="0")
+    private Integer goddessCode;
+
+    public Integer getGoddessCode() {
+        return goddessCode;
+    }
+
+    public void setGoddessCode(Integer goddessCode) {
+        this.goddessCode = goddessCode;
+    }
+
     public Integer getAttention() {
         return attention;
     }

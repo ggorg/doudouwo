@@ -78,6 +78,20 @@ public class WalletController {
 
     }
     @Token
+    @ApiOperation(value = "查询优惠卷",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/coupon/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<CouponVO>> getCoupon(@PathVariable String token ){
+        try {
+            ResponseApiVO vo=this.walletService.getCouponList(TokenUtil.getUserId(token));
+            return vo;
+        }catch (Exception e){
+            logger.error("WalletController-getCoupon-》查询优惠卷-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"查询失败",null);
+
+    }
+    @Token
     @ApiOperation(value = "查询女神收益",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/goddessIn/{token}")
     @ResponseBody

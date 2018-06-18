@@ -8,6 +8,8 @@ import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.PayApiConstant;
 import com.ddw.util.PayApiUtil;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
@@ -85,7 +87,19 @@ public class WalletService extends CommonService {
 
         return new ResponseApiVO(1,"成功",balanceVO);
     }
-
+    public ResponseApiVO getCouponList(Integer userid){
+        Map csearch=new HashMap();
+        csearch.put("userId",userid);
+        csearch.put("ducStatus",0);
+        CommonSearchBean csb=new CommonSearchBean("ddw_coupon",null,"t1.id couponCode,t1.dcName name,t1.dcType type,t1.dcMoney mop,t1.dcStartTime startTime,t1.dcEndTime endTime,t1.dcDesc 'desc',ct1.dsName storeName,t1.dcMinPrice minPrice",1,1,null,
+                new CommonChildBean("ddw_userinfo_coupon","couponId","id",csearch),
+                new CommonChildBean("ddw_store","id","storeId",null));
+        List couponlist=this.getCommonMapper().selectObjects(csb);
+        if(couponlist==null){
+            return new ResponseApiVO(2,"没有优惠卷",new ListVO(new ArrayList()));
+        }
+        return new ResponseApiVO(1,"成功",new ListVO(couponlist));
+    }
     /**
      * 获取总资产
      * @param userid
@@ -94,6 +108,11 @@ public class WalletService extends CommonService {
      */
     public ResponseApiVO getAsset(Integer userid)throws Exception{
         WalletAssetVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletAssetVO.class);
+        ResponseApiVO<ListVO<List>> couponVo=this.getCouponList(userid);
+        List couponlist=couponVo.getData().getList();
+        if(couponlist!=null && !couponlist.isEmpty()){
+            balanceVO.setCouponList(couponlist);
+        }
 
         return new ResponseApiVO(1,"成功",balanceVO);
     }

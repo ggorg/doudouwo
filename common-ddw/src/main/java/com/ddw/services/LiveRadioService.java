@@ -3,6 +3,7 @@ package com.ddw.services;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
+import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.enums.LiveStatusEnum;
