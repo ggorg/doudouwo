@@ -7,6 +7,7 @@
     <resultMap id="BaseResultMap" type="com.ddw.beans.vo.AppIndexGoddessVO">
         <id property="id" column="id"/>
         <result property="nickName" column="nickName"/>
+        <result property="imgUrl" column="imgUrl"/>
         <result property="headImgUrl" column="headImgUrl"/>
         <result property="ggradeName" column="ggradeName"/>
         <result property="label" column="label"/>
@@ -16,11 +17,12 @@
 
 
     <select id="getGoddessList" parameterType="int" resultMap="BaseResultMap">
-        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t4.gradeName ggradeName,count(1) AS fans
+        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t4.gradeName ggradeName,count(1) AS fans,t5.imgUrl
         from ddw_goddess t1 left join ddw_my_attention t2 on t1.userId=t2.goddessId and t1.storeId = #{storeId}
         LEFT join ddw_userinfo t3 on t1.userId = t3.id
         left join ddw_goddess_grade t4 on t4.id=t3.goddessGradeId
-        group  by t1.userId,t1.bidPrice
+        left join (SELECT a.userId,imgUrl from ddw_photograph a,ddw_goddess b where a.userId = b.userId ORDER BY a.createTime desc limit 1)t5 on t1.userId = t5.userId
+        group  by t1.userId,t1.bidPrice,t5.imgUrl
         order by count(1) desc
         limit #{start},#{end}
     </select>

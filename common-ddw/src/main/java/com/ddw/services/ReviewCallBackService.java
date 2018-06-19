@@ -22,6 +22,8 @@ public class ReviewCallBackService {
     private ReviewGoddessService reviewGoddessService;
     @Autowired
     private ReviewPracticeService reviewPracticeService;
+    @Autowired
+    private ReviewBannerService reviewBannerService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeLiveRadio(ReviewCallBackBean rb)throws Exception{
@@ -44,6 +46,12 @@ public class ReviewCallBackService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executePractice(ReviewCallBackBean rb)throws Exception{
         return reviewPracticeService.updateReviewPractice(rb.getBusinessCode());
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO executeBanner(ReviewCallBackBean rb)throws Exception{
+        return reviewBannerService.updateReviewBanner(rb.getBusinessCode());
 
     }
 }

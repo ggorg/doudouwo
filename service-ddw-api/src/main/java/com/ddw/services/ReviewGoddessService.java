@@ -134,7 +134,7 @@ public class ReviewGoddessService extends CommonService {
         List<AppIndexGoddessVO>AppIndexGoddessList = goddessMapper.getGoddessList(storeId,startRow,endRow);
         int count = goddessMapper.getGoddessListCount(storeId);
         ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = AppIndexGoddessList.listIterator();
-        MyAttentionVO myAttentionVO = myAttentionService.queryGoddessByUserId(userId);
+        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryGoddessByUserId(userId,1,9999).getData();
         List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
         while (appIndexGoddessIterator.hasNext()){
             AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();

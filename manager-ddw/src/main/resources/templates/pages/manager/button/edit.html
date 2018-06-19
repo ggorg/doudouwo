@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+  <style type="text/css">
+    .dmImge{z-index:10;width: 353px;height: 93.83px;position:absolute;top:0;left:0}
+    .dmImg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane" >
+  <input th:if="${buttonPO!=null and buttonPO['id']!=null}" th:name="id" th:value="${buttonPO['id']}" type="hidden"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="name" required="required" title="名称"  lay-verify="required|max20" th:value="${buttonPO!=null? buttonPO['name']:''}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">类型</label>
+    <div class="layui-input-block">
+      <select name="type" lay-filter="type" lay-verify="required">
+        <option value="">请选择类型</option>
+        <option value="1" th:selected="${buttonPO?.type == 1}">女神直播</option>
+        <option value="2" th:selected="${buttonPO?.type == 2}">今日餐点</option>
+        <option value="3" th:selected="${buttonPO?.type == 3}">大神代表</option>
+        <option value="4" th:selected="${buttonPO?.type == 4}">好友约战</option>
+        <option value="5" th:selected="${buttonPO?.type == 5}">预约房间</option>
+        <option value="6" th:selected="${buttonPO?.type == 6}">pc上机</option>
+        <option value="7" th:selected="${buttonPO?.type == 7}">霸屏上墙</option>
+        <option value="8" th:selected="${buttonPO?.type == 8}">车队上分</option>
+        <option value="9" th:selected="${buttonPO?.type == 9}">游戏竞猜</option>
+        <option value="0" th:selected="${buttonPO?.type == 0}">URL跳转</option>
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item" hidden>
+    <label class="layui-form-label">跳转URL</label>
+    <div class="layui-input-block">
+      <input type="text" name="url" title="跳转URL" th:value="${buttonPO!=null? buttonPO['url']:''}" placeholder="请输入URL" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">序号</label>
+    <div class="layui-input-block">
+      <input type="text" name="sort" required="required" title="序号"  lay-verify="required" th:value="${buttonPO!=null? buttonPO['sort']:''}" placeholder="请输入序号" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item ">
+    <label class="layui-form-label">描述</label>
+    <div class="layui-input-block">
+
+      <textarea name="describe" th:text="${buttonPO!=null?buttonPO['describe']:''}"  class="layui-textarea"></textarea>
+    </div>
+  </div>
+
+  <div class="layui-form-item" style="display: none">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    initForm("do-edit",".layui-form")
+    layui.use('form', function(){
+        var form = layui.form;
+        form.on('select(type)', function(data){
+            if(data.value == 0){
+                jQuery("[name='url']").parent().parent().show();
+            }else{
+                jQuery("[name='url']").parent().parent().hide();
+            }
+        });
+    });
+</script>
+</body>
+</html>

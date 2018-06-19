@@ -12,6 +12,7 @@ public enum ReviewCallBackEnum implements Dictionary {
     liveRadioCallBack10("executeLiveRadio",10),//申请直播
     realName11("executeRealName",11),//实名认证申请
     goddessFlagCallBack2("executeGoddess",2),//申请当女神
+    bannerCallBack7("executeBanner",7),//banner申请
     practiceFlag5("executePractice",5);//申请代练
     private String name;
     private Integer code;
