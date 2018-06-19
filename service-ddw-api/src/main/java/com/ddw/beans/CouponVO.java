@@ -30,6 +30,17 @@ public class CouponVO {
     @ApiModelProperty(name="minPrice",value="最低消费金额",example="单位：分")
     private Integer minPrice;
 
+    @ApiModelProperty(name="expire",value="是否过期",example="是否过期，未过期：1，已过期：-1")
+    private Integer expire;
+
+    public Integer getExpire() {
+        return expire;
+    }
+
+    public void setExpire(Integer expire) {
+        this.expire = expire;
+    }
+
     public Integer getCouponCode() {
         return couponCode;
     }

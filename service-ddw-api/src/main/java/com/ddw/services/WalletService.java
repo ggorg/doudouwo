@@ -87,6 +87,7 @@ public class WalletService extends CommonService {
 
         return new ResponseApiVO(1,"成功",balanceVO);
     }
+
     public ResponseApiVO getCouponList(Integer userid){
         Map csearch=new HashMap();
         csearch.put("userId",userid);
@@ -95,10 +96,29 @@ public class WalletService extends CommonService {
                 new CommonChildBean("ddw_userinfo_coupon","couponId","id",csearch),
                 new CommonChildBean("ddw_store","id","storeId",null));
         List couponlist=this.getCommonMapper().selectObjects(csb);
-        if(couponlist==null){
-            return new ResponseApiVO(2,"没有优惠卷",new ListVO(new ArrayList()));
+        List list=new ArrayList();
+        Date now=new Date();
+        if(couponlist!=null){
+            couponlist.forEach(a->{
+                CouponVO vo=new CouponVO();
+                try {
+
+                    PropertyUtils.copyProperties(vo,a);
+                    if(vo.getEndTime().after(now)){
+                        vo.setExpire(1);
+                    }else{
+                        vo.setExpire(-1);
+                    }
+                    list.add(vo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
-        return new ResponseApiVO(1,"成功",new ListVO(couponlist));
+        if(couponlist==null){
+            return new ResponseApiVO(2,"没有优惠卷",new ListVO(list));
+        }
+        return new ResponseApiVO(1,"成功",new ListVO(list));
     }
     /**
      * 获取总资产

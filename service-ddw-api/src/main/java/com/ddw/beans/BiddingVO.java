@@ -22,7 +22,7 @@ public class BiddingVO implements Serializable {
     @JsonProperty
     private String price;
 
-    @ApiModelProperty(name="time",value="时长，单位：时",example="1")
+    @ApiModelProperty(name="time",value="时长，单位：分",example="1")
     private Integer time;
 
     @JsonIgnore
