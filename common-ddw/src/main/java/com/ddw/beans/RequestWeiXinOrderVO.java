@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 public class RequestWeiXinOrderVO implements Serializable {
+    private static final long serialVersionUID = 8490502907638180804L;
     private String return_code;
     private String return_msg;
     private String appid;

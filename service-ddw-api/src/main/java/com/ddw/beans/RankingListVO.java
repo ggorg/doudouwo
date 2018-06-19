@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 @ApiModel
 public class RankingListVO implements Serializable {
+    private static final long serialVersionUID = 5986934177743999641L;
     @ApiModelProperty(name="nickName",value="昵称",example="1")
     private String nickName;
     @ApiModelProperty(name="consumePrice",value="消费总额",example="1")

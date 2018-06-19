@@ -7,6 +7,7 @@ import java.util.Date;
  * 女神
  */
 public class GoddessPO implements Serializable {
+    private static final long serialVersionUID = 1380098317020231822L;
     private int id;
     private int userId;
     private String tableNo;

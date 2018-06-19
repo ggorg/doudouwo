@@ -14,6 +14,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexTicketVO implements Serializable {
 
+    private static final long serialVersionUID = 4112194326008721273L;
     @JsonProperty("name")
     @ApiModelProperty(name="name",value="门票名称",example="门票")
     private String name;

@@ -10,6 +10,7 @@ import java.io.Serializable;
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PayCenterWeixinPayVO implements Serializable {
+    private static final long serialVersionUID = -7755581280388315475L;
     @ApiModelProperty(name="appid",value="应用ID",example="wx8888888888888888")
     private String appid;
 

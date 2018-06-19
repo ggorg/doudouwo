@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class OrderMaterialPO implements Serializable {
+    private static final long serialVersionUID = -4995413656478349947L;
     private Integer id;
     /**
      * 订单ID

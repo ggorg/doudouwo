@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class BiddingDTO implements Serializable {
 
 
-
+    private static final long serialVersionUID = -6865772197689329141L;
     @ApiModelProperty(name="price",value="价格，单位：分",example="xxx")
     private Integer price;
 

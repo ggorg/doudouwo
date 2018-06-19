@@ -15,6 +15,7 @@ import java.util.List;
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexVO implements Serializable {
+    private static final long serialVersionUID = 9026400385035060991L;
     @ApiModelProperty(name="topImgsList",value="顶部图片",example="")
     public List<AppIndexTopImgsVO> topImgsList ;
 

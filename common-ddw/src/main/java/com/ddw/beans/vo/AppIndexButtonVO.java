@@ -12,6 +12,7 @@ import java.io.Serializable;
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexButtonVO implements Serializable {
+    private static final long serialVersionUID = -8343385375744442767L;
     @ApiModelProperty(name="name",value="名称",example="女神直播")
     private String name;
     @ApiModelProperty(name="url",value="跳转URL",example="http://doudouwo.cn/")

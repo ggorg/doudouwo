@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class ReviewPO implements Serializable {
+    private static final long serialVersionUID = -6728013719441257262L;
     private Integer id;
     private Integer drProposer ;//申请人ID
     private Integer drReviewer ;//审核人

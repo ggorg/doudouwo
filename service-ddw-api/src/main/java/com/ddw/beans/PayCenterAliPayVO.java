@@ -9,6 +9,7 @@ import java.io.Serializable;
 @ApiModel
 public class PayCenterAliPayVO implements Serializable {
 
+    private static final long serialVersionUID = 586130737173181747L;
     @ApiModelProperty(name="orderString",value="订单信息",example="alipay_sdk=alipay-sdk-java-dynamicVersionNo&app_id=2018050602643844&biz_content=%7B%22body%22%3....")
     private String orderString;
     @ApiModelProperty(name="orderNo",value="订单号",example="1111111111111111111")

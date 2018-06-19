@@ -9,6 +9,7 @@ import java.util.Date;
 
 @ApiModel
 public class GiftVO implements Serializable {
+    private static final long serialVersionUID = 3085741180777598140L;
     @ApiModelProperty(name="code",value="礼物编号",example="1")
     @JsonProperty("code")
     private Integer id;

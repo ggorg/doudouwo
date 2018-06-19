@@ -3,6 +3,7 @@ package com.ddw.beans;
 import java.io.Serializable;
 
 public class RequestAliOrderVO implements Serializable {
+    private static final long serialVersionUID = -3250423523126266986L;
     private String orderString;
     private String orderNo;
 

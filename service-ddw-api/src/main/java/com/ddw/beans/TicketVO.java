@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 @ApiModel
 public class TicketVO implements Serializable {
+    private static final long serialVersionUID = -6825630510874089900L;
     @ApiModelProperty(name="code",value="门票编号",example="1")
     @JsonProperty("code")
     private Integer id;

@@ -10,6 +10,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexGoddessVO implements Serializable{
 
+    private static final long serialVersionUID = -8407930715107323949L;
     @ApiModelProperty(name="id",value="女神id,对应会员表id",example="1")
     private Integer id;
     @ApiModelProperty(name="nickName",value="昵称",example="女神")

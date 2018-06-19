@@ -13,6 +13,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BiddingOrderInfoVO implements Serializable {
 
+    private static final long serialVersionUID = 3957094280971593401L;
     @ApiModelProperty(name="openId",value="用户标识号",example="用户标识号")
     private String openId;
 
