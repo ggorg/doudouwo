@@ -134,7 +134,7 @@ public class ReviewPracticeService extends CommonService {
         Integer endRow = pageSize;
         List<AppIndexPracticeVO>AppIndexPracticeList = practiceMapper.getPracticeList(storeId,startRow,endRow);
         int count = practiceMapper.getPracticeListCount(storeId);
-        MyAttentionVO myAttentionVO = myAttentionService.queryPracticeByUserId(userId);
+        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(userId,1,9999).getData();
         List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
         ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = AppIndexPracticeList.listIterator();
         while (appIndexPracticeIterator.hasNext()){
