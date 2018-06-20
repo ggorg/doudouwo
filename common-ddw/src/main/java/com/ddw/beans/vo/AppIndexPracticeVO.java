@@ -12,6 +12,7 @@ import java.io.Serializable;
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexPracticeVO implements Serializable {
+    private static final long serialVersionUID = 8329442349340665610L;
     @ApiModelProperty(name="id",value="代练id,对应会员表id",example="1")
     private Integer id;
     @ApiModelProperty(name="nickName",value="昵称",example="代练大神")

@@ -21,6 +21,9 @@ public class PublicPayDTO {
     @ApiModelProperty(name="codes",value="所购买的多个物品编号（充值卷的ID，商品ID，礼物ID等）,竞价定金和竞价金额不用传，其它必须传",example="")
     private Integer codes[];
 
+    @ApiModelProperty(name="couponCode",value="优惠卷code",example="")
+    private Integer couponCode;
+
     public Integer[] getCodes() {
         return codes;
     }

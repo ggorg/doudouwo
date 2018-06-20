@@ -5,6 +5,7 @@ import java.util.Date;
 
 
 public class ExitOrderPO implements Serializable {
+    private static final long serialVersionUID = -2754876779624263760L;
     private Integer id;
     private Date createTime;
     private Integer orderId;

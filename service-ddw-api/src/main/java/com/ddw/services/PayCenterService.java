@@ -355,6 +355,7 @@ public class PayCenterService extends BaseOrderService {
                     m.put("updateTime",new Date());
                     m.put("creater",userId);
                     m.put("dorCost",payMap.get("needPayPrice"));
+                    m.put("times",payMap.get("time"));
                     m.put("biddingId",code);
                     resVo=this.commonInsertMap("ddw_order_bidding_pay",m);
                     if(resVo.getReCode()!=1){

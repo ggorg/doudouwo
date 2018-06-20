@@ -30,14 +30,7 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class TicketService extends CommonService {
 
-    @Autowired
-    private FileService fileService;
 
-    @Autowired
-    private DDWGlobals ddwGlobals;
-
-    @Autowired
-    private MainGlobals mainGlobals;
 
     public Page findPage(Integer pageNo)throws Exception{
 

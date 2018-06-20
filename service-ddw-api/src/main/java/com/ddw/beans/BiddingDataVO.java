@@ -13,6 +13,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BiddingDataVO<T> implements Serializable {
 
+    private static final long serialVersionUID = -213132036120371130L;
     @ApiModelProperty(name="bidEndTime",value="竞价结束时间",example="yyyy-MM-dd HH:mm:ss")
     private String bidEndTime;
 

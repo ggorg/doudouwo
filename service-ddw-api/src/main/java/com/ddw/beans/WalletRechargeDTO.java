@@ -19,6 +19,17 @@ public class WalletRechargeDTO {
 
     private Integer codes[];
 
+    @ApiModelProperty(name="couponCode",value="优惠卷code",example="")
+    private Integer couponCode;
+
+    public Integer getCouponCode() {
+        return couponCode;
+    }
+
+    public void setCouponCode(Integer couponCode) {
+        this.couponCode = couponCode;
+    }
+
     public Integer[] getCodes() {
         return codes;
     }

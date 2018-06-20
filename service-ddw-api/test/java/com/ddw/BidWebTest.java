@@ -24,7 +24,7 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=ApiApplication.class)
 @WebAppConfiguration
-public class BidTest {
+public class BidWebTest {
     @Autowired
     private WebApplicationContext context;
     private MockMvc mvc;
@@ -34,6 +34,8 @@ public class BidTest {
         //       mvc = MockMvcBuilders.standaloneSetup(new TestController()).build();
         mvc = MockMvcBuilders.webAppContextSetup(context).build();//建议使用这种
     }
+
+
     @Test
     public void testBid()throws Exception{
         System.out.println("请求登录");

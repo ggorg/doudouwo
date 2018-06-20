@@ -73,6 +73,31 @@ public class BiddingController {
             return new ResponseApiVO(-1,"失败",null);
         }
     }
+
+    @Token
+    @ApiOperation(value = "获取订单信息（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/bid/order/info/{token}")
+    @ResponseBody
+    public ResponseApiVO<BiddingOrderInfoVO> getBidOrderInfoByGoddess(@PathVariable String token){
+        try {
+            return this.biddingService.getBidOrderInfoByGoddess(token);
+        }catch (Exception e){
+            logger.error("BiddingController->getBidOrderInfoByGoddess-》获取订单信息-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "结束约玩（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/end/{token}")
+    @ResponseBody
+    public ResponseApiVO doEnd(@PathVariable String token){
+        try {
+            return this.biddingService.doEndPlay(token);
+        }catch (Exception e){
+            logger.error("BiddingController->doEnd-》结束约玩-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
     @Token
     @ApiOperation(value = "确认完成（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/makesure/{token}")

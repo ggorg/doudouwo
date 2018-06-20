@@ -9,6 +9,7 @@ import java.io.Serializable;
 @ApiModel
 public class BiddingPayVO implements Serializable {
 
+    private static final long serialVersionUID = -6551081186520374765L;
     @ApiModelProperty(name="msg",value="消息内容",example="恭喜。。。")
     private String msg;
 
