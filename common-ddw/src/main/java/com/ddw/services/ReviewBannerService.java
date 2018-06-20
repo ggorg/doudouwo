@@ -26,7 +26,7 @@ public class ReviewBannerService extends CommonService {
 
     public Page findPage(Integer pageNo,Map condtion)throws Exception{
         Integer startRow = pageNo > 0 ? (pageNo - 1) * 10 : 0;
-        CommonSearchBean csb=new CommonSearchBean("ddw_review",null,"t1.*,ct0.enable ",startRow,10,condtion,new CommonChildBean("ddw_review_banner","drBusinessCode","drBusinessCode",null));
+        CommonSearchBean csb=new CommonSearchBean("ddw_review","id desc","t1.*,ct0.enable ",startRow,10,condtion,new CommonChildBean("ddw_review_banner","drBusinessCode","drBusinessCode",null));
         return this.commonPage(pageNo,10,csb);
 //        return this.commonPage("ddw_review","createTime desc",pageNo,10,condtion);
     }
