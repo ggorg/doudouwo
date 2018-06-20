@@ -22,6 +22,7 @@ public class BannerService extends CommonService {
         Map<String,Object> searchCondition = new HashMap<>();
         searchCondition.put("storeId",storeId);
         searchCondition.put("status",1);
+        searchCondition.put("enable",1);
         List<Map> list = this.commonObjectsBySearchCondition("ddw_review_banner",searchCondition);
         List<AppIndexBannerVO> appIndexBannerList = new ArrayList<>();
         if (list != null) {

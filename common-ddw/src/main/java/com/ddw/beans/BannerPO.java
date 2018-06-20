@@ -13,8 +13,17 @@ public class BannerPO {
     private String picUrl;
     private String url;
     private int status;
+    private int enable;
     private String describe;
     private Date createTime;
+
+    public int getEnable() {
+        return enable;
+    }
+
+    public void setEnable(int enable) {
+        this.enable = enable;
+    }
 
     public int getId() {
         return id;

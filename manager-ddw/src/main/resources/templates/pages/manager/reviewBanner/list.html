@@ -96,7 +96,7 @@
                             <div class="layui-btn-group">
                                 <button class="layui-btn layui-btn-sm" th:onclick="'viewDialog(\'500px\',\'580px\',\'查看\',\'/manager/reviewBanner/to-review-info-by-id-html?id='+${obj['id']}+'\')'"  >查 看</button>
                                 <th:block th:utext="${#toolsddw.commonReviewBtn(obj['drBusinessCode'],obj['drReviewStatus'])}"></th:block>
-
+                                <button th:if="${obj['drReviewStatus'] == 1}" th:class="'layui-btn layui-btn-sm '+${obj['enable']==0?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${obj['drBusinessCode']}+'\','+${obj['enable']==1?0:1}+',\''+${obj['enable']==0?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['enable']==0?'发 布':'撤回发布'}"></button>
                             </div>
                        </td>
                     </tr>
@@ -111,6 +111,13 @@
 
     </div>
     <script type="text/javascript">
+        function confirmDisabled(id,enable,msg){
+            layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-updateEnable",null,{drBusinessCode:id,enable:enable});
+                }
+            });
+        }
 
         layui.use('form', function(){
             var form = layui.form;
