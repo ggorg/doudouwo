@@ -3,7 +3,6 @@ package com.ddw.controller;
 
 import com.ddw.beans.ReviewPO;
 import com.ddw.services.ReviewBannerService;
-import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class ReviewBannerController {
     @GetMapping("/to-review-page")
     public String toReviewPageByHq(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
        try {
-           Page page = this.reviewBannerService.findBannerPageByHq(pageNo);
            model.addAttribute("rPage",this.reviewBannerService.findBannerPageByHq(pageNo));
        }catch (Exception e){
            logger.error("ReviewBannerController->toReviewPage",e);
