@@ -228,7 +228,19 @@ public class BaseOrderService extends CommonService {
                 this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),goddUserId,cost,IncomeTypeEnum.IncomeType1);
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
             }
+            if(StringUtils.isNotBlank(cacheOrder.getDoCouponNo())){
+                Map setParam=new HashMap();
+                setParam.put("used",1);
+                Map search=new HashMap();
+                search.put("couponId",Integer.parseInt(cacheOrder.getDoCouponNo()));
+                search.put("userId",cacheOrder.getDoCustomerUserId());
+                ResponseVO updatevo=this.commonUpdateByParams("ddw_userinfo_coupon",setParam,search);
+                if(updatevo.getReCode()==-1){
+                    throw new GenException("更新优惠卷失败");
+                }
+            }
             CacheUtil.put("pay","order-"+orderNo,"success");
+
             return new ResponseVO(1,"更新支付状态成功",null);
 
         }

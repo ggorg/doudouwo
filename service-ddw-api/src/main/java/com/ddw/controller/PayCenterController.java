@@ -70,7 +70,7 @@ public class PayCenterController {
         try {
             //return this.walletService.searchPayStatus(token,args);
             logger.info("publicPay->request："+args);
-            ResponseApiVO vo= this.payCenterService.prePay(token,args.getMoney(),args.getPayType(),args.getOrderType(),args.getCodes() );
+            ResponseApiVO vo= this.payCenterService.prePay(token,args.getMoney(),args.getPayType(),args.getOrderType(),args.getCodes(),args.getCouponCode() );
             logger.info("publicPay->response:"+vo);
             return vo;
         }catch (Exception e){
@@ -88,10 +88,10 @@ public class PayCenterController {
     @ApiOperation(value = "微信支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/weixin/pay/{token}")
     @ResponseBody
-    public ResponseApiVO<PayCenterWeixinPayVO> weixinPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
+    public ResponseApiVO<PayCenterWeixinPayVO> weixinPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PayDTO args){
         try {
             logger.info("weixinPay->request："+args);
-            ResponseApiVO vo=this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType1.getCode(), args.getOrderType(),args.getCodes() );
+            ResponseApiVO vo=this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType1.getCode(), args.getOrderType(),args.getCodes(),args.getCouponCode() );
             logger.info("weixinPay->response："+vo);
 
             return vo;
@@ -113,10 +113,10 @@ public class PayCenterController {
     @ApiOperation(value = "支付宝支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/alipay/pay/{token}")
     @ResponseBody
-    public ResponseApiVO<PayCenterAliPayVO> aliPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletRechargeDTO args){
+    public ResponseApiVO<PayCenterAliPayVO> aliPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PayDTO args){
         try {
             logger.info("aliPay->request："+args);
-            ResponseApiVO vo=this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType2.getCode(),args.getOrderType(),args.getCodes() );
+            ResponseApiVO vo=this.payCenterService.prePay(token,args.getMoney(), PayTypeEnum.PayType2.getCode(),args.getOrderType(),args.getCodes(),args.getCouponCode() );
             logger.info("aliPay->response："+vo);
 
             return vo;

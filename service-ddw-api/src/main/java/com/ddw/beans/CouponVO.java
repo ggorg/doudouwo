@@ -33,6 +33,17 @@ public class CouponVO {
     @ApiModelProperty(name="expire",value="是否过期",example="是否过期，未过期：1，已过期：-1")
     private Integer expire;
 
+    @ApiModelProperty(name="used",value="是否用过的",example="是否用过的，未用过：0，已用过：1")
+    private Integer used;
+
+    public Integer getUsed() {
+        return used;
+    }
+
+    public void setUsed(Integer used) {
+        this.used = used;
+    }
+
     public Integer getExpire() {
         return expire;
     }

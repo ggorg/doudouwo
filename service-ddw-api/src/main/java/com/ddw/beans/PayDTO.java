@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Arrays;
 
 @ApiModel
-public class WalletRechargeDTO {
+public class PayDTO {
     @ApiModelProperty(name="money",value="金额,单位分",example="1000")
     private Integer money;
 
@@ -48,7 +48,7 @@ public class WalletRechargeDTO {
 
     @Override
     public String toString() {
-        return "WalletRechargeDTO{" +
+        return "PayDTO{" +
                 "money=" + money +
                 ", orderType=" + orderType +
                 ", codes=" + Arrays.toString(codes) +

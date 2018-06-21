@@ -48,6 +48,9 @@ public class PayCenterService extends BaseOrderService {
     @Autowired
     private LiveRadioService liveRadioService;
 
+    @Autowired
+    private WalletService walletService;
+
 
     @Autowired
     private DDWGlobals ddwGlobals;
@@ -137,7 +140,7 @@ public class PayCenterService extends BaseOrderService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO prePay(String token, Integer cost, Integer payType, Integer orderType,Integer[] codes)throws Exception{
+    public ResponseApiVO prePay(String token, Integer cost, Integer payType, Integer orderType,Integer[] codes ,Integer couponCode)throws Exception{
 
         if(!PayTypeEnum.PayType1.getCode().equals(payType) && !PayTypeEnum.PayType2.getCode().equals(payType)){
             return new ResponseApiVO(-2,"请选择有效的支付方式",null);
@@ -178,7 +181,13 @@ public class PayCenterService extends BaseOrderService {
             if(earnest==null){
                 return new ResponseApiVO(-2,"定金支付失败",null);
             }
+
+
             orderPO.setDoCost(earnest);
+            ResponseApiVO couponVo=this.executeCoupon(orderPO,couponCode,token);
+            if(couponVo.getReCode()!=1){
+                return couponVo;
+            }
        // 竞价金额
         }else if(OrderTypeEnum.OrderType5.getCode().equals(orderType)){
             orderPO.setDoSellerId(-1);
@@ -194,11 +203,15 @@ public class PayCenterService extends BaseOrderService {
                 }
 
             }
+
             orderPO.setDoCost(bidCost);
+
         //计算充值
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
             orderPO.setDoSellerId(-1);
-            orderPO.setDoCost(rechargeService.getRechargeCost(codes[0]));
+            Integer recCost=rechargeService.getRechargeCost(codes[0]);
+
+            orderPO.setDoCost(recCost);
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
             }
@@ -255,6 +268,7 @@ public class PayCenterService extends BaseOrderService {
             if(countPrice==null || countPrice<=0){
                 return new ResponseApiVO(-2,"支付失败",null);
             }
+
         //礼物
         }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
             orderPO.setDoSellerId(-1);
@@ -537,7 +551,43 @@ public class PayCenterService extends BaseOrderService {
 
         return new ResponseApiVO(1,"成功",null);
     }
+    public ResponseApiVO executeCoupon(OrderPO po,Integer couponCode,String token)throws Exception{
+        if(couponCode!=null && couponCode>0){
+            ResponseVO<Integer> couponVo=this.handleCoupon(po.getDoCost(),couponCode,TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
+            if(couponVo.getReCode()!=1){
+                return new ResponseApiVO(-2,couponVo.getReMsg(),null);
+            }else{
+                po.setDoCouponNo(couponCode==null?null:couponCode+"");
+                po.setDoCost(couponVo.getData());
+            }
+        }
+        return new ResponseApiVO(1,"成功",null);
+    }
+    public ResponseVO handleCoupon(Integer cost,Integer couponId,Integer userId,Integer storeId)throws Exception{
 
+        CouponPO po=this.walletService.getCoupon(couponId,userId,storeId);
+        if(po==null){
+            return new ResponseVO(-2,"优惠卷不存在",null);
+        }
+        Date currentDate=new Date();
+        System.out.println(DateFormatUtils.format(po.getDcStartTime(),"yyyy-MM-dd HH:mm:ss")+","+po.getDcStartTime().after(currentDate));
+        System.out.println(DateFormatUtils.format(po.getDcEndTime(),"yyyy-MM-dd HH:mm:ss"));
+        if(po.getDcStartTime().after(currentDate)){
+            return new ResponseVO(-2,"优惠卷有效时间没开始",null);
+        }
+        if(po.getDcEndTime().before(currentDate)){
+            return new ResponseVO(-2,"优惠卷有效时间已过期",null);
+        }
+        if(cost<po.getDcMinPrice()){
+            return new ResponseVO(-2,"优惠卷消费额度不达标",null);
+        }
+        if(CouponTypeEnum.CouponType2.getCode().equals(po.getDcType())){
+            cost=(int)(cost*((float)po.getDcMoney()/100));
+        }else{
+            cost=cost-po.getDcMoney();
+        }
+        return new ResponseVO(1,"成功",cost);
+    }
     public static void main(String[] args) {
         Integer[] id={1,2,3,4};
         System.out.println(Arrays.asList(id).toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
