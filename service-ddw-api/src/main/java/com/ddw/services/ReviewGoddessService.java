@@ -180,8 +180,10 @@ public class ReviewGoddessService extends CommonService {
         while (appIndexGoddessIterator.hasNext()){
             AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
             ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(appIndexGoddessVO.getId(),storeId);
+            LiveRadioPO liveRadioP = (LiveRadioPO)rav.getData();
             if(rav.getReCode() == 2 || rav.getReCode() == -2002){
                 appIndexGoddessVO.setLiveRadioFlag(1);
+                appIndexGoddessVO.setCode(liveRadioP.getId());
             }else if(rav.getReCode() == -2003){
                 appIndexGoddessVO.setLiveRadioFlag(2);
             }else if(rav.getReCode() == 1){
