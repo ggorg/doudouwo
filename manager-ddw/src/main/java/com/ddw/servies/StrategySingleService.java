@@ -59,4 +59,5 @@ public class StrategySingleService extends CommonService {
         }
         return vo;
     }
+    //TODO 根据充值金额修改会员等级
 }
