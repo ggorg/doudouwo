@@ -17,7 +17,7 @@ public class AppIndexButtonVO implements Serializable {
     private String name;
     @ApiModelProperty(name="url",value="跳转URL",example="http://doudouwo.cn/")
     private String url;
-    @ApiModelProperty(name="type",value="类型,0URL跳转,1女神直播,2今日餐点,3大神代表,4好友约战,5预约房间,6pc上机,7霸屏上墙,8车队上分,9游戏竞猜",example="1")
+    @ApiModelProperty(name="type",value="类型,0URL跳转,1女神直播,2今日餐点,3大神代练,4好友约战,5预约房间,6pc上机,7霸屏上墙,8车队上分,9游戏竞猜",example="1")
     private int type;
 
     public String getName() {

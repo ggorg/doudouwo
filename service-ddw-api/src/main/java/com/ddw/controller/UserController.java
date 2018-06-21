@@ -53,9 +53,11 @@ public class UserController {
                     userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
+                    userVO.setInviteCode(userInfoService.createInviteCode(userVO.getId()));
                     userInfoService.setLiveRadioFlag(userVO,token);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
+                    userInfoService.update(userVO);//更新邀请码
                     return new ResponseApiVO(1, "注册成功", userVO);
                 } else {
                     List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));

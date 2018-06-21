@@ -7,12 +7,12 @@ import com.gen.common.dict.Dictionary;
  */
 public enum ButtonTypeEnum implements Dictionary{
     /**
-     * 0URL跳转,1女神直播,2今日餐点,3大神代表,4好友约战,5预约房间,6pc上机,7霸屏上墙,8车队上分,9游戏竞猜
+     * 0URL跳转,1女神直播,2今日餐点,3大神代练,4好友约战,5预约房间,6pc上机,7霸屏上墙,8车队上分,9游戏竞猜
      */
     buttonType0("URL跳转",0),
     buttonType1("女神直播",1),
     buttonType2("今日餐点",2),
-    buttonType3("大神代表",3),
+    buttonType3("大神代练",3),
     buttonType4("好友约战",4),
     buttonType5("预约房间",5),
     buttonType6("pc上机",6),

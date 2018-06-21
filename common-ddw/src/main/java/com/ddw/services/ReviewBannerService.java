@@ -7,6 +7,7 @@ import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.springframework.stereotype.Service;
@@ -23,12 +24,10 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class ReviewBannerService extends CommonService {
 
-
     public Page findPage(Integer pageNo,Map condtion)throws Exception{
         Integer startRow = pageNo > 0 ? (pageNo - 1) * 10 : 0;
-        CommonSearchBean csb=new CommonSearchBean("ddw_review",null,"t1.*,ct0.enable ",startRow,10,condtion,new CommonChildBean("ddw_review_banner","drBusinessCode","drBusinessCode",null));
+        CommonSearchBean csb=new CommonSearchBean("ddw_review","id desc","t1.*,ct0.enable ",startRow,10,condtion,new CommonChildBean("ddw_review_banner","drBusinessCode","drBusinessCode",null));
         return this.commonPage(pageNo,10,csb);
-//        return this.commonPage("ddw_review","createTime desc",pageNo,10,condtion);
     }
 
     public Page findBannerPageByHq(Integer pageNo)throws Exception{
@@ -48,6 +47,8 @@ public class ReviewBannerService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateEnable(String drBusinessCode,Integer enable)throws Exception{
+        BannerPO bannerPO = this.getReviewBannerByCode(drBusinessCode);
+        CacheUtil.delete("publicCache","appIndexBanner"+bannerPO.getStoreId());
         Map setParams=new HashMap();
         setParams.put("enable",enable);
         Map searchCondition=new HashMap();
@@ -58,6 +59,8 @@ public class ReviewBannerService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateReviewBanner(String drBusinessCode)throws Exception{
+        BannerPO bannerPO = this.getReviewBannerByCode(drBusinessCode);
+        CacheUtil.delete("publicCache","appIndexBanner"+bannerPO.getStoreId());
         Map setParams=new HashMap();
         setParams.put("status",1);
         setParams.put("enable",1);

@@ -7,6 +7,7 @@ import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewStatusEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.IMApiUtil;
+import com.ddw.util.RC4;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -63,8 +64,6 @@ public class UserInfoService extends CommonService {
         userInfoPO.setPracticeGradeId(1);
         userInfoPO.setGoddessFlag(0);
         userInfoPO.setPracticeFlag(0);
-        //TODO 生成邀请码
-        userInfoPO.setInviteCode("");
         userInfoPO.setCreateTime(new Date());
         userInfoPO.setUpdateTime(new Date());
         ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
@@ -353,5 +352,20 @@ public class UserInfoService extends CommonService {
             this.resetCacheGoddessPhoto(po.getUserId(),po.getImgUrl(),true);
         }
         return responseVO;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO update(UserInfoVO userInfoVO)throws Exception{
+        UserInfoPO userInfoPO = new UserInfoPO();
+        PropertyUtils.copyProperties(userInfoPO,userInfoVO);
+        userInfoPO.setCreateTime(new Date());
+        userInfoPO.setUpdateTime(new Date());
+        Map updatePoMap= BeanToMapUtil.beanToMap(userInfoPO);
+        return this.commonUpdateBySingleSearchParam("ddw_userinfo",updatePoMap,"id",userInfoPO.getId());
+    }
+
+    //根据用户id生成邀请码
+    public String createInviteCode(Integer id){
+        return RC4.encry_RC4_string(String.format("%07d",id), UUID.randomUUID().toString());
     }
 }

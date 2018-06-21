@@ -41,8 +41,6 @@ public class ReviewRealNameService extends CommonService {
     }
 
     public ReviewRealNamePO getReviewRealNameByCode(String drBusinessCode)throws Exception{
-        Map conditoin=new HashMap();
-        conditoin.put("drBusinessCode",drBusinessCode);
         return this.commonObjectBySingleParam("ddw_review_realname","drBusinessCode",drBusinessCode,ReviewRealNamePO.class);
 
     }
