@@ -27,11 +27,14 @@ public class AppIndexGoddessVO implements Serializable{
     private Integer bidPrice;
     @ApiModelProperty(name="liveRadioFlag",value="直播标记，0未申请，1审核通过,2审核中,3拒绝",example="1")
     private Integer liveRadioFlag;
+    @ApiModelProperty(name="code",value="直播房间号,直播状态为1时才有",example="1")
+    private Integer code;
+
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
     private Integer fans;
+
     @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
     private boolean followed;
-
     public Integer getId() {
         return id;
     }
@@ -94,6 +97,14 @@ public class AppIndexGoddessVO implements Serializable{
 
     public void setLiveRadioFlag(Integer liveRadioFlag) {
         this.liveRadioFlag = liveRadioFlag;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public Integer getFans() {

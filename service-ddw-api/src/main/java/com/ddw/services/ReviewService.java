@@ -42,11 +42,11 @@ public class ReviewService extends CommonService {
 
         LiveRadioPO liveRadioPO=liveRadioService.getLiveRadio(userid,storeId);
         if(liveRadioPO!=null && liveRadioPO.getLiveStatus()==LiveStatusEnum.liveStatus0.getCode()) {
-            return new ResponseApiVO(2,"直播等待中，请前往直播房间",null);
+            return new ResponseApiVO(2,"直播等待中，请前往直播房间",liveRadioPO);
 
         }
         if(liveRadioPO!=null && liveRadioPO.getLiveStatus()==LiveStatusEnum.liveStatus1.getCode()){
-            return new ResponseApiVO(-2002,"直播房间已开，请关闭再申请",null);
+            return new ResponseApiVO(-2002,"直播房间已开，请关闭再申请",liveRadioPO);
         }
         boolean hasReview=this.hasLiveRadioReviewFromGoddess(userid,storeId);
         if(hasReview){
