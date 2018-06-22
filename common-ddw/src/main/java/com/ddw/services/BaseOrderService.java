@@ -209,7 +209,6 @@ public class BaseOrderService extends CommonService {
                 JSONObject json=JSONObject.parseObject(jsonStr);
                 Integer goddUserId=json.getInteger("goddessUserId");
                 Integer cost=json.getInteger("cost");
-                this.incomeService.commonIncome(goddUserId,cost,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,orderNo);
                 OrderViewPO po=new OrderViewPO();
                 po.setCreateTime(new Date());
                 po.setName(json.getString("name"));
@@ -225,7 +224,10 @@ public class BaseOrderService extends CommonService {
                 po.setShipStatus(ShipStatusEnum.ShipStatus5.getCode());
                 po.setStoreId(cacheOrder.getDoSellerId());
                 this.orderViewService.saveOrderView(po);
-                this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),goddUserId,cost,IncomeTypeEnum.IncomeType1);
+                if(goddUserId>-1){
+                    this.incomeService.commonIncome(goddUserId,cost,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,orderNo);
+                    this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),goddUserId,cost,IncomeTypeEnum.IncomeType1);
+                }
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
             }
             if(StringUtils.isNotBlank(cacheOrder.getDoCouponNo())){

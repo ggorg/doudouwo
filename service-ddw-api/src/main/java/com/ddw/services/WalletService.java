@@ -104,6 +104,20 @@ public class WalletService extends CommonService {
         }
         return null;
     }
+    public ResponseApiVO getGiftPackge(Integer userid){
+        Map search=new HashMap();
+        search.put("used",0);
+        Map csearch=new HashMap();
+        csearch.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
+        CommonSearchBean csb=new CommonSearchBean("ddw_order_gift",null,"ct1.id giftCode,ct1.dgName name,ct1.dgImgPath imgUrl",1,1,search,
+                new CommonChildBean("ddw_order","id","orderId",csearch),
+                new CommonChildBean("ddw_gift","id","giftId",null));
+        List giftPacketlist=this.getCommonMapper().selectObjects(csb);
+        if(giftPacketlist==null){
+            return new ResponseApiVO(2,"空背包",new ListVO(new ArrayList()));
+        }
+        return new ResponseApiVO(1,"成功",new ListVO(giftPacketlist));
+    }
     public ResponseApiVO getCouponList(Integer userid){
         Map csearch=new HashMap();
         csearch.put("userId",userid);
@@ -145,9 +159,14 @@ public class WalletService extends CommonService {
     public ResponseApiVO getAsset(Integer userid)throws Exception{
         WalletAssetVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletAssetVO.class);
         ResponseApiVO<ListVO<List>> couponVo=this.getCouponList(userid);
+        ResponseApiVO<ListVO<List>> giftPackVo=this.getGiftPackge(userid);
         List couponlist=couponVo.getData().getList();
         if(couponlist!=null && !couponlist.isEmpty()){
             balanceVO.setCouponList(couponlist);
+        }
+        List giftPacketlist=giftPackVo.getData().getList();
+        if(giftPacketlist!=null && !giftPacketlist.isEmpty()){
+            balanceVO.setPackList(giftPacketlist);
         }
 
         return new ResponseApiVO(1,"成功",balanceVO);

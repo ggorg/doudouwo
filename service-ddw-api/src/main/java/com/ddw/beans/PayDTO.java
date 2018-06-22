@@ -16,11 +16,21 @@ public class PayDTO {
 
 
     @ApiModelProperty(name="codes",value="所购买的多个物品编号（充值卷的ID，商品ID，礼物ID，竞价ID，定金ID等）,",example="[1]")
-
     private Integer codes[];
 
     @ApiModelProperty(name="couponCode",value="优惠卷code",example="")
     private Integer couponCode;
+
+    @ApiModelProperty(name="groupId",value="群ID（此参数用在房间购买礼物时候传，在商城购买礼物的不用传这个参数）",example="")
+    private String groupId;
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
 
     public Integer getCouponCode() {
         return couponCode;

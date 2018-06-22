@@ -92,6 +92,20 @@ public class WalletController {
 
     }
     @Token
+    @ApiOperation(value = "查询背包礼物",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/giftpacket/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<GiftPacketVO>> getGiftPacket(@PathVariable String token ){
+        try {
+            ResponseApiVO vo=this.walletService.getGiftPackge(TokenUtil.getUserId(token));
+            return vo;
+        }catch (Exception e){
+            logger.error("WalletController-getGiftPacket-》查询背包礼物-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"查询失败",null);
+
+    }
+    @Token
     @ApiOperation(value = "查询女神收益",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/goddessIn/{token}")
     @ResponseBody

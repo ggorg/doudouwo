@@ -140,7 +140,7 @@ public class PayCenterService extends BaseOrderService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO prePay(String token, Integer cost, Integer payType, Integer orderType,Integer[] codes ,Integer couponCode)throws Exception{
+    public ResponseApiVO prePay(String token, Integer cost, Integer payType, Integer orderType,Integer[] codes ,Integer couponCode,String groupId)throws Exception{
 
         if(!PayTypeEnum.PayType1.getCode().equals(payType) && !PayTypeEnum.PayType2.getCode().equals(payType)){
             return new ResponseApiVO(-2,"请选择有效的支付方式",null);
@@ -412,8 +412,19 @@ public class PayCenterService extends BaseOrderService {
                 insertM.put("giftId",voData.get("id"));
                 insertM.put("giftName",voData.get("dgName").toString());
                 insertM.put("giftPrice",orderPO.getDoCost());
-                Integer goddessUserId=this.liveRadioService.getLiveRadioByGroupId(TokenUtil.getGroupId(token)).getUserid();
-                insertM.put("goddessUserId",goddessUserId);
+                insertM.put("userId",orderPO.getDoCustomerUserId());
+                Integer goddessUserId=-1;
+                if(StringUtils.isNotBlank(groupId)){
+                    LiveRadioPO po=this.liveRadioService.getLiveRadioByGroupId(groupId);
+                    if(po==null){
+                        throw new GenException("群组号不存在");
+                    }
+                    goddessUserId=po.getUserid();
+                    insertM.put("acceptUserId",goddessUserId);
+                    insertM.put("used",1);
+                }else{
+                    insertM.put("used",0);
+                }
 
                 resVo=this.commonInsertMap("ddw_order_gift",insertM);
                 if(resVo.getReCode()!=1){

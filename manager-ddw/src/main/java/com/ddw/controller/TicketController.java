@@ -1,9 +1,14 @@
 package com.ddw.controller;
 
 import com.ddw.beans.GiftDTO;
+import com.ddw.beans.StorePO;
 import com.ddw.beans.TicketDTO;
+import com.ddw.enums.ShipStatusEnum;
 import com.ddw.servies.GiftService;
+import com.ddw.servies.OrderService;
+import com.ddw.servies.StoreService;
 import com.ddw.servies.TicketService;
+import com.ddw.util.Toolsddw;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +26,12 @@ public class TicketController {
 
     @Autowired
     private TicketService ticketService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private StoreService storeService;
 
 
     @GetMapping("to-paging")
@@ -59,15 +70,19 @@ public class TicketController {
 
     }
 
-    @PostMapping("do-update-status")
+    @PostMapping("do-makesure")
     @ResponseBody
-    public ResponseVO doUpdate(String idStr,Integer status){
+    public ResponseVO doMakeSure(String orderStr){
         try {
-            return this.ticketService.update(idStr,status);
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                return this.orderService.updateOrderStatus(null, ShipStatusEnum.ShipStatus5.getCode(),spo.getId(),orderStr);
+
+            }
         }catch (Exception e){
-            logger.error("TicketController->doUpdate",e);
-            return new ResponseVO(-1,"操作失败",null);
+            logger.error("TicketController->makesure",e);
         }
+        return new ResponseVO(-1,"操作失败",null);
 
     }
 
