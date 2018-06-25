@@ -130,18 +130,23 @@ public class PayCenterService extends BaseOrderService {
         return new ResponseApiVO(-4,"支付处理中，请稍等",null);
 
     }
+
     /**
      * 预支付
      * @param token
-     * @param cost
      * @param payType
-     * @param orderType
+     * @param dto
      * @return
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO prePay(String token, Integer cost, Integer payType, Integer orderType,Integer[] codes ,Integer couponCode,String groupId)throws Exception{
-
+    public ResponseApiVO prePay(String token, Integer payType, PayDTO dto)throws Exception{
+        Integer cost= dto.getMoney();
+        Integer orderType=dto.getOrderType();
+        Integer[] codes=dto.getCodes();
+        Integer couponCode=dto.getCouponCode();
+        String groupId=dto.getGroupId();
+        String tableNo=dto.getTableNo();
         if(!PayTypeEnum.PayType1.getCode().equals(payType) && !PayTypeEnum.PayType2.getCode().equals(payType)){
             return new ResponseApiVO(-2,"请选择有效的支付方式",null);
         }
@@ -166,17 +171,20 @@ public class PayCenterService extends BaseOrderService {
 
         orderPO.setDoCustomerStoreId(-1);
         orderPO.setDoPayType(payType);
-        orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus0.getCode());
         orderPO.setDoCustomerType(OrderCustomerTypeEnum.OrderCustomerType0.getCode());
         orderPO.setDoType(orderType);
         orderPO.setCreater(TokenUtil.getUserName(token));
+        if(StringUtils.isNotBlank(tableNo)){
+            orderPO.setDoExtendStr("桌号-"+tableNo);
+        }
         Map<Integer,Map> buyInProMap=null;
         //GiftPO gift=null;
         Map voData=null;
         List<Map> insertList=null;
         //定金
         if(OrderTypeEnum.OrderType4.getCode().equals(orderType)){
-            orderPO.setDoSellerId(-1);
+            orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
+            orderPO.setDoSellerId(TokenUtil.getStoreId(token));
             Integer earnest=(Integer)CacheUtil.get("pay","bidding-earnest-pay-"+userId+"-"+codes[0]);
             if(earnest==null){
                 return new ResponseApiVO(-2,"定金支付失败",null);
@@ -190,11 +198,12 @@ public class PayCenterService extends BaseOrderService {
             }
        // 竞价金额
         }else if(OrderTypeEnum.OrderType5.getCode().equals(orderType)){
-            orderPO.setDoSellerId(-1);
+            orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
+            orderPO.setDoSellerId(TokenUtil.getStoreId(token));
             Integer bidCost=0;
             Map bidMap=null;
             for(Integer code:codes){
-                bidMap=(Map)CacheUtil.get("pay","bidding-pay-"+userId+"-"+codes[0]);
+                bidMap=(Map)CacheUtil.get("pay","bidding-pay-"+userId+"-"+code);
                 if(bidMap==null){
                     return new ResponseApiVO(-2,"竞价金额支付失败",null);
 
@@ -204,10 +213,12 @@ public class PayCenterService extends BaseOrderService {
 
             }
 
+
             orderPO.setDoCost(bidCost);
 
         //计算充值
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
+            orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(-1);
             Integer recCost=rechargeService.getRechargeCost(codes[0]);
 
@@ -218,6 +229,7 @@ public class PayCenterService extends BaseOrderService {
         //计算货品
         }else if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
             orderPO.setDoSellerId(TokenUtil.getStoreId(token));
+            orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus0.getCode());
 
             buyInProMap=new HashMap();
             List<Integer> codesList=Arrays.asList(codes);
@@ -271,18 +283,32 @@ public class PayCenterService extends BaseOrderService {
 
         //礼物
         }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
+            orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(-1);
+            List<Integer> codesList=Arrays.asList(codes);
             Map search=new HashMap();
-            search.put("id",codes[0]);
+            search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+          //  search.put("id",codes[0]);
             search.put("dgDisabled",DisabledEnum.disabled0.getCode());
-            voData=this.commonObjectBySearchCondition("ddw_gift",search);
-            if(voData==null){
+            List<Map> giftList=this.commonObjectsBySearchCondition("ddw_gift",search);
+            if(giftList==null){
                 return new ResponseApiVO(-2,"礼物不存在",null);
             }
-            Integer actPrice=(Integer)voData.get("dgActPrice");
-            Integer price=(Integer)voData.get("dgPrice");
-            orderPO.setDoCost(actPrice!=null && actPrice>0?actPrice:price);
+            final Map<Integer,Map> buyInGoiftMap=new HashMap();
+            giftList.forEach(a-> buyInGoiftMap.put((Integer) a.get("id"),a));
+
+            Integer coutCost=0;
+            Integer actPrice=null;
+            Integer price=null;
+            for(Integer code:codesList){
+                actPrice=(Integer)buyInGoiftMap.get(code).get("dgActPrice");
+                price=(Integer)buyInGoiftMap.get(code).get("dgPrice");
+                coutCost=coutCost+(actPrice!=null && actPrice>0?actPrice:price);
+            }
+            orderPO.setDoCost(coutCost);
+            buyInProMap=buyInGoiftMap;
         }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
+            orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus0.getCode());
 
             orderPO.setDoSellerId(TokenUtil.getStoreId(token));
             List<Integer> codesList=Arrays.asList(codes);
@@ -404,38 +430,59 @@ public class PayCenterService extends BaseOrderService {
                 }
                 CacheUtil.put("pay","goodsPru-order-"+orderNo,new ArrayList(collection));
             }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
-                Map insertM=new HashMap();
-                insertM.put("orderNo",orderNo);
-                insertM.put("orderId",insertResponseVO.getData());
-                insertM.put("createTime",new Date());
-                insertM.put("updateTime",new Date());
-                insertM.put("giftId",voData.get("id"));
-                insertM.put("giftName",voData.get("dgName").toString());
-                insertM.put("giftPrice",orderPO.getDoCost());
-                insertM.put("userId",orderPO.getDoCustomerUserId());
+                Map insertM=null;
                 Integer goddessUserId=-1;
-                if(StringUtils.isNotBlank(groupId)){
-                    LiveRadioPO po=this.liveRadioService.getLiveRadioByGroupId(groupId);
-                    if(po==null){
+                if(StringUtils.isNotBlank(groupId)) {
+                    LiveRadioPO po = this.liveRadioService.getLiveRadioByGroupId(groupId);
+                    if (po == null) {
                         throw new GenException("群组号不存在");
                     }
                     goddessUserId=po.getUserid();
-                    insertM.put("acceptUserId",goddessUserId);
-                    insertM.put("used",1);
-                }else{
-                    insertM.put("used",0);
+                }
+                Map cacheMap=null;
+                Map giftMap=null;
+                Integer actPrice=null;
+                Integer price=null;
+                List giftList=new ArrayList();
+                for(Integer code:codes){
+                    giftMap=buyInProMap.get(code);
+
+                    actPrice=(Integer)giftMap.get("dgActPrice");
+                    price=(Integer)giftMap.get("dgPrice");
+                    insertM=new HashMap();
+                    cacheMap=new HashMap();
+                    insertM.put("orderNo",orderNo);
+                    insertM.put("orderId",insertResponseVO.getData());
+                    insertM.put("createTime",new Date());
+                    insertM.put("updateTime",new Date());
+                    insertM.put("giftId",giftMap.get("id"));
+                    insertM.put("giftName",giftMap.get("dgName").toString());
+                    insertM.put("giftPrice",actPrice!=null && actPrice>0?actPrice:price);
+                    insertM.put("userId",orderPO.getDoCustomerUserId());
+                    cacheMap.put("cost",actPrice!=null && actPrice>0?actPrice:price);
+                    cacheMap.put("headImg",giftMap.get("dgImgPath"));
+                    cacheMap.put("name",giftMap.get("dgName").toString());
+                    giftList.add(cacheMap);
+                    if(StringUtils.isNotBlank(groupId)){
+                        insertM.put("acceptUserId",goddessUserId);
+                        insertM.put("used",1);
+                    }else{
+                        insertM.put("used",0);
+
+                    }
+                    resVo=this.commonInsertMap("ddw_order_gift",insertM);
+                    if(resVo.getReCode()!=1){
+                        throw new GenException("礼物支付失败");
+
+                    }
                 }
 
-                resVo=this.commonInsertMap("ddw_order_gift",insertM);
-                if(resVo.getReCode()!=1){
-                    throw new GenException("礼物支付失败");
-
-                }
                 Map map=new HashMap();
                 map.put("goddessUserId",goddessUserId);
-                map.put("cost",orderPO.getDoCost());
+                map.put("giftList",giftList);
+                /*map.put("cost",orderPO.getDoCost());
                 map.put("headImg",voData.get("dgImgPath"));
-                map.put("name",voData.get("dgName").toString());
+                map.put("name",voData.get("dgName").toString());*/
                 orderCacheData=JSONObject.toJSONString(map);
             }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
                 for(Map im:insertList){

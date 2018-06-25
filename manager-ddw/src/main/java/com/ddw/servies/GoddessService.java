@@ -59,6 +59,7 @@ public class GoddessService extends CommonService {
             PropertyUtils.copyProperties(goddessPO,goddessDTO);
             goddessPO.setUpdateTime(new Date());
             Map updatePoMap= BeanToMapUtil.beanToMap(goddessPO);
+
             CacheUtil.delete("publicCache","goddess-"+oldGoddessVo.getStoreId()+"-"+oldGoddessVo.getUserId());
 
             return super.commonUpdateBySingleSearchParam("ddw_goddess",updatePoMap,"id",goddessPO.getId());

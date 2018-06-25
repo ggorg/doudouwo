@@ -24,6 +24,17 @@ public class PayDTO {
     @ApiModelProperty(name="groupId",value="群ID（此参数用在房间购买礼物时候传，在商城购买礼物的不用传这个参数）",example="")
     private String groupId;
 
+    @ApiModelProperty(name="tableNo",value="桌号",example="")
+    private String tableNo;
+
+    public String getTableNo() {
+        return tableNo;
+    }
+
+    public void setTableNo(String tableNo) {
+        this.tableNo = tableNo;
+    }
+
     public String getGroupId() {
         return groupId;
     }

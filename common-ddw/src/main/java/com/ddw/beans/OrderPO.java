@@ -94,6 +94,15 @@ public class OrderPO implements Serializable {
      */
     private String doExitExpressName;
 
+    private String doExtendStr;
+
+    public String getDoExtendStr() {
+        return doExtendStr;
+    }
+
+    public void setDoExtendStr(String doExtendStr) {
+        this.doExtendStr = doExtendStr;
+    }
 
     public String getDoTrackingNumber() {
         return doTrackingNumber;

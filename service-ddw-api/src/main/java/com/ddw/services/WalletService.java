@@ -107,9 +107,10 @@ public class WalletService extends CommonService {
     public ResponseApiVO getGiftPackge(Integer userid){
         Map search=new HashMap();
         search.put("used",0);
+        search.put("userId",userid);
         Map csearch=new HashMap();
         csearch.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
-        CommonSearchBean csb=new CommonSearchBean("ddw_order_gift",null,"ct1.id giftCode,ct1.dgName name,ct1.dgImgPath imgUrl",1,1,search,
+        CommonSearchBean csb=new CommonSearchBean("ddw_order_gift",null,"ct1.id giftCode,ct1.dgName name,ct1.dgImgPath imgUrl",null,null,search,
                 new CommonChildBean("ddw_order","id","orderId",csearch),
                 new CommonChildBean("ddw_gift","id","giftId",null));
         List giftPacketlist=this.getCommonMapper().selectObjects(csb);

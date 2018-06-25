@@ -13,6 +13,7 @@ import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
+import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import com.sun.tools.javah.Gen;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -580,15 +581,69 @@ public class BiddingService extends CommonService {
 
     }
 
-    public ResponseApiVO getBidOrderInfoByGoddess(String token){
-        String streamId=TokenUtil.getStreamId(token);
-        if(streamId==null){
-            return new ResponseApiVO(-2,"直播房间不存在",null);
+    private List commonHandleBidOrder(List<Map> bidList){
+        Date currentDate=new Date();
+        bidList.forEach(a->{
+            Date endTime=(Date) a.get("endTime");
+            Integer bidUserId=(Integer) a.get("luckyUserId");
+            // Integer goddessUserId=(Integer) a.get("userId");
+            if(bidUserId==null){
+                a.put("status",BiddingStatusEnum.Status1.getCode());
+                a.put("statusMsg",BiddingStatusEnum.Status1.getName());
+            }else if(bidUserId>0 && endTime==null){
+                a.put("status",BiddingStatusEnum.Status7.getCode());
+                a.put("statusMsg",BiddingStatusEnum.Status7.getName());
+            }else if(endTime.after(currentDate)){
+                a.put("status",BiddingStatusEnum.Status5.getCode());
+                a.put("statusMsg",BiddingStatusEnum.Status5.getName());
+            }else{
+                a.put("status",BiddingStatusEnum.Status8.getCode());
+                a.put("statusMsg",BiddingStatusEnum.Status8.getName());
+            }
+            // a.put("headImg",this.userInfoService.getPhotograph(goddessUserId));
+            if(endTime!=null) a.replace("endTime",DateFormatUtils.format(endTime,"yyyy-MM-dd HH:mm:ss"));
+            a.replace("createTime",DateFormatUtils.format((Date)a.get("createTime"),"MM/dd HH:mm:ss"));
+            a.remove("luckyUserId");
+        });
+        return bidList;
+    }
+    public ResponseApiVO getBidOrderList(String token,Integer pageN0){
+        Page p=new Page(pageN0==null?1:pageN0,10);
+
+        Integer userId=TokenUtil.getUserId(token);
+        Integer dgId=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",userId,"id",Integer.class);
+        Map searchMap=new HashMap();
+        String childKeyName=null;
+        if(dgId!=null){
+            childKeyName="luckyDogUserId";
+            searchMap.put("userId",userId);
+
+        }else{
+            childKeyName="userId";
+
+            searchMap.put("luckyDogUserId",userId);
         }
+        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.createTime,t1.price,t1.endTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName",p.getStartRow(),p.getEndRow(),searchMap,cb);
+        List<Map> bidList=this.getCommonMapper().selectObjects(csb);
+        if(bidList==null || bidList.isEmpty()){
+            return new ResponseApiVO(-2,"没有竞价信息",new ListVO(new ArrayList()));
+        }
+
+        return new ResponseApiVO(1,"成功",new ListVO(commonHandleBidOrder(bidList)));
+
+    }
+    public ResponseApiVO getBidOrderInfoByGoddess(String token,Integer bidCode){
+        Integer userId=TokenUtil.getUserId(token);
+        if(bidCode==null){
+            return new ResponseApiVO(-2,"竞价code为空",null);
+
+        }
+        Integer dgId=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",userId,"id",Integer.class);
+
         Map map=new HashMap();
 
-        String groupId=streamId.replaceFirst("[0-9]+_","");
-
+       /*
         String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
         Map paymap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
 
@@ -610,29 +665,48 @@ public class BiddingService extends CommonService {
             map.put("time",paymap.get("time"));
             map.put("price",paymap.get("bidPrice"));
             return new ResponseApiVO(3,"用户未支付",map);
-        }
+        }*/
         Map searchMap=new HashMap();
-        searchMap.put("groupId",groupId);
-        List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc","t1.price,t1.endTime,t1.luckyDogUserName name,t1.times",1,1,searchMap);
-        if(bidList==null || bidList.isEmpty()){
-            return new ResponseApiVO(-2,"没有竞价信息",null);
-        }
-
-        Map poMap=bidList.get(0);
-
-        Date endTime=(Date)poMap.get("endTime");
-        Date currentDate=new Date();
-        poMap.put("endTime",DateFormatUtils.format(endTime,"yyyy-MM-dd HH:mm:ss"));
-        if(endTime!=null && endTime.after(currentDate)){
-            poMap.put("status", BiddingStatusEnum.Status5.getCode());
-            poMap.put("statusMsg",BiddingStatusEnum.Status5.getName());
-            return new ResponseApiVO(4,"约玩中",poMap);
-
+        searchMap.put("id",bidCode);
+        String childKeyName=null;
+        if(dgId!=null){
+            childKeyName="luckyDogUserId";
+            searchMap.put("userId",userId);
         }else{
-            poMap.put("status", BiddingStatusEnum.Status8.getCode());
-            poMap.put("statusMsg",BiddingStatusEnum.Status8.getName());
-            return new ResponseApiVO(5,"已结束",poMap);
+            searchMap.put("luckyDogUserId",userId);
+            childKeyName="userId";
+
         }
+        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.createTime,t1.price,t1.endTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName",0,1,searchMap,cb);
+
+        List<Map> bidList=this.getCommonMapper().selectObjects(csb);
+        if(bidList==null || bidList.isEmpty()){
+            return new ResponseApiVO(-2,"没有竞价订单信息",null);
+        }
+
+        Map a=(Map)commonHandleBidOrder(bidList).get(0);
+
+        Map orderRsbMap=new HashMap();
+        orderRsbMap.put("biddingId",bidCode);
+
+        Map orderCbMap=new HashMap();
+        if(dgId==null){
+            orderRsbMap.put("creater",userId);
+            orderCbMap.put("doCustomerUserId",userId);
+        }
+        CommonChildBean orderCb=new CommonChildBean("ddw_order","id","orderId",orderCbMap);
+        CommonSearchBean orderRsb=new CommonSearchBean("ddw_order_bidding_pay","createTime desc","t1.createTime,t1.dorCost price,t1.orderNo,ct0.doType orderType",null,null,orderRsbMap,orderCb);
+        List<Map> orderList=this.getCommonMapper().selectObjects(orderRsb);
+        if(orderList!=null){
+            orderList.forEach(b->{
+                b.put("orderTypeName",OrderTypeEnum.getName((Integer) b.get("orderType")));
+                b.put("createTime",DateFormatUtils.format((Date)b.get("createTime"),"yyyy-MM-dd HH:mm:ss"));
+            });
+        }
+        a.put("priceList",orderList);
+        return new ResponseApiVO(1,"成功",a);
+
 
     }
     public ResponseApiVO getCurrentAllBidding(String token)throws Exception{
@@ -712,7 +786,7 @@ public class BiddingService extends CommonService {
         BigDecimal point=v.subtract(BigDecimal.valueOf(part)).multiply(BigDecimal.valueOf(60));
         System.out.println(part+"分"+point.intValue()+"秒");
         System.out.println(new ArrayList().remove("125"));
-        String useridStr="1_41_180606213932".replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2");
+        String useridStr="20202_1_41_180606213932".replaceAll("^([0-9]+_)(.*_)([0-9]+)$","$2");
         System.out.println(useridStr);
 
     }

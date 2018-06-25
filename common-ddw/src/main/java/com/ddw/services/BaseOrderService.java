@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.OrderPO;
 import com.ddw.beans.OrderViewPO;
@@ -88,7 +89,7 @@ public class BaseOrderService extends CommonService {
                 po.setPrice(dorCost);
                 po.setUserId(userid);
                 po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
-                po.setShipStatus(ShipStatusEnum.ShipStatus5.getCode());
+                po.setShipStatus(cacheOrder.getDoShipStatus());
                 po.setStoreId(cacheOrder.getDoSellerId());
                 this.orderViewService.saveOrderView(po);
                 CacheUtil.delete("pay","orderObject-"+orderNo);
@@ -110,7 +111,7 @@ public class BaseOrderService extends CommonService {
                 po.setOrderType(OrderTypeEnum.OrderType4.getCode());
                 po.setUserId(cacheOrder.getDoCustomerUserId());
                 po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
-                po.setShipStatus(ShipStatusEnum.ShipStatus5.getCode());
+                po.setShipStatus(cacheOrder.getDoShipStatus());
                 po.setStoreId(cacheOrder.getDoSellerId());
                 this.orderViewService.saveOrderView(po);
             }else if(OrderTypeEnum.OrderType5.getCode().equals(doType)){
@@ -155,7 +156,7 @@ public class BaseOrderService extends CommonService {
                     po.setPrice(needPayPrice);
                     po.setUserId(cacheOrder.getDoCustomerUserId());
                     po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
-                    po.setShipStatus(ShipStatusEnum.ShipStatus0.getCode());
+                    po.setShipStatus(cacheOrder.getDoShipStatus());
                     po.setStoreId(cacheOrder.getDoSellerId());
                     this.orderViewService.saveOrderView(po);
                 }
@@ -194,7 +195,7 @@ public class BaseOrderService extends CommonService {
                     po.setPrice((Integer) m.get("productUnitPrice"));
                     po.setUserId(cacheOrder.getDoCustomerUserId());
                     po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
-                    po.setShipStatus(ShipStatusEnum.ShipStatus0.getCode());
+                    po.setShipStatus(cacheOrder.getDoShipStatus());
                     po.setStoreId(cacheOrder.getDoSellerId());
                     this.orderViewService.saveOrderView(po);
 
@@ -208,26 +209,32 @@ public class BaseOrderService extends CommonService {
                 }
                 JSONObject json=JSONObject.parseObject(jsonStr);
                 Integer goddUserId=json.getInteger("goddessUserId");
-                Integer cost=json.getInteger("cost");
-                OrderViewPO po=new OrderViewPO();
-                po.setCreateTime(new Date());
-                po.setName(json.getString("name"));
-                po.setHeadImg(json.getString("headImg"));
-                po.setNum(1);
-                po.setOrderId(OrderUtil.getOrderId(orderNo));
-                po.setOrderNo(orderNo);
-                po.setPrice(cost);
-                po.setOrderType(OrderTypeEnum.OrderType6.getCode());
+                JSONArray giftArray=json.getJSONArray("giftList");
+                JSONObject jsonGift=null;
+                for(int i=0;i<giftArray.size();i++){
+                    jsonGift=giftArray.getJSONObject(i);
+                    Integer cost=jsonGift.getInteger("cost");
+                    OrderViewPO po=new OrderViewPO();
+                    po.setCreateTime(new Date());
+                    po.setName(jsonGift.getString("name"));
+                    po.setHeadImg(jsonGift.getString("headImg"));
+                    po.setNum(1);
+                    po.setOrderId(OrderUtil.getOrderId(orderNo));
+                    po.setOrderNo(orderNo);
+                    po.setPrice(cost);
+                    po.setOrderType(OrderTypeEnum.OrderType6.getCode());
 
-                po.setUserId(cacheOrder.getDoCustomerUserId());
-                po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
-                po.setShipStatus(ShipStatusEnum.ShipStatus5.getCode());
-                po.setStoreId(cacheOrder.getDoSellerId());
-                this.orderViewService.saveOrderView(po);
-                if(goddUserId>-1){
-                    this.incomeService.commonIncome(goddUserId,cost,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,orderNo);
-                    this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),goddUserId,cost,IncomeTypeEnum.IncomeType1);
+                    po.setUserId(cacheOrder.getDoCustomerUserId());
+                    po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
+                    po.setShipStatus(cacheOrder.getDoShipStatus());
+                    po.setStoreId(cacheOrder.getDoSellerId());
+                    this.orderViewService.saveOrderView(po);
+                    if(goddUserId>-1){
+                        this.incomeService.commonIncome(goddUserId,cost,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,orderNo);
+                        this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),goddUserId,cost,IncomeTypeEnum.IncomeType1);
+                    }
                 }
+
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
             }
             if(StringUtils.isNotBlank(cacheOrder.getDoCouponNo())){
