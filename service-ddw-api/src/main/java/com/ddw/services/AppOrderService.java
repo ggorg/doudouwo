@@ -27,7 +27,7 @@ public class AppOrderService extends CommonService {
         Map map=new HashMap();
         map.put("userId", TokenUtil.getUserId(token));
         map.put("payStatus,>=", PayStatusEnum.PayStatus1.getCode());
-        map.put("orderType,in",dto.getType()==null?AppOrderTypeEnum.OrderType3.getName():AppOrderTypeEnum.getName(dto.getType()));
+        map.put("orderType,in",AppOrderTypeEnum.OrderType3.getName());
         if(dto.getShipStatus()!=null && StringUtils.isNotBlank(ShipStatusEnum.getName(dto.getShipStatus()))){
             map.put("shipStatus", dto.getShipStatus());
         }

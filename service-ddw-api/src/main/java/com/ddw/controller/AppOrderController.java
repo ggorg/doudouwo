@@ -37,26 +37,50 @@ public class AppOrderController {
 
     }
     @Token
-    @ApiOperation(value = "查看约玩订单信息",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/query/bid/order/info/{token}")
+    @ApiOperation(value = "查看约玩订单信息（用户）",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/bid/user/order/info/{token}")
     @ResponseBody
-    public ResponseApiVO<BiddingOrderInfoVO> getBidOrderInfoByGoddess(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingCodeDTO args){
+    public ResponseApiVO<BiddingOrderInfoVO> getBidOrderInfoByUser(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingCodeDTO args){
         try {
-            return this.biddingService.getBidOrderInfoByGoddess(token,args.getBidCode());
+            return this.biddingService.getBidOrderInfoByGoddess(token,args.getBidCode(),false);
         }catch (Exception e){
-            logger.error("BiddingController->getBidOrderInfoByGoddess-》获取订单信息-》系统异常",e);
+            logger.error("BiddingController->getBidOrderInfoByUser-》查看约玩订单信息（用户）-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
         }
     }
     @Token
-    @ApiOperation(value = "获取约玩订单列表",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/query/bid/orderlist/{token}")
+    @ApiOperation(value = "查看约玩订单信息（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/bid/goddess/order/info/{token}")
     @ResponseBody
-    public ResponseApiVO<ListVO<BiddingOrderListVO>> getBidOrderList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+    public ResponseApiVO<BiddingOrderInfoVO> getBidOrderInfoByGoddess(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingCodeDTO args){
         try {
-            return this.biddingService.getBidOrderList(token,args.getPageNo());
+            return this.biddingService.getBidOrderInfoByGoddess(token,args.getBidCode(),true);
         }catch (Exception e){
-            logger.error("BiddingController->getBidOrderLists-》获取订单列表-》系统异常",e);
+            logger.error("BiddingController->getBidOrderInfoByGoddess-》查看约玩订单信息（女神）-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "获取约玩订单列表（用户下单）",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/bid/user/orderlist/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<BiddingOrderListVO>> getBidUserOrderList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+        try {
+            return this.biddingService.getBidOrderList(token,args.getPageNo(),false);
+        }catch (Exception e){
+            logger.error("BiddingController->getBidUserOrderList-》获取约玩订单列表（用户下单）-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "获取约玩订单列表(女神接单)",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/bid/goddess/orderlist/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<BiddingOrderListVO>> getBidGoddessOrderList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+        try {
+            return this.biddingService.getBidOrderList(token,args.getPageNo(),true);
+        }catch (Exception e){
+            logger.error("BiddingController->getBidGoddessOrderList-》获取约玩订单列表(女神接单)-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
         }
     }

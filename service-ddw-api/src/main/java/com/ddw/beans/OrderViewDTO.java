@@ -10,7 +10,7 @@ public class OrderViewDTO {
     @ApiModelProperty(name="pageNo",value="页码",example="1")
     private Integer pageNo;
 
-    @ApiModelProperty(name="type",value="类型,女神：1，代练：2，所有：3，",example="1")
+    @ApiModelProperty(name="type",value="商城：3",example="1")
     private Integer type;
 
 

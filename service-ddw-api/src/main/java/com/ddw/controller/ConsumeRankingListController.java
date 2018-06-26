@@ -1,9 +1,6 @@
 package com.ddw.controller;
 
-import com.ddw.beans.GiftVO;
-import com.ddw.beans.ListVO;
-import com.ddw.beans.PageNoDTO;
-import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.*;
 import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.services.ConsumeRankingListService;
 import com.ddw.token.Token;
@@ -29,7 +26,7 @@ public class ConsumeRankingListController {
     @ApiOperation(value = "女神土豪列表",produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Token
-    public ResponseApiVO<ListVO<GiftVO>> queryGoddessList(@PathVariable String token){
+    public ResponseApiVO<ListVO<RankingListVO>> queryGoddessList(@PathVariable String token){
 
         try{
             return this.consumeRankingListService.getList(TokenUtil.getGroupId(token), IncomeTypeEnum.IncomeType1);
@@ -43,7 +40,7 @@ public class ConsumeRankingListController {
     @ApiOperation(value = "代练土豪列表",produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @Token
-    public ResponseApiVO<ListVO<GiftVO>> queryPracticeList(@PathVariable String token){
+    public ResponseApiVO<ListVO<RankingListVO>> queryPracticeList(@PathVariable String token){
 
         try{
             return this.consumeRankingListService.getList(TokenUtil.getGroupId(token), IncomeTypeEnum.IncomeType2);

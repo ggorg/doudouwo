@@ -9,7 +9,7 @@ public enum AppOrderTypeEnum implements Dictionary {
     //商品:1,原材料：2
     OrderType1("(4,5,6)",1),
     OrderType2("(6)",2),
-    OrderType3("(1,3,4,5,6,7)",3);
+    OrderType3("(1,3,6,7)",3);
 
 
 

@@ -607,11 +607,15 @@ public class BiddingService extends CommonService {
         });
         return bidList;
     }
-    public ResponseApiVO getBidOrderList(String token,Integer pageN0){
+    public ResponseApiVO getBidOrderList(String token,Integer pageN0,boolean isGoddess){
         Page p=new Page(pageN0==null?1:pageN0,10);
 
         Integer userId=TokenUtil.getUserId(token);
-        Integer dgId=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",userId,"id",Integer.class);
+        Integer dgId=null;
+        if(isGoddess){
+            dgId=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",userId,"id",Integer.class);
+
+        }
         Map searchMap=new HashMap();
         String childKeyName=null;
         if(dgId!=null){
@@ -633,14 +637,17 @@ public class BiddingService extends CommonService {
         return new ResponseApiVO(1,"成功",new ListVO(commonHandleBidOrder(bidList)));
 
     }
-    public ResponseApiVO getBidOrderInfoByGoddess(String token,Integer bidCode){
+    public ResponseApiVO getBidOrderInfoByGoddess(String token,Integer bidCode,boolean isGoddess){
         Integer userId=TokenUtil.getUserId(token);
         if(bidCode==null){
             return new ResponseApiVO(-2,"竞价code为空",null);
 
         }
-        Integer dgId=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",userId,"id",Integer.class);
+        Integer dgId=null;
+        if(isGoddess){
+            dgId=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",userId,"id",Integer.class);
 
+        }
         Map map=new HashMap();
 
        /*

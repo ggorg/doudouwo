@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.beans.vo.AppIndexBannerVO;
 import com.ddw.enums.GoodsRecommendEnum;
 import com.ddw.enums.GoodsStatusEnum;
 import com.ddw.enums.GoodsTypeEnum;
@@ -8,7 +9,9 @@ import com.ddw.token.TokenUtil;
 import com.gen.common.dict.Dictionary;
 import com.gen.common.dict.DictionaryUtils;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Tools;
+import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,9 @@ public class GoodsClientService extends CommonService {
 
     @Autowired
     private StoreGoodsTypeService storeGoodsTypeService;
+
+    @Autowired
+    private BannerService bannerService;
 
    public ResponseApiVO appIndex(String token)throws Exception{
        Integer storeId= TokenUtil.getStoreId(token);
@@ -117,7 +123,17 @@ public class GoodsClientService extends CommonService {
                }
            }
        }
-       return new ResponseApiVO(1,"成功",new ListVO(listData));
+
+       Map goddessIndex=new HashMap();
+       goddessIndex.put("list",listData);
+
+       Object obBanner = CacheUtil.get("publicCache","appIndexBanner"+storeId);
+       if(obBanner==null){
+           obBanner = bannerService.getBannerList(storeId);
+           CacheUtil.put("publicCache","appIndexButton"+storeId,obBanner);
+       }
+       goddessIndex.put("bannerList",obBanner);
+       return new ResponseApiVO(1,"成功",goddessIndex);
 
    }
 
