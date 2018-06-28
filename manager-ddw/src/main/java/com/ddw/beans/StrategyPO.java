@@ -1,11 +1,12 @@
 package com.ddw.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Jacky on 2018/5/29.
  */
-public class StrategyPO {
+public class StrategyPO implements Serializable{
     private int id;
     private String name;
     private int levelId;

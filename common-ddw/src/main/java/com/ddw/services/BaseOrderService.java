@@ -1,10 +1,12 @@
 package com.ddw.services;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.OrderPO;
 import com.ddw.beans.OrderViewPO;
-import com.ddw.enums.*;
+import com.ddw.enums.DoubiRecordTypeEnum;
+import com.ddw.enums.IncomeTypeEnum;
+import com.ddw.enums.OrderTypeEnum;
+import com.ddw.enums.PayStatusEnum;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
@@ -13,9 +15,7 @@ import com.gen.common.util.CacheUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +32,9 @@ public class BaseOrderService extends CommonService {
 
     @Autowired
     protected BaseConsumeRankingListService baseConsumeRankingListService;
+
+    @Autowired
+    private StraregyService straregyService;
 
     public OrderPO getCacheOrder(String orderNo)throws Exception{
         String objStr=(String) CacheUtil.get("pay","orderObject-"+orderNo);
@@ -75,6 +78,8 @@ public class BaseOrderService extends CommonService {
                     CacheUtil.put("pay","order-"+orderNo,"fail");
                     throw new GenException("更新钱包充值状态失败");
                 }
+                //根据充值金额匹配会员策略
+                straregyService.recharge(dorCost,userid);
                 OrderViewPO po=new OrderViewPO();
                 po.setCreateTime(new Date());
                 po.setName(OrderTypeEnum.OrderType3.getName());
