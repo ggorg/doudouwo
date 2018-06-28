@@ -91,7 +91,12 @@ public class StraregyService extends CommonService {
         return this.commonUpdateBySingleSearchParam("ddw_userinfo",updatePoMap,"id",userInfoPO.getId());
     }
 
-    // 根据充值金额修改会员等级
+    /**
+     * 根据充值金额执行会员策略
+     * @param money 充值金额
+     * @param userId 会员id
+     * @throws Exception
+     */
     public void recharge(int money,int userId)throws Exception{
         //初始化赠送逗币
         int coinSingle = 0;
