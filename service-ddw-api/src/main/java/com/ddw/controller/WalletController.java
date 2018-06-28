@@ -61,6 +61,23 @@ public class WalletController {
 
     }
     @Token
+    @ApiOperation(value = "查询钱包所剩逗币",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/coin/{token}")
+    @ResponseBody
+    public ResponseApiVO<WalletDoubiVO> getCoin(@PathVariable String token ){
+        try {
+            ResponseApiVO vo=this.walletService.getCoin(TokenUtil.getUserId(token));
+            vo=createWallet(vo,token);
+            if(vo.getReCode()==1){
+                return vo;
+            }
+        }catch (Exception e){
+            logger.error("WalletController-getCoin-》查询钱包所剩逗币-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"查询失败",null);
+
+    }
+    @Token
     @ApiOperation(value = "查询总资产",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/asset/{token}")
     @ResponseBody

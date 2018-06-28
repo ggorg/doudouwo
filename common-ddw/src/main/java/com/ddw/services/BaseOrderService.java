@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.OrderPO;
 import com.ddw.beans.OrderViewPO;
-import com.ddw.enums.IncomeTypeEnum;
-import com.ddw.enums.OrderTypeEnum;
-import com.ddw.enums.PayStatusEnum;
-import com.ddw.enums.ShipStatusEnum;
+import com.ddw.enums.*;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
@@ -28,13 +25,13 @@ import java.util.*;
 public class BaseOrderService extends CommonService {
 
     @Autowired
-    private IncomeService incomeService;
+    protected IncomeService incomeService;
 
     @Autowired
-    private OrderViewService orderViewService;
+    protected OrderViewService orderViewService;
 
     @Autowired
-    private BaseConsumeRankingListService baseConsumeRankingListService;
+    protected BaseConsumeRankingListService baseConsumeRankingListService;
 
     public OrderPO getCacheOrder(String orderNo)throws Exception{
         String objStr=(String) CacheUtil.get("pay","orderObject-"+orderNo);
@@ -92,6 +89,45 @@ public class BaseOrderService extends CommonService {
                 po.setShipStatus(cacheOrder.getDoShipStatus());
                 po.setStoreId(cacheOrder.getDoSellerId());
                 this.orderViewService.saveOrderView(po);
+                CacheUtil.delete("pay","orderObject-"+orderNo);
+            }else if(OrderTypeEnum.OrderType8.getCode().equals(doType)){
+                Map mapRecharge=this.commonObjectBySingleParam("ddw_order_doubi","orderNo",orderNo);
+                Integer userid=(Integer) mapRecharge.get("creater");
+                Integer dodDoubiNum=(Integer) mapRecharge.get("dodDoubiNum");
+                Map setParams=new HashMap();
+                setParams.put("coin",dodDoubiNum);
+                Map condition=new HashMap();
+                condition.put("userId",userid);
+                ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version",new String[]{"coin"});
+                if(wres.getReCode()!=1){
+                    CacheUtil.put("pay","order-"+orderNo,"fail");
+                    throw new GenException("更新钱包充值状态失败");
+                }
+                OrderViewPO po=new OrderViewPO();
+                po.setCreateTime(new Date());
+                po.setName(OrderTypeEnum.OrderType8.getName());
+                po.setHeadImg(null);
+                po.setNum(1);
+                po.setOrderType(OrderTypeEnum.OrderType8.getCode());
+                po.setOrderId(OrderUtil.getOrderId(orderNo));
+                po.setOrderNo(orderNo);
+                po.setPrice(cacheOrder.getDoCost());
+                po.setUserId(userid);
+                po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
+                po.setShipStatus(cacheOrder.getDoShipStatus());
+                po.setStoreId(cacheOrder.getDoSellerId());
+                this.orderViewService.saveOrderView(po);
+                Map doubiRecord=new HashMap();
+                doubiRecord.put("coin",dodDoubiNum);
+                doubiRecord.put("userId",userid);
+                doubiRecord.put("type", DoubiRecordTypeEnum.Type0.getCode());
+                doubiRecord.put("createTime",new Date());
+                doubiRecord.put("updatetime",new Date());
+                ResponseVO resIn=this.commonInsertMap("ddw_my_wallet_doubi_record",doubiRecord);
+                if(resIn.getReCode()!=1){
+                    CacheUtil.put("pay","order-"+orderNo,"fail");
+                    throw new GenException("更新钱包充值状态失败");
+                }
                 CacheUtil.delete("pay","orderObject-"+orderNo);
             }else if(OrderTypeEnum.OrderType4.getCode().equals(doType)){
                 String ub =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
@@ -202,7 +238,7 @@ public class BaseOrderService extends CommonService {
                 }
                 CacheUtil.delete("pay","goodsPru-order-"+orderNo);
 
-            }else if(OrderTypeEnum.OrderType6.getCode().equals(doType)){
+            }/*else if(OrderTypeEnum.OrderType6.getCode().equals(doType)){
                 String jsonStr =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
                 if(jsonStr==null){
                     throw new GenException("更新礼物支付状态失败");
@@ -236,7 +272,7 @@ public class BaseOrderService extends CommonService {
                 }
 
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
-            }
+            }*/
             if(StringUtils.isNotBlank(cacheOrder.getDoCouponNo())){
                 Map setParam=new HashMap();
                 setParam.put("used",1);

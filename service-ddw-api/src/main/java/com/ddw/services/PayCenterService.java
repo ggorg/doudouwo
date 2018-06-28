@@ -51,6 +51,9 @@ public class PayCenterService extends BaseOrderService {
     @Autowired
     private WalletService walletService;
 
+    @Autowired
+    private DoubiClientService doubiClientService;
+
 
     @Autowired
     private DDWGlobals ddwGlobals;
@@ -130,7 +133,12 @@ public class PayCenterService extends BaseOrderService {
         return new ResponseApiVO(-4,"支付处理中，请稍等",null);
 
     }
-
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO doubiPay(String token,DoubiPayDTO dto)throws Exception{
+        PayDTO payDTO=new PayDTO();
+        PropertyUtils.copyProperties(payDTO,dto);
+        return prePay(token,PayTypeEnum.PayType4.getCode(),payDTO);
+    }
     /**
      * 预支付
      * @param token
@@ -147,14 +155,17 @@ public class PayCenterService extends BaseOrderService {
         Integer couponCode=dto.getCouponCode();
         String groupId=dto.getGroupId();
         String tableNo=dto.getTableNo();
-        if(!PayTypeEnum.PayType1.getCode().equals(payType) && !PayTypeEnum.PayType2.getCode().equals(payType)){
+        if(StringUtils.isBlank(PayTypeEnum.getName(payType))){
             return new ResponseApiVO(-2,"请选择有效的支付方式",null);
         }
         if(StringUtils.isBlank(OrderTypeEnum.getName(orderType))){
             return new ResponseApiVO(-2,"请选择有效的订单类型",null);
 
         }
+        if(!PayTypeEnum.PayType4.getCode().equals(payType)&& OrderTypeEnum.OrderType6.getCode().equals(orderType)){
+            return new ResponseApiVO(-2,"抱歉，礼物只能逗币购买",null);
 
+        }
         if(codes==null){
             return new ResponseApiVO(-2,"业务编号不能是空",null);
 
@@ -226,6 +237,22 @@ public class PayCenterService extends BaseOrderService {
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
             }
+        //计算逗币充值
+        }else if(OrderTypeEnum.OrderType8.getCode().equals(orderType)){
+            orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
+            orderPO.setDoSellerId(-1);
+            Map map=doubiClientService.getObject(codes[0]);
+            if(map==null){
+                return new ResponseApiVO(-2,"充值卷编号异常",null);
+
+            }
+            Integer price=(Integer) map.get("price");
+            Integer discount=(Integer) map.get("discount");
+            Integer recCost=discount==null?price:discount;
+            orderPO.setDoCost(recCost);
+            if(orderPO.getDoCost()==null){
+                return new ResponseApiVO(-2,"充值卷编号异常",null);
+        }
         //计算货品
         }else if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
             orderPO.setDoSellerId(TokenUtil.getStoreId(token));
@@ -285,10 +312,21 @@ public class PayCenterService extends BaseOrderService {
         }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(-1);
-            List<Integer> codesList=Arrays.asList(codes);
+            ResponseApiVO<WalletDoubiVO> res=this.walletService.getCoin(userId);
+            if(res.getReCode()!=1){
+                return new ResponseApiVO(-2,"支付失败",null);
+
+            }
+
+            WalletDoubiVO walletVo=res.getData();
+            if(walletVo.getCoin()==null || walletVo.getCoin()<=0){
+                return new ResponseApiVO(-2,"逗币不足，请充值",null);
+
+            }
+            List<Integer> codesList=Arrays.asList(dto.getCodes());
             Map search=new HashMap();
             search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
-          //  search.put("id",codes[0]);
+            //  search.put("id",codes[0]);
             search.put("dgDisabled",DisabledEnum.disabled0.getCode());
             List<Map> giftList=this.commonObjectsBySearchCondition("ddw_gift",search);
             if(giftList==null){
@@ -296,7 +334,6 @@ public class PayCenterService extends BaseOrderService {
             }
             final Map<Integer,Map> buyInGoiftMap=new HashMap();
             giftList.forEach(a-> buyInGoiftMap.put((Integer) a.get("id"),a));
-
             Integer coutCost=0;
             Integer actPrice=null;
             Integer price=null;
@@ -304,6 +341,9 @@ public class PayCenterService extends BaseOrderService {
                 actPrice=(Integer)buyInGoiftMap.get(code).get("dgActPrice");
                 price=(Integer)buyInGoiftMap.get(code).get("dgPrice");
                 coutCost=coutCost+(actPrice!=null && actPrice>0?actPrice:price);
+            }
+            if(coutCost>walletVo.getCoin()){
+                return new ResponseApiVO(-2,"逗币不足，请充值",null);
             }
             orderPO.setDoCost(coutCost);
             buyInProMap=buyInGoiftMap;
@@ -360,6 +400,18 @@ public class PayCenterService extends BaseOrderService {
                 m.put("dorCost",orderPO.getDoCost());
                 m.put("rechargeId",codes[0]);
                 resVo=this.commonInsertMap("ddw_order_recharge",m);
+            }if(orderType.equals(OrderTypeEnum.OrderType8.getCode())){
+                Map m=new HashMap();
+                m.put("orderId",insertResponseVO.getData());
+                m.put("orderNo",orderNo);
+                m.put("createTime",new Date());
+                m.put("updateTime",new Date());
+                m.put("creater",userId);
+                m.put("dodCost",orderPO.getDoCost());
+                m.put("doubiId",codes[0]);
+                Map map=doubiClientService.getObject(codes[0]);
+                m.put("dodDoubiNum",map.get("doubiNum"));
+                resVo=this.commonInsertMap("ddw_order_doubi",m);
             }else if(orderType.equals(OrderTypeEnum.OrderType4.getCode()) ){
                 String ub=userId+"-"+codes[0];
                 Integer earnest=(Integer)CacheUtil.get("pay","bidding-earnest-pay-"+ub);
@@ -475,15 +527,36 @@ public class PayCenterService extends BaseOrderService {
                         throw new GenException("礼物支付失败");
 
                     }
-                }
+                    OrderViewPO po=new OrderViewPO();
+                    po.setCreateTime(new Date());
+                    po.setName(giftMap.get("dgName").toString());
+                    po.setHeadImg(giftMap.get("dgImgPath").toString());
+                    po.setNum(1);
+                    po.setOrderId(OrderUtil.getOrderId(orderNo));
+                    po.setOrderNo(orderNo);
+                    po.setPrice(actPrice!=null && actPrice>0?actPrice:price);
+                    po.setOrderType(OrderTypeEnum.OrderType6.getCode());
 
-                Map map=new HashMap();
-                map.put("goddessUserId",goddessUserId);
-                map.put("giftList",giftList);
-                /*map.put("cost",orderPO.getDoCost());
-                map.put("headImg",voData.get("dgImgPath"));
-                map.put("name",voData.get("dgName").toString());*/
-                orderCacheData=JSONObject.toJSONString(map);
+                    po.setUserId(userId);
+                    po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
+                    po.setShipStatus(ShipStatusEnum.ShipStatus2.getCode());
+                    po.setStoreId(orderPO.getDoSellerId());
+                    //super.orderViewService.
+                    this.orderViewService.saveOrderView(po);
+                    if(goddessUserId>-1){
+                        this.incomeService.commonIncome(goddessUserId,po.getPrice()*10,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,orderNo);
+                        this.baseConsumeRankingListService.save(userId,goddessUserId,po.getPrice()*10,IncomeTypeEnum.IncomeType1);
+                    }
+                }
+                Map setParams=new HashMap();
+                setParams.put("coin",-(orderPO.getDoCost()));
+                Map condition=new HashMap();
+                condition.put("userId",TokenUtil.getUserId(token));
+                ResponseVO wres=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,condition,"version",new String[]{"coin"});
+                if(wres.getReCode()!=1){
+                    throw new GenException("更新钱包逗币失败");
+                }
+                return new ResponseApiVO(1,"成功",null);
             }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
                 for(Map im:insertList){
                     im.put("orderId",insertResponseVO.getData());

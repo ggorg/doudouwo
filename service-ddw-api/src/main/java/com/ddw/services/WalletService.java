@@ -87,6 +87,17 @@ public class WalletService extends CommonService {
 
         return new ResponseApiVO(1,"成功",balanceVO);
     }
+    /**
+     * 获取逗币
+     * @param userid
+     * @return
+     * @throws Exception
+     */
+    public ResponseApiVO getCoin(Integer userid)throws Exception{
+        WalletDoubiVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletDoubiVO.class);
+
+        return new ResponseApiVO(1,"成功",balanceVO);
+    }
     public CouponPO getCoupon(Integer couponId,Integer userId,Integer storeId)throws Exception{
         Map search=new HashMap();
         search.put("id",couponId);

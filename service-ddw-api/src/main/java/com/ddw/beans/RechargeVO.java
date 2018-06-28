@@ -15,6 +15,27 @@ public class RechargeVO {
     @ApiModelProperty(name="desc",value="描述",example="xxxx")
     private String desc;
 
+    @ApiModelProperty(name="price",value="价格",example="xxxx")
+    private Integer price;
+    @ApiModelProperty(name="discount",value="优惠价格",example="xxxx")
+    private Integer discount;
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    public Integer getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Integer discount) {
+        this.discount = discount;
+    }
+
     public Integer getId() {
         return id;
     }

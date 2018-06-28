@@ -22,7 +22,7 @@
 
             <div id="contentwrapper" class="contentwrapper">
                 <div class="contenttitle2">
-                    <h3>礼物列表</h3>
+                    <h3>充值卷列表</h3>
 
                 </div><!--contenttitle-->
 
@@ -51,7 +51,7 @@
                 </div><!--tableoptions-->
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('650px','530px','新增礼物','to-edit')" title="table2">新增礼物</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('650px','530px','新增逗币卷','to-edit')" title="table2">新增逗币卷</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -68,10 +68,10 @@
                     <thead>
 
                     <tr>
-                        <th class="head1">礼物图片</th>
-                        <th class="head1">礼物名称</th>
-                        <th class="head1">逗币价格</th>
-                        <th class="head1">活动逗币价格</th>
+                        <th class="head1">名称</th>
+                        <th class="head1">价格</th>
+                        <th class="head1">活动价格</th>
+                        <th class="head1">逗币数额</th>
 
                         <th class="head1">状态</th>
                         <th class="head1">创建时间</th>
@@ -82,11 +82,12 @@
 
                     <tbody>
                     <tr th:each="obj:${sPage?.result}">
-                        <td ><img th:src="${obj['dgImgPath']}" style="width:70px;height:60px" /></td>
-                        <td th:text="${obj['dgName']}">Trident</td>
-                        <td th:text="${obj['dgPrice']}">Trident</td>
-                        <td th:text="${obj['dgActPrice']}">Trident</td>
-                        <td th:text="${obj['dgDisabled']==1||obj['dgDisabled']==null?'未发布':'已发布'}">Trident</td>
+                        <td th:text="${obj['drName']}">Trident</td>
+                        <td th:text="${#toolsddw.divided(obj['drCost'],100)}">Trident</td>
+                        <td th:text="${#toolsddw.divided(obj['drDiscount'],100)}">Trident</td>
+                        <td th:text="${obj['drDoubiNum']}">Trident</td>
+
+                        <td th:text="${obj['drDisabled']==1||obj['drDisabled']==null?'未发布':'已发布'}">Trident</td>
 
                         <td th:text="${obj['createTime']}">Win 95+</td>
 
@@ -94,7 +95,7 @@
                             <div class="layui-btn-group">
                             <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
 
-                                <button  th:class="'layui-btn layui-btn-sm '+${obj['dgDisabled']==1 or obj['dgDisabled']==null?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dgDisabled']==1 or obj['dgDisabled']==null?0:1}+',\''+${obj['dgDisabled']==1 or obj['dgDisabled']==null?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['dgDisabled']==1 or obj['dgDisabled']==null?'发 布':'撤回发布'}"></button>
+                                <button  th:class="'layui-btn layui-btn-sm '+${obj['drDisabled']==1?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['drDisabled']==1?0:1}+',\''+${obj['drDisabled']==1?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['drDisabled']==1?'发 布':'撤回发布'}"></button>
                             </div>
                         </td>
                     </tr>

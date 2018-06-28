@@ -631,7 +631,7 @@ public class BiddingService extends CommonService {
         CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.createTime,t1.price,t1.endTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName",p.getStartRow(),p.getEndRow(),searchMap,cb);
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         if(bidList==null || bidList.isEmpty()){
-            return new ResponseApiVO(-2,"没有竞价信息",new ListVO(new ArrayList()));
+            return new ResponseApiVO(2,"没有竞价信息",new ListVO(new ArrayList()));
         }
 
         return new ResponseApiVO(1,"成功",new ListVO(commonHandleBidOrder(bidList)));
@@ -689,7 +689,7 @@ public class BiddingService extends CommonService {
 
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         if(bidList==null || bidList.isEmpty()){
-            return new ResponseApiVO(-2,"没有竞价订单信息",null);
+            return new ResponseApiVO(2,"没有竞价订单信息",null);
         }
 
         Map a=(Map)commonHandleBidOrder(bidList).get(0);

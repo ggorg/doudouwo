@@ -7,10 +7,13 @@ import com.gen.common.util.CacheUtil;
 import com.gen.common.util.HttpUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
 
 import java.util.Date;
 
 public class LiveRadioApiUtil {
+    private static final Logger logger = Logger.getLogger(LiveRadioApiUtil.class);
+
     public static LiveRadioUrlBean createLiveUrl(String streamIdExt,Date endDate)throws Exception{
         String txTime=txTime= Long.toHexString(endDate.getTime()/1000).toUpperCase();
         String streamid=LiveRadioConstant.BIZID+"_"+streamIdExt;
@@ -53,7 +56,7 @@ public class LiveRadioApiUtil {
                 Thread.sleep(i*200);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("LiveRadioApiUtil->closeLoveRadio->关闭房间异常",e);
         }
 
 

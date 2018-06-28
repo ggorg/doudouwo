@@ -130,4 +130,26 @@ public class PayCenterController {
         }
     }
 
+
+    @Idemp
+    @Token
+    @ApiOperation(value = "逗币支付",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/doubi/pay/{token}")
+    @ResponseBody
+    public ResponseApiVO<PayCenterAliPayVO> doubiPay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)DoubiPayDTO args){
+        try {
+            logger.info("doubiPay->request："+args);
+            ResponseApiVO vo=this.payCenterService.doubiPay(token, args);
+            logger.info("doubiPay->response："+vo);
+
+            return vo;
+        }catch (Exception e){
+            if(e instanceof GenException){
+                return new ResponseApiVO(-2,e.getMessage(),null);
+
+            }
+            logger.error("PayCenterController-doubiPay-》逗币支付-》系统异常",e);
+            return new ResponseApiVO(-1,"逗币支付",null);
+        }
+    }
 }

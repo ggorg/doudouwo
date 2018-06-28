@@ -8,7 +8,9 @@ import com.gen.common.dict.Dictionary;
 public enum PayTypeEnum implements Dictionary {
     PayType1("微信",1),
     PayType2("支付宝",2),
-    PayType3("线下",3);
+    PayType3("线下",3),
+    PayType4("逗币",4),
+    PayType5("钱包余额",5);
 
     private String name;
     private Integer code;

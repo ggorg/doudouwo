@@ -3,31 +3,26 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 订单类型
+ *
  */
-public enum OrderTypeEnum  implements Dictionary {
-    //商品:1,原材料：2
-    OrderType1("商品",1),
-    OrderType2("原材料",2),
-    OrderType3("充值",3),
-    OrderType4("竞价定金",4),
-    OrderType5("竞价金额",5),
-    OrderType6("女神-礼物",6),
-    OrderType7("门票",7),
-    OrderType8("逗币充值",8);
+public enum DoubiRecordTypeEnum implements Dictionary {
+    //买进：0，赠送获取：1，已用：2
+    Type0("买进",0),
+    Type1("赠送获取",1),
+    Type2("已用",2);
 
 
     private String name;
     private Integer code;
 
-    private OrderTypeEnum(String name, Integer code) {
+    private DoubiRecordTypeEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }
 
     // 普通方法
     public static String getName(Integer code) {
-        for (OrderTypeEnum c : OrderTypeEnum.values()) {
+        for (DoubiRecordTypeEnum c : DoubiRecordTypeEnum.values()) {
             if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }

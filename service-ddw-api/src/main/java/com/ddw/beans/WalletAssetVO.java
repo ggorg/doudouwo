@@ -24,11 +24,22 @@ public class WalletAssetVO {
     @JsonProperty("practiceIn")
     private Integer practiceIncome;
 
+    @ApiModelProperty(name="coin",value="逗币",example="1000")
+    private Integer coin;
+
     @ApiModelProperty(name="couponList",value="优惠卷列表",example="[]")
     private List<CouponVO> couponList=new ArrayList();
 
     @ApiModelProperty(name="packList",value="背包列表",example="[]")
     private List packList=new ArrayList();
+
+    public Integer getCoin() {
+        return coin;
+    }
+
+    public void setCoin(Integer coin) {
+        this.coin = coin;
+    }
 
     public List<CouponVO> getCouponList() {
         return couponList;

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane" >
+  <input th:if="${ds!=null and ds['id']!=null}" th:name="id" th:value="${ds['id']}" type="hidden"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="drName" required="required" title="名称"  lay-verify="required|max20" th:value="${ds!=null? ds['drName']:''}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">价格(分)</label>
+    <div class="layui-input-block">
+      <input type="text" name="drCost" required="required" title="价格"  lay-verify="required" th:value="${ds!=null? ds['drCost']:''}" placeholder="请输入价格" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">活动价格(分)</label>
+    <div class="layui-input-block">
+      <input type="text" name="drDiscount" title="活动价格"   th:value="${ds!=null? ds['drDiscount']:''}" placeholder="请输入活动价格" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">逗币数额</label>
+    <div class="layui-input-block">
+      <input type="text" name="drDoubiNum" title="逗币数额"   th:value="${ds!=null? ds['drDoubiNum']:''}" placeholder="请输入逗币数额" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">排序</label>
+    <div class="layui-input-block">
+      <input type="text" name="drSort" title="排序"   th:value="${ds!=null? ds['drSort']:''}" placeholder="请输入排序号" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">描述</label>
+    <div class="layui-input-block">
+      <textarea placeholder="请输入描述" name="drDesc" th:text="${ds!=null? ds['drDesc']:''}" class="layui-textarea"></textarea>
+    </div>
+  </div>
+
+
+  <div class="layui-form-item" style="display: none">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    //initForm("do-edit-user",".layui-form")
+
+
+    layui.use(['laydate','form','layer'], function(){
+        layer=layui.layer;
+
+        initProForm(layui);
+
+        //执行实例
+       // var uploadInst1 = upload.render(initUpload(".myupload1","dgImg","dmImg"));
+
+
+    });
+    function initProForm(layui){
+        var form = layui.form;
+        form.verify({
+            required:function(value,item){
+                var msg=item.getAttribute("placeholder");
+                if(value!=null && value.replace(/[ ]/g,"")==""){
+                    return msg==null?"请输入必填项":msg;
+                }else{
+                    return false;
+                }
+                return msg==null?"请输入必填项":msg;
+            },
+            max20:function(value,item){
+                if(value.length>20){
+                    return '标题至多得20个字符啊';
+                }
+            },
+            max200:function(value,item){
+                if(value.length>200){
+                    return '活动描述至多得200个字符啊';
+                }
+            }
+        })
+        $(".layui-form").submit(function(){
+
+            return  commonSubmit("do-edit",$(".layui-form"));
+
+        })
+    }
+</script>
+</body>
+</html>
