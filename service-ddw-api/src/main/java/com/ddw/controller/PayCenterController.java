@@ -85,6 +85,31 @@ public class PayCenterController {
     }
     @Idemp
     @Token
+    @ApiOperation(value = "余额支付",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/blance/pay/{token}")
+    @ResponseBody
+    public ResponseApiVO blancePay (@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PayDTO args){
+        try {
+            logger.info("blancePay->request："+args);
+            ResponseApiVO vo=this.payCenterService.prePay(token ,PayTypeEnum.PayType5.getCode(),args);
+            logger.info("blancePay->response："+vo);
+
+            return vo;
+        }catch (Exception e){
+            if(e instanceof GenException){
+                return new ResponseApiVO(-2,e.getMessage(),null);
+
+            }
+            logger.error("PayCenterController-blancePay-》余额支付-》系统异常",e);
+
+            return new ResponseApiVO(-1,"余额支付失败",null);
+
+
+        }
+    }
+
+    @Idemp
+    @Token
     @ApiOperation(value = "微信支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/weixin/pay/{token}")
     @ResponseBody

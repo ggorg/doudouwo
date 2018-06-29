@@ -166,10 +166,11 @@ public class PayCenterService extends BaseOrderService {
             return new ResponseApiVO(-2,"抱歉，礼物只能逗币购买",null);
 
         }
-        if(codes==null){
+        if(codes==null || codes.length==0){
             return new ResponseApiVO(-2,"业务编号不能是空",null);
 
         }
+
         Integer userId=TokenUtil.getUserId(token);
 
         OrderPO orderPO=new OrderPO();
@@ -383,7 +384,28 @@ public class PayCenterService extends BaseOrderService {
 
 
         }
+        if(PayTypeEnum.PayType5.getCode().equals(payType)){
+            ResponseApiVO<WalletBalanceVO> responseApiVO= this.walletService.getBalance(userId);
+            if(responseApiVO.getReCode()!=1 ){
+                return new ResponseApiVO(-2,"钱包余额支付失败",null);
+            }else{
+                WalletBalanceVO walletBalanceVO=responseApiVO.getData();
+                if(walletBalanceVO.getMoney()==null || orderPO.getDoCost()<walletBalanceVO.getMoney()){
+                    return new ResponseApiVO(-2,"钱包余额不足",null);
 
+                }else{
+                   Map setMap=new HashMap();
+                   setMap.put("money",-orderPO.getDoCost());
+                   setMap.put("updateTime",new Date());
+                   Map searchMap=new HashMap();
+                   searchMap.put("userId",userId);
+                   ResponseVO res=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setMap,searchMap,"version",new String[]{"money"});
+                    if(res.getReCode()!=1){
+                        return new ResponseApiVO(-2,"钱包余额不足",null);
+                    }
+                }
+            }
+        }
         ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
 
         if(insertResponseVO.getReCode()==1){
@@ -569,8 +591,17 @@ public class PayCenterService extends BaseOrderService {
                     }
 
                 }
+                orderCacheData=insertList;
             }
+            if(PayTypeEnum.PayType5.getCode().equals(payType)){
+                orderCacheData=null;
+                if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
+                    CacheUtil.delete("pay","goodsPru-order-"+orderNo);
 
+                }
+                return new ResponseApiVO(1,"钱包支付成功",null);
+
+            }
             if(resVo.getReCode()==1){
                 if(PayTypeEnum.PayType1.getCode().equals(payType)){
                     /*RequestWeiXinOrderVO vo=new RequestWeiXinOrderVO();

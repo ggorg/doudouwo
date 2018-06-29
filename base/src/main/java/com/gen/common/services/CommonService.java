@@ -153,6 +153,9 @@ public abstract class CommonService {
                     if(cn==null)cn=0;
                     num=(Integer)map.get(calculateName);
                     num=(num==null?0:num)+cn;
+                    if(num<0){
+                        return new ResponseVO(-2,"更新失败，结果值出现小于0",null);
+                    }
                     setParams.put(calculateName,num);
                 }
 

@@ -243,6 +243,29 @@ public class BaseOrderService extends CommonService {
                 }
                 CacheUtil.delete("pay","goodsPru-order-"+orderNo);
 
+            }else if(OrderTypeEnum.OrderType7.getCode().equals(doType)){
+                List<Map> ticketList =(List) CacheUtil.get("pay","pre-pay-"+orderNo);
+                OrderViewPO po=null;
+
+                for(Map ticketMap:ticketList){
+                    po=new OrderViewPO();
+                    po.setCreateTime(new Date());
+                    po.setName((String)ticketMap.get("ticketName"));
+                    po.setHeadImg(null);
+                    po.setNum(1);
+                    po.setOrderId(OrderUtil.getOrderId(orderNo));
+                    po.setOrderNo(orderNo);
+                    po.setPrice((Integer) ticketMap.get("ticketPrice"));
+                    po.setOrderType(OrderTypeEnum.OrderType6.getCode());
+
+                    po.setUserId(cacheOrder.getDoCustomerUserId());
+                    po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
+                    po.setShipStatus(cacheOrder.getDoShipStatus());
+                    po.setStoreId(cacheOrder.getDoSellerId());
+                    this.orderViewService.saveOrderView(po);
+                }
+                CacheUtil.delete("pay","pre-pay-"+orderNo);
+
             }/*else if(OrderTypeEnum.OrderType6.getCode().equals(doType)){
                 String jsonStr =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
                 if(jsonStr==null){

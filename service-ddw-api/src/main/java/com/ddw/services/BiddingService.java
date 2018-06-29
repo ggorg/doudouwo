@@ -82,10 +82,11 @@ public class BiddingService extends CommonService {
         return this.commonInsertMap("ddw_goddess_bidding",insertMap);
     }
     public ResponseApiVO  biddingSuccess(String groupId,BiddingVO bv)throws Exception{
-
         Map searchMap=new HashMap();
         searchMap.put("groupId",groupId);
-        List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
+        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.id,t1.userId,ct0.headImgUrl,ct0.nickName goddessName",0,1,searchMap,cb);
+        List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         Map map=bidList.get(0);
         //map.get("id");
         Map updateMap=new HashMap();
@@ -94,6 +95,7 @@ public class BiddingService extends CommonService {
         updateMap.put("luckyDogUserName",bv.getUserName());
         updateMap.put("price",bv.getPrice());
         updateMap.put("updateTime",new Date());
+        updateMap.put("times",bv.getTime());
         this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",map.get("id"));
         Map m=new HashMap();
         m.put("msg","恭喜"+bv.getUserName()+"以"+Double.parseDouble(bv.getPrice())/100+"元竞价成功");
@@ -113,6 +115,8 @@ public class BiddingService extends CommonService {
             m.put("code",map.get("id"));
             Map retMap=new HashMap(m);
             m.put("goddessUserId",map.get("userId"));
+            m.put("headImgUrl",map.get("headImgUrl"));
+            m.put("goddessName",map.get("goddessName"));
             /*BiddingPayVO payVO=new BiddingPayVO();
             PropertyUtils.copyProperties(payVO,m);
             payVO.setBiddingId((Integer)map.get("id"));
@@ -221,7 +225,7 @@ public class BiddingService extends CommonService {
            Map payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
            Map updateMap=new HashMap();
            updateMap.put("endTime",DateUtils.addMinutes(new Date(),(Integer) payMap.get("time")));
-           updateMap.put("times",(Integer) payMap.get("time"));
+           //updateMap.put("times",(Integer) payMap.get("time"));
            this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",payMap.get("code"));
 
            CacheUtil.delete("commonCache","groupId-"+groupId);
@@ -640,6 +644,25 @@ public class BiddingService extends CommonService {
     public ResponseApiVO getBidOrderInfoByGoddess(String token,Integer bidCode,boolean isGoddess){
         Integer userId=TokenUtil.getUserId(token);
         if(bidCode==null){
+            if(!isGoddess){
+                Map map=new HashMap();
+                String groupId=TokenUtil.getGroupId(token);
+                String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
+                Map paymap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
+
+                String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+TokenUtil.getUserId(token));
+                if(StringUtils.isNotBlank(retStr)){
+                    map.put("status", BiddingStatusEnum.Status7.getCode());
+                    map.put("statusMsg",BiddingStatusEnum.Status7.getName());
+                    map.put("userName",paymap.get("name"));
+                    //map.put("openId",paymap.get("openid"));
+                    map.put("time",paymap.get("time"));
+                    map.put("price",paymap.get("bidPrice"));
+                    map.put("headImgUrl",paymap.get("headImgUrl"));
+                    map.put("goddessName",paymap.get("goddessName"));
+                    return new ResponseApiVO(2,"用户已支付",map);
+                }
+            }
             return new ResponseApiVO(-2,"竞价code为空",null);
 
         }
@@ -648,7 +671,7 @@ public class BiddingService extends CommonService {
             dgId=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",userId,"id",Integer.class);
 
         }
-        Map map=new HashMap();
+        //Map map=new HashMap();
 
        /*
         String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
