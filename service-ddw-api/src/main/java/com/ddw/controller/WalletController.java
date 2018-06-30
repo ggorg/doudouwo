@@ -1,8 +1,6 @@
 package com.ddw.controller;
 
 import com.ddw.beans.*;
-import com.ddw.enums.OrderTypeEnum;
-import com.ddw.enums.PayTypeEnum;
 import com.ddw.services.PayCenterService;
 import com.ddw.services.WalletService;
 import com.ddw.token.Token;
@@ -50,7 +48,6 @@ public class WalletController {
     public ResponseApiVO<WalletBalanceVO> getBalance(@PathVariable String token ){
         try {
             ResponseApiVO vo=this.walletService.getBalance(TokenUtil.getUserId(token));
-            vo=createWallet(vo,token);
             if(vo.getReCode()==1){
                 return vo;
             }
@@ -67,7 +64,6 @@ public class WalletController {
     public ResponseApiVO<WalletDoubiVO> getCoin(@PathVariable String token ){
         try {
             ResponseApiVO vo=this.walletService.getCoin(TokenUtil.getUserId(token));
-            vo=createWallet(vo,token);
             if(vo.getReCode()==1){
                 return vo;
             }
@@ -84,7 +80,6 @@ public class WalletController {
     public ResponseApiVO<WalletAssetVO> getAsset(@PathVariable String token ){
         try {
             ResponseApiVO vo=this.walletService.getAsset(TokenUtil.getUserId(token));
-            vo=createWallet(vo,token);
             if(vo.getReCode()==1){
                 return vo;
             }
@@ -129,7 +124,6 @@ public class WalletController {
     public ResponseApiVO<WalletGoddessInVO> getGoddessIn(@PathVariable String token ){
         try {
             ResponseApiVO vo=this.walletService.getGoddessIn(TokenUtil.getUserId(token));
-            vo=createWallet(vo,token);
             if(vo.getReCode()==1){
                 return vo;
             }
@@ -146,7 +140,6 @@ public class WalletController {
     public ResponseApiVO<WalletPracticeInVO> getPracticeIn(@PathVariable String token ){
         try {
             ResponseApiVO vo=this.walletService.getPracticeIn(TokenUtil.getUserId(token));
-            vo=createWallet(vo,token);
             if(vo.getReCode()==1){
                 return vo;
             }
@@ -156,17 +149,51 @@ public class WalletController {
         return new ResponseApiVO(-1,"查询失败",null);
 
     }
-    private ResponseApiVO createWallet(ResponseApiVO vo,String token){
-        if(vo.getData()==null){
-            ResponseApiVO createVo=this.walletService.createWallet(TokenUtil.getUserId(token));
-            if(createVo.getReCode()==1){
-                return vo;
+
+    @Token
+    @ApiOperation(value = "查询是否首次使用钱包支付,首次需要修改支付密码,1首次,2非首次",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/isFirst/{token}")
+    @ResponseBody
+    public ResponseApiVO isFirst(@PathVariable String token){
+        try {
+            WalletPO walletPO = this.walletService.getWallet(TokenUtil.getUserId(token));
+            if(walletPO.getPayPwd() == null || walletPO.getPayPwd().equals("")){
+                return new ResponseApiVO(1,"首次",null);
+            }else {
+                return new ResponseApiVO(2,"非首次",null);
             }
-        }else if(vo.getReCode()==1){
-            return vo;
+        }catch (Exception e){
+            logger.error("WalletController-isFirst-》查询是否首次使用钱包支付-》系统异常",e);
         }
-        return vo;
+        return new ResponseApiVO(-1,"查询失败",null);
+
     }
 
+    @Token
+    @ApiOperation(value = "修改钱包密码",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/updatePayPwd/{token}")
+    @ResponseBody
+    public ResponseApiVO updatePayPwd(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式,oldPwd钱包原支付密码,首次原密码为空,newPwd新密码",required=true)WalletUpdatePayPwdDTO args){
+        try {
+            return this.walletService.updatePayPwd(TokenUtil.getUserId(token),args.getOldPwd(),args.getNewPwd());
+        }catch (Exception e){
+            logger.error("WalletController-updatePayPwd-》修改钱包支付密码-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"失败",null);
 
+    }
+
+    @Token
+    @ApiOperation(value = "校验钱包密码",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/verifyPayPwd/{token}")
+    @ResponseBody
+    public ResponseApiVO verifyPayPwd(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式,payPwd支付密码",required=true)WalletVerifyPayPwdDTO args){
+        try {
+            return this.walletService.verifyPayPwd(TokenUtil.getUserId(token),args.getPayPwd());
+        }catch (Exception e){
+            logger.error("WalletController-verifyPayPwd-》校验钱包支付密码-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"失败",null);
+
+    }
 }

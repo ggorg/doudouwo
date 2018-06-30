@@ -49,7 +49,6 @@ public class UserInfoService extends CommonService {
     private PhotographMapper photographMapper;
     @Autowired
     private ReviewService reviewService;
-
     @Autowired
     private WalletService walletService;
 

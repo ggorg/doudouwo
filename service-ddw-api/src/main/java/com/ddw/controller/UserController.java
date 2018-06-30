@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.UserInfoService;
+import com.ddw.services.WalletService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
@@ -32,6 +33,8 @@ public class UserController {
     private UserInfoService userInfoService;
     @Autowired
     private ReviewRealNameService reviewRealNameService;
+    @Autowired
+    private WalletService walletService;
 
     @Autowired
     private tls_sigcheck ts;
@@ -58,6 +61,8 @@ public class UserController {
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
                     userInfoService.update(userVO);//更新邀请码
+                    //初始化钱包
+                    walletService.createWallet(userVO.getId());
                     return new ResponseApiVO(1, "注册成功", userVO);
                 } else {
                     List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));

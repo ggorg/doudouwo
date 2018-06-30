@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.ddw.beans.GradePO;
 import com.ddw.beans.UserInfoPO;
+import com.ddw.enums.DoubiRecordTypeEnum;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
@@ -70,8 +71,18 @@ public class StraregyService extends CommonService {
         setParams.put("updateTime",new Date());
         Map searchCondition = new HashMap<>();
         searchCondition.put("userId",userId);
-        return super.commonOptimisticLockUpdateByParam("ddw_my_wallet",setParams,searchCondition,"version");
-        //TODO 更新ddw_wallet_doubi_record逗币记录
+        ResponseVO resUp = super.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setParams,searchCondition,"version",new String[]{"coin"});
+        // 更新ddw_wallet_doubi_record逗币记录
+        if(resUp.getReCode() == 1) {
+            Map doubiRecord = new HashMap();
+            doubiRecord.put("coin", oldCoin+coin);
+            doubiRecord.put("userId", userId);
+            doubiRecord.put("type", DoubiRecordTypeEnum.Type1.getCode());
+            doubiRecord.put("createTime", new Date());
+            doubiRecord.put("updatetime", new Date());
+            this.commonInsertMap("ddw_my_wallet_doubi_record", doubiRecord);
+        }
+        return resUp;
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

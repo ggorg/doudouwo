@@ -1,37 +1,23 @@
 package com.ddw.services;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alipay.api.internal.util.AlipaySignature;
 import com.ddw.beans.*;
 import com.ddw.config.DDWGlobals;
-import com.ddw.enums.*;
+import com.ddw.dao.WalletErrorLogMapper;
+import com.ddw.enums.IncomeTypeEnum;
+import com.ddw.enums.OrderTypeEnum;
+import com.ddw.enums.PayStatusEnum;
 import com.ddw.token.TokenUtil;
-import com.ddw.util.PayApiConstant;
-import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
-import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
-import com.gen.common.util.BeanToMapUtil;
-import com.gen.common.util.CacheUtil;
-import com.gen.common.util.OrderUtil;
-import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.http.util.Asserts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -43,6 +29,8 @@ public class WalletService extends CommonService {
 
     @Autowired
     private DDWGlobals ddwGlobals;
+    @Autowired
+    private WalletErrorLogMapper walletErrorLogMapper;
 
     public ResponseApiVO getIncome(Integer incomeType,Integer pageNo,String token)throws Exception{
         if(StringUtils.isBlank(IncomeTypeEnum.getName(incomeType))){
@@ -224,6 +212,64 @@ public class WalletService extends CommonService {
         return new ResponseApiVO(vo.getReCode(),vo.getReMsg(),null);
     }
 
+    public WalletPO getWallet(Integer userId)throws Exception{
+        return this.commonObjectBySingleParam("ddw_my_wallet","userId",userId,WalletPO.class);
+    }
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO updatePayPwd(Integer userId,String oldPwd,String newPwd)throws Exception{
+        WalletPO walletPO = this.getWallet(userId);
+        //校验密码
+        if(walletPO.getPayPwd() == null){
+            if(StringUtils.isBlank(newPwd)){
+                return new ResponseApiVO(-1,"密码不能为空",null);
+            }
+        }else {
+            if(StringUtils.isBlank(oldPwd) || StringUtils.isBlank(newPwd)){
+                return new ResponseApiVO(-1,"密码不能为空",null);
+            }
+            if(!oldPwd.equals(walletPO.getPayPwd())){
+                return new ResponseApiVO(-2,"原密码不正确",null);
+            }
+        }
+        //修改钱包密码
+        Map setParams = new HashMap();
+        setParams.put("payPwd",newPwd);
+        Map searchCondition = new HashMap();
+        searchCondition.put("userId",userId);
+        ResponseVO vo = this.commonOptimisticLockUpdateByParam("ddw_my_wallet",setParams,searchCondition,"version");
+        return new ResponseApiVO(vo.getReCode(),vo.getReMsg(),null);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO insertPayPwdErrorLog(Integer userId,String payPwd)throws Exception{
+        Map payPwdErrorLog = new HashMap<>();
+        payPwdErrorLog.put("userId",userId);
+        payPwdErrorLog.put("payPwd",payPwd);
+        payPwdErrorLog.put("createTime",new Date());
+        return this.commonInsertMap("ddw_my_wallet_error_log",payPwdErrorLog);
+    }
+    /**
+     * 校验支付密码
+     * @param userId
+     * @param payPwd
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO verifyPayPwd(Integer userId,String payPwd)throws Exception{
+        WalletPO walletPO = this.getWallet(userId);
+        int errorCount = walletErrorLogMapper.errorTodayCount(userId);
+        if(errorCount >= 5){
+            return new ResponseApiVO(-2,"今日密码输入错误达5次,请明日再试",null);
+        }
+        if(payPwd.equals(walletPO.getPayPwd())){
+            return new ResponseApiVO(1,"成功",null);
+        }else{
+            //插入失败记录
+            this.insertPayPwdErrorLog(userId,payPwd);
+            return new ResponseApiVO(-1,"支付密码错误",null);
+        }
+    }
 
 }
