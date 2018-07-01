@@ -1,5 +1,6 @@
 package com.ddw.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.PayCenterService;
 import com.ddw.services.WalletService;
@@ -189,7 +190,15 @@ public class WalletController {
     @ResponseBody
     public ResponseApiVO verifyPayPwd(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式,payPwd支付密码",required=true)WalletVerifyPayPwdDTO args){
         try {
-            return this.walletService.verifyPayPwd(TokenUtil.getUserId(token),args.getPayPwd());
+            ResponseApiVO responseApiVO = this.walletService.verifyPayPwd(TokenUtil.getUserId(token),args.getPayPwd());
+            if(responseApiVO.getReCode() == 1){
+                JSONObject js = new JSONObject();
+                String payCode = this.walletService.getRandomCode(8);
+                js.put("payCode",payCode);
+                TokenUtil.putPayCode(token,payCode);
+                responseApiVO.setData(js);
+            }
+            return responseApiVO;
         }catch (Exception e){
             logger.error("WalletController-verifyPayPwd-》校验钱包支付密码-》系统异常",e);
         }
