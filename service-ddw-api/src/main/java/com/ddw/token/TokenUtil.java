@@ -1,6 +1,5 @@
 package com.ddw.token;
 
-import com.gen.common.exception.GenException;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CacheUtil;
 import net.sf.ehcache.Cache;
@@ -16,7 +15,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TokenUtil {
     private static final Logger logger = Logger.getLogger(TokenUtil.class);
@@ -103,6 +105,21 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
+
+    /**
+     * 支付校验code
+     * @param base64Token
+     * @param payCode
+     */
+    public static void putPayCode(String base64Token,String payCode){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("payCode",payCode);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
+
     public static void putIdempotent(String base64Token,String idemp){
 
         CacheUtil.put("idemp",base64Token,idemp);
@@ -130,6 +147,14 @@ public class TokenUtil {
         if(obj!=null){
             Map map=(Map)obj;
             return (String) map.get("streamId");
+        }
+        return null;
+    }
+    public static String getPayCode(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (String) map.get("payCode");
         }
         return null;
     }
