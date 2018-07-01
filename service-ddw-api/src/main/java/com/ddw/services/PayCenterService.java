@@ -403,6 +403,8 @@ public class PayCenterService extends BaseOrderService {
                     if(res.getReCode()!=1){
                         return new ResponseApiVO(-2,"钱包余额不足",null);
                     }
+                    orderPO.setDoPayStatus(PayStatusEnum.PayStatus1.getCode());
+
                 }
             }
         }
@@ -593,15 +595,7 @@ public class PayCenterService extends BaseOrderService {
                 }
                 orderCacheData=insertList;
             }
-            if(PayTypeEnum.PayType5.getCode().equals(payType)){
-                orderCacheData=null;
-                if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
-                    CacheUtil.delete("pay","goodsPru-order-"+orderNo);
 
-                }
-                return new ResponseApiVO(1,"钱包支付成功",null);
-
-            }
             if(resVo.getReCode()==1){
                 if(PayTypeEnum.PayType1.getCode().equals(payType)){
                     /*RequestWeiXinOrderVO vo=new RequestWeiXinOrderVO();
@@ -631,7 +625,7 @@ public class PayCenterService extends BaseOrderService {
                         PropertyUtils.copyProperties(wxVo,treeMap);
                         wxVo.setOrderNo(orderNo);
                         CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
-                        CacheUtil.put("pay",".orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
+                        CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
                         return new ResponseApiVO(1,"成功",wxVo);
                     }else{
                         throw new GenException("调用微信支付接口失败");
@@ -650,6 +644,13 @@ public class PayCenterService extends BaseOrderService {
 
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
+                }else if(PayTypeEnum.PayType5.getCode().equals(payType)){
+
+                    CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
+                    //CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
+                    this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo,orderPO);
+                    return new ResponseApiVO(1,"钱包支付成功",null);
+
                 }
             }else{
                 throw new GenException("支付失败");

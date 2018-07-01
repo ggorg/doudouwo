@@ -53,17 +53,25 @@ public class BaseOrderService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO pulbicUpdateOrderPayStatus(PayStatusEnum payStatusEnum, String orderNo)throws Exception{
+    public ResponseVO pulbicUpdateOrderPayStatus(PayStatusEnum payStatusEnum, String orderNo,OrderPO...orderPO)throws Exception{
         if(StringUtils.isBlank(orderNo)){
             return new ResponseVO(-2,"订单号为空",null);
         }
 
-        Map map=new HashMap();
-        map.put("doPayStatus",payStatusEnum.getCode());
-        OrderPO cacheOrder=this.getCacheOrder(orderNo);
 
+        OrderPO cacheOrder=null;
+        ResponseVO res=null;
+
+        if(orderPO!=null && orderPO.length>0){
+            cacheOrder=orderPO[0];
+            res=new ResponseVO(1,null,null);
+        }else{
+            cacheOrder=this.getCacheOrder(orderNo);
+            Map map=new HashMap();
+            map.put("doPayStatus",payStatusEnum.getCode());
+            res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",OrderUtil.getOrderId(orderNo));
+        }
         Integer doType=cacheOrder.getDoType();
-        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",OrderUtil.getOrderId(orderNo));
         if(res.getReCode()==1){
             if(OrderTypeEnum.OrderType3.getCode().equals(doType)){
                 Map mapRecharge=this.commonObjectBySingleParam("ddw_order_recharge","orderNo",orderNo);
@@ -208,7 +216,7 @@ public class BaseOrderService extends CommonService {
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
 
             }else if(OrderTypeEnum.OrderType1.getCode().equals(doType)){
-                List<Map> list=getGoodsPruduct(orderNo);
+                List<Map> list=(List) CacheUtil.get("pay","goodsPru-order-"+orderNo);
                 Map search=null;
                 Map setMap=null;
                 OrderViewPO po=null;
@@ -226,7 +234,7 @@ public class BaseOrderService extends CommonService {
                     }
                     po=new OrderViewPO();
                     po.setCreateTime(new Date());
-                    po.setName((String)m.get("dghDesc"));
+                    po.setName((String)m.get("productName"));
                     po.setHeadImg((String)m.get("headImg"));
                     po.setNum((Integer) m.get("productBuyNumber"));
                     po.setOrderId(OrderUtil.getOrderId(orderNo));
@@ -264,7 +272,6 @@ public class BaseOrderService extends CommonService {
                     po.setStoreId(cacheOrder.getDoSellerId());
                     this.orderViewService.saveOrderView(po);
                 }
-                CacheUtil.delete("pay","pre-pay-"+orderNo);
 
             }/*else if(OrderTypeEnum.OrderType6.getCode().equals(doType)){
                 String jsonStr =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
@@ -322,13 +329,6 @@ public class BaseOrderService extends CommonService {
 
 
     }
-    public List getGoodsPruduct(String orderNo)throws Exception{
-        List list=(ArrayList) CacheUtil.get("pay","goodsPru-order-"+orderNo);
-        if(list!=null)return list;
-        Map search=new HashMap();
-        search.put("orderNo",orderNo);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goods_product",null,"t1.dghActivityPrice,t1.dghSalesPrice,t1.dghDesc,t1.id,ct0.fileImgIcoPath headImg",null,null,search,new CommonChildBean("ddw_goods","id","dghGoodsId",null));
-        return this.getCommonMapper().selectObjects(csb);
-    }
+
 
 }
