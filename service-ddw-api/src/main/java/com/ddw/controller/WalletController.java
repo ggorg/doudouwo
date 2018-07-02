@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.PayCenterService;
 import com.ddw.services.WalletService;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import io.swagger.annotations.Api;
@@ -39,6 +40,20 @@ public class WalletController {
             logger.error("WalletController-getIncome-》查询收益明细-》系统异常",e);
         }
         return new ResponseApiVO(-1,"查询失败",null);
+
+    }
+    @Idemp
+    @Token
+    @ApiOperation(value = "收益转入钱包",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/transfer/{token}")
+    @ResponseBody
+    public ResponseApiVO transferMoney(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletTransferMoneyDTO args){
+        try {
+            return this.walletService.transferMoney(token,args);
+        }catch (Exception e){
+            logger.error("WalletController-transferMoney-》收益转入钱包-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"转入钱包失败",null);
 
     }
 

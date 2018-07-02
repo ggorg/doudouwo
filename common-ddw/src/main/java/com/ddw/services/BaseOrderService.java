@@ -15,6 +15,7 @@ import com.gen.common.util.CacheUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -215,6 +216,46 @@ public class BaseOrderService extends CommonService {
                 });
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
 
+            }else if(OrderTypeEnum.OrderType9.getCode().equals(doType)){
+
+                Map renewMap=(Map) CacheUtil.get("pay","pre-pay-"+orderNo);
+
+                if(renewMap==null){
+                    throw new GenException("续费失败");
+                }
+
+
+                Integer needPayPrice=(Integer)renewMap.get("price");
+                Integer time=(Integer)renewMap.get("time");
+
+                Integer gid=(Integer) renewMap.get("goddessUserId");
+                this.incomeService.commonIncome(gid,needPayPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType9,orderNo);
+                this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),gid,needPayPrice,IncomeTypeEnum.IncomeType1);
+
+
+                OrderViewPO po=new OrderViewPO();
+                po.setCreateTime(new Date());
+                po.setName(OrderTypeEnum.OrderType9.getName());
+                po.setHeadImg(null);
+                po.setNum(1);
+                po.setOrderId(OrderUtil.getOrderId(orderNo));
+                po.setOrderNo(orderNo);
+                po.setOrderType(OrderTypeEnum.OrderType9.getCode());
+                po.setPrice(needPayPrice);
+                po.setUserId(cacheOrder.getDoCustomerUserId());
+                po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
+                po.setShipStatus(cacheOrder.getDoShipStatus());
+                po.setStoreId(cacheOrder.getDoSellerId());
+                this.orderViewService.saveOrderView(po);
+                Map setMap=new HashMap();
+                setMap.put("price",needPayPrice);
+                setMap.put("times",time);
+                setMap.put("endTime", DateUtils.addMinutes((Date)renewMap.get("endTime"),time));
+                Map searchMap=new HashMap();
+                searchMap.put("id",renewMap.get("bidCode"));
+                this.commonCalculateOptimisticLockUpdateByParam("ddw_goddess_bidding",setMap,searchMap,"version",new String[]{"price","times"});
+                CacheUtil.delete("pay","pre-pay-"+orderNo);
+
             }else if(OrderTypeEnum.OrderType1.getCode().equals(doType)){
                 List<Map> list=(List) CacheUtil.get("pay","goodsPru-order-"+orderNo);
                 Map search=null;
@@ -254,7 +295,6 @@ public class BaseOrderService extends CommonService {
             }else if(OrderTypeEnum.OrderType7.getCode().equals(doType)){
                 List<Map> ticketList =(List) CacheUtil.get("pay","pre-pay-"+orderNo);
                 OrderViewPO po=null;
-
                 for(Map ticketMap:ticketList){
                     po=new OrderViewPO();
                     po.setCreateTime(new Date());

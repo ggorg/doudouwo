@@ -14,7 +14,8 @@ public enum OrderTypeEnum  implements Dictionary {
     OrderType5("竞价金额",5),
     OrderType6("女神-礼物",6),
     OrderType7("门票",7),
-    OrderType8("逗币充值",8);
+    OrderType8("逗币充值",8),
+    OrderType9("竞价续费",9);
 
 
     private String name;

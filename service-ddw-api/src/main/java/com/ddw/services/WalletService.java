@@ -32,6 +32,59 @@ public class WalletService extends CommonService {
     @Autowired
     private WalletErrorLogMapper walletErrorLogMapper;
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO transferMoney(String token ,WalletTransferMoneyDTO dto)throws Exception{
+        if(StringUtils.isBlank(IncomeTypeEnum.getName(dto.getIncomeType()))){
+            return new ResponseApiVO(-2,"收益类型异常",null);
+        }
+        Integer userId=TokenUtil.getUserId(token);
+        ResponseVO vo=null;
+        if(IncomeTypeEnum.IncomeType1.getCode().equals(dto.getIncomeType())){
+            ResponseApiVO<WalletGoddessInVO> gvo=this.getGoddessIn(userId);
+            if(gvo.getReCode()!=1){
+                return new ResponseApiVO(-2,"失败",null);
+
+            }else{
+                WalletGoddessInVO wg=gvo.getData();
+                if(wg.getGoddessIncome()==null || wg.getGoddessIncome()<dto.getMoney()){
+                    return new ResponseApiVO(-2,"女神收益金额不足",null);
+
+                }
+                Map setMap=new HashMap();
+                setMap.put("money",dto.getMoney());
+                setMap.put("goddessIncome",-dto.getMoney());
+                Map searchMap=new HashMap();
+                searchMap.put("userId",userId);
+                vo= this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setMap,searchMap,"version",new String[]{"money","goddessIncome"});
+            }
+        }else if(IncomeTypeEnum.IncomeType2.getCode().equals(dto.getIncomeType())){
+            ResponseApiVO<WalletPracticeInVO> gvo=this.getPracticeIn(userId);
+            if(gvo.getReCode()!=1){
+                return new ResponseApiVO(-2,"失败",null);
+
+            }else{
+                WalletPracticeInVO wg=gvo.getData();
+                if(wg.getPracticeIncome()==null || wg.getPracticeIncome()<dto.getMoney()){
+                    return new ResponseApiVO(-2,"代练收益金额不足",null);
+
+                }
+                Map setMap=new HashMap();
+                setMap.put("money",dto.getMoney());
+                setMap.put("practiceIncome",-dto.getMoney());
+                Map searchMap=new HashMap();
+                searchMap.put("userId",userId);
+                vo=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setMap,searchMap,"version",new String[]{"money","practiceIncome"});
+            }
+        }
+        if(vo==null ||  vo.getReCode()!=1){
+            return new ResponseApiVO(-2,"转入钱包失败",null);
+
+        }else{
+            return new ResponseApiVO(1,"成功",null);
+
+        }
+    }
+
     public ResponseApiVO getIncome(Integer incomeType,Integer pageNo,String token)throws Exception{
         if(StringUtils.isBlank(IncomeTypeEnum.getName(incomeType))){
             return new ResponseApiVO(-2,"参数异常",null);

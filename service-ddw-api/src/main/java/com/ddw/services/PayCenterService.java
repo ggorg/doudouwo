@@ -225,10 +225,21 @@ public class PayCenterService extends BaseOrderService {
 
             }
 
-
             orderPO.setDoCost(bidCost);
 
-        //计算充值
+
+        }else if(OrderTypeEnum.OrderType9.getCode().equals(orderType)){
+            orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
+            orderPO.setDoSellerId(TokenUtil.getStoreId(token));
+            Map renewMap=(Map)CacheUtil.get("pay","bidding-renew-"+userId+"-"+codes[0]);
+            if(renewMap==null){
+                return new ResponseApiVO(-2,"约玩续费失败",null);
+
+            }
+            Integer bidCost=(Integer) renewMap.get("price");
+            orderPO.setDoCost(bidCost);
+
+            //计算充值
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(-1);
@@ -253,7 +264,7 @@ public class PayCenterService extends BaseOrderService {
             orderPO.setDoCost(recCost);
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
-        }
+             }
         //计算货品
         }else if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
             orderPO.setDoSellerId(TokenUtil.getStoreId(token));
@@ -385,12 +396,16 @@ public class PayCenterService extends BaseOrderService {
 
         }
         if(PayTypeEnum.PayType5.getCode().equals(payType)){
+            if(StringUtils.isBlank(TokenUtil.getPayCode(token))){
+                return new ResponseApiVO(-2,"密码口令无效",null);
+            }
+
             ResponseApiVO<WalletBalanceVO> responseApiVO= this.walletService.getBalance(userId);
             if(responseApiVO.getReCode()!=1 ){
                 return new ResponseApiVO(-2,"钱包余额支付失败",null);
             }else{
                 WalletBalanceVO walletBalanceVO=responseApiVO.getData();
-                if(walletBalanceVO.getMoney()==null || orderPO.getDoCost()<walletBalanceVO.getMoney()){
+                if(walletBalanceVO.getMoney()==null || orderPO.getDoCost()>walletBalanceVO.getMoney()){
                     return new ResponseApiVO(-2,"钱包余额不足",null);
 
                 }else{
@@ -483,6 +498,23 @@ public class PayCenterService extends BaseOrderService {
                 }
                 orderCacheData=list;
 
+            }else if(orderType.equals(OrderTypeEnum.OrderType9.getCode())){
+                Map renewMap=(Map)CacheUtil.get("pay","bidding-renew-"+userId+"-"+codes[0]);
+                Map  m=new HashMap();
+                m.put("orderId",insertResponseVO.getData());
+                m.put("orderNo",orderNo);
+                m.put("createTime",new Date());
+                m.put("updateTime",new Date());
+                m.put("creater",userId);
+                m.put("dorCost",renewMap.get("price"));
+                m.put("times",renewMap.get("time"));
+                m.put("biddingId",codes[0]);
+                resVo=this.commonInsertMap("ddw_order_bidding_pay",m);
+                if(resVo.getReCode()!=1){
+                    throw new GenException("约玩续费失败");
+
+                }
+                orderCacheData=renewMap;
             }else if(OrderTypeEnum.OrderType1.getCode().equals(orderType)){
                 if(buyInProMap==null){
                     throw new GenException("商品支付失败");
@@ -649,6 +681,7 @@ public class PayCenterService extends BaseOrderService {
                     CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
                     //CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
                     this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo,orderPO);
+                    TokenUtil.deletePayCode(token);
                     return new ResponseApiVO(1,"钱包支付成功",null);
 
                 }

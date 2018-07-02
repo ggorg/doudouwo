@@ -12,7 +12,7 @@ public class PayDTO {
     @ApiModelProperty(name="money",value="金额,单位分",example="1000")
     private Integer money;
 
-    @ApiModelProperty(name="orderType",value="订单类型,商品：1，充值：3，竞价定金：4，竞价金额：5，门票：7，逗币充值：8",example="3")
+    @ApiModelProperty(name="orderType",value="订单类型,商品：1，充值：3，竞价定金：4，竞价金额：5，门票：7，逗币充值：8，约玩续费：9",example="3")
     private Integer orderType;
 
 

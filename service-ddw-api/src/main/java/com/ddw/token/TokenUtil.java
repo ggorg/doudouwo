@@ -193,6 +193,15 @@ public class TokenUtil {
         CacheUtil.delete("tokenCache",token);
 
     }
+    public static void deletePayCode(String token){
+        Object obj=CacheUtil.get("tokenCache",token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.remove("payCode");
+            CacheUtil.put("tokenCache",token,map);
+        }
+
+    }
     public static String getBaseToken(String base64Token){
         String token=null;
         try {

@@ -160,4 +160,29 @@ public class BiddingController {
             return new ResponseApiVO(-1,"失败",null);
         }
     }
+    @Token
+    @ApiOperation(value = "查询续费金额",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/renew/{token}")
+    @ResponseBody
+    public ResponseApiVO<BiddingRenewVO> queryRenewInfo(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingCodeDTO args){
+        try {
+            return this.biddingService.getBidOrderInfoByBidCode(args.getBidCode(),token,true);
+        }catch (Exception e){
+            logger.error("BiddingController->queryRenewInfo-》查询续费金额-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+
+    @Token
+    @ApiOperation(value = "确认续费(用户)",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/makesure/renew/{token}")
+    @ResponseBody
+    public ResponseApiVO makeSureRenew(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingRenewDTO args){
+        try {
+            return this.biddingService.makeSureRenew(args,token);
+        }catch (Exception e){
+            logger.error("BiddingController->makeSureRenew-》确认续费(用户)-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
 }

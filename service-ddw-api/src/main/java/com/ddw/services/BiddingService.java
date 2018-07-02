@@ -85,7 +85,7 @@ public class BiddingService extends CommonService {
         Map searchMap=new HashMap();
         searchMap.put("groupId",groupId);
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.id,t1.userId,ct0.headImgUrl,ct0.nickName goddessName",0,1,searchMap,cb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime desc","t1.id,t1.userId,ct0.headImgUrl,ct0.nickName goddessName",0,1,searchMap,cb);
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         Map map=bidList.get(0);
         //map.get("id");
@@ -345,6 +345,13 @@ public class BiddingService extends CommonService {
         //searchMap.put("bidEndTime,>=",new Date());
         searchMap.put("id",bidId);
         searchMap.put("bidEndTime,>=",new Date());
+        return this.commonObjectBySearchCondition("ddw_goddess_bidding",searchMap);
+
+    }
+    public Map getBidMapById2(Integer bidId){
+        Map searchMap=new HashMap();
+        searchMap.put("endTime,>=",new Date());
+        searchMap.put("id",bidId);
         return this.commonObjectBySearchCondition("ddw_goddess_bidding",searchMap);
 
     }
@@ -640,6 +647,53 @@ public class BiddingService extends CommonService {
 
         return new ResponseApiVO(1,"成功",new ListVO(commonHandleBidOrder(bidList)));
 
+    }
+
+    public ResponseApiVO getBidOrderInfoByBidCode(Integer bidCode,String token,boolean flag)throws Exception{
+        Integer storeId=TokenUtil.getStoreId(token);
+        Map bidMap=this.getBidMapById2(bidCode);
+        Map a=new HashMap();
+            if(bidMap==null){
+            a.put("status",BiddingStatusEnum.Status8.getCode());
+            a.put("statusMsg",BiddingStatusEnum.Status8.getName());
+            return new ResponseApiVO(2,"约玩已结束",a);
+        }else{
+            a.put("status",BiddingStatusEnum.Status5.getCode());
+            a.put("statusMsg",BiddingStatusEnum.Status5.getName());
+        }
+        Integer userId=(Integer) bidMap.get("userId");
+        GoddessPO gpo=this.goddessService.getAppointment(userId,storeId);
+        if(gpo==null){
+            return new ResponseApiVO(-2,"失败",null);
+        }else{
+            a.put("price",gpo.getBidPrice());
+            a.put("bidCode",bidCode);
+            a.put("goddessUserId",userId);
+            a.put("endTime",bidMap.get("endTime"));
+            if(flag){
+                BiddingRenewVO biddingRenewVO=new BiddingRenewVO();
+                PropertyUtils.copyProperties(biddingRenewVO,a);
+                return new ResponseApiVO(1,"成功",biddingRenewVO);
+            }
+        }
+        return new ResponseApiVO(1,"成功",a);
+    }
+    public ResponseApiVO makeSureRenew(BiddingRenewDTO dto,String token)throws Exception{
+        Integer userId=TokenUtil.getUserId(token);
+        ResponseApiVO<Map> res=getBidOrderInfoByBidCode(dto.getBidCode(),token,false);
+        if(res.getReCode()==1){
+            Map m=res.getData();
+            Integer time=dto.getTime()/60;
+
+            time=time<1?1:time;
+            Integer price=((Integer) m.get("price"))*time;
+            m.put("time",dto.getTime());
+            m.put("price",price);
+            CacheUtil.put("pay","bidding-renew-"+userId+"-"+dto.getBidCode(),m);
+            return new ResponseApiVO(1,"成功",null);
+        }else{
+            return res;
+        }
     }
     public ResponseApiVO getBidOrderInfoByGoddess(String token,Integer bidCode,boolean isGoddess){
         Integer userId=TokenUtil.getUserId(token);
