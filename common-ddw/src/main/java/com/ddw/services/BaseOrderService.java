@@ -1,12 +1,11 @@
 package com.ddw.services;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ddw.beans.ExitOrderPO;
 import com.ddw.beans.OrderPO;
 import com.ddw.beans.OrderViewPO;
-import com.ddw.enums.DoubiRecordTypeEnum;
-import com.ddw.enums.IncomeTypeEnum;
-import com.ddw.enums.OrderTypeEnum;
-import com.ddw.enums.PayStatusEnum;
+import com.ddw.enums.*;
+import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
@@ -14,7 +13,9 @@ import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.vo.ResponseVO;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
@@ -370,5 +371,59 @@ public class BaseOrderService extends CommonService {
 
     }
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO baseExitOrder(List<Integer> orderIds)throws Exception{
+        if(orderIds==null){
+            return new ResponseVO(-2,"参数异常",null);
 
+        }else if(orderIds.isEmpty()){
+            return new ResponseVO(1,"成功",null);
+
+        }
+        ExitOrderPO exitOrderPO=null;
+        Map searchMap=new HashMap();
+        searchMap.put("id,in",orderIds.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+        searchMap.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
+        List<Map> orders=this.commonObjectsBySearchCondition("ddw_order",searchMap);
+        for(Map o:orders){
+            // orderPO=this.commonObjectBySingleParam("ddw_order","id",OrderUtil.getOrderId(o),OrderPO.class);
+            exitOrderPO=new ExitOrderPO();
+            exitOrderPO.setCreater((Integer) o.get("doCustomerUserId"));
+            exitOrderPO.setCreaterName((String) o.get("creater"));
+            exitOrderPO.setCreateTime(new Date());
+            exitOrderPO.setExitCost((Integer) o.get("doCost"));
+            exitOrderPO.setTotalCost(exitOrderPO.getExitCost());
+            exitOrderPO.setOrderId((Integer) o.get("id"));
+            exitOrderPO.setOrderNo(OrderUtil.createOrderNo((String)o.get("doOrderDate"),(Integer) o.get("doType"),(Integer) o.get("doPayType"),exitOrderPO.getOrderId()));
+            exitOrderPO.setExitOrderNo(DateFormatUtils.format(new Date(),"yyyyMMddHHmmss")+ RandomStringUtils.randomNumeric(6));
+            ResponseVO inserRes=this.commonInsert("ddw_exit_order",exitOrderPO);
+            if(inserRes.getReCode()!=1){
+                throw new GenException("新建退订单失败");
+            }
+            if(PayTypeEnum.PayType1.getCode().equals((Integer) o.get("doPayType"))){
+                Map<String,String> callMap= PayApiUtil.reqeustWeiXinExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitOrderNo(),exitOrderPO.getExitCost(),exitOrderPO.getExitCost());
+                if(callMap!=null && "FAIL".equals(callMap.get("return_code"))){
+                    throw new GenException("申请退款失败");
+                }else if(callMap!=null && "SUCCESS".equals(callMap.get("return_code")) && "SUCCESS".equals(callMap.get("result_code"))){
+                    CacheUtil.put("pay","weixin-refund-"+o,exitOrderPO.getExitOrderNo());
+                }
+
+            }else if(PayTypeEnum.PayType2.getCode().equals((Integer) o.get("doPayType"))){
+                ResponseVO resvo=PayApiUtil.requestAliExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitCost());
+                if(resvo.getReCode()==1){
+                    Map map=new HashMap();
+                    map.put("doPayStatus",PayStatusEnum.PayStatus2.getCode());
+                    ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",exitOrderPO.getOrderId());
+                    map=new HashMap();
+                    map.put("payStatus",PayStatusEnum.PayStatus2.getCode());
+                    map.put("shipStatus",ClientShipStatusEnum.ShipStatus4.getCode());
+                    this.commonUpdateBySingleSearchParam("ddw_order_view",map,"orderId",exitOrderPO.getOrderId());
+                }
+            }
+            //ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
+
+        }
+
+        return new ResponseVO(1,"成功",null);
+    }
 }

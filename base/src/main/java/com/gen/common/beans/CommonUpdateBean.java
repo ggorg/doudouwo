@@ -7,7 +7,15 @@ import java.util.Map;
 
 public class CommonUpdateBean extends CommonInsertBean {
 	private Object condition;
+	public Boolean isAuto=true;
 
+
+	public Boolean isAuto() {
+		return isAuto;
+	}
+	public void setAuto(Boolean isAuto) {
+		this.isAuto = isAuto;
+	}
 	public Object getCondition() {
 		return condition;
 	}

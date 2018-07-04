@@ -695,57 +695,8 @@ public class PayCenterService extends BaseOrderService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO exitOrder(List<Integer> orderIds)throws Exception{
-        if(orderIds==null){
-            return new ResponseApiVO(-2,"参数异常",null);
-
-        }else if(orderIds.isEmpty()){
-            return new ResponseApiVO(1,"成功",null);
-
-        }
-        ExitOrderPO exitOrderPO=null;
-        Map searchMap=new HashMap();
-        searchMap.put("id,in",orderIds.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
-        List<Map> orders=this.commonObjectsBySearchCondition("ddw_order",searchMap);
-        for(Map o:orders){
-           // orderPO=this.commonObjectBySingleParam("ddw_order","id",OrderUtil.getOrderId(o),OrderPO.class);
-            exitOrderPO=new ExitOrderPO();
-            exitOrderPO.setCreater((Integer) o.get("doCustomerUserId"));
-            exitOrderPO.setCreaterName((String) o.get("creater"));
-            exitOrderPO.setCreateTime(new Date());
-            exitOrderPO.setExitCost((Integer) o.get("doCost"));
-            exitOrderPO.setTotalCost(exitOrderPO.getExitCost());
-            exitOrderPO.setOrderId((Integer) o.get("id"));
-            exitOrderPO.setOrderNo(OrderUtil.createOrderNo((String)o.get("doOrderDate"),(Integer) o.get("doType"),(Integer) o.get("doPayType"),exitOrderPO.getOrderId()));
-            exitOrderPO.setExitOrderNo(DateFormatUtils.format(new Date(),"yyyyMMddHHmmss")+RandomStringUtils.randomNumeric(6));
-            ResponseVO inserRes=this.commonInsert("ddw_exit_order",exitOrderPO);
-            if(inserRes.getReCode()!=1){
-                throw new GenException("新建退订单失败");
-            }
-            if(PayTypeEnum.PayType1.getCode().equals((Integer) o.get("doPayType"))){
-                Map<String,String> callMap= PayApiUtil.reqeustWeiXinExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitOrderNo(),exitOrderPO.getExitCost(),exitOrderPO.getExitCost());
-                if(callMap!=null && "FAIL".equals(callMap.get("return_code"))){
-                    throw new GenException("申请退款失败");
-                }else if(callMap!=null && "SUCCESS".equals(callMap.get("return_code")) && "SUCCESS".equals(callMap.get("result_code"))){
-                    CacheUtil.put("pay","weixin-refund-"+o,exitOrderPO.getExitOrderNo());
-                }
-
-            }else if(PayTypeEnum.PayType2.getCode().equals((Integer) o.get("doPayType"))){
-                ResponseVO resvo=PayApiUtil.requestAliExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitCost());
-                if(resvo.getReCode()==1){
-                    Map map=new HashMap();
-                    map.put("doPayStatus",PayStatusEnum.PayStatus2.getCode());
-                    ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",exitOrderPO.getOrderId());
-                    map=new HashMap();
-                    map.put("payStatus",PayStatusEnum.PayStatus2.getCode());
-                    map.put("shipStatus",ClientShipStatusEnum.ShipStatus4.getCode());
-                    this.commonUpdateBySingleSearchParam("ddw_order_view",map,"orderId",exitOrderPO.getOrderId());
-                }
-            }
-            //ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
-
-        }
-
-        return new ResponseApiVO(1,"成功",null);
+        ResponseVO vo=this.baseExitOrder(orderIds);
+        return new ResponseApiVO(vo.getReCode(),vo.getReMsg(),null);
     }
     public ResponseApiVO executeCoupon(OrderPO po,Integer couponCode,String token)throws Exception{
         if(couponCode!=null && couponCode>0){

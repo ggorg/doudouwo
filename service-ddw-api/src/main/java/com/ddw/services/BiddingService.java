@@ -178,7 +178,7 @@ public class BiddingService extends CommonService {
         String ub=(String)CacheUtil.get("pay","bidding-success-"+groupId);
         Map payMap=(Map) CacheUtil.get("pay","bidding-pay-"+ub);
         Map setMap=new HashMap();
-        setMap.put("bidEndTime",new Date());
+        setMap.put("endTime",new Date());
         ResponseVO resVo=this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",setMap,"id",payMap.get("code"));
         if(resVo.getReCode()!=1){
             return new ResponseApiVO(-2,"取消失败",null);
@@ -596,14 +596,29 @@ public class BiddingService extends CommonService {
         Date currentDate=new Date();
         bidList.forEach(a->{
             Date endTime=(Date) a.get("endTime");
+            Date bidEndTime=(Date) a.get("bidEndTime");
             Integer bidUserId=(Integer) a.get("luckyUserId");
             // Integer goddessUserId=(Integer) a.get("userId");
             if(bidUserId==null){
-                a.put("status",BiddingStatusEnum.Status1.getCode());
-                a.put("statusMsg",BiddingStatusEnum.Status1.getName());
+                if(endTime==null){
+                    if(DateUtils.addMinutes(bidEndTime,10).before(new Date())){
+                        a.put("status",BiddingStatusEnum.Status8.getCode());
+                        a.put("statusMsg",BiddingStatusEnum.Status8.getName());
+                    }else{
+                        a.put("status",BiddingStatusEnum.Status1.getCode());
+                        a.put("statusMsg",BiddingStatusEnum.Status1.getName());
+                    }
+                }
+
             }else if(bidUserId>0 && endTime==null){
-                a.put("status",BiddingStatusEnum.Status7.getCode());
-                a.put("statusMsg",BiddingStatusEnum.Status7.getName());
+                if(DateUtils.addMinutes(bidEndTime,10).before(new Date())){
+                    a.put("status",BiddingStatusEnum.Status8.getCode());
+                    a.put("statusMsg",BiddingStatusEnum.Status8.getName());
+                }else{
+                    a.put("status",BiddingStatusEnum.Status7.getCode());
+                    a.put("statusMsg",BiddingStatusEnum.Status7.getName());
+                }
+
             }else if(endTime.after(currentDate)){
                 a.put("status",BiddingStatusEnum.Status5.getCode());
                 a.put("statusMsg",BiddingStatusEnum.Status5.getName());
@@ -860,6 +875,8 @@ public class BiddingService extends CommonService {
         return new ResponseApiVO(1,"成功",map);
 
     }
+
+
     public static void main(String[] args) {
         long l=(DateUtils.addMinutes(new Date(),150).getTime()-System.currentTimeMillis());
         System.out.println(l);

@@ -16,11 +16,11 @@ import java.util.Map;
 @Component
 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
-    @Value("${gen.framework.menus.filter.urls}")
+    @Value("${gen.framework.menus.filter.urls:}")
     private String filterUrls;
    // private List filterList;
 
-    @Value("${gen.framework.manager.url.prefix}")
+    @Value("${gen.framework.manager.url.prefix:}")
     private String managerPrefixUrls;
    // private List managerPrefixUrlsList;
     @Autowired
