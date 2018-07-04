@@ -98,7 +98,7 @@ public class TimerTaskService extends CommonService {
                 for(Map map:listMap){
                     Date bidEndTime=(Date) map.get("bidEndTime");
                     Integer bidUserId=(Integer) map.get("luckyUserId");
-                    if( DateUtils.addMinutes(bidEndTime,10).before(new Date())){
+                    if( DateUtils.addMinutes(bidEndTime,30).before(new Date())){
                         orderIds.add(map.get("orderId"));
                         bids.add(map.get("id"));
                         // this.common

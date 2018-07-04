@@ -601,7 +601,7 @@ public class BiddingService extends CommonService {
             // Integer goddessUserId=(Integer) a.get("userId");
             if(bidUserId==null){
                 if(endTime==null){
-                    if(DateUtils.addMinutes(bidEndTime,10).before(new Date())){
+                    if(DateUtils.addMinutes(bidEndTime,30).before(new Date())){
                         a.put("status",BiddingStatusEnum.Status8.getCode());
                         a.put("statusMsg",BiddingStatusEnum.Status8.getName());
                     }else{
@@ -611,7 +611,7 @@ public class BiddingService extends CommonService {
                 }
 
             }else if(bidUserId>0 && endTime==null){
-                if(DateUtils.addMinutes(bidEndTime,10).before(new Date())){
+                if(DateUtils.addMinutes(bidEndTime,30).before(new Date())){
                     a.put("status",BiddingStatusEnum.Status8.getCode());
                     a.put("statusMsg",BiddingStatusEnum.Status8.getName());
                 }else{
