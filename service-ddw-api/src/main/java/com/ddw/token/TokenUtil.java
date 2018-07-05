@@ -96,7 +96,22 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
-
+    public static void putBidCode(String base64Token,Integer bidCode){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("bidCode",bidCode);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
+    public static Integer getBidCode(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (Integer)map.get("bidCode");
+        }
+        return null;
+    }
     public static void putStreamId(String base64Token,String streamId){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){

@@ -10,7 +10,9 @@ import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,20 +89,22 @@ public class TimerTaskService extends CommonService {
         try {
             Map searchBid=new HashMap();
             searchBid.put("endTime,is","null");
-            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime","t1.id,t1.bidEndTime,t1.luckyDogUserId,ct0.orderId",null,null,searchBid,
+            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime","t1.id,t1.bidEndTime,t1.luckyDogUserId,ct0.orderId,t1.userId,t1.groupId",null,null,searchBid,
                     new CommonChildBean("ddw_order_bidding_pay","biddingId","id",null));
 
             List<Map>  listMap= this.getCommonMapper().selectObjects(csb);
             if(listMap!=null){
                 List orderIds=new ArrayList();
                 List bids=new ArrayList();
-
+                List<String> bidCacheList=new ArrayList();
                 for(Map map:listMap){
                     Date bidEndTime=(Date) map.get("bidEndTime");
                     Integer bidUserId=(Integer) map.get("luckyUserId");
+
                     if( DateUtils.addMinutes(bidEndTime,30).before(new Date())){
                         orderIds.add(map.get("orderId"));
                         bids.add(map.get("id"));
+                        bidCacheList.add((Integer) map.get("id")+"&"+(Integer)map.get("userId")+"&"+(String)map.get("groupId"));
                         // this.common
                     }
                 }
@@ -117,7 +121,20 @@ public class TimerTaskService extends CommonService {
                 if(!!orderIds.isEmpty()){
                     baseOrderService.baseExitOrder(orderIds);
                 }
-
+                logger.info("扫描空闲的竞价："+bidCacheList);
+                if(!bidCacheList.isEmpty()){
+                    bidCacheList.forEach(a->{
+                        String[] str=a.split("&");
+                        CacheUtil.delete("pay","groupId-"+str[0]+"-"+str[2]);
+                        CacheUtil.delete("pay","bidding-cancel-"+str[0]+"-"+str[2]);
+                        CacheUtil.delete("pay","bidding-finish-pay-"+str[0]+"-"+str[1]);
+                        String ub=(String)CacheUtil.get("pay","bidding-success-"+str[0]+"-"+str[2]);
+                        if(StringUtils.isNotBlank(ub)){
+                            CacheUtil.delete("pay","bidding-pay-"+ub);
+                            CacheUtil.delete("pay","bidding-success-"+str[0]+"-"+str[2]);
+                        }
+                    });
+                }
             }
         }catch (Exception e){
             logger.error("TimerTaskService->handleFreeBid",e);
