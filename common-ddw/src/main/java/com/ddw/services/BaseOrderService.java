@@ -175,9 +175,10 @@ public class BaseOrderService extends CommonService {
 
                 //goddessUserId
                 OrderViewPO po=null;
-                List goddessId=new ArrayList();
+                List<String> bid_goddessid=new ArrayList();
                 Integer gid=null;
                 Integer needPayPrice=0;
+
                 for(String ub:ubs){
                     payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
                     if(payMap==null){
@@ -189,7 +190,8 @@ public class BaseOrderService extends CommonService {
                     this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",payMap.get("code"));
 */
                     gid=(Integer) payMap.get("goddessUserId");
-                    goddessId.add(gid);
+
+                    bid_goddessid.add(payMap.get("code").toString()+"-"+gid);
                     needPayPrice=Integer.parseInt((String) payMap.get("needPayPrice"));
                     this.incomeService.commonIncome(gid,needPayPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType5,orderNo);
                     this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),gid,needPayPrice,IncomeTypeEnum.IncomeType1);
@@ -211,7 +213,7 @@ public class BaseOrderService extends CommonService {
                     po.setStoreId(cacheOrder.getDoSellerId());
                     this.orderViewService.saveOrderView(po);
                 }
-                goddessId.forEach(a->{
+                bid_goddessid.forEach(a->{
                     CacheUtil.put("pay","bidding-finish-pay-"+a,orderNo);
                    // CacheUtil.delete("pay","bidding-pay-"+a);
                 });
