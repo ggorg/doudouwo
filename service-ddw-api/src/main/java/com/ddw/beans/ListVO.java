@@ -25,5 +25,12 @@ public class ListVO<T> {
     public void setList(List<T> list) {
         this.list = list;
     }
+
+    @Override
+    public String toString() {
+        return "ListVO{" +
+                "list=" + list +
+                '}';
+    }
 }
 

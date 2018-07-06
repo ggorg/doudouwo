@@ -16,4 +16,11 @@ public class UserOpenIdDTO {
     public void setOpenId(String openId) {
         this.openId = openId;
     }
+
+    @Override
+    public String toString() {
+        return "UserOpenIdDTO{" +
+                "openId='" + openId + '\'' +
+                '}';
+    }
 }

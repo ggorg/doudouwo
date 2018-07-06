@@ -1,4 +1,4 @@
-package com.ddw.beans;
+package com.ddw.beans.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -80,5 +80,17 @@ public class BiddingVO implements Serializable {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "BiddingVO{" +
+                "openId='" + openId + '\'' +
+                ", userName='" + userName + '\'' +
+                ", price='" + price + '\'' +
+                ", time=" + time +
+                ", bidEndTime='" + bidEndTime + '\'' +
+                ", userId=" + userId +
+                '}';
     }
 }

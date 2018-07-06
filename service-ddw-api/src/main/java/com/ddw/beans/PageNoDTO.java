@@ -17,4 +17,11 @@ public class PageNoDTO {
     public void setPageNo(Integer pageNo) {
         this.pageNo = pageNo;
     }
+
+    @Override
+    public String toString() {
+        return "PageNoDTO{" +
+                "pageNo=" + pageNo +
+                '}';
+    }
 }

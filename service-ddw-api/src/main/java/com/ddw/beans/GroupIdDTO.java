@@ -15,4 +15,11 @@ public class GroupIdDTO {
     public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
+
+    @Override
+    public String toString() {
+        return "GroupIdDTO{" +
+                "groupId='" + groupId + '\'' +
+                '}';
+    }
 }

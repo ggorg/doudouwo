@@ -32,5 +32,11 @@ public class BiddingDTO implements Serializable {
         this.price = price;
     }
 
-
+    @Override
+    public String toString() {
+        return "BiddingDTO{" +
+                "price=" + price +
+                ", time=" + time +
+                '}';
+    }
 }

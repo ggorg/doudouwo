@@ -1,11 +1,10 @@
 package com.ddw.util;
 
-import com.ddw.beans.BiddingVO;
+import com.ddw.beans.vo.BiddingVO;
 import com.ddw.services.BiddingService;
 import com.gen.common.util.CacheUtil;
 
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class BiddingTimer extends TimerTask {

@@ -20,4 +20,11 @@ public class BiddingCodeDTO implements Serializable {
     public void setBidCode(Integer bidCode) {
         this.bidCode = bidCode;
     }
+
+    @Override
+    public String toString() {
+        return "BiddingCodeDTO{" +
+                "bidCode=" + bidCode +
+                '}';
+    }
 }

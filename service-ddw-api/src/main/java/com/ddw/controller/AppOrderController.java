@@ -29,6 +29,7 @@ public class AppOrderController {
     @ResponseBody
     public ResponseApiVO<ListVO<OrderViewVO>> getOrderList(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)OrderViewDTO dto){
         try {
+
             return appOrderService.getOrderList(token,dto);
         }catch (Exception e){
             logger.error("AppOrderController-getOrderList-》查询订单列表-》系统异常",e);
@@ -42,7 +43,11 @@ public class AppOrderController {
     @ResponseBody
     public ResponseApiVO<BiddingOrderInfoVO> getBidOrderInfoByUser(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingCodeDTO args){
         try {
-            return this.biddingService.getBidOrderInfoByGoddess(token,args.getBidCode(),false);
+            logger.info("getBidOrderInfoByUser->查看约玩订单信息（用户）->request->"+args);
+            ResponseApiVO rs=this.biddingService.getBidOrderInfoByGoddess(token,args.getBidCode(),false);
+            logger.info("getBidOrderInfoByUser->查看约玩订单信息（用户）->response->"+rs);
+
+            return rs;
         }catch (Exception e){
             logger.error("BiddingController->getBidOrderInfoByUser-》查看约玩订单信息（用户）-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
@@ -54,7 +59,11 @@ public class AppOrderController {
     @ResponseBody
     public ResponseApiVO<BiddingOrderInfoVO> getBidOrderInfoByGoddess(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingCodeDTO args){
         try {
-            return this.biddingService.getBidOrderInfoByGoddess(token,args.getBidCode(),true);
+            logger.info("getBidOrderInfoByGoddess->查看约玩订单信息（女神）->request->"+args);
+            ResponseApiVO rs=this.biddingService.getBidOrderInfoByGoddess(token,args.getBidCode(),true);
+            logger.info("getBidOrderInfoByGoddess->查看约玩订单信息（女神）->response->"+rs);
+
+            return rs;
         }catch (Exception e){
             logger.error("BiddingController->getBidOrderInfoByGoddess-》查看约玩订单信息（女神）-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
@@ -66,7 +75,12 @@ public class AppOrderController {
     @ResponseBody
     public ResponseApiVO<ListVO<BiddingOrderListVO>> getBidUserOrderList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
         try {
-            return this.biddingService.getBidOrderList(token,args.getPageNo(),false);
+
+            logger.info("getBidUserOrderList->获取约玩订单列表（用户下单）->request->"+args);
+            ResponseApiVO rs=this.biddingService.getBidOrderList(token,args.getPageNo(),false);
+            logger.info("getBidUserOrderList->获取约玩订单列表（用户下单）->response->"+rs);
+
+            return rs;
         }catch (Exception e){
             logger.error("BiddingController->getBidUserOrderList-》获取约玩订单列表（用户下单）-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
@@ -78,7 +92,11 @@ public class AppOrderController {
     @ResponseBody
     public ResponseApiVO<ListVO<BiddingOrderListVO>> getBidGoddessOrderList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
         try {
-            return this.biddingService.getBidOrderList(token,args.getPageNo(),true);
+            logger.info("getBidGoddessOrderList->获取约玩订单列表(女神接单)->request->"+args);
+            ResponseApiVO rs=this.biddingService.getBidOrderList(token,args.getPageNo(),true);
+            logger.info("getBidGoddessOrderList->获取约玩订单列表(女神接单)->response->"+rs);
+
+            return rs;
         }catch (Exception e){
             logger.error("BiddingController->getBidGoddessOrderList-》获取约玩订单列表(女神接单)-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);

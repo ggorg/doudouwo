@@ -63,7 +63,7 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                    }
 
                    String base64Token=map.get("token");
-                    logger.info("base64Token:"+base64Token);
+                    //logger.info("base64Token:"+base64Token);
                    if(base64Token==null){
                        toWriteResponseVo(response,-1000,"token异常");
                        return false;
@@ -73,7 +73,7 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                         toWriteResponseVo(response,-1000,"token异常");
                         return false;
                     }
-                    logger.info("baseToken:"+baseToken);
+                  //  logger.info("baseToken:"+baseToken);
                     if(!TokenUtil.validToken(baseToken)){
                         toWriteResponseVo(response,-1000,"token异常");
                         return false;

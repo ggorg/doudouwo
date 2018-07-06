@@ -1,12 +1,12 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.beans.vo.BiddingVO;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
-import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;

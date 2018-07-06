@@ -36,6 +36,11 @@ public class BiddingRenewDTO implements Serializable {
     }
 
 
-
-
+    @Override
+    public String toString() {
+        return "BiddingRenewDTO{" +
+                "time=" + time +
+                ", bidCode=" + bidCode +
+                '}';
+    }
 }
