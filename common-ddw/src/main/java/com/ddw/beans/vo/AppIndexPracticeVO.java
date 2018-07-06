@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 代练
@@ -17,6 +18,8 @@ public class AppIndexPracticeVO implements Serializable {
     private Integer id;
     @ApiModelProperty(name="nickName",value="昵称",example="代练大神")
     private String nickName;
+    @ApiModelProperty(name="appointment",value="预约开关，1开启，2预约中,0关闭",example="1")
+    private Integer appointment;
     @ApiModelProperty(name="imgUrl",value="相册第一张",example="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529384238691&di=7e0db331f1a4b1d1b11e2643e8bb6ac3&imgtype=0&src=http%3A%2F%2Fi1.mopimg.cn%2Fimg%2Fdzh%2F2015-07%2F414%2F20150717120946794.jpg")
     private String imgUrl;
     @ApiModelProperty(name="headImgUrl",value="头像URL",example="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522752012429&di=b26668f45e547cb644bb85d054242abe&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fbba1cd11728b4710655829d1c9cec3fdfc0323bc.jpg")
@@ -29,6 +32,8 @@ public class AppIndexPracticeVO implements Serializable {
     private Integer fans;
     @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
     private boolean followed;
+    @ApiModelProperty(name="practiceGameList",value="代练游戏列表",example="")
+    private List<PracticeGameVO> practiceGameList;
 
     public String getImgUrl() {
         return imgUrl;
