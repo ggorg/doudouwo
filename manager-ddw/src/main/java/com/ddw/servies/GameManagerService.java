@@ -1,6 +1,6 @@
 package com.ddw.servies;
 
-import com.ddw.beans.RankPO;
+import com.gen.common.beans.GamePO;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.Page;
@@ -18,17 +18,15 @@ import java.util.Map;
  */
 @Service
 @Transactional(readOnly = true)
-public class RankService extends CommonService {
+public class GameManagerService extends CommonService {
 
-    public Page findList(String gameId)throws Exception{
-        Map condition=new HashMap();
-        condition.put("gameId",gameId);
-        return super.commonPage("ddw_rank","createTime",1,999,condition);
+    public Page findList()throws Exception{
+        return super.commonPage("ddw_game","createTime desc",1,999,new HashMap());
     }
 
-    public RankPO selectById(String id){
+    public GamePO selectById(String id){
         try {
-            return super.commonObjectBySingleParam("ddw_rank","id",id,RankPO.class);
+            return super.commonObjectBySingleParam("ddw_game","id",id,GamePO.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -36,20 +34,20 @@ public class RankService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO saveOrUpdate(RankPO rankPO)throws Exception{
-        if(rankPO.getId() > 0 ){
-            Map updatePoMap= BeanToMapUtil.beanToMap(rankPO);
-            return super.commonUpdateBySingleSearchParam("ddw_rank",updatePoMap,"id",rankPO.getId());
+    public ResponseVO saveOrUpdate(GamePO gamePO)throws Exception{
+        if(gamePO.getId() > 0 ){
+            Map updatePoMap= BeanToMapUtil.beanToMap(gamePO);
+            return super.commonUpdateBySingleSearchParam("ddw_game",updatePoMap,"id",gamePO.getId());
         }else{
-            rankPO.setCreateTime(new Date());
-            return super.commonInsert("ddw_rank",rankPO);
+            gamePO.setCreateTime(new Date());
+            return super.commonInsert("ddw_game",gamePO);
         }
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO delete(String id){
         ResponseVO vo=new ResponseVO();
-        int n = super.commonDelete("ddw_rank","id",id);
+        int n = super.commonDelete("ddw_game","id",id);
         if(n>0){
             vo.setReCode(1);
             vo.setReMsg("删除成功");

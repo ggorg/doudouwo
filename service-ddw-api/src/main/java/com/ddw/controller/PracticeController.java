@@ -109,7 +109,7 @@ public class PracticeController {
             if (userVO == null) {
                 return new ResponseApiVO(-2,"账号不存在",null);
             }
-            //TODO 查询代练信息,舍弃原本会员资料返回
+            //TODO 查询代练信息,舍弃原本会员资料返回,返回代练游戏简历\代练资料\接单数\评价
             List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
             userVO.setPhotograph(photographList);
             userVO.setToken(token);
@@ -126,7 +126,7 @@ public class PracticeController {
     public ResponseApiVO gameApply(@PathVariable String token,
                                            @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeGameApplyDTO practiceGameApplyDTO){
         try {
-            //TODO 判断代练是否开启预约,提交游戏编号,当前段位包含几星,目标段位包含几星,代练编号,返回drBusinessCode
+            //TODO 判断代练是否开启预约,提交游戏编号,当前段位包含几星,目标段位包含几星,代练编号
             return new ResponseApiVO(1,"成功",null);
         }catch (Exception e){
             logger.error("PracticeController->gameApply",e);
@@ -172,4 +172,7 @@ public class PracticeController {
             return new ResponseApiVO(-1,"提交失败",null);
         }
     }
+    //TODO 发布代练
+
+    //TODO 取消代练
 }

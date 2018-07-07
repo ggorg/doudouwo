@@ -6,14 +6,14 @@ import io.swagger.annotations.ApiModelProperty;
  * Created by Jacky on 2018/7/5.
  */
 public class PracticeGameApplyStateDTO {
-    @ApiModelProperty(name = "drBusinessCode",value = "所属业务编号或者ID，关联ddw_review表",example = "12345")
-    private String drBusinessCode;
+    @ApiModelProperty(name = "practieId",value = "代练ID，关联ddw_practice表",example = "8")
+    private int practieId;
 
-    public String getDrBusinessCode() {
-        return drBusinessCode;
+    public int getPractieId() {
+        return practieId;
     }
 
-    public void setDrBusinessCode(String drBusinessCode) {
-        this.drBusinessCode = drBusinessCode;
+    public void setPractieId(int practieId) {
+        this.practieId = practieId;
     }
 }
