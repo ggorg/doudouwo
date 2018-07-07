@@ -1,9 +1,9 @@
 package com.ddw.controller;
 
-import com.ddw.servies.GameService;
+import com.ddw.beans.RankPO;
+import com.ddw.servies.GameManagerService;
 import com.ddw.servies.RankService;
 import com.gen.common.beans.GamePO;
-import com.gen.common.beans.RankPO;
 import com.gen.common.services.CacheService;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ public class GameController {
     private final Logger logger = Logger.getLogger(GameController.class);
 
     @Autowired
-    private GameService gameService;
+    private GameManagerService gameManagerService;
     @Autowired
     private RankService rankService;
     @Autowired
@@ -31,7 +31,7 @@ public class GameController {
     @GetMapping("list")
     public String list(Model model){
         try {
-            model.addAttribute("gameList",gameService.findList());
+            model.addAttribute("gameList", gameManagerService.findList());
         }catch (Exception e){
             logger.error("GameController->list",e);
         }
@@ -42,7 +42,7 @@ public class GameController {
     public String toEdit(String id,Model model){
         try {
             if(StringUtils.isNotBlank(id)) {
-                GamePO gamePO = gameService.selectById(id);
+                GamePO gamePO = gameManagerService.selectById(id);
                 model.addAttribute("gamePO", gamePO);
             }
         }catch (Exception e){
@@ -55,7 +55,7 @@ public class GameController {
     @ResponseBody
     public ResponseVO doEdit(GamePO gamePO){
         try {
-            return this.gameService.saveOrUpdate(gamePO);
+            return this.gameManagerService.saveOrUpdate(gamePO);
         }catch (Exception e){
             logger.error("GameController->doEdit",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -67,7 +67,7 @@ public class GameController {
     @ResponseBody
     public ResponseVO delete(String id){
         try {
-            return this.gameService.delete(id);
+            return this.gameManagerService.delete(id);
         }catch (Exception e){
             logger.error("GameController->delete",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -78,7 +78,7 @@ public class GameController {
     @RequestMapping("rank/list")
     public String rankList(@RequestParam(defaultValue = "1") String gameId, Model model){
         try {
-            model.addAttribute("gameList",gameService.findList());
+            model.addAttribute("gameList", gameManagerService.findList());
             if(gameId == null){
                 gameId = (String) cacheService.get("gameId");
             }else{
@@ -93,12 +93,19 @@ public class GameController {
     }
 
     @GetMapping("rank/to-edit")
-    public String rankToEdit(String id,Model model){
+    public String rankToEdit(String id,String gameId,Model model){
         try {
-            if(StringUtils.isNotBlank(id)) {
-                RankPO rankPO = rankService.selectById(id);
-                model.addAttribute("rankPO", rankPO);
+            RankPO rankPO = new RankPO();
+            if(StringUtils.isNotBlank(id) && !id.equals("-1")) {
+                rankPO = rankService.selectById(id);
             }
+            if(gameId == null){
+                gameId = (String) cacheService.get("gameId");
+            }else{
+                cacheService.set("gameId",gameId);
+            }
+            rankPO.setGameId(Integer.valueOf(gameId));
+            model.addAttribute("rankPO", rankPO);
         }catch (Exception e){
             logger.error("GameController->rankToEdit",e);
         }

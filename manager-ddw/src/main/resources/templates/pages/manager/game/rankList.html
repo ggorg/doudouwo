@@ -59,19 +59,22 @@
                         <col class="con0" />
                         <col class="con1" />
                         <col class="con0" />
+                        <col class="con1" />
                     </colgroup>
                     <thead>
 
                     <tr>
                         <th class="head0">名称</th>
-                        <th class="head1">创建时间</th>
-                        <th class="head0">操作</th>
+                        <th class="head1">星数</th>
+                        <th class="head0">创建时间</th>
+                        <th class="head1">操作</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <tr th:each="obj:${rankList?.result}">
                         <td th:text="${obj['rank']}">Trident</td>
+                        <td th:text="${obj['star']}">Trident</td>
                         <td th:text="${obj['createTime']!=null ? #dates.format(obj['createTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
                         <td class="center">
                             <div class="layui-btn-group">

@@ -1,7 +1,7 @@
 package com.ddw.services;
 
+import com.ddw.beans.RankPO;
 import com.ddw.beans.vo.GameVO;
-import com.gen.common.beans.RankPO;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import org.apache.commons.beanutils.PropertyUtils;

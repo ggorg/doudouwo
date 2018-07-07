@@ -1,6 +1,6 @@
 package com.ddw.servies;
 
-import com.gen.common.beans.RankPO;
+import com.ddw.beans.RankPO;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.Page;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ public class RankService extends CommonService {
             Map updatePoMap= BeanToMapUtil.beanToMap(rankPO);
             return super.commonUpdateBySingleSearchParam("ddw_rank",updatePoMap,"id",rankPO.getId());
         }else{
+            rankPO.setCreateTime(new Date());
             return super.commonInsert("ddw_rank",rankPO);
         }
     }

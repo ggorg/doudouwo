@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Service
 @Transactional(readOnly = true)
-public class GameService extends CommonService {
+public class GameManagerService extends CommonService {
 
     public Page findList()throws Exception{
         return super.commonPage("ddw_game","createTime desc",1,999,new HashMap());

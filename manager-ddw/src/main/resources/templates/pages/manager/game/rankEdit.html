@@ -22,6 +22,13 @@
     </div>
   </div>
 
+  <div class="layui-form-item">
+    <label class="layui-form-label">星数</label>
+    <div class="layui-input-block">
+      <input type="text" name="star" required="required" title="星数"  lay-verify="required|number" th:value="${rankPO!=null? rankPO['star']:''}" placeholder="请输入该段位包含星数" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
   <div class="layui-form-item" style="display: none">
     <div class="layui-input-block">
       <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>

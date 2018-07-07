@@ -1,6 +1,6 @@
 package com.ddw.beans.vo;
 
-import com.gen.common.beans.RankPO;
+import com.ddw.beans.RankPO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -13,28 +13,6 @@ import java.util.List;
 @ApiModel
 public class GameVO implements Serializable{
     private static final long serialVersionUID = 5244406517903017996L;
-    /*
-    {
-    "gameList": [
-        {
-            "id": 1,
-            "gameName": "王者荣耀",
-            "rankList": [
-                {
-                    "id": "1",
-                    "rank": "青铜",
-                    "star": "5"
-                },
-                {
-                    "id": "2",
-                    "rank": "白银",
-                    "star": "5"
-                }
-            ]
-        }
-    ]
-}
-     */
 
     @ApiModelProperty(name="id",value="游戏编号",example="1")
     private int id;
