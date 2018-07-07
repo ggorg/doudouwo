@@ -1,6 +1,6 @@
 package com.ddw.servies;
 
-import com.gen.common.beans.GamePO;
+import com.ddw.beans.GamePO;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.Page;

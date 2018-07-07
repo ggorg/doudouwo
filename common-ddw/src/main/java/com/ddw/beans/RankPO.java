@@ -1,11 +1,13 @@
 package com.ddw.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Jacky on 2018/5/14.
  */
-public class RankPO {
+public class RankPO implements Serializable{
+    private static final long serialVersionUID = -5714960190035614160L;
     private int id;
     private int gameId;
     private int star;
