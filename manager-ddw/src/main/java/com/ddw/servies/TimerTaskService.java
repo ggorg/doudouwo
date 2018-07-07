@@ -132,6 +132,8 @@ public class TimerTaskService extends CommonService {
                         if(StringUtils.isNotBlank(ub)){
                             CacheUtil.delete("pay","bidding-pay-"+ub);
                             CacheUtil.delete("pay","bidding-success-"+str[0]+"-"+str[2]);
+                            CacheUtil.delete("pay","bidding-earnest-pay-"+ub);
+
                         }
                     });
                 }

@@ -136,7 +136,16 @@ public class PayCenterService extends BaseOrderService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO doubiPay(String token,DoubiPayDTO dto)throws Exception{
         PayDTO payDTO=new PayDTO();
+        if(dto.getCode()==null || dto.getCode()<=0){
+            return new ResponseApiVO(-2,"参数异常",null);
+        }
         PropertyUtils.copyProperties(payDTO,dto);
+        int num=dto.getNum()==null || dto.getNum()<=0?1:dto.getNum();
+        Integer[] codes=new Integer[num];
+        for(int i=0;i<num;i++){
+            codes[i]=dto.getCode();
+        }
+        payDTO.setCodes(codes);
         return prePay(token,PayTypeEnum.PayType4.getCode(),payDTO);
     }
     /**

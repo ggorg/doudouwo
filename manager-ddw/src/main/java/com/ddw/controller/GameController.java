@@ -1,6 +1,6 @@
 package com.ddw.controller;
 
-import com.ddw.servies.GameService;
+import com.ddw.services.GameService;
 import com.ddw.servies.RankService;
 import com.gen.common.beans.GamePO;
 import com.gen.common.beans.RankPO;

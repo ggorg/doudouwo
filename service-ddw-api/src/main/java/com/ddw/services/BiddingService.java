@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.ddw.beans.*;
 import com.ddw.beans.vo.BiddingVO;
+import com.ddw.controller.AppOrderController;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.gen.common.beans.CommonChildBean;
@@ -15,6 +16,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ import java.util.*;
 @Service
 @Transactional(readOnly = true)
 public class BiddingService extends CommonService {
+    private final Logger logger = Logger.getLogger(BiddingService.class);
 
     @Value("${goddess.bidEndTime.minute:15}")
     private Integer bidEndTimeMinute;
@@ -196,6 +199,7 @@ public class BiddingService extends CommonService {
         CacheUtil.delete("pay","bidding-pay-"+ub);
         CacheUtil.delete("pay","groupId-"+bidCode+"-"+groupId);
         CacheUtil.delete("pay","bidding-cancel-"+groupId);
+        CacheUtil.delete("pay","bidding-earnest-pay"+ub);
 
 
 
@@ -273,6 +277,7 @@ public class BiddingService extends CommonService {
        CacheUtil.delete("pay","bidding-finish-pay-"+bidCode+"-"+TokenUtil.getUserId(token));
        CacheUtil.delete("pay","bidding-success-"+bidCode+"-"+groupId);
        CacheUtil.delete("pay","bidding-pay-"+ub);
+       CacheUtil.delete("pay","bidding-earnest-pay-"+ub);
        return new ResponseApiVO(1,"成功",null);
 
     }
@@ -502,6 +507,7 @@ public class BiddingService extends CommonService {
             bidId=(Integer) bidMap.get("id");
             String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+bidId+"-"+groupId);
             if(userIdBidId!=null ){
+                logger.info("putPrice->本轮竞价已经结束->"+userIdBidId);
                 Map payMap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
                 return new ResponseApiVO(6,"本轮竞价已经结束，"+payMap.get("msg"),null);
             }
@@ -510,14 +516,21 @@ public class BiddingService extends CommonService {
             bidEndTime=(Date) bidMap.get("bidEndTime");
             Date endTime=(Date) bidMap.get("endTime");
             if(bidEndTime.after(currentDate) && endTime==null){
-               Map earnestMap=new HashMap();
+                Map earnestMap=new HashMap();
                earnestMap.put("creater",TokenUtil.getUserId(token));
                earnestMap.put("biddingId",bidId);
-               Map mapPO=this.commonObjectBySearchCondition("ddw_order_bidding_pay",earnestMap);
+                logger.info("putPrice->(bidEndTime.after(currentDate) && endTime==null)->bidId:"+bidId+"+bidEndTime:"+DateFormatUtils.format(bidEndTime,"yyyy-MM-dd HH:mm:ss")+",endTime:"+endTime+",userId:"+TokenUtil.getUserId(token));
+
+                Map mapPO=this.commonObjectBySearchCondition("ddw_order_bidding_pay",earnestMap);
+
                if(mapPO!=null){
-                  Integer orderId=(Integer) mapPO.get("orderId");
+
+
+                   Integer orderId=(Integer) mapPO.get("orderId");
                    OrderPO orderPO=this.commonObjectBySingleParam("ddw_order","id",orderId,OrderPO.class);
-                    if(!PayStatusEnum.PayStatus1.getCode().equals(orderPO.getDoPayStatus())){
+                   logger.info("putPrice->判断定金有没有交->bidId:"+bidId+"，order:"+orderPO);
+
+                   if(!PayStatusEnum.PayStatus1.getCode().equals(orderPO.getDoPayStatus())){
                         flag=true;
                     }
                }else{
@@ -526,11 +539,15 @@ public class BiddingService extends CommonService {
                }
 
            }else if(endTime!=null && endTime.after(currentDate)){
+                logger.info("putPrice->endTime!=null && endTime.after(currentDate)->陪玩中，空闲时间约在->bidId:"+bidId+"，endTime:"+endTime);
+
                 Map voMap=new HashMap();
                 voMap.put("endTime",DateFormatUtils.format((Date)bidMap.get("endTime"),"yyyy-MM-dd HH:mm:ss"));
                 return new ResponseApiVO(3,"陪玩中，空闲时间约在"+this.getSurplusTimeStr(bidMap)+"后",voMap);
 
             }else if((endTime!=null && endTime.before(currentDate)) || (userIdBidId==null && bidEndTime.before(currentDate))){
+                logger.info("putPrice->(endTime!=null && endTime.before(currentDate)) || (userIdBidId==null && bidEndTime.before(currentDate))->陪玩中，空闲时间约在->bidId:"+bidId+"，bidEndTime:"+bidEndTime+"，endTime:"+endTime);
+
                 bidEndTime=DateUtils.addMinutes(new Date(),this.bidEndTimeMinute);
                 ResponseVO<Integer> res=this.saveBidding(token,groupId,bidEndTime);
                 if(res.getReCode()!=1){

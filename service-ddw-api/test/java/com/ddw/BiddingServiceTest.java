@@ -1,6 +1,7 @@
 package com.ddw;
 
 import com.ApiApplication;
+import com.ddw.beans.BiddingDTO;
 import com.ddw.services.BiddingService;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
@@ -40,5 +41,16 @@ public class BiddingServiceTest {
 
         //String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+TokenUtil.getUserId(token));
       //  System.out.println(this.biddingService.getBidOrderInfoByGoddess(token,"1_8_180516180728"));;
+    }
+    @Test
+    public void testPutPrice()throws Exception{
+        String token= TokenUtil.createToken("openid");
+        TokenUtil.putStoreid(token,1);
+        TokenUtil.putUseridAndName(token,26,"test123");
+        TokenUtil.putGroupId(token,"1_8_180530232503");
+        BiddingDTO dto=new BiddingDTO();
+        dto.setPrice(10000);
+        dto.setTime(60);
+        System.out.println(this.biddingService.putPrice(token,dto));;
     }
 }
