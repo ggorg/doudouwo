@@ -13,7 +13,9 @@ public enum BiddingStatusEnum implements Dictionary {
     Status5("约玩中",5),
     Status6("空闲中",6),
     Status7("未开始",7),
-    Status8("已结束",8);
+    Status8("约玩结束",8),
+    Status9("未支付",9),
+    Status10("竞价结束",10);
 
     private String name;
     private Integer code;

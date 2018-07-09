@@ -1,9 +1,9 @@
 package com.ddw.controller;
 
+import com.ddw.beans.GamePO;
 import com.ddw.beans.RankPO;
 import com.ddw.servies.GameManagerService;
 import com.ddw.servies.RankService;
-import com.gen.common.beans.GamePO;
 import com.gen.common.services.CacheService;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;

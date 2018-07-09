@@ -1,12 +1,18 @@
 package com.ddw.beans;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
- * Created by Jacky on 2018/7/6.
+ * Created by Jacky on 2018/5/14.
  */
-public class rankPO {
+public class RankPO implements Serializable{
+    private static final long serialVersionUID = -5714960190035614160L;
     private int id;
-    private String rank;
+    private int gameId;
     private int star;
+    private String rank;
+    private Date createTime;
 
     public int getId() {
         return id;
@@ -14,6 +20,22 @@ public class rankPO {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
+
+    public int getStar() {
+        return star;
+    }
+
+    public void setStar(int star) {
+        this.star = star;
     }
 
     public String getRank() {
@@ -24,11 +46,11 @@ public class rankPO {
         this.rank = rank;
     }
 
-    public int getStar() {
-        return star;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setStar(int star) {
-        this.star = star;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

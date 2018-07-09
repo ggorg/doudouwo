@@ -190,6 +190,7 @@ public class BiddingService extends CommonService {
         }
         Map setMap=new HashMap();
         setMap.put("endTime",new Date());
+        setMap.put("status",BiddingStatusEnum.Status10.getCode());
         ResponseVO resVo=this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",setMap,"id",bidCode);
         if(resVo.getReCode()!=1){
             return new ResponseApiVO(-2,"取消失败",null);
@@ -208,11 +209,22 @@ public class BiddingService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO cancelBidPayByUserId(String token,GroupIdDTO dto,boolean isUser){
-        if(StringUtils.isBlank(dto.getGroupId())){
-            return new ResponseApiVO(-2,"群组不能为空",null);
+    public ResponseApiVO cancelBidPayByUserId(String token,BiddingUserCancelPayDTO dto,boolean isUser)throws Exception{
+        if(StringUtils.isBlank(dto.getGroupId()) && (dto.getBidCode()==null || dto.getBidCode()<=0)){
+            return new ResponseApiVO(-2,"参数异常",null);
         }
-        Map bidMap=this.getCurrentBidMapNoBidEndTime(dto.getGroupId());
+        if(StringUtils.isNotBlank(dto.getGroupId()) && dto.getBidCode()>0){
+            return new ResponseApiVO(-2,"群号和竞价号只能传其中一个",null);
+
+        }
+        Map searchMap=new HashMap();
+        searchMap.put("luckyDogUserId",TokenUtil.getUserId(token));
+        if(StringUtils.isNotBlank(dto.getGroupId())){
+            searchMap.put("groupId",dto.getGroupId());
+        }else if(dto.getBidCode()>0){
+            searchMap.put("id",dto.getBidCode());
+        }
+        Map bidMap=this.getCurrentBidMapBySearchMap(searchMap);
         if(bidMap==null){
             return new ResponseApiVO(-2,"取消失败",null);
         }
@@ -336,9 +348,9 @@ public class BiddingService extends CommonService {
     public ResponseApiVO getCurrentMaxPrice(String token)throws Exception{
         String groupId=TokenUtil.getGroupId(token);
         Integer storeId=TokenUtil.getStoreId(token);
-
         if(StringUtils.isBlank(groupId)){
-            return new ResponseApiVO(-2,"请先选择一个直播房间",null);
+            return new ResponseApiVO(-2,"请先选择直播房间",null);
+
         }
 
         if(storeId==null){
@@ -357,12 +369,8 @@ public class BiddingService extends CommonService {
         }
 
         //查询竞价表是否有记录，若有或者未过期的就表示陪玩中，否则就是空闲
-        Map searchMap=new HashMap();
-       // searchMap.put("endTime,>=",new Date());
-        searchMap.put("groupId",groupId);
-        List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
-        if(bidList!=null && !bidList.isEmpty()){
-            Map bidMap=bidList.get(0);
+        Map bidMap=getCurrentBidByUserId(TokenUtil.getUserId(token));
+        if(bidMap!=null && !bidMap.isEmpty()){
             Integer bidCode=(Integer) bidMap.get("id");
             Date endTime=(Date) bidMap.get("endTime");
             String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+bidCode+"-"+groupId);
@@ -392,14 +400,13 @@ public class BiddingService extends CommonService {
                 return new ResponseApiVO(1,"成功",map);
             }
         }
-        Integer bidPrice=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",Integer.parseInt(useridStr),"bidPrice",Integer.class);
         // BiddingVO vo=new BiddingVO();
         // vo.setPrice(bidPrice+"");
         Map map=new HashMap();
         map.put("status",6);
         map.put("statusMsg","空闲中");
-        map.put("price",bidPrice);
-        return new ResponseApiVO(2,"目前还没人竞价,起投金额为："+(double)bidPrice/100+"元",map);
+        map.put("price", gpo.getBidPrice());
+        return new ResponseApiVO(2,"目前还没人竞价,起投金额为："+(double) gpo.getBidPrice()/100+"元",map);
 
        /* if(bidList!=null && !bidList.isEmpty()){
             Map dataMap=(Map)bidList.get(0);
@@ -456,10 +463,28 @@ public class BiddingService extends CommonService {
         }
         return null;
     }
+    public Map getCurrentBidByUserId(Integer userId){
+        Map searchMap=new HashMap();
+        //searchMap.put("bidEndTime,>=",new Date());
+        searchMap.put("userId",userId);
+        List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
+        if(bidList!=null && !bidList.isEmpty()){
+            return bidList.get(0);
+        }
+        return null;
+    }
     public Map getCurrentBidMapNoBidEndTime(String groupId){
         Map searchMap=new HashMap();
         //searchMap.put("bidEndTime,>=",new Date());
         searchMap.put("groupId",groupId);
+        List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
+        if(bidList!=null && !bidList.isEmpty()){
+            return bidList.get(0);
+        }
+        return null;
+    }
+    public Map getCurrentBidMapBySearchMap(Map searchMap){
+
         List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
         if(bidList!=null && !bidList.isEmpty()){
             return bidList.get(0);
@@ -489,7 +514,7 @@ public class BiddingService extends CommonService {
         //searchMap.put("bidEndTime,>=",new Date());
        // searchMap.put("groupId",groupId);
         //searchMap.put("bidEndTime,>=",new Date());
-        Map bidMap=this.getCurrentBidMapNoBidEndTime(groupId);
+        Map bidMap=this.getCurrentBidByUserId(Integer.parseInt(useridStr));
         //List<Map> bidList=this.commonList("ddw_goddess_bidding","createTime desc",1,1,searchMap);
         Integer bidId=null;
         boolean flag=false;
@@ -720,12 +745,14 @@ public class BiddingService extends CommonService {
             Date endTime=(Date) a.get("endTime");
             Date bidEndTime=(Date) a.get("bidEndTime");
             Integer bidUserId=(Integer) a.get("luckyUserId");
-            // Integer goddessUserId=(Integer) a.get("userId");
+            Integer bidCode=(Integer) a.get("bidCode");
+            Integer goddessUserId=(Integer) a.get("userId");
+            Integer status=(Integer) a.get("bidStatus");
             if(bidUserId==null){
                 if(endTime==null){
                     if(DateUtils.addMinutes(bidEndTime,30).before(new Date())){
-                        a.put("status",BiddingStatusEnum.Status8.getCode());
-                        a.put("statusMsg",BiddingStatusEnum.Status8.getName());
+                        a.put("status",BiddingStatusEnum.Status10.getCode());
+                        a.put("statusMsg",BiddingStatusEnum.Status10.getName());
                     }else{
                         a.put("status",BiddingStatusEnum.Status1.getCode());
                         a.put("statusMsg",BiddingStatusEnum.Status1.getName());
@@ -734,25 +761,39 @@ public class BiddingService extends CommonService {
 
             }else if(bidUserId>0 && endTime==null){
                 if(DateUtils.addMinutes(bidEndTime,30).before(new Date())){
-                    a.put("status",BiddingStatusEnum.Status8.getCode());
-                    a.put("statusMsg",BiddingStatusEnum.Status8.getName());
+                    a.put("status",BiddingStatusEnum.Status10.getCode());
+                    a.put("statusMsg",BiddingStatusEnum.Status10.getName());
                 }else{
-                    a.put("status",BiddingStatusEnum.Status7.getCode());
-                    a.put("statusMsg",BiddingStatusEnum.Status7.getName());
+                    String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+bidCode+"-"+goddessUserId);
+                    if(StringUtils.isNotBlank(retStr)){
+                        a.put("status",BiddingStatusEnum.Status7.getCode());
+                        a.put("statusMsg",BiddingStatusEnum.Status7.getName());
+                    }else{
+                        a.put("status",BiddingStatusEnum.Status9.getCode());
+                        a.put("statusMsg",BiddingStatusEnum.Status9.getName());
+                    }
+
                 }
 
             }else if(endTime.after(currentDate)){
                 a.put("status",BiddingStatusEnum.Status5.getCode());
                 a.put("statusMsg",BiddingStatusEnum.Status5.getName());
             }else{
-                a.put("status",BiddingStatusEnum.Status8.getCode());
-                a.put("statusMsg",BiddingStatusEnum.Status8.getName());
+               if(BiddingStatusEnum.Status10.getCode().equals(status)){
+                   a.put("status",BiddingStatusEnum.Status10.getCode());
+                   a.put("statusMsg",BiddingStatusEnum.Status10.getName());
+               }else{
+                   a.put("status",BiddingStatusEnum.Status8.getCode());
+                   a.put("statusMsg",BiddingStatusEnum.Status8.getName());
+               }
+
             }
             // a.put("headImg",this.userInfoService.getPhotograph(goddessUserId));
             if(endTime!=null) a.replace("endTime",DateFormatUtils.format(endTime,"yyyy-MM-dd HH:mm:ss"));
             a.replace("createTime",DateFormatUtils.format((Date)a.get("createTime"),"MM/dd HH:mm:ss"));
             a.remove("luckyUserId");
             a.remove("bidEndTime");
+            a.remove("userId");
         });
         return bidList;
     }
@@ -777,7 +818,7 @@ public class BiddingService extends CommonService {
             searchMap.put("luckyDogUserId",userId);
         }
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.createTime,t1.bidEndTime,t1.price,t1.endTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName",p.getStartRow(),p.getEndRow(),searchMap,cb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId",p.getStartRow(),p.getEndRow(),searchMap,cb);
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         if(bidList==null || bidList.isEmpty()){
             return new ResponseApiVO(2,"没有竞价信息",new ListVO(new ArrayList()));
@@ -905,7 +946,7 @@ public class BiddingService extends CommonService {
 
         }
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.createTime,t1.bidEndTime,t1.price,t1.endTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName",0,1,searchMap,cb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId",0,1,searchMap,cb);
 
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         if(bidList==null || bidList.isEmpty()){
@@ -937,13 +978,15 @@ public class BiddingService extends CommonService {
 
     }
     public ResponseApiVO getCurrentAllBidding(String token)throws Exception{
-        String streamId=TokenUtil.getStreamId(token);
+       /* String streamId=TokenUtil.getStreamId(token);
         if(streamId==null){
             return new ResponseApiVO(-2,"直播房间不存在",null);
-        }
+        }*/
 
-        String groupId=streamId.replaceFirst("[0-9]+_","");
-        Map bidMap=this.getCurrentBidMapNoBidEndTime(groupId);
+       // String groupId=streamId.replaceFirst("[0-9]+_","");
+
+        Map bidMap=getCurrentBidByUserId(TokenUtil.getUserId(token));
+
         if(bidMap==null){
             Map map=new HashMap();
             map.put("status",6);
@@ -960,8 +1003,14 @@ public class BiddingService extends CommonService {
                 voMap.put("statusMsg","约玩中");
                 return new ResponseApiVO(4,"陪玩中，空闲时间约在"+this.getSurplusTimeStr(bidMap)+"后",voMap);
 
+            }else if(endTime!=null && endTime.before(currentDate)){
+                Map map=new HashMap();
+                map.put("status",6);
+                map.put("statusMsg","空闲中");
+                return new ResponseApiVO(3,"空闲中",map);
             }
         }
+        String groupId=(String)bidMap.get("groupId");
         List<BiddingVO> list=(List)CacheUtil.get("pay","groupId-"+(Integer)bidMap.get("id")+"-"+groupId);
 
         if(list==null || list.isEmpty()){
@@ -1020,7 +1069,7 @@ public class BiddingService extends CommonService {
         BigDecimal point=v.subtract(BigDecimal.valueOf(part)).multiply(BigDecimal.valueOf(60));
         System.out.println(part+"分"+point.intValue()+"秒");
         System.out.println(new ArrayList().remove("125"));
-        String useridStr="20202_1_41_180606213932".replaceAll("^([0-9]+_)(.*_)([0-9]+)$","$2");
+        String useridStr="1_41_180606213932".replaceAll("^([0-9]+_)(.*)(_[0-9]+)$","$2");
         System.out.println(useridStr);
 
     }

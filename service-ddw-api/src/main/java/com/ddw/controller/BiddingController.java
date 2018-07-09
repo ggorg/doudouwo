@@ -172,7 +172,7 @@ public class BiddingController {
     @ApiOperation(value = "取消支付(普通用户)",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/cancel/pay/user/{token}")
     @ResponseBody
-    public ResponseApiVO<BiddingPayVO> cancelByUser(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GroupIdDTO args){
+    public ResponseApiVO<BiddingPayVO> cancelByUser(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingUserCancelPayDTO args){
         try {
             ResponseApiVO rs=this.biddingService.cancelBidPayByUserId(token,args,true);
             logger.info("cancelByUser->取消支付(普通用户)->response->"+rs);

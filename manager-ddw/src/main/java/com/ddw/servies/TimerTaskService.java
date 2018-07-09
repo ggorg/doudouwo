@@ -113,6 +113,7 @@ public class TimerTaskService extends CommonService {
                     Map setParam=new HashMap();
                     setParam.put("endTime",new Date());
                     setParam.put("updateTime",new Date());
+                    setParam.put("status",BiddingStatusEnum.Status10.getCode());
                     Map searchParam=new HashMap();
                     searchParam.put("id,in",bids.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
                     this.commonUpdateByParams("ddw_goddess_bidding",setParam,searchBid);
