@@ -148,9 +148,7 @@ public class BaseOrderService extends CommonService {
                 String ub =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
                 Integer earnest=(Integer)CacheUtil.get("pay","bidding-earnest-pay-"+ub);
 
-                CacheUtil.delete("pay","bidding-earnest-pay-"+ub);
-                CacheUtil.delete("pay","pre-pay-"+orderNo);
-                CacheUtil.delete("pay","orderObject-"+orderNo);
+
                 OrderViewPO po=new OrderViewPO();
                 po.setCreateTime(new Date());
                 po.setName(OrderTypeEnum.OrderType4.getName());
@@ -165,6 +163,9 @@ public class BaseOrderService extends CommonService {
                 po.setShipStatus(cacheOrder.getDoShipStatus());
                 po.setStoreId(cacheOrder.getDoSellerId());
                 this.orderViewService.saveOrderView(po);
+                CacheUtil.delete("pay","bidding-earnest-pay-"+ub);
+                CacheUtil.delete("pay","pre-pay-"+orderNo);
+                CacheUtil.delete("pay","orderObject-"+orderNo);
             }else if(OrderTypeEnum.OrderType5.getCode().equals(doType)){
 
                 List<String> ubs =(List) CacheUtil.get("pay","pre-pay-"+orderNo);
@@ -307,7 +308,7 @@ public class BaseOrderService extends CommonService {
                     po.setOrderId(OrderUtil.getOrderId(orderNo));
                     po.setOrderNo(orderNo);
                     po.setPrice((Integer) ticketMap.get("ticketPrice"));
-                    po.setOrderType(OrderTypeEnum.OrderType6.getCode());
+                    po.setOrderType(OrderTypeEnum.OrderType7.getCode());
 
                     po.setUserId(cacheOrder.getDoCustomerUserId());
                     po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
@@ -396,6 +397,7 @@ public class BaseOrderService extends CommonService {
             exitOrderPO.setExitCost((Integer) o.get("doCost"));
             exitOrderPO.setTotalCost(exitOrderPO.getExitCost());
             exitOrderPO.setOrderId((Integer) o.get("id"));
+            exitOrderPO.setOrderType((Integer)o.get("doType"));
             exitOrderPO.setOrderNo(OrderUtil.createOrderNo((String)o.get("doOrderDate"),(Integer) o.get("doType"),(Integer) o.get("doPayType"),exitOrderPO.getOrderId()));
             exitOrderPO.setExitOrderNo(DateFormatUtils.format(new Date(),"yyyyMMddHHmmss")+ RandomStringUtils.randomNumeric(6));
             ResponseVO inserRes=this.commonInsert("ddw_exit_order",exitOrderPO);

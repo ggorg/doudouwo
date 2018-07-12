@@ -138,10 +138,10 @@ public class BiddingController {
     @ApiOperation(value = "查询待支付的竞价金额(普通用户)",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/bidding/waitpay/{token}")
     @ResponseBody
-    public ResponseApiVO<BiddingPayVO> waitpay(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GroupIdDTO args){
+    public ResponseApiVO<BiddingPayVO> waitpay(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingSearchWaitPayDTO args){
         try {
             logger.info("waitpay->查询待支付的竞价金额(普通用户)->request->"+args);
-            ResponseApiVO rs=this.biddingService.searchWaitPayByUser(args.getGroupId(),token);
+            ResponseApiVO rs=this.biddingService.searchWaitPayByUser(token,args);
             logger.info("waitpay->查询待支付的竞价金额(普通用户)->response->"+rs);
 
             return rs;
@@ -155,10 +155,10 @@ public class BiddingController {
     @ApiOperation(value = "查询待支付的竞价金额(女神)",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/bidding/waitpay/goddess/{token}")
     @ResponseBody
-    public ResponseApiVO<BiddingPayVO> waitpayByGoddess(@PathVariable String token){
+    public ResponseApiVO<BiddingPayVO> waitpayByGoddess(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)BiddingSearchWaitPayDTO args){
         try {
 
-            ResponseApiVO rs=this.biddingService.searchWaitPayByGoddess(token);
+            ResponseApiVO rs=this.biddingService.searchWaitPayByGoddess(token,args);
             logger.info("waitpayByGoddess->查询待支付的竞价金额(女神)->response->"+rs);
 
             return rs;

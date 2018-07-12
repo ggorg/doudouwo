@@ -5,7 +5,11 @@
 <head>
   <meta charset="UTF-8" />
   <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
-
+  <style type="text/css">
+    .mystyle1{
+      line-height: 35px;
+    }
+  </style>
 </head>
 <body style="padding:10px 10px 10px 10px">
 <form class="layui-form layui-form-pane" >
@@ -20,19 +24,20 @@
   <div class="layui-form-item">
     <label class="layui-form-label">价格(分)</label>
     <div class="layui-input-block">
-      <input type="text" name="drCost" required="required" title="价格"  lay-verify="required" th:value="${ds!=null? ds['drCost']:''}" placeholder="请输入价格" autocomplete="off" class="layui-input" />
+      <input type="number" name="drCost" required="required" title="价格"  id="drCost"  lay-verify="required|numMax10" th:value="${ds!=null? ds['drCost']:''}" placeholder="请输入价格" autocomplete="off" class="layui-input" />
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">活动价格(分)</label>
     <div class="layui-input-block">
-      <input type="text" name="drDiscount" title="活动价格"   th:value="${ds!=null? ds['drDiscount']:''}" placeholder="请输入活动价格" autocomplete="off" class="layui-input" />
+      <input type="number" name="drDiscount" title="活动价格"   th:value="${ds!=null? ds['drDiscount']:''}" placeholder="请输入活动价格" autocomplete="off" class="layui-input" />
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">逗币数额</label>
     <div class="layui-input-block">
-      <input type="text" name="drDoubiNum" title="逗币数额"   th:value="${ds!=null? ds['drDoubiNum']:''}" placeholder="请输入逗币数额" autocomplete="off" class="layui-input" />
+      <div class="layui-input mystyle1" id="db" th:text="${ds!=null? ds['drDoubiNum']:''}" ></div>
+
     </div>
   </div>
 
@@ -48,7 +53,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label">描述</label>
     <div class="layui-input-block">
-      <textarea placeholder="请输入描述" name="drDesc" th:text="${ds!=null? ds['drDesc']:''}" class="layui-textarea"></textarea>
+      <textarea placeholder="请输入描述" lay-verify="max200" name="drDesc" th:text="${ds!=null? ds['drDesc']:''}" class="layui-textarea"></textarea>
     </div>
   </div>
 
@@ -76,6 +81,7 @@
     });
     function initProForm(layui){
         var form = layui.form;
+        var layer=layui.layer;
         form.verify({
             required:function(value,item){
                 var msg=item.getAttribute("placeholder");
@@ -95,6 +101,11 @@
                 if(value.length>200){
                     return '活动描述至多得200个字符啊';
                 }
+            },
+            numMax10:function(value,item){
+                if(value!="" && value<10){
+                    return '价格不能小于10分';
+                }
             }
         })
         $(".layui-form").submit(function(){
@@ -102,6 +113,19 @@
             return  commonSubmit("do-edit",$(".layui-form"));
 
         })
+        $("#drCost").blur(function(){
+            handleDb($(this));
+        })
+
+        function handleDb(obj){
+            if(obj.val()!="" && obj.val()<10){
+                layer.msg("价格不能小于10分");
+
+                obj.focus();
+            }else if(obj.val()!="" ){
+                $("#db").text(obj.val()/10);
+            }
+        }
     }
 </script>
 </body>

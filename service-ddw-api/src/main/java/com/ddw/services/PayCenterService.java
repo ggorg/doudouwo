@@ -353,21 +353,48 @@ public class PayCenterService extends BaseOrderService {
             if(giftList==null){
                 return new ResponseApiVO(-2,"礼物不存在",null);
             }
+            buyInProMap=new HashMap();
             final Map<Integer,Map> buyInGoiftMap=new HashMap();
             giftList.forEach(a-> buyInGoiftMap.put((Integer) a.get("id"),a));
             Integer coutCost=0;
             Integer actPrice=null;
             Integer price=null;
+            Map insertM=null;
+            Integer giftPrice=0;
             for(Integer code:codesList){
+                if(!buyInGoiftMap.containsKey(code)){
+                    return new ResponseApiVO(-2,buyInGoiftMap.get(code).get("dgName")+"可能已下架",null);
+                }
+
                 actPrice=(Integer)buyInGoiftMap.get(code).get("dgActPrice");
                 price=(Integer)buyInGoiftMap.get(code).get("dgPrice");
-                coutCost=coutCost+(actPrice!=null && actPrice>0?actPrice:price);
+                giftPrice=actPrice!=null && actPrice>0?actPrice:price;
+                if(buyInProMap.containsKey(code)){
+                    insertM=buyInProMap.get(code);
+                    Integer currentPrice=(Integer) insertM.get("giftPrice");
+                    Integer num=(Integer) insertM.get("num");
+                    insertM.replace("giftPrice",currentPrice+giftPrice);
+                    insertM.replace("num",num+1);
+                }else{
+                    insertM=new HashMap();
+                    insertM.put("createTime",new Date());
+                    insertM.put("updateTime",new Date());
+                    insertM.put("giftId",code);
+                    insertM.put("giftName",buyInGoiftMap.get(code).get("dgName").toString());
+                    insertM.put("giftImg",buyInGoiftMap.get(code).get("dgImgPath").toString());
+                    insertM.put("giftPrice",giftPrice);
+                    insertM.put("userId",orderPO.getDoCustomerUserId());
+                    insertM.put("num",1);
+                    buyInProMap.put(code,insertM);
+                }
+
+                coutCost=coutCost+giftPrice;
             }
             if(coutCost>walletVo.getCoin()){
                 return new ResponseApiVO(-2,"逗币不足，请充值",null);
             }
             orderPO.setDoCost(coutCost);
-            buyInProMap=buyInGoiftMap;
+            //buyInProMap=buyInGoiftMap;
         }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus0.getCode());
 
@@ -547,7 +574,7 @@ public class PayCenterService extends BaseOrderService {
                 }
                 CacheUtil.put("pay","goodsPru-order-"+orderNo,new ArrayList(collection));
             }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
-                Map insertM=null;
+
                 Integer goddessUserId=-1;
                 if(StringUtils.isNotBlank(groupId)) {
                     LiveRadioPO po = this.liveRadioService.getLiveRadioByGroupId(groupId);
@@ -556,50 +583,52 @@ public class PayCenterService extends BaseOrderService {
                     }
                     goddessUserId=po.getUserid();
                 }
-                Map cacheMap=null;
                 Map giftMap=null;
-                Integer actPrice=null;
+                Integer giftPrice=null;
                 Integer price=null;
-                List giftList=new ArrayList();
-                for(Integer code:codes){
+               // List giftList=new ArrayList();
+                Set<Integer> keys=buyInProMap.keySet();
+                Integer num=0;
+                String giftImg=null;
+                for(Integer code:keys){
                     giftMap=buyInProMap.get(code);
 
-                    actPrice=(Integer)giftMap.get("dgActPrice");
-                    price=(Integer)giftMap.get("dgPrice");
-                    insertM=new HashMap();
-                    cacheMap=new HashMap();
-                    insertM.put("orderNo",orderNo);
-                    insertM.put("orderId",insertResponseVO.getData());
-                    insertM.put("createTime",new Date());
-                    insertM.put("updateTime",new Date());
-                    insertM.put("giftId",giftMap.get("id"));
-                    insertM.put("giftName",giftMap.get("dgName").toString());
-                    insertM.put("giftPrice",actPrice!=null && actPrice>0?actPrice:price);
-                    insertM.put("userId",orderPO.getDoCustomerUserId());
-                    cacheMap.put("cost",actPrice!=null && actPrice>0?actPrice:price);
-                    cacheMap.put("headImg",giftMap.get("dgImgPath"));
-                    cacheMap.put("name",giftMap.get("dgName").toString());
-                    giftList.add(cacheMap);
-                    if(StringUtils.isNotBlank(groupId)){
-                        insertM.put("acceptUserId",goddessUserId);
-                        insertM.put("used",1);
-                    }else{
-                        insertM.put("used",0);
+                    giftPrice=(Integer)giftMap.get("giftPrice");
+                    giftMap.put("orderNo",orderNo);
+                    giftMap.put("orderId",insertResponseVO.getData());
 
-                    }
-                    resVo=this.commonInsertMap("ddw_order_gift",insertM);
-                    if(resVo.getReCode()!=1){
-                        throw new GenException("礼物支付失败");
+                   // cacheMap.put("cost",actPrice!=null && actPrice>0?actPrice:price);
+                   // cacheMap.put("headImg",giftMap.get("dgImgPath"));
+                   // cacheMap.put("name",giftMap.get("dgName").toString());
+                   // giftList.add(cacheMap);
 
+                    num=(Integer) giftMap.get("num");
+                    giftImg=(String) giftMap.get("giftImg");
+
+                    for(int i=0;i<num;i++){
+                        if(StringUtils.isNotBlank(groupId)){
+                            giftMap.put("acceptUserId",goddessUserId);
+                            giftMap.put("used",1);
+                        }else{
+                            giftMap.put("used",0);
+                        }
+                        giftMap.put("num",1);
+                        giftMap.remove("giftImg");
+                        resVo=this.commonInsertMap("ddw_order_gift",giftMap);
+                        if(resVo.getReCode()!=1){
+                            throw new GenException("礼物支付失败");
+
+                        }
                     }
+
                     OrderViewPO po=new OrderViewPO();
                     po.setCreateTime(new Date());
-                    po.setName(giftMap.get("dgName").toString());
-                    po.setHeadImg(giftMap.get("dgImgPath").toString());
-                    po.setNum(1);
+                    po.setName(giftMap.get("giftName").toString());
+                    po.setHeadImg(giftImg);
+                    po.setNum(num);
                     po.setOrderId(OrderUtil.getOrderId(orderNo));
                     po.setOrderNo(orderNo);
-                    po.setPrice(actPrice!=null && actPrice>0?actPrice:price);
+                    po.setPrice(giftPrice);
                     po.setOrderType(OrderTypeEnum.OrderType6.getCode());
 
                     po.setUserId(userId);

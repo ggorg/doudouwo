@@ -38,6 +38,20 @@ public class AppOrderController {
 
     }
     @Token
+    @ApiOperation(value = "退款订单列表",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/refund/list/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<RefundOrderViewVO>> getRefundOrderList(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO dto){
+        try {
+
+            return appOrderService.getExitOrderList(token,dto);
+        }catch (Exception e){
+            logger.error("AppOrderController-RefundOrderViewVO-》退款订单列表-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"查询失败",null);
+
+    }
+    @Token
     @ApiOperation(value = "查看约玩订单信息（用户）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/bid/user/order/info/{token}")
     @ResponseBody

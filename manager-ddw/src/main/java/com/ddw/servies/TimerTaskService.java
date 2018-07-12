@@ -94,9 +94,11 @@ public class TimerTaskService extends CommonService {
 
             List<Map>  listMap= this.getCommonMapper().selectObjects(csb);
             if(listMap!=null){
-                List orderIds=new ArrayList();
-                List bids=new ArrayList();
-                List<String> bidCacheList=new ArrayList();
+                Set orderIds=new HashSet();
+                Set bids=new HashSet();
+
+                Set<String> bidCacheList=new HashSet();
+
                 for(Map map:listMap){
                     Date bidEndTime=(Date) map.get("bidEndTime");
                     Integer bidUserId=(Integer) map.get("luckyUserId");
@@ -120,7 +122,7 @@ public class TimerTaskService extends CommonService {
 
                 }
                 if(!!orderIds.isEmpty()){
-                    baseOrderService.baseExitOrder(orderIds);
+                    baseOrderService.baseExitOrder(new ArrayList<>(orderIds));
                 }
                 logger.info("扫描空闲的竞价："+bidCacheList);
                 if(!bidCacheList.isEmpty()){

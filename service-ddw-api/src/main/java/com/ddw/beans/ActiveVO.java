@@ -19,9 +19,20 @@ public class ActiveVO<T> {
 
     @ApiModelProperty(name="activeTime",value="活动时间",example="活动时间")
     private String activeTime;
+    @ApiModelProperty(name="createTime",value="创建时间",example="创建时间")
+    private String createTime;
 
     @ApiModelProperty(name="jumpUrl",value="跳转地址",example="跳转地址")
     private String jumpUrl;
+
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
 
     public String getJumpUrl() {
         return jumpUrl;

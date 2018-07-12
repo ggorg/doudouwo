@@ -75,18 +75,15 @@ public class DouBiService extends CouponService{
             return new ResponseVO(-2,"请填写名称",null);
 
         }
-        if(dto.getDrCost()==null ||dto.getDrCost()<0){
-            return new ResponseVO(-2,"请填写有效的价格",null);
+        if(dto.getDrCost()==null ||dto.getDrCost()<10){
+            return new ResponseVO(-2,"请填写有效的价格，至少10分",null);
 
         }
         if(dto.getDrDiscount()!=null && dto.getDrDiscount()<0){
             return new ResponseVO(-2,"请填写有效的活动价格",null);
 
         }
-        if(dto.getDrDoubiNum()==null ||dto.getDrDoubiNum()<0){
-            return new ResponseVO(-2,"请填写有逗币数额",null);
-
-        }
+        dto.setDrDoubiNum((Integer) (dto.getDrCost()/10));
         Map map= BeanToMapUtil.beanToMap(dto,true);
         map.put("updateTime",new Date());
         if(dto.getId()==null){

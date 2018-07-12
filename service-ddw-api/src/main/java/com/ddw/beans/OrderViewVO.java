@@ -18,7 +18,7 @@ public class OrderViewVO {
     private Integer price;
 
     @ApiModelProperty(name="createTime",value="时间",example="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(timezone = "GMT+8", pattern = "MM/dd HH:mm:ss")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     @ApiModelProperty(name="orderNo",value="订单号",example="xxxxx")

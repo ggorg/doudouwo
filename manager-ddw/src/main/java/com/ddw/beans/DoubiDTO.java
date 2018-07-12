@@ -7,6 +7,15 @@ public class DoubiDTO {
     private Integer drDiscount;
     private Integer drSort;
     private Integer drDoubiNum;
+    private String drDesc;
+
+    public String getDrDesc() {
+        return drDesc;
+    }
+
+    public void setDrDesc(String drDesc) {
+        this.drDesc = drDesc;
+    }
 
     public Integer getDrDoubiNum() {
         return drDoubiNum;

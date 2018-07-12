@@ -28,12 +28,35 @@ public class BiddingOrderListVO implements Serializable {
 
     @ApiModelProperty(name="endTime",value="结束时间",example="结束时间")
     private String endTime;
+
+    @ApiModelProperty(name="startTime",value="开始时间",example="开始时间")
+    private String startTime;
+
+    @ApiModelProperty(name="payEndTime",value="支付结束时间",example="支付结束时间")
+    private String payEndTime;
     @ApiModelProperty(name="createTime",value="创建时间",example="创建时间")
     private String createTime;
     @ApiModelProperty(name="headImgUrl",value="头像",example="头像")
     private String headImgUrl;
     @ApiModelProperty(name="bidCode",value="竞价code",example="bidCode")
     private Integer bidCode;
+
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getPayEndTime() {
+        return payEndTime;
+    }
+
+    public void setPayEndTime(String payEndTime) {
+        this.payEndTime = payEndTime;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
