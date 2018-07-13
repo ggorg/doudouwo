@@ -285,7 +285,12 @@ public abstract class CommonService {
     protected long commonSumByBySingleSearchParam(String tableName,String sumParamName,String searchName,Object searchValue){
         Map sumCondition=new HashMap();
         sumCondition.put(searchName,searchValue);
-        List list= this.commonMapper.selectObjects(new CommonSearchBean(tableName,null,"sum(t1."+sumParamName+") sumPrice",null,null,sumCondition));
+
+        return commonSumByBySingleSearchMap(tableName,sumParamName,sumCondition);
+    }
+    protected long commonSumByBySingleSearchMap(String tableName,String sumParamName,Map searchMap){
+
+        List list= this.commonMapper.selectObjects(new CommonSearchBean(tableName,null,"sum(t1."+sumParamName+") sumPrice",null,null,searchMap));
         if(list==null || list.isEmpty()){
             return 0;
         }

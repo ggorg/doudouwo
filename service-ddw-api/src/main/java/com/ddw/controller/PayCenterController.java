@@ -4,6 +4,7 @@ import com.ddw.beans.*;
 import com.ddw.enums.PayTypeEnum;
 import com.ddw.services.PayCenterService;
 import com.ddw.services.ReviewService;
+import com.ddw.services.WithdrawService;
 import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.gen.common.exception.GenException;
@@ -29,6 +30,9 @@ public class PayCenterController {
     @Autowired
     private PayCenterService payCenterService;
 
+    @Autowired
+    private WithdrawService withdrawService;
+
     @Token
     @ApiOperation(value = "查询支付状态",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/paystatus/{token}")
@@ -45,22 +49,7 @@ public class PayCenterController {
             return new ResponseApiVO(-1,"支付状态查询失败",null);
         }
     }
-    @Idemp
-    @Token
-    @ApiOperation(value = "提现申请",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/review/withdrawmoney/{token}")
-    @ResponseBody
-    public ResponseApiVO withdrawMoney(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)MoneyDTO args){
-        try {
-            logger.info("withdrawMoney->request："+args);
 
-            //return this.walletService.searchPayStatus(token,args);
-        }catch (Exception e){
-            logger.error("PayCenterController-withdrawMoney-》提现申请-》系统异常",e);
-        }
-        return new ResponseApiVO(-1,"提现申请失败",null);
-
-    }
     @Idemp
     @Token
     @ApiOperation(value = "统一支付",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -177,4 +166,5 @@ public class PayCenterController {
             return new ResponseApiVO(-1,"逗币支付",null);
         }
     }
+
 }

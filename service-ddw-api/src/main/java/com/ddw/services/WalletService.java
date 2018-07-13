@@ -136,7 +136,10 @@ public class WalletService extends CommonService {
      */
     public ResponseApiVO getCoin(Integer userid)throws Exception{
         WalletDoubiVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletDoubiVO.class);
-
+        Map searchMap=new HashMap();
+        searchMap.put("userId",userid);
+        searchMap.put("orderType",OrderTypeEnum.OrderType6.getCode());
+        balanceVO.setExpenseCoin((int)this.commonSumByBySingleSearchMap("ddw_order_view","price",searchMap));
         return new ResponseApiVO(1,"成功",balanceVO);
     }
     public CouponPO getCoupon(Integer couponId,Integer userId,Integer storeId)throws Exception{
