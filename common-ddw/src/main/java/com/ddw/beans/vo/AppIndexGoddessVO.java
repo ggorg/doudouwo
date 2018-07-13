@@ -25,7 +25,7 @@ public class AppIndexGoddessVO implements Serializable{
     private String ggradeName;
     @ApiModelProperty(name="bidPrice",value="竞价金额",example="3000")
     private Integer bidPrice;
-    @ApiModelProperty(name="liveRadioFlag",value="直播标记，0未申请，1审核通过,2审核中,3拒绝",example="1")
+    @ApiModelProperty(name="liveRadioFlag",value="直播标记，等待直播：0，直播中：1，关闭：2",example="1")
     private Integer liveRadioFlag;
     @ApiModelProperty(name="code",value="直播房间号,直播状态为1时才有",example="1")
     private Integer code;

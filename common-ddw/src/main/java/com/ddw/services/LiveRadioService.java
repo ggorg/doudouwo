@@ -133,7 +133,7 @@ public class LiveRadioService extends CommonService{
             ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
             while (appIndexGoddessIterator.hasNext()){
                 AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
-                if(appIndexGoddessVO.getId() == userId){
+                if(appIndexGoddessVO.getId() == userId || appIndexGoddessVO.getId() .equals( userId)){
                     appIndexGoddessVO.setLiveRadioFlag(flag);
                 }
             }

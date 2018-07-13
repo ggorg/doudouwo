@@ -21,7 +21,7 @@
         from ddw_goddess t1 left join ddw_my_attention t2 on t1.userId=t2.goddessId and t1.storeId = #{storeId}
         LEFT join ddw_userinfo t3 on t1.userId = t3.id
         left join ddw_goddess_grade t4 on t4.id=t3.goddessGradeId
-        left join (SELECT a.userId,imgUrl from ddw_photograph a,ddw_goddess b where a.userId = b.userId ORDER BY a.createTime desc limit 1)t5 on t1.userId = t5.userId
+        left join (SELECT a.userId,imgUrl from ddw_photograph a,ddw_goddess b where a.userId = b.userId  ORDER BY a.createTime desc limit 1)t5 on t1.userId = t5.userId
         group  by t1.userId,t1.bidPrice,t5.imgUrl
         order by count(1) desc
         limit #{start},#{end}

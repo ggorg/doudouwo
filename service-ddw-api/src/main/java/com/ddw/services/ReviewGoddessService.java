@@ -139,12 +139,18 @@ public class ReviewGoddessService extends CommonService {
         while (appIndexGoddessIterator.hasNext()){
             AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
             ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(appIndexGoddessVO.getId(),storeId);
-            if(rav.getReCode() == 2 || rav.getReCode() == -2002){
-                appIndexGoddessVO.setLiveRadioFlag(1);
-            }else if(rav.getReCode() == -2003){
-                appIndexGoddessVO.setLiveRadioFlag(2);
-            }else if(rav.getReCode() == 1){
+            /**
+             *    liveStatus0("等待直播",0)-》2,"直播等待中，请前往直播房间
+             liveStatus1("正在直播",1)-》-2002,"直播房间已开，请关闭再申请"
+             liveStatus2("停用",2);其它
+
+             */
+            if(rav.getReCode() == 2){
                 appIndexGoddessVO.setLiveRadioFlag(0);
+            }else if(rav.getReCode() == -2002){
+                appIndexGoddessVO.setLiveRadioFlag(1);
+            }else {
+                appIndexGoddessVO.setLiveRadioFlag(2);
             }
             if(myAttentionGoddessList != null){
                 for(UserInfoVO myAttentionGoddess:myAttentionGoddessList){
@@ -181,13 +187,19 @@ public class ReviewGoddessService extends CommonService {
             AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
             ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(appIndexGoddessVO.getId(),storeId);
             LiveRadioPO liveRadioP = (LiveRadioPO)rav.getData();
-            if(rav.getReCode() == 2 || rav.getReCode() == -2002){
+            /**
+             *    liveStatus0("等待直播",0)-》2,"直播等待中，请前往直播房间
+             liveStatus1("正在直播",1)-》-2002,"直播房间已开，请关闭再申请"
+             liveStatus2("停用",2);其它
+
+             */
+            if(rav.getReCode() == 2){
+                appIndexGoddessVO.setLiveRadioFlag(0);
+            }else if(rav.getReCode() == -2002){
                 appIndexGoddessVO.setLiveRadioFlag(1);
                 appIndexGoddessVO.setCode(liveRadioP.getId());
-            }else if(rav.getReCode() == -2003){
+            }else{
                 appIndexGoddessVO.setLiveRadioFlag(2);
-            }else if(rav.getReCode() == 1){
-                appIndexGoddessVO.setLiveRadioFlag(0);
 //            }else {
 //                //判断审核缓存是否存在
 //                if (CacheUtil.get("review", "liveRadio" + appIndexGoddessVO.getId()) == null) {
