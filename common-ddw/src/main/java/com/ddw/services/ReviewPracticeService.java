@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.beans.PracticeGamePO;
 import com.ddw.beans.PracticePO;
 import com.ddw.beans.ReviewPO;
 import com.ddw.beans.ReviewPracticePO;
@@ -76,6 +77,15 @@ public class ReviewPracticeService extends CommonService {
         practicePO.setCreateTime(new Date());
         practicePO.setUpdateTime(new Date());
         this.commonInsert("ddw_practice",practicePO);
+        //TODO 判断更新代练段位等级
+        //插入代练与游戏关联表
+        ReviewPracticePO reviewPracticePO = this.getReviewPracticeByCode(drBusinessCode);
+        PracticeGamePO practiceGamePO = new PracticeGamePO();
+        practiceGamePO.setCreateTime(new Date());
+        practiceGamePO.setGameId(reviewPracticePO.getGameId());
+        practiceGamePO.setRankId(reviewPracticePO.getRankId());
+        practiceGamePO.setAppointment(0);
+        this.commonInsert("ddw_practice_game",practiceGamePO);
         return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
     }
 

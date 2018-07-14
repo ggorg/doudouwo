@@ -8,16 +8,18 @@ import java.util.Date;
 public class RankPO {
     private int id;
     private int gameId;
+    private int sort;
+    private int star;
+    private int money;
+    private String rank;
     private Date createTime;
 
-    private String rank;
-
-    public Date getCreateTime() {
-        return createTime;
+    public int getId() {
+        return id;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getGameId() {
@@ -28,12 +30,28 @@ public class RankPO {
         this.gameId = gameId;
     }
 
-    public int getId() {
-        return id;
+    public int getSort() {
+        return sort;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
+
+    public int getStar() {
+        return star;
+    }
+
+    public void setStar(int star) {
+        this.star = star;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
     }
 
     public String getRank() {
@@ -42,5 +60,13 @@ public class RankPO {
 
     public void setRank(String rank) {
         this.rank = rank;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

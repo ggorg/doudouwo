@@ -10,7 +10,9 @@ public class RankPO implements Serializable{
     private static final long serialVersionUID = -5714960190035614160L;
     private int id;
     private int gameId;
+    private int sort;
     private int star;
+    private int money;
     private String rank;
     private Date createTime;
 
@@ -30,12 +32,28 @@ public class RankPO implements Serializable{
         this.gameId = gameId;
     }
 
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
+
     public int getStar() {
         return star;
     }
 
     public void setStar(int star) {
         this.star = star;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
     }
 
     public String getRank() {

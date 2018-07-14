@@ -1,13 +1,17 @@
 package com.ddw.beans;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Created by Jacky on 2018/7/5.
+ * Created by Jacky on 2018/7/7.
  */
-public class PracticeEvaluationDTO {
+@ApiModel
+public class PracticeEvaluationDetailDTO {
     @ApiModelProperty(name = "gameId",value = "游戏ID,关联ddw_game游戏表",example = "1")
     private int gameId;
+    @ApiModelProperty(name = "userId",value = "会员编号",example = "1")
+    private int userId;
     @ApiModelProperty(name = "practiceId",value = "代练编号",example = "1")
     private int practiceId;
     @ApiModelProperty(name = "star",value = "星,最低两颗星",example = "2")
@@ -21,6 +25,14 @@ public class PracticeEvaluationDTO {
 
     public void setGameId(int gameId) {
         this.gameId = gameId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getPracticeId() {

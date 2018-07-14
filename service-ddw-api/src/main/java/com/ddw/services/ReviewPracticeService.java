@@ -3,18 +3,22 @@ package com.ddw.services;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.beans.vo.AppIndexPracticeVO;
+import com.ddw.beans.vo.GameVO;
 import com.ddw.dao.PracticeMapper;
-import com.ddw.dao.UserInfoMapper;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.gen.common.beans.CommonBeanFiles;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
+import com.gen.common.util.Page;
 import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -42,7 +46,7 @@ public class ReviewPracticeService extends CommonService {
     @Autowired
     private MyAttentionService myAttentionService;
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private GameService gameService;
     @Autowired
     private PracticeMapper practiceMapper;
 
@@ -172,4 +176,167 @@ public class ReviewPracticeService extends CommonService {
         return new ResponseVO(1,"成功",AppIndexPracticeList);
     }
 
+    /**
+     * 插入评价
+     * @param practiceEvaluationDetailDTO
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO insertPracticeEvaluationDetail(PracticeEvaluationDetailDTO practiceEvaluationDetailDTO)throws Exception{
+        PracticeEvaluationDetailPO practiceEvaluationDetailPO = new PracticeEvaluationDetailPO();
+        PropertyUtils.copyProperties(practiceEvaluationDetailPO,practiceEvaluationDetailDTO);
+        practiceEvaluationDetailPO.setCreateTime(new Date());
+        return super.commonInsert("ddw_practice_evaluation_detail",practiceEvaluationDetailPO);
+    }
+
+    /**
+     * 插入代练平均评分
+     * @param practiceEvaluationDetailDTO
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO insertPracticeEvaluation(PracticeEvaluationDetailDTO practiceEvaluationDetailDTO)throws Exception{
+        PracticeEvaluationPO practiceEvaluationPO = super.commonObjectBySingleParam("ddw_practice_evaluation","practiceId",practiceEvaluationDetailDTO.getPracticeId(),PracticeEvaluationPO.class);
+        ResponseVO responseVO = new ResponseVO();
+        if (practiceEvaluationPO != null) {
+            int allStar = practiceEvaluationPO.getAllStar();
+            int countEvaluation = practiceEvaluationPO.getCountEvaluation();
+            Map params= BeanToMapUtil.beanToMap(practiceEvaluationPO);
+            params.put("countEvaluation",countEvaluation+1);
+            params.put("allStar",allStar+practiceEvaluationDetailDTO.getStar());
+            params.put("star",Math.round(practiceEvaluationPO.getAllStar()/practiceEvaluationPO.getCountEvaluation()));
+            params.put("updateTime",new Date());
+            Map searchCondition = new HashMap<>();
+            searchCondition.put("practiceId",practiceEvaluationDetailDTO.getPracticeId());
+            responseVO = super.commonUpdateByParams("ddw_practice_evaluation",params,searchCondition);
+        }else{
+            practiceEvaluationPO = new PracticeEvaluationPO();
+            practiceEvaluationPO.setAllStar(practiceEvaluationDetailDTO.getStar());
+            practiceEvaluationPO.setCountEvaluation(1);
+            practiceEvaluationPO.setStar(Math.round(practiceEvaluationDetailDTO.getStar()));
+            practiceEvaluationPO.setCreateTime(new Date());
+            responseVO = super.commonInsert("ddw_practice_evaluation",practiceEvaluationPO);
+        }
+        return responseVO;
+    }
+
+    /**
+     * 查看代练详细评价
+     * @param practiceEvaluationDetailListDTO
+     * @return
+     * @throws Exception
+     */
+    public Page getPracticeEvaluationDetailList(PracticeEvaluationDetailListDTO practiceEvaluationDetailListDTO)throws Exception{
+        Map condtion = new HashMap<>();
+        condtion.put("practiceId",practiceEvaluationDetailListDTO.getPracticeId());
+        condtion.put("gameId",practiceEvaluationDetailListDTO.getGameId());
+        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_evaluation_detail","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb);
+        return this.commonPage(practiceEvaluationDetailListDTO.getPage().getPageNum(),practiceEvaluationDetailListDTO.getPage().getPageSize(),csb);
+    }
+
+    /**
+     * 修改代练预约状态,1开启，2代练中，0关闭
+     * @param gameId
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updatePracticeGame(Integer practiceId,Integer gameId,int appointment){
+        Map setParams = new HashMap<>();
+        setParams.put("appointment",appointment);
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("userId",practiceId);
+        searchCondition.put("gameId",gameId);
+        return super.commonUpdateByParams("ddw_practice_game",setParams,searchCondition);
+    }
+
+    /**
+     * 代练与游戏关联表
+     * @param practiceId
+     * @param gameId
+     * @return
+     * @throws Exception
+     */
+    public PracticeGamePO getPracticeGamePO(Integer practiceId,Integer gameId)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("userId",practiceId);
+        searchCondition.put("gameId",gameId);
+        return super.commonObjectBySearchCondition("ddw_practice_game",searchCondition,PracticeGamePO.class);
+    }
+    /**
+     * 查询正在进行的订单
+     * @param practiceId
+     * @return
+     * @throws Exception
+     */
+    public PracticeOrderPO getOrderInProgress(Integer practiceId)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("practiceId",practiceId);
+        searchCondition.put("status",1);
+        return super.commonObjectBySearchCondition("ddw_practice_order",searchCondition,PracticeOrderPO.class);
+    }
+
+    /**
+     * 查询订单
+     * @param id 订单编号
+     * @return
+     * @throws Exception
+     */
+    public PracticeOrderPO getOrder(Integer id)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("id",id);
+        return super.commonObjectBySearchCondition("ddw_practice_order",searchCondition,PracticeOrderPO.class);
+    }
+
+    /**
+     * 插入代练订单
+     * @param userId
+     * @param practiceGameApplyDTO
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO insertPracticeOrder(int userId,PracticeGameApplyDTO practiceGameApplyDTO)throws Exception{
+        PracticeOrderPO practiceOrderPO = new PracticeOrderPO();
+        PropertyUtils.copyProperties(practiceOrderPO,practiceGameApplyDTO);
+        practiceOrderPO.setUserId(userId);
+        //订单状态，1开始接单，2完成,3未完成并结单
+        practiceOrderPO.setStatus(1);
+        practiceOrderPO.setCreateTime(new Date());
+        practiceOrderPO.setUpdateTime(new Date());
+        return super.commonInsert("ddw_practice_order",practiceOrderPO);
+    }
+
+    /**
+     * 订单结算
+     * @param practiceSettlementDTO
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO settlement(PracticeSettlementDTO practiceSettlementDTO)throws Exception{
+        //TODO 查询订单信息,查询段位信息,根据段位和星计算金额,段位信息放缓存
+        PracticeOrderPO practiceOrderPO = this.getOrder(practiceSettlementDTO.getOrderId());
+        List<GameVO> gameList = gameService.getGameList();
+        int money = 0;//支付金额,单位分
+        for(GameVO gameVO:gameList){
+            if(gameVO.getId() == practiceOrderPO.getGameId()){
+                //TODO 根据段位星数计算金额
+                practiceOrderPO.getRankId();//原段位
+                practiceOrderPO.getStar();//原星
+                List<RankPO> rankPOList = gameVO.getRankList();
+                for(RankPO rankPO:rankPOList){
+
+                }
+                break;
+            }
+        }
+        //订单状态，1开始接单，2完成,3未完成并结单
+        practiceOrderPO.setStatus(money>=0?2:3);
+        practiceOrderPO.setUpdateTime(new Date());
+        Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
+        return super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
+    }
 }
