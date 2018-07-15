@@ -73,12 +73,12 @@ public class WalletController {
 
     }
     @Token
-    @ApiOperation(value = "查询钱包所剩逗币",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "查询钱包所剩逗币和贡献值",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/coin/{token}")
     @ResponseBody
     public ResponseApiVO<WalletDoubiVO> getCoin(@PathVariable String token ){
         try {
-            ResponseApiVO vo=this.walletService.getCoin(TokenUtil.getUserId(token));
+            ResponseApiVO vo=this.walletService.getCoinAndExpenseCoin(TokenUtil.getUserId(token));
             if(vo.getReCode()==1){
                 return vo;
             }
@@ -88,6 +88,7 @@ public class WalletController {
         return new ResponseApiVO(-1,"查询失败",null);
 
     }
+
     @Token
     @ApiOperation(value = "查询总资产",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/asset/{token}")

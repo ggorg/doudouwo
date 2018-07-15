@@ -295,6 +295,9 @@ public abstract class CommonService {
             return 0;
         }
         Map map=(Map)list.get(0);
+        if(map==null){
+            return 0;
+        }
         return ((BigDecimal)map.get("sumPrice")).longValue();
     }
     protected <T>T commonSingleFieldBySingleSearchParam(String tableName,String searchName,Object searchValue,String fieldName,Class<T> clazz){

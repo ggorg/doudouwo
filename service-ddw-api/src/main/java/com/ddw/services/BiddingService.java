@@ -230,7 +230,7 @@ public class BiddingService extends CommonService {
 
         Map searchMap=new HashMap();
         searchMap.put("luckyDogUserId",TokenUtil.getUserId(token));
-        if(dto!=null && dto.getBidCode()>0){
+        if(dto!=null && dto!=null && dto.getBidCode()>0){
             searchMap.put("id",dto.getBidCode());
         }else  if(StringUtils.isNotBlank(groupId)){
             searchMap.put("groupId",groupId);

@@ -40,4 +40,8 @@ public class WalletTest extends CommonService {
         ResponseVO res=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setMap,searchMap,"version",new String[]{"money"});
 
     }
+    @Test
+    public void getCoinTest()throws Exception{
+        this.walletService.getCoin(8);
+    }
 }
