@@ -14,8 +14,8 @@ public class PracticeGameApplyDTO {
     private int rankId;
     @ApiModelProperty(name = "star",value = "星",example = "1")
     private int star;
-    @ApiModelProperty(name = "targetrankId",value = "目标段位编号",example = "2")
-    private int targetrankId;
+    @ApiModelProperty(name = "targetRankId",value = "目标段位编号",example = "2")
+    private int targetRankId;
     @ApiModelProperty(name = "targetStar",value = "目标星",example = "1")
     private int targetStar;
 
@@ -51,12 +51,12 @@ public class PracticeGameApplyDTO {
         this.star = star;
     }
 
-    public int getTargetrankId() {
-        return targetrankId;
+    public int getTargetRankId() {
+        return targetRankId;
     }
 
-    public void setTargetrankId(int targetrankId) {
-        this.targetrankId = targetrankId;
+    public void setTargetRankId(int targetRankId) {
+        this.targetRankId = targetRankId;
     }
 
     public int getTargetStar() {

@@ -6,64 +6,34 @@ import io.swagger.annotations.ApiModelProperty;
  * Created by Jacky on 2018/7/5.
  */
 public class PracticeSettlementDTO {
-    @ApiModelProperty(name = "practiceId",value = "代练编号",example = "1")
-    private int practiceId;
-    @ApiModelProperty(name = "gameId",value = "原游戏编号（界面只读）",example = "1")
-    private int gameId;
-    @ApiModelProperty(name = "rankId",value = "原段位编号（界面只读）",example = "1")
-    private int rankId;
-    @ApiModelProperty(name = "star",value = "原星（界面只读）",example = "1")
-    private int star;
-    @ApiModelProperty(name = "nowRankId",value = "当前段位编号",example = "2")
-    private int nowRankId;
-    @ApiModelProperty(name = "nowStar",value = "当前星",example = "1")
-    private int nowStar;
+    @ApiModelProperty(name = "orderId",value = "订单编号",example = "1")
+    private int orderId;
+    @ApiModelProperty(name = "realityRankId",value = "当前段位编号",example = "2")
+    private int realityRankId;
+    @ApiModelProperty(name = "realityStar",value = "当前星",example = "1")
+    private int realityStar;
 
-    public int getPracticeId() {
-        return practiceId;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setPracticeId(int practiceId) {
-        this.practiceId = practiceId;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
-    public int getGameId() {
-        return gameId;
+    public int getRealityRankId() {
+        return realityRankId;
     }
 
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
+    public void setRealityRankId(int realityRankId) {
+        this.realityRankId = realityRankId;
     }
 
-    public int getRankId() {
-        return rankId;
+    public int getRealityStar() {
+        return realityStar;
     }
 
-    public void setRankId(int rankId) {
-        this.rankId = rankId;
-    }
-
-    public int getStar() {
-        return star;
-    }
-
-    public void setStar(int star) {
-        this.star = star;
-    }
-
-    public int getNowRankId() {
-        return nowRankId;
-    }
-
-    public void setNowRankId(int nowRankId) {
-        this.nowRankId = nowRankId;
-    }
-
-    public int getNowStar() {
-        return nowStar;
-    }
-
-    public void setNowStar(int nowStar) {
-        this.nowStar = nowStar;
+    public void setRealityStar(int realityStar) {
+        this.realityStar = realityStar;
     }
 }
