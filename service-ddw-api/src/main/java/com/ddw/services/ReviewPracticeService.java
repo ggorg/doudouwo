@@ -316,27 +316,92 @@ public class ReviewPracticeService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO settlement(PracticeSettlementDTO practiceSettlementDTO)throws Exception{
-        //TODO 查询订单信息,查询段位信息,根据段位和星计算金额,段位信息放缓存
+    public ResponseApiVO<PracticeSettlementVO> settlement(PracticeSettlementDTO practiceSettlementDTO)throws Exception{
+        // 查询订单信息,查询段位信息,根据段位和星计算金额,段位信息放缓存
         PracticeOrderPO practiceOrderPO = this.getOrder(practiceSettlementDTO.getOrderId());
+        int payMoney = 0;//支付金额,单位分
+        int gameId = practiceOrderPO.getGameId();
+        int rankId = practiceOrderPO.getRankId();//原段位
+        int star = practiceOrderPO.getStar();//原星
+        int realityRankId = practiceSettlementDTO.getRealityRankId();//实际段位
+        int realityStar = practiceSettlementDTO.getRealityStar();//实际星数
+        payMoney = this.payMoney(gameId,rankId,star,realityRankId,realityStar);
+        PropertyUtils.copyProperties(practiceOrderPO,practiceSettlementDTO);
+        //订单状态，1开始接单，2完成,3未完成并结单
+        practiceOrderPO.setStatus(payMoney>=0?2:3);
+        practiceOrderPO.setUpdateTime(new Date());
+        Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
+        ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
+        ResponseApiVO responseApiVO = new ResponseApiVO();
+        PropertyUtils.copyProperties(responseApiVO,responseVO);
+        PracticeSettlementVO practiceSettlementVO = new PracticeSettlementVO();
+        practiceSettlementVO.setPayMoney(payMoney);
+        responseApiVO.setData(practiceSettlementVO);
+        return responseApiVO;
+    }
+
+    /**
+     * 计算段位和星需要支付金额,负数则为降星双倍赔偿
+     * @param gameId 游戏id
+     * @param rankId 原段位id
+     * @param star 原星
+     * @param realityRankId 结算段位
+     * @param realityStar 结算星
+     */
+    public int payMoney(int gameId,int rankId,int star,int realityRankId,int realityStar)throws Exception{
         List<GameVO> gameList = gameService.getGameList();
-        int money = 0;//支付金额,单位分
+        int payMoney = 0;//支付金额,单位分
         for(GameVO gameVO:gameList){
-            if(gameVO.getId() == practiceOrderPO.getGameId()){
-                //TODO 根据段位星数计算金额
-                practiceOrderPO.getRankId();//原段位
-                practiceOrderPO.getStar();//原星
+            if(gameVO.getId() == gameId){
+                //根据段位星数计算金额
+                int sort = 0;
+                int realitySort = 0;
+                int money = 0;
                 List<RankPO> rankPOList = gameVO.getRankList();
                 for(RankPO rankPO:rankPOList){
-
+                    if(rankId == rankPO.getId()){
+                        sort = rankPO.getSort();//段位序号
+                    }
+                    if(realityRankId == rankPO.getId()){
+                        realitySort = rankPO.getSort();//段位序号
+                        money = rankPO.getMoney();//星单价
+                    }
+                }
+                if(realitySort > sort){
+                    for (RankPO rankPO:rankPOList){
+                        for(int i=0;i<realitySort-sort;i++){
+                            if(rankPO.getSort() == sort+i){
+                                int upStar = 0;
+                                if(i == 0){
+                                    upStar = rankPO.getStar()-star;
+                                }else if(i != 0){
+                                    upStar = rankPO.getStar();
+                                }else if(i == realitySort-sort){
+                                    upStar = realityStar;
+                                }
+                                payMoney += upStar*rankPO.getMoney();
+                            }
+                        }
+                    }
+                }else if(realitySort == sort){//同等段位
+                    if(realityStar > star){
+                        payMoney = (realityStar - star) * money;
+                    }else if(realityStar < star){//降星,双倍赔偿
+                        payMoney = (realityStar - star) * money*2;
+                    }
+                }else{//降段降星
+                    for (RankPO rankPO:rankPOList){
+                        for(int i=0;i<sort-realitySort;i++){
+                            if(rankPO.getSort() == realitySort+i){
+                                payMoney += (rankPO.getStar()-star)*rankPO.getMoney()*2;
+                            }
+                        }
+                    }
+                    payMoney = payMoney*-1;
                 }
                 break;
             }
         }
-        //订单状态，1开始接单，2完成,3未完成并结单
-        practiceOrderPO.setStatus(money>=0?2:3);
-        practiceOrderPO.setUpdateTime(new Date());
-        Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
-        return super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
+        return payMoney;
     }
 }

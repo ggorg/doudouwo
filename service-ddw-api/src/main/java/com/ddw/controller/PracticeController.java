@@ -12,6 +12,7 @@ import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -123,7 +124,7 @@ public class PracticeController {
 
     @ApiOperation(value = "约代练申请,返回状态成功,取data值为订单编号")
     @PostMapping("/gameApply/{token}")
-    public ResponseVO gameApply(@PathVariable String token,
+    public ResponseApiVO<PracticeGameApplyVO> gameApply(@PathVariable String token,
                                            @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeGameApplyDTO practiceGameApplyDTO){
         try {
             //判断代练是否开启预约,提交游戏编号,当前段位包含几星,目标段位包含几星,代练编号,写进订单,更新代练预约状态
@@ -133,24 +134,31 @@ public class PracticeController {
                 if(rv.getReCode() > 0){
                     rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId("token"), practiceGameApplyDTO);
                 }
-                return rv;
+                ResponseApiVO<PracticeGameApplyVO> responseApiVO = new ResponseApiVO();
+                PropertyUtils.copyProperties(responseApiVO,rv);
+                PracticeGameApplyVO practiceGameApplyVO = new PracticeGameApplyVO();
+                practiceGameApplyVO.setOrderId((Integer)rv.getData());
+                practiceGameApplyVO.setPayMoney(reviewPracticeService.payMoney(practiceGameApplyDTO.getGameId(),
+                        practiceGameApplyDTO.getRankId(),practiceGameApplyDTO.getStar(),
+                        practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar()));
+                responseApiVO.setData(practiceGameApplyVO);
+                return responseApiVO;
             }else {
-                return new ResponseVO(-2,"代练未开启预约或在代练中",null);
+                return new ResponseApiVO(-2,"代练未开启预约或在代练中",null);
             }
         }catch (Exception e){
             logger.error("PracticeController->gameApply",e);
-            return new ResponseVO(-1,"提交失败",null);
+            return new ResponseApiVO(-1,"提交失败",null);
         }
     }
 
     @ApiOperation(value = "提交结算申请,用户或者代练都可提交结算")
     @PostMapping("/settlement/{token}")
-    public ResponseApiVO<PracticeVO> settlement(@PathVariable String token,
+    public ResponseApiVO<PracticeSettlementVO> settlement(@PathVariable String token,
                                                @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeSettlementDTO practiceSettlementDTO){
         try {
-            //TODO 原段位包含几星(不可修改),目前段位包含几星,代练编号,返回需要支付金额,如果段位星级比原段位星级低,则走赔付流程,双倍赔付
-            reviewPracticeService.settlement(practiceSettlementDTO);
-            return new ResponseApiVO(1,"成功",null);
+            // 原段位包含几星(不可修改),目前段位包含几星,代练编号,返回需要支付金额,如果段位星级比原段位星级低,则走赔付流程,双倍赔付
+            return reviewPracticeService.settlement(practiceSettlementDTO);
         }catch (Exception e){
             logger.error("PracticeController->settlement",e);
             return new ResponseApiVO(-1,"提交失败",null);
@@ -198,7 +206,7 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "取消代练发布")
+    @ApiOperation(value = "取消发布代练")
     @PostMapping("/cancle/{token}")
     public ResponseVO cancle(@PathVariable String token,
                              @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeReleaseDTO practiceReleaseDTO){
