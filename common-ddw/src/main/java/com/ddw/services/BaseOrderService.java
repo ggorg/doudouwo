@@ -5,6 +5,7 @@ import com.ddw.beans.ExitOrderPO;
 import com.ddw.beans.OrderPO;
 import com.ddw.beans.OrderViewPO;
 import com.ddw.enums.*;
+import com.ddw.util.BiddingTimer;
 import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -13,11 +14,14 @@ import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.vo.ResponseVO;
+import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +29,8 @@ import java.util.*;
 
 
 public class BaseOrderService extends CommonService {
+    private static final Logger logger = Logger.getLogger(BaseOrderService.class);
+
 
     @Autowired
     protected IncomeService incomeService;
@@ -37,6 +43,12 @@ public class BaseOrderService extends CommonService {
 
     @Autowired
     private StraregyService straregyService;
+
+    @Autowired
+    private BaseBiddingService baseBiddingService;
+
+    @Value("${bidding.makeSureEndTime.minute:30}")
+    private Integer makeSureEndTime;
 
     public OrderPO getCacheOrder(String orderNo)throws Exception{
         String objStr=(String) CacheUtil.get("pay","orderObject-"+orderNo);
@@ -179,17 +191,25 @@ public class BaseOrderService extends CommonService {
                 List<String> bid_goddessid=new ArrayList();
                 Integer gid=null;
                 Integer needPayPrice=0;
-
+                Date makeSureEndTime=null;
+                Map m=(Map)CacheUtil.get("publicCache","bidding-make-sure-end-time");
+                //+ub,
+                if(m==null){
+                    m=new HashMap();
+                }
                 for(String ub:ubs){
                     payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
                     if(payMap==null){
                         throw new GenException("更新竞价金额支付状态失败");
                     }
-                   /*
-                    Map updateMap=null;updateMap=new HashMap();
-                    updateMap.put("endTime",DateUtils.addMinutes(new Date(),(Integer) payMap.get("time")));
+
+                    Map updateMap=new HashMap();
+                    makeSureEndTime=DateUtils.addMinutes(new Date(),this.makeSureEndTime);
+                    updateMap.put("makeSureEndTime",makeSureEndTime);
                     this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",payMap.get("code"));
-*/
+                    Timer timer=new Timer();
+                    timer.schedule(new BiddingTimer(this.baseBiddingService,ub),makeSureEndTime);
+                    m.put(ub,DateFormatUtils.format(makeSureEndTime,"yyyy-MM-dd HH:mm:ss"));
                     gid=(Integer) payMap.get("goddessUserId");
 
                     bid_goddessid.add(payMap.get("code").toString()+"-"+gid);
@@ -218,6 +238,7 @@ public class BaseOrderService extends CommonService {
                     CacheUtil.put("pay","bidding-finish-pay-"+a,orderNo);
                    // CacheUtil.delete("pay","bidding-pay-"+a);
                 });
+                CacheUtil.put("publicCache","bidding-make-sure-end-time",m);
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
 
             }else if(OrderTypeEnum.OrderType9.getCode().equals(doType)){
@@ -388,6 +409,7 @@ public class BaseOrderService extends CommonService {
         searchMap.put("id,in",orderIds.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
         searchMap.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
         List<Map> orders=this.commonObjectsBySearchCondition("ddw_order",searchMap);
+
         for(Map o:orders){
             // orderPO=this.commonObjectBySingleParam("ddw_order","id",OrderUtil.getOrderId(o),OrderPO.class);
             exitOrderPO=new ExitOrderPO();
@@ -405,29 +427,43 @@ public class BaseOrderService extends CommonService {
                 throw new GenException("新建退订单失败");
             }
             if(PayTypeEnum.PayType1.getCode().equals((Integer) o.get("doPayType"))){
+
                 Map<String,String> callMap= PayApiUtil.reqeustWeiXinExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitOrderNo(),exitOrderPO.getExitCost(),exitOrderPO.getExitCost());
+                logger.info("reqeustWeiXinExitOrder->response->"+callMap);
                 if(callMap!=null && "FAIL".equals(callMap.get("return_code"))){
-                    throw new GenException("申请退款失败");
-                }else if(callMap!=null && "SUCCESS".equals(callMap.get("return_code")) && "SUCCESS".equals(callMap.get("result_code"))){
+                    throw new GenException("微信申请退款失败");
+                }/*else if(callMap!=null && "SUCCESS".equals(callMap.get("return_code")) && "SUCCESS".equals(callMap.get("result_code"))){
                     CacheUtil.put("pay","weixin-refund-"+o,exitOrderPO.getExitOrderNo());
-                }
+
+                }*/
 
             }else if(PayTypeEnum.PayType2.getCode().equals((Integer) o.get("doPayType"))){
                 ResponseVO resvo=PayApiUtil.requestAliExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitCost());
-                if(resvo.getReCode()==1){
-                    Map map=new HashMap();
-                    map.put("doPayStatus",PayStatusEnum.PayStatus2.getCode());
-                    ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",exitOrderPO.getOrderId());
-                    map=new HashMap();
-                    map.put("payStatus",PayStatusEnum.PayStatus2.getCode());
-                    map.put("shipStatus",ClientShipStatusEnum.ShipStatus4.getCode());
-                    this.commonUpdateBySingleSearchParam("ddw_order_view",map,"orderId",exitOrderPO.getOrderId());
+                if(resvo.getReCode()!=1){
+                    throw new GenException("阿里申请退款失败");
+
                 }
+            }
+            Map map=new HashMap();
+            map.put("doPayStatus",PayStatusEnum.PayStatus2.getCode());
+            ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",exitOrderPO.getOrderId());
+            if(res.getReCode()!=1){
+                throw new GenException("申请退款失败->更新订单表失败");
+
+            }
+            map=new HashMap();
+            map.put("payStatus",PayStatusEnum.PayStatus2.getCode());
+            map.put("shipStatus",ClientShipStatusEnum.ShipStatus4.getCode());
+            res=this.commonUpdateBySingleSearchParam("ddw_order_view",map,"orderId",exitOrderPO.getOrderId());
+            if(res.getReCode()!=1){
+                throw new GenException("申请退款失败->更新订单视图表失败");
+
             }
             //ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
 
         }
-
         return new ResponseVO(1,"成功",null);
+
+
     }
 }

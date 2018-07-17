@@ -34,6 +34,8 @@ public class BiddingOrderListVO implements Serializable {
 
     @ApiModelProperty(name="payEndTime",value="支付结束时间",example="支付结束时间")
     private String payEndTime;
+    @ApiModelProperty(name="makeSureEndTime",value="确认结束时间",example="确认结束时间")
+    private String makeSureEndTime;
     @ApiModelProperty(name="createTime",value="创建时间",example="创建时间")
     private String createTime;
     @ApiModelProperty(name="headImgUrl",value="头像",example="头像")
@@ -41,6 +43,13 @@ public class BiddingOrderListVO implements Serializable {
     @ApiModelProperty(name="bidCode",value="竞价code",example="bidCode")
     private Integer bidCode;
 
+    public String getMakeSureEndTime() {
+        return makeSureEndTime;
+    }
+
+    public void setMakeSureEndTime(String makeSureEndTime) {
+        this.makeSureEndTime = makeSureEndTime;
+    }
 
     public String getStartTime() {
         return startTime;

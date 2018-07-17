@@ -2,8 +2,10 @@ package com.ddw.servies;
 
 import com.ddw.enums.BiddingStatusEnum;
 import com.ddw.enums.LiveEventTypeEnum;
+import com.ddw.services.BaseBiddingService;
 import com.ddw.services.BaseOrderService;
 import com.ddw.services.LiveRadioService;
+import com.ddw.util.BiddingTimer;
 import com.ddw.util.LiveRadioApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Component
@@ -36,6 +39,9 @@ public class TimerTaskService extends CommonService {
 
     @Autowired
     private BaseOrderService baseOrderService;
+
+    @Autowired
+    private BaseBiddingService baseBiddingService;
 
     /**
      * 黑房间定时处理，每10分钟扫描一次
@@ -89,7 +95,8 @@ public class TimerTaskService extends CommonService {
         try {
             Map searchBid=new HashMap();
             searchBid.put("endTime,is","null");
-            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime","t1.id,t1.bidEndTime,t1.luckyDogUserId,ct0.orderId,t1.userId,t1.groupId",null,null,searchBid,
+
+            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime","t1.id,t1.bidEndTime,t1.luckyDogUserId,ct0.orderId,t1.userId,t1.groupId,t1.makeSureEndTime",null,null,searchBid,
                     new CommonChildBean("ddw_order_bidding_pay","biddingId","id",null));
 
             List<Map>  listMap= this.getCommonMapper().selectObjects(csb);
@@ -98,12 +105,16 @@ public class TimerTaskService extends CommonService {
                 Set bids=new HashSet();
 
                 Set<String> bidCacheList=new HashSet();
-
+                Date currentDate=new Date();
                 for(Map map:listMap){
                     Date bidEndTime=(Date) map.get("bidEndTime");
                     Integer bidUserId=(Integer) map.get("luckyUserId");
+                    Date makeSureEndTime=(Date) map.get("makeSureEndTime");
+                    if(makeSureEndTime!=null && makeSureEndTime.after(currentDate)){
+                        continue;
+                    }
 
-                    if( DateUtils.addMinutes(bidEndTime,30).before(new Date())){
+                    if( DateUtils.addMinutes(bidEndTime,60).before(new Date())){
                         orderIds.add(map.get("orderId"));
                         bids.add(map.get("id"));
                         bidCacheList.add((Integer) map.get("id")+"&"+(Integer)map.get("userId")+"&"+(String)map.get("groupId"));
@@ -146,6 +157,32 @@ public class TimerTaskService extends CommonService {
             throw new GenException("定时处理竞价失败");
         }
 
+
+    }
+    @Scheduled(cron = "0 0/30 * * * *")
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void testExitOrder(){
+
+    }
+    @PostConstruct
+    public void initBiddingTimer(){
+        try {
+            Map<String,String> m=(Map)CacheUtil.get("publicCache","bidding-make-sure-end-time");
+            Map searchMap=new HashMap();
+            searchMap.put("makeSureEndTime,>=",new Date());
+            Map listMap=(Map)this.commonObjectsBySearchCondition("ddw_goddess_bidding",searchMap);
+            logger.info("初始化竞价定时器-》"+m);
+            if(m!=null){
+                Set<String> keys=m.keySet();
+                for(String k:keys){
+                    Timer timer=new Timer();
+                    timer.schedule(new BiddingTimer(this.baseBiddingService,k),DateUtils.parseDate(m.get(k),"yyyy-MM-dd HH:mm:ss"));
+                }
+            }
+
+        }catch (Exception e){
+            logger.error("initBiddingTimer",e);
+        }
 
     }
 

@@ -5,6 +5,7 @@ import com.ddw.beans.vo.BiddingVO;
 import com.ddw.controller.AppOrderController;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.BiddingTimer;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -56,6 +58,9 @@ public class BiddingService extends CommonService {
 
     @Autowired
     private ConsumeRankingListService consumeRankingListService;
+
+    @Autowired
+    private BaseBiddingService baseBiddingService;
     private String getSurplusTimeStr(Date date){
 
         long l=date.getTime()-System.currentTimeMillis();
@@ -784,7 +789,7 @@ public class BiddingService extends CommonService {
     }
     public ResponseApiVO searchWaitPayByUser(String token,BiddingSearchWaitPayDTO dto)throws Exception{
 
-      return commmonSearchWaiyPay(TokenUtil.getGroupId(token),TokenUtil.getGroupId(token),dto,false);
+      return commmonSearchWaiyPay(token,TokenUtil.getGroupId(token),dto,false);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -896,7 +901,7 @@ public class BiddingService extends CommonService {
             searchMap.put("luckyDogUserId",userId);
         }
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.groupId,t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime ,DATE_FORMAT(t1.startTime,'%Y-%m-%d %H:%i:%S') startTime,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId",p.getStartRow(),p.getEndRow(),searchMap,cb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.groupId,t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime ,DATE_FORMAT(t1.startTime,'%Y-%m-%d %H:%i:%S') startTime,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime,DATE_FORMAT(t1.makeSureEndTime,'%Y-%m-%d %H:%i:%S') makeSureEndTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId",p.getStartRow(),p.getEndRow(),searchMap,cb);
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         if(bidList==null || bidList.isEmpty()){
             return new ResponseApiVO(2,"没有竞价信息",new ListVO(new ArrayList()));
@@ -1024,7 +1029,7 @@ public class BiddingService extends CommonService {
 
         }
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.groupId,t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime,DATE_FORMAT(t1.startTime,'%Y-%m-%d %H:%i:%S') startTime,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId",0,1,searchMap,cb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.groupId,t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime,DATE_FORMAT(t1.startTime,'%Y-%m-%d %H:%i:%S') startTime,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime,DATE_FORMAT(t1.makeSureEndTime,'%Y-%m-%d %H:%i:%S') makeSureEndTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId",0,1,searchMap,cb);
 
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         if(bidList==null || bidList.isEmpty()){

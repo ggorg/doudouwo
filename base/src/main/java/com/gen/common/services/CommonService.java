@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public abstract class CommonService {
 
     @Autowired
@@ -99,13 +100,8 @@ public abstract class CommonService {
     protected Map commonObjectBySingleParam(String tableName,String paramName,Object paramValue)throws Exception{
         Map<String,Object> condition=new HashMap<>();
         condition.put(paramName+",=",paramValue);
-        List<Map> list=this.commonMapper.selectObjects(new CommonSearchBean(tableName,condition));
-        if(list!=null && !list.isEmpty()){
+        return this.commonObjectBySearchCondition(tableName,condition);
 
-            return list.get(0);
-
-        }
-        return null;
     }
     protected ResponseVO commonUpdateBySingleSearchParam(String tableName, Map setParams, String searchParamName, Object searchParamValue){
         ResponseVO vo=new ResponseVO();
@@ -337,4 +333,5 @@ public abstract class CommonService {
     protected CommonMapper getCommonMapper(){
         return this.commonMapper;
     }
+
 }
