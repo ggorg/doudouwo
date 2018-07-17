@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class CommonService {
+public abstract class CommonService {
 
     @Autowired
     private CommonMapper commonMapper;
