@@ -127,8 +127,10 @@ public class PayApiUtil {
         map.put("total_fee",orderCost);
         map.put("refund_fee",exitCost);
         map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/refund/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/refund/execute");
-
-        String callBackStr= HttpUtil.sendHtpps(WEIXIN_REFUND,wxSign(map));
+        String reStr=wxSign(map);
+        logger.info("reqeustWeiXinExitOrder->request->"+reStr);
+        String callBackStr= HttpUtil.sendHtpps(WEIXIN_REFUND,reStr);
+        logger.info("reqeustWeiXinExitOrder->response->"+callBackStr);
         Map callMap=Tools.xmlCastMap(callBackStr);
         return callMap;
 

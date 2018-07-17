@@ -3,6 +3,7 @@ package com.gen.common.util;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -30,6 +31,8 @@ import java.util.Map;
  *
  */
 public class Tools {
+	private static final Logger logger = Logger.getLogger(Tools.class);
+
 	private static ThreadLocal<String> openid=new ThreadLocal();
 	private static WebApplicationContext wa;
 
@@ -442,7 +445,7 @@ public class Tools {
 
 			return map;
 		}catch (Exception e){
-			e.printStackTrace();
+			logger.error("xmlCastMap->"+xmlStr,e);
 		}
 		return null;
 	}
