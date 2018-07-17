@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,8 +21,12 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class GameManagerService extends CommonService {
 
-    public Page findList()throws Exception{
-        return super.commonPage("ddw_game","createTime desc",1,999,new HashMap());
+    public Page findPage(Integer pageNo)throws Exception{
+        return super.commonPage("ddw_game","createTime desc",pageNo,10,new HashMap());
+    }
+
+    public List<GamePO> findList()throws Exception{
+        return super.commonObjectsBySearchCondition("ddw_game",new HashMap());
     }
 
     public GamePO selectById(String id){

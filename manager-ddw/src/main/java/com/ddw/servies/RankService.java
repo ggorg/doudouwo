@@ -20,10 +20,10 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class RankService extends CommonService {
 
-    public Page findList(String gameId)throws Exception{
+    public Page findList(Integer pageNo,Integer gameId)throws Exception{
         Map condition=new HashMap();
         condition.put("gameId",gameId);
-        return super.commonPage("ddw_rank","createTime",1,999,condition);
+        return super.commonPage("ddw_rank","sort desc",pageNo,10,condition);
     }
 
     public RankPO selectById(String id){
@@ -38,6 +38,7 @@ public class RankService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO saveOrUpdate(RankPO rankPO)throws Exception{
         if(rankPO.getId() > 0 ){
+            rankPO.setCreateTime(new Date());
             Map updatePoMap= BeanToMapUtil.beanToMap(rankPO);
             return super.commonUpdateBySingleSearchParam("ddw_rank",updatePoMap,"id",rankPO.getId());
         }else{
