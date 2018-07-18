@@ -168,9 +168,9 @@ public class TimerTaskService extends CommonService {
     public void initBiddingTimer(){
         try {
             Map<String,String> m=(Map)CacheUtil.get("publicCache","bidding-make-sure-end-time");
-            Map searchMap=new HashMap();
+/*            Map searchMap=new HashMap();
             searchMap.put("makeSureEndTime,>=",new Date());
-            Map listMap=(Map)this.commonObjectsBySearchCondition("ddw_goddess_bidding",searchMap);
+            Map listMap=(Map)this.commonObjectsBySearchCondition("ddw_goddess_bidding",searchMap);*/
             logger.info("初始化竞价定时器-》"+m);
             if(m!=null){
                 Set<String> keys=m.keySet();

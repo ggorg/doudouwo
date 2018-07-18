@@ -430,7 +430,7 @@ public class BaseOrderService extends CommonService {
 
                 Map<String,String> callMap= PayApiUtil.reqeustWeiXinExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitOrderNo(),exitOrderPO.getExitCost(),exitOrderPO.getExitCost());
                 logger.info("reqeustWeiXinExitOrder->response->"+callMap);
-                if(callMap!=null && "FAIL".equals(callMap.get("return_code"))){
+                if(callMap==null ||  "FAIL".equals(callMap.get("return_code")) ||  "FAIL".equals(callMap.get("result_code"))){
                     throw new GenException("微信申请退款失败");
                 }/*else if(callMap!=null && "SUCCESS".equals(callMap.get("return_code")) && "SUCCESS".equals(callMap.get("result_code"))){
                     CacheUtil.put("pay","weixin-refund-"+o,exitOrderPO.getExitOrderNo());
@@ -441,6 +441,17 @@ public class BaseOrderService extends CommonService {
                 ResponseVO resvo=PayApiUtil.requestAliExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitCost());
                 if(resvo.getReCode()!=1){
                     throw new GenException("阿里申请退款失败");
+
+                }
+            }else if(PayTypeEnum.PayType5.getCode().equals((Integer) o.get("doPayType"))){
+                Map walletSearchMap=new HashMap();
+                walletSearchMap.put("userId",exitOrderPO.getCreater());
+                Map setMap=new HashMap();
+                setMap.put("money",exitOrderPO.getExitCost());
+                setMap.put("updateTime",new Date());
+                ResponseVO resvo= this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setMap,walletSearchMap,"version",new String[]{"money"});
+                if(resvo.getReCode()!=1){
+                    throw new GenException("钱包退款失败");
 
                 }
             }

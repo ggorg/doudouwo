@@ -1,6 +1,9 @@
 package com.gen.common.util;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.ssl.KeyMaterial;
+import org.apache.commons.ssl.SSLClient;
+import org.apache.commons.ssl.TrustMaterial;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -22,6 +25,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -45,6 +49,8 @@ import java.util.Map;
  * @see :
  */
 public class HttpUtil {
+    private static final Logger logger = Logger.getLogger(HttpUtil.class);
+
     private static PoolingHttpClientConnectionManager connMgr;
     private static RequestConfig requestConfig;
     private static final int MAX_TIMEOUT = 7000;
@@ -323,7 +329,70 @@ public class HttpUtil {
         }
         return sslsf;
     }
+    public static String sendHttpsWithCert(String urlStr,String data,String pkcs12,String password){
+        OutputStreamWriter out = null;
+        BufferedReader in = null;
+        HttpsURLConnection https=null;
+        try {
+            SSLClient client = new SSLClient();
+            client.addTrustMaterial(TrustMaterial.DEFAULT);
 
+            client.addTrustMaterial(new KeyMaterial(pkcs12, password.toCharArray()));
+            client.setCheckHostname(true); // default setting is "true" for
+            client.setCheckExpiry(false); // default setting is "true" forclient.setCheckCRL(true); // default setting is "true" for SSLClient
+            client.setWantClientAuth(true);
+
+            client.setKeyMaterial(new KeyMaterial(pkcs12, password.toCharArray()));
+            URL url = new URL(urlStr);
+            https = (HttpsURLConnection) url.openConnection();
+            https.setSSLSocketFactory(client);
+/* 发送数据 */
+            https.setDoOutput(true);
+            https.setDoInput(true);
+            https.setRequestMethod("POST"); //
+            https.setConnectTimeout(8000);
+            https.setRequestProperty("accept", "*/*");
+            https.setRequestProperty("connection", "Keep-Alive");
+            https.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            https.setRequestProperty("Content-Type", "text/plain;charset=utf-8");
+            https.connect();
+            out = new OutputStreamWriter(https.getOutputStream(), "UTF-8"); //
+            out.append(data);
+            out.flush();
+/* 接收数据 */
+            in = new BufferedReader(new InputStreamReader(
+                    https.getInputStream()));
+            String line;
+
+            StringBuilder result=new StringBuilder();
+            while ((line = in.readLine()) != null) {
+                result.append(line);
+
+            }
+            int code=https.getResponseCode();
+            if(code==200){
+                return result.toString();
+            }
+        }catch (Exception e){
+            logger.error("sendHttpsWithCert",e);
+        }finally {
+            try {
+                if (out != null) {
+
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+        }
+        return null;
+
+    }
     public static String sendHtpps(String url,String a) {
         String result = "";
         PrintWriter out = null;
@@ -364,7 +433,7 @@ public class HttpUtil {
                 result += line;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("sendHtpps",e);
         } finally {// 使用finally块来关闭输出流、输入流
             try {
                 if (out != null) {

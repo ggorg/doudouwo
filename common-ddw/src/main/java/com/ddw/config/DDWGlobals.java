@@ -15,6 +15,18 @@ public class DDWGlobals {
     @Value("${callbackurl.host:}")
     private String callBackHost;
 
+
+    @Value("${wx.cert.path:}")
+    private String wxCertPath;
+
+    public String getWxCertPath() {
+        return wxCertPath;
+    }
+
+    public void setWxCertPath(String wxCertPath) {
+        this.wxCertPath = wxCertPath;
+    }
+
     public String getCallBackHost() {
         return callBackHost;
     }

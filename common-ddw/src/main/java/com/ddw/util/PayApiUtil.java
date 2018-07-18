@@ -60,9 +60,12 @@ public class PayApiUtil {
         try {
             ddwGlobals= Tools.getBean(DDWGlobals.class);
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("init->ddwGlobals",e);
         }
 
+    }
+    public static void setDdwGlobals(DDWGlobals d){
+            ddwGlobals=d;
     }
     public static ResponseVO aliPayOrderQuery(String orderNo){
         InputStream privateIs=null;
@@ -129,7 +132,7 @@ public class PayApiUtil {
         map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/refund/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/refund/execute");
         String reStr=wxSign(map);
         logger.info("reqeustWeiXinExitOrder->request->"+reStr);
-        String callBackStr= HttpUtil.sendHtpps(WEIXIN_REFUND,reStr);
+        String callBackStr= HttpUtil.sendHttpsWithCert(WEIXIN_REFUND,reStr,ddwGlobals.getWxCertPath(),PayApiConstant.WEI_XIN_PAY_MCH_ID);
         logger.info("reqeustWeiXinExitOrder->response->"+callBackStr);
         Map callMap=Tools.xmlCastMap(callBackStr);
         return callMap;
@@ -222,7 +225,6 @@ public class PayApiUtil {
         }
         params.append("key=").append(PayApiConstant.WEI_XIN_PAY_KEY);
         rootXML.addElement("sign").addCDATA(DigestUtils.md5Hex(params.toString()).toUpperCase());
-        System.out.println(rootXML.asXML());
         return rootXML.asXML();
     }
     public static void main(String[] args)throws Exception {
