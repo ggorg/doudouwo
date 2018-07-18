@@ -40,7 +40,9 @@ public class GameService extends CommonService{
                 gameVO.setRankList(rankPOList);
                 gameVOList.add(gameVO);
             }
-            CacheUtil.put("publicCache","gameList",gameVOList);
+            if(gameVOList.size()>0){
+                CacheUtil.put("publicCache","gameList",gameVOList);
+            }
             return gameVOList;
         }else{
             return (List<GameVO>)CacheUtil.get("publicCache","gameList");
