@@ -29,9 +29,9 @@ public class GameController {
     private CacheService cacheService;
 
     @GetMapping("list")
-    public String list(Model model){
+    public String list(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
         try {
-            model.addAttribute("gameList", gameManagerService.findList());
+            model.addAttribute("gamePage", gameManagerService.findPage(pageNo));
         }catch (Exception e){
             logger.error("GameController->list",e);
         }
@@ -76,16 +76,16 @@ public class GameController {
     }
 
     @RequestMapping("rank/list")
-    public String rankList(@RequestParam(defaultValue = "1") String gameId, Model model){
+    public String rankList(@RequestParam(defaultValue = "1") Integer pageNo,@RequestParam(defaultValue = "1") Integer gameId, Model model){
         try {
             model.addAttribute("gameList", gameManagerService.findList());
             if(gameId == null){
-                gameId = (String) cacheService.get("gameId");
+                gameId = (Integer) cacheService.get("gameId");
             }else{
                 cacheService.set("gameId",gameId);
             }
-            model.addAttribute("gameId",Integer.valueOf(gameId));
-            model.addAttribute("rankList",rankService.findList(gameId));
+            model.addAttribute("gameId",gameId);
+            model.addAttribute("rankList",rankService.findList(pageNo,gameId));
         }catch (Exception e){
             logger.error("GameController->rankList",e);
         }
@@ -93,18 +93,18 @@ public class GameController {
     }
 
     @GetMapping("rank/to-edit")
-    public String rankToEdit(String id,String gameId,Model model){
+    public String rankToEdit(String id,Integer gameId,Model model){
         try {
             RankPO rankPO = new RankPO();
             if(StringUtils.isNotBlank(id) && !id.equals("-1")) {
                 rankPO = rankService.selectById(id);
             }
             if(gameId == null){
-                gameId = (String) cacheService.get("gameId");
+                gameId = (Integer)cacheService.get("gameId");
             }else{
                 cacheService.set("gameId",gameId);
             }
-            rankPO.setGameId(Integer.valueOf(gameId));
+            rankPO.setGameId(gameId);
             model.addAttribute("rankPO", rankPO);
         }catch (Exception e){
             logger.error("GameController->rankToEdit",e);

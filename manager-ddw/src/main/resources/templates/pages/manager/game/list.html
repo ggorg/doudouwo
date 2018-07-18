@@ -4,7 +4,7 @@
         <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
         <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
         <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${gameList!=null?gameList.total:0}]]*/ );
+           initPage(/*[[${gamePage!=null?gamePage.total:0}]]*/ );
         </script>
 	</head>
     <body class="withvernav">
@@ -64,7 +64,7 @@
                     </thead>
 
                     <tbody>
-                    <tr th:each="obj:${gameList?.result}">
+                    <tr th:each="obj:${gamePage?.result}">
                         <td th:text="${obj['gameName']}">Trident</td>
                         <td th:text="${obj['createTime']!=null ? #dates.format(obj['createTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
                         <td class="center">
@@ -88,7 +88,7 @@
         layui.use('form', function(){
             var form = layui.form;
 
-        })
+        });
 
         function del(obj) {
             //删除

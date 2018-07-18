@@ -23,9 +23,23 @@
   </div>
 
   <div class="layui-form-item">
+    <label class="layui-form-label">排序</label>
+    <div class="layui-input-block">
+      <input type="text" name="sort" required="required" title="排序"  lay-verify="required|number" th:value="${rankPO!=null? rankPO['sort']:''}" placeholder="请输入排序序号" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
     <label class="layui-form-label">星数</label>
     <div class="layui-input-block">
       <input type="text" name="star" required="required" title="星数"  lay-verify="required|number" th:value="${rankPO!=null? rankPO['star']:''}" placeholder="请输入该段位包含星数" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">单价（分）</label>
+    <div class="layui-input-block">
+      <input type="text" name="money" required="required" title="单价（分）"  lay-verify="required|number" th:value="${rankPO!=null? rankPO['money']:''}" placeholder="请输入星单价,单位分" autocomplete="off" class="layui-input" />
     </div>
   </div>
 
