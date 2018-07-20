@@ -4,6 +4,7 @@ package com.ddw.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.GameService;
+import com.ddw.services.MyAttentionService;
 import com.ddw.services.ReviewPracticeService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
@@ -30,6 +31,8 @@ public class PracticeController {
     private final Logger logger = Logger.getLogger(PracticeController.class);
     @Autowired
     private ReviewPracticeService reviewPracticeService;
+    @Autowired
+    private MyAttentionService myAttentionService;
     @Autowired
     private UserInfoService userInfoService;
     @Autowired
@@ -101,21 +104,31 @@ public class PracticeController {
     public ResponseApiVO<PracticeVO> query(@PathVariable String token,
                                            @RequestBody @ApiParam(name = "id",value="会员id,传入json格式,如:{\"id\":\"1\"}", required = false) JSONObject json){
         try {
-            UserInfoVO userVO = new UserInfoVO();
+            //代练编号
+            Integer practiceId = 0;
+            boolean focus = false;
             if(!json.isEmpty()){
-                userVO = userInfoService.query(Integer.valueOf(json.getString("id")));
+                practiceId = Integer.valueOf(json.getString("id"));
+                //会员编号
+                Integer userId = TokenUtil.getUserId(token);
+                focus = myAttentionService.isFocusPractice(userId,practiceId);
             }else{
-                userVO = userInfoService.query(TokenUtil.getUserId(token));
+                practiceId = TokenUtil.getUserId(token);
             }
-            if (userVO == null) {
-                return new ResponseApiVO(-2,"账号不存在",null);
+            PracticeVO practiceVO = reviewPracticeService.getPracticeInfo(practiceId);
+            //评分
+            PracticeEvaluationPO practiceEvaluationPO = reviewPracticeService.getEvaluation(practiceId);
+            PropertyUtils.copyProperties(practiceVO,practiceEvaluationPO);
+            // 查询代练信息,舍弃原本会员资料返回,返回代练游戏简历\代练资料\接单数\评分
+            List<PhotographPO> photographList = userInfoService.queryPhotograph(practiceId);
+            if(photographList.size()>0){
+                practiceVO.setImgUrl(photographList.get(0).getImgUrl());
             }
-            //TODO 查询代练信息,舍弃原本会员资料返回,返回代练游戏简历\代练资料\接单数\评价
-            List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
-            userVO.setPhotograph(photographList);
-            userVO.setToken(token);
-            userVO.setIdentifier(userVO.getOpenid());
-            return new ResponseApiVO(1,"成功",userVO);
+            //接单数
+            practiceVO.setOrders(reviewPracticeService.getOrderCount(practiceId));
+            practiceVO.setFocus(focus);
+            practiceVO.setPracticeGameList(reviewPracticeService.getPracticeGameList(practiceId));
+            return new ResponseApiVO(1,"成功",practiceVO);
         }catch (Exception e){
             logger.error("PracticeController->query",e);
             return new ResponseApiVO(-1,"提交失败",null);

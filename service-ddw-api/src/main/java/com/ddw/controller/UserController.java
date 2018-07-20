@@ -63,7 +63,7 @@ public class UserController {
                     userInfoService.update(userVO);//更新邀请码
                     return new ResponseApiVO(1, "注册成功", userVO);
                 } else {
-                    List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
+                    List<PhotographPO> photographList = userInfoService.queryPhotograph(userVO.getId());
                     userVO.setPhotograph(photographList);
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
@@ -94,7 +94,7 @@ public class UserController {
                 return new ResponseApiVO(-2,"账号不存在",null);
             }
             userInfoService.setLiveRadioFlag(userVO,token);
-            List<PhotographPO> photographList = userInfoService.queryPhotograph(String.valueOf(userVO.getId()));
+            List<PhotographPO> photographList = userInfoService.queryPhotograph(userVO.getId());
             userVO.setPhotograph(photographList);
             userVO.setToken(token);
             userVO.setIdentifier(userVO.getOpenid());
