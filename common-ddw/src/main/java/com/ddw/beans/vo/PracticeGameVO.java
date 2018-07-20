@@ -20,6 +20,12 @@ public class PracticeGameVO implements Serializable {
     private int rankId;
     @ApiModelProperty(name="rank",value="段位名称",example="青铜")
     private String rank;
+    @ApiModelProperty(name="appointment",value="预约开关，1开启，2代练中，0关闭'",example="1")
+    private int appointment;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public int getGameId() {
         return gameId;
@@ -51,5 +57,13 @@ public class PracticeGameVO implements Serializable {
 
     public void setRank(String rank) {
         this.rank = rank;
+    }
+
+    public int getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(int appointment) {
+        this.appointment = appointment;
     }
 }

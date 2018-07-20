@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.beans.vo.AppIndexPracticeVO;
 import com.ddw.beans.vo.GameVO;
+import com.ddw.beans.vo.PracticeGameVO;
 import com.ddw.dao.PracticeMapper;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
@@ -223,6 +224,18 @@ public class ReviewPracticeService extends CommonService {
     }
 
     /**
+     * 查询代练平均评分
+     * @param practiceId 代练编号
+     * @return
+     * @throws Exception
+     */
+    public PracticeEvaluationPO getEvaluation(Integer practiceId)throws Exception {
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("practiceId", practiceId);
+        return super.commonObjectBySearchCondition("ddw_practice_evaluation", searchCondition, PracticeEvaluationPO.class);
+    }
+
+    /**
      * 查看代练详细评价
      * @param practiceEvaluationDetailListDTO
      * @return
@@ -288,6 +301,16 @@ public class ReviewPracticeService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",id);
         return super.commonObjectBySearchCondition("ddw_practice_order",searchCondition,PracticeOrderPO.class);
+    }
+
+    /**
+     * 查询接单数
+     * @param id 代练会员id
+     * @return
+     * @throws Exception
+     */
+    public long getOrderCount(Integer id)throws Exception{
+        return super.commonCountBySingleParam("ddw_practice_order","id",id);
     }
 
     /**
@@ -403,5 +426,48 @@ public class ReviewPracticeService extends CommonService {
             }
         }
         return payMoney;
+    }
+
+    /**
+     * 代练基本资料
+     * @param practiceId
+     * @return
+     * @throws Exception
+     */
+    public PracticeVO getPracticeInfo(Integer practiceId)throws Exception{
+        PracticeVO practiceVO = new PracticeVO();
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("id",practiceId);
+        Map conditon=new HashMap();
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.nickName,t1.headImgUrl,ct0.gradeName pgradeName ",null,null,searchCondition,
+                new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
+        List list=this.getCommonMapper().selectObjects(csb);
+        if(list!=null && list.size()>0){
+            PropertyUtils.copyProperties(practiceVO,list.get(0));
+        }
+        practiceVO.setUserId(practiceId);
+        return practiceVO;
+    }
+
+    /**
+     * 代练游戏简介
+     * @param practiceId
+     * @return
+     * @throws Exception
+     */
+    public List<PracticeGameVO> getPracticeGameList(Integer practiceId)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("id",practiceId);
+        Map conditon=new HashMap();
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game",null,"t1.gameId,t1.rankId,t1.appointment,ct0.gameName,ct1.rank ",null,null,searchCondition,
+                new CommonChildBean("ddw_game","id","gameId",conditon),new CommonChildBean("ddw_rank","id","rankId",conditon));
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
+        List<PracticeGameVO> PracticeGameList = new ArrayList<>();
+        for(Map map:list){
+            PracticeGameVO pg = new PracticeGameVO();
+            PropertyUtils.copyProperties(pg,map);
+            PracticeGameList.add(pg);
+        }
+        return PracticeGameList;
     }
 }

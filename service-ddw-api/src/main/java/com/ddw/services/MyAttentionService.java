@@ -147,4 +147,18 @@ public class MyAttentionService extends CommonService {
         }
         return this.commonDeleteByParams("ddw_my_attention",searchCondition);
     }
+
+    /**
+     * 判断是否关注代练
+     * @param userId
+     * @param practiceId
+     * @return
+     * @throws Exception
+     */
+    public boolean isFocusPractice(Integer userId,Integer practiceId)throws Exception{
+        Map<String,Object> searchCondition = new HashMap<>();
+        searchCondition.put("userId",userId);
+        searchCondition.put("practiceId",practiceId);
+        return super.commonCountBySearchCondition("ddw_my_attention", searchCondition) > 0;
+    }
 }

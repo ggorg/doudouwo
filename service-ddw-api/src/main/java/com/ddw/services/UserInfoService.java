@@ -254,7 +254,7 @@ public class UserInfoService extends CommonService {
      * @return
      * @throws Exception
      */
-    public List<PhotographPO>queryPhotograph(String id)throws Exception{
+    public List<PhotographPO>queryPhotograph(Integer id)throws Exception{
         List<PhotographPO> photographList = new ArrayList<PhotographPO>();
         Map<String,Object> searchCondition = new HashedMap();
         searchCondition.put("userId",id);

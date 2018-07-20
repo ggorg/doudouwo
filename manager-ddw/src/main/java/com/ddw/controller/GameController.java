@@ -5,6 +5,7 @@ import com.ddw.beans.RankPO;
 import com.ddw.servies.GameManagerService;
 import com.ddw.servies.RankService;
 import com.gen.common.services.CacheService;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -55,6 +56,8 @@ public class GameController {
     @ResponseBody
     public ResponseVO doEdit(GamePO gamePO){
         try {
+            //删除游戏缓存
+            CacheUtil.delete("publicCache","gameList");
             return this.gameManagerService.saveOrUpdate(gamePO);
         }catch (Exception e){
             logger.error("GameController->doEdit",e);
@@ -67,6 +70,8 @@ public class GameController {
     @ResponseBody
     public ResponseVO delete(String id){
         try {
+            //删除游戏缓存
+            CacheUtil.delete("publicCache","gameList");
             return this.gameManagerService.delete(id);
         }catch (Exception e){
             logger.error("GameController->delete",e);
@@ -116,6 +121,8 @@ public class GameController {
     @ResponseBody
     public ResponseVO rankDoEdit(RankPO rankPO){
         try {
+            //删除游戏缓存
+            CacheUtil.delete("publicCache","gameList");
             return this.rankService.saveOrUpdate(rankPO);
         }catch (Exception e){
             logger.error("GameController->rankDoEdit",e);
@@ -128,6 +135,8 @@ public class GameController {
     @ResponseBody
     public ResponseVO rankDelete(String id){
         try {
+            //删除游戏缓存
+            CacheUtil.delete("publicCache","gameList");
             return this.rankService.delete(id);
         }catch (Exception e){
             logger.error("GameController->rankDelete",e);
