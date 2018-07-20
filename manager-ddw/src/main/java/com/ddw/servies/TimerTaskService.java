@@ -1,5 +1,6 @@
 package com.ddw.servies;
 
+import com.ddw.config.DDWGlobals;
 import com.ddw.enums.BiddingStatusEnum;
 import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.services.BaseBiddingService;
@@ -7,6 +8,7 @@ import com.ddw.services.BaseOrderService;
 import com.ddw.services.LiveRadioService;
 import com.ddw.util.BiddingTimer;
 import com.ddw.util.LiveRadioApiUtil;
+import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
@@ -22,6 +24,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.context.support.UiApplicationContextUtils;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -42,6 +47,9 @@ public class TimerTaskService extends CommonService {
 
     @Autowired
     private BaseBiddingService baseBiddingService;
+
+    @Autowired
+    private DDWGlobals ddwGlobals;
 
     /**
      * 黑房间定时处理，每10分钟扫描一次
@@ -96,28 +104,50 @@ public class TimerTaskService extends CommonService {
             Map searchBid=new HashMap();
             searchBid.put("endTime,is","null");
 
-            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime","t1.id,t1.bidEndTime,t1.luckyDogUserId,ct0.orderId,t1.userId,t1.groupId,t1.makeSureEndTime",null,null,searchBid,
+            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime","t1.id,t1.bidEndTime,t1.luckyDogUserId,ct0.orderId,t1.userId,t1.groupId,t1.makeSureEndTime,t1.payEndTime",null,null,searchBid,
                     new CommonChildBean("ddw_order_bidding_pay","biddingId","id",null));
 
             List<Map>  listMap= this.getCommonMapper().selectObjects(csb);
             if(listMap!=null){
                 Set orderIds=new HashSet();
                 Set bids=new HashSet();
-
+                Set<String> ubgs=new HashSet();
                 Set<String> bidCacheList=new HashSet();
                 Date currentDate=new Date();
+                String cancel=null;
+                Integer bidCode=null;
+                String groupId=null;
+                Date bidEndTime=null;
+                Integer luckyUserId=null;
+                Integer goddessUserId=null;
+                Date makeSureEndTime=null;
+                Date payEndTime=null;
                 for(Map map:listMap){
-                    Date bidEndTime=(Date) map.get("bidEndTime");
-                    Integer bidUserId=(Integer) map.get("luckyUserId");
-                    Date makeSureEndTime=(Date) map.get("makeSureEndTime");
+                    bidEndTime=(Date) map.get("bidEndTime");
+                    luckyUserId=(Integer) map.get("luckyUserId");
+                    goddessUserId=(Integer)map.get("userId");
+                    makeSureEndTime=(Date) map.get("makeSureEndTime");
+                    payEndTime=(Date) map.get("payEndTime");
+                    bidCode=(Integer) map.get("id");
+                    groupId=(String)map.get("groupId");
                     if(makeSureEndTime!=null && makeSureEndTime.after(currentDate)){
                         continue;
                     }
+                    //用户超时没有支付
+                    cancel=(String) CacheUtil.get("pay","bidding-cancel-"+bidCode+"-"+groupId);
+                    if(StringUtils.isNotBlank(cancel) || (payEndTime!=null && payEndTime.before(currentDate) && makeSureEndTime==null)){
+                       StringBuilder b=new StringBuilder();
+                       b.append(luckyUserId).append("-");
+                       b.append(bidCode).append("-");
+                       b.append(goddessUserId).append("-");
+                       b.append(groupId);
+                        ubgs.add(b.toString());
+                       // CacheUtil.get("pay","bidding-cancel-"+(Integer) map.get("id")+"-"+(String)map.get("groupId"));
+                    }else if( DateUtils.addMinutes(bidEndTime,60).before(currentDate)){
 
-                    if( DateUtils.addMinutes(bidEndTime,60).before(new Date())){
                         orderIds.add(map.get("orderId"));
-                        bids.add(map.get("id"));
-                        bidCacheList.add((Integer) map.get("id")+"&"+(Integer)map.get("userId")+"&"+(String)map.get("groupId"));
+                        bids.add(bidCode);
+                        bidCacheList.add(bidCode+"&"+goddessUserId+"&"+groupId);
                         // this.common
                     }
                 }
@@ -132,7 +162,18 @@ public class TimerTaskService extends CommonService {
                     this.commonUpdateByParams("ddw_goddess_bidding",setParam,searchBid);
 
                 }
-                if(!!orderIds.isEmpty()){
+
+                if(!ubgs.isEmpty()){
+                    logger.info("用户支付超时或者取消没有支付："+ubgs);
+                    for(String ubg:ubgs){
+                        baseBiddingService.executeNoPay(ubg);
+                    }
+
+                }
+
+                logger.info("退款订单ID："+orderIds);
+                if(!orderIds.isEmpty()){
+
                     baseOrderService.baseExitOrder(new ArrayList<>(orderIds));
                 }
                 logger.info("扫描空闲的竞价："+bidCacheList);
@@ -164,7 +205,15 @@ public class TimerTaskService extends CommonService {
     public void testExitOrder(){
 
     }
+
     @PostConstruct
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void init()throws Exception{
+        PayApiUtil.setDdwGlobals(ddwGlobals);
+        handleFreeBid();
+        initBiddingTimer();
+    }
+
     public void initBiddingTimer(){
         try {
             Map<String,String> m=(Map)CacheUtil.get("publicCache","bidding-make-sure-end-time");

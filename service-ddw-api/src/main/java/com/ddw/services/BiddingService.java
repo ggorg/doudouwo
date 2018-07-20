@@ -661,7 +661,7 @@ public class BiddingService extends CommonService {
             Map earnestMap=new HashMap();
             earnestMap.put("code",bidId);
             earnestMap.put("price",gpo.getEarnest());
-            CacheUtil.put("pay","bidding-earnest-pay-"+TokenUtil.getUserId(token)+"-"+bidId,gpo.getEarnest());
+            CacheUtil.put("pay","bidding-earnest-pay-"+TokenUtil.getUserId(token)+"-"+bidId,gpo.getEarnest()+"-"+gpo.getUserId());
             return new ResponseApiVO(4,"请完成定金支付",earnestMap);
         }
 

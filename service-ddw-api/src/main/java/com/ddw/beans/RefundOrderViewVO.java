@@ -23,6 +23,17 @@ public class RefundOrderViewVO {
     @ApiModelProperty(name="orderNo",value="订单号",example="xxxxx")
 
     private String orderNo;
+    @ApiModelProperty(name="imgUrl",value="图片",example="http://xxxxxx")
+
+    private String imgUrl;
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
     public String getName() {
         return name;

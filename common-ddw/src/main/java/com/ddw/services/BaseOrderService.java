@@ -158,13 +158,16 @@ public class BaseOrderService extends CommonService {
                 CacheUtil.delete("pay","orderObject-"+orderNo);
             }else if(OrderTypeEnum.OrderType4.getCode().equals(doType)){
                 String ub =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
-                Integer earnest=(Integer)CacheUtil.get("pay","bidding-earnest-pay-"+ub);
 
-
+                String str=(String)CacheUtil.get("pay","bidding-earnest-pay-"+ub);
+                String strs[]=str.split("-");
+                Integer earnest=Integer.parseInt(strs[0]);
+                Integer goddessUserId=Integer.parseInt(strs[1]);
+                String headImgUrl=this.commonSingleFieldBySingleSearchParam("ddw_userinfo","id",goddessUserId,"headImgUrl",String.class);
                 OrderViewPO po=new OrderViewPO();
                 po.setCreateTime(new Date());
                 po.setName(OrderTypeEnum.OrderType4.getName());
-                po.setHeadImg(null);
+                po.setHeadImg(headImgUrl);
                 po.setNum(1);
                 po.setOrderId(OrderUtil.getOrderId(orderNo));
                 po.setOrderNo(orderNo);
@@ -197,7 +200,9 @@ public class BaseOrderService extends CommonService {
                 if(m==null){
                     m=new HashMap();
                 }
+                String headImgUrl=null;
                 for(String ub:ubs){
+
                     payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
                     if(payMap==null){
                         throw new GenException("更新竞价金额支付状态失败");
@@ -211,6 +216,7 @@ public class BaseOrderService extends CommonService {
                     timer.schedule(new BiddingTimer(this.baseBiddingService,ub),makeSureEndTime);
                     m.put(ub,DateFormatUtils.format(makeSureEndTime,"yyyy-MM-dd HH:mm:ss"));
                     gid=(Integer) payMap.get("goddessUserId");
+                    headImgUrl=this.commonSingleFieldBySingleSearchParam("ddw_userinfo","id",gid,"headImgUrl",String.class);
 
                     bid_goddessid.add(payMap.get("code").toString()+"-"+gid);
                     needPayPrice=Integer.parseInt((String) payMap.get("needPayPrice"));
@@ -221,7 +227,7 @@ public class BaseOrderService extends CommonService {
                     po=new OrderViewPO();
                     po.setCreateTime(new Date());
                     po.setName(OrderTypeEnum.OrderType5.getName());
-                    po.setHeadImg(null);
+                    po.setHeadImg(headImgUrl);
                     po.setNum(1);
                     po.setOrderId(OrderUtil.getOrderId(orderNo));
                     po.setOrderNo(orderNo);

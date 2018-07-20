@@ -489,11 +489,14 @@ public class PayCenterService extends BaseOrderService {
                 resVo=this.commonInsertMap("ddw_order_doubi",m);
             }else if(orderType.equals(OrderTypeEnum.OrderType4.getCode()) ){
                 String ub=userId+"-"+codes[0];
-                Integer earnest=(Integer)CacheUtil.get("pay","bidding-earnest-pay-"+ub);
-                if(earnest==null){
+                String str=(String)CacheUtil.get("pay","bidding-earnest-pay-"+ub);
+
+                if(str==null){
                     throw new GenException("定金支付超时");
 
                 }
+                String strs[]=str.split("-");
+                Integer earnest=Integer.parseInt(strs[0]);
                 Map m=new HashMap();
                 m.put("orderId",insertResponseVO.getData());
                 m.put("orderNo",orderNo);

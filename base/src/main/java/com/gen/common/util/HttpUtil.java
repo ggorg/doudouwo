@@ -377,17 +377,8 @@ public class HttpUtil {
         }catch (Exception e){
             logger.error("sendHttpsWithCert",e);
         }finally {
-            try {
-                if (out != null) {
-
-                    out.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
 
         }
         return null;

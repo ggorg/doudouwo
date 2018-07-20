@@ -56,13 +56,15 @@ public class PayApiUtil {
     private static String ALIPAY_UNIFIEDORDER="https://openapi.alipay.com/gateway.do";
 
     private static DDWGlobals ddwGlobals;
-    static{
-        try {
-            ddwGlobals= Tools.getBean(DDWGlobals.class);
-        }catch (Exception e){
-            logger.error("init->ddwGlobals",e);
-        }
 
+    private  static void initDdwGlobals(){
+        if(ddwGlobals==null){
+            try {
+                ddwGlobals= Tools.getBean(DDWGlobals.class);
+            }catch (Exception e){
+                logger.error("init->ddwGlobals",e);
+            }
+        }
     }
     public static void setDdwGlobals(DDWGlobals d){
             ddwGlobals=d;
@@ -107,7 +109,7 @@ public class PayApiUtil {
         return null;
     }
     public static RequestWeiXinOrderVO requestWeiXinOrder(String body,String orderNo,Integer cost,String ip)throws Exception{
-
+        initDdwGlobals();
         Map<String,String> map=new HashMap();
         map.put("body",body);
         map.put("out_trade_no",orderNo);
@@ -124,12 +126,13 @@ public class PayApiUtil {
         return null;
     }
     public static Map reqeustWeiXinExitOrder(String orderNo,String exitOrderNo,Integer orderCost,Integer exitCost){
+        initDdwGlobals();
         Map map=new HashMap();
         map.put("out_trade_no",orderNo);
         map.put("out_refund_no",exitOrderNo);
         map.put("total_fee",orderCost);
         map.put("refund_fee",exitCost);
-        map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/refund/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/refund/execute");
+       // map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/refund/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/refund/execute");
         String reStr=wxSign(map);
         logger.info("reqeustWeiXinExitOrder->request->"+reStr);
         String callBackStr= HttpUtil.sendHttpsWithCert(WEIXIN_REFUND,reStr,ddwGlobals.getWxCertPath(),PayApiConstant.WEI_XIN_PAY_MCH_ID);
@@ -169,6 +172,7 @@ public class PayApiUtil {
 
     }
     public static RequestAliOrderVO requestAliPayOrder(String title, String orderNo, String cost, String ip)throws Exception{
+        initDdwGlobals();
         InputStream privateIs=null;
         InputStream publicIs=null;
         try {

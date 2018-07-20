@@ -182,7 +182,7 @@ public class CallBackController {
             is=request.getInputStream();
             String xmlStr= IOUtils.toString(is);
             logger.info("weiXinRefundExecute->request："+xmlStr);
-            Map<String,String> map=Tools.xmlCastMap(xmlStr);
+            /*Map<String,String> map=Tools.xmlCastMap(xmlStr);
             if(map!=null && "SUCCESS".equals(map.get("return_code")) ){
                if(StringUtils.isBlank(paySignClose) && !SignUtil.wxPaySign(map)){
                     logger.info("微信申请退款回调验签不成功");
@@ -209,7 +209,7 @@ public class CallBackController {
                     CacheUtil.put("pay","refund-"+map.get("out_trade_no"),"fail");
                 }
 
-            }
+            }*/
 
         }catch (Exception e){
             logger.error("微信退款回调失败",e);
