@@ -118,7 +118,9 @@ public class PracticeController {
             PracticeVO practiceVO = reviewPracticeService.getPracticeInfo(practiceId);
             //评分
             PracticeEvaluationPO practiceEvaluationPO = reviewPracticeService.getEvaluation(practiceId);
-            PropertyUtils.copyProperties(practiceVO,practiceEvaluationPO);
+            if (practiceEvaluationPO != null) {
+                practiceVO.setStar(practiceEvaluationPO.getStar());
+            }
             // 查询代练信息,舍弃原本会员资料返回,返回代练游戏简历\代练资料\接单数\评分
             List<PhotographPO> photographList = userInfoService.queryPhotograph(practiceId);
             if(photographList.size()>0){
