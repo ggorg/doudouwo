@@ -147,7 +147,7 @@ public class PracticeController {
             if (practiceGamePO != null && practiceGamePO.getAppointment() == 1) {
                 ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2);
                 if(rv.getReCode() > 0){
-                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId("token"), practiceGameApplyDTO);
+                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token), practiceGameApplyDTO);
                 }
                 ResponseApiVO<PracticeGameApplyVO> responseApiVO = new ResponseApiVO();
                 PropertyUtils.copyProperties(responseApiVO,rv);
@@ -214,7 +214,7 @@ public class PracticeController {
     public ResponseVO release(@PathVariable String token,
                                  @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeReleaseDTO practiceReleaseDTO){
         try {
-            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId("token"),practiceReleaseDTO.getGameId(),1);
+            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),1);
         }catch (Exception e){
             logger.error("PracticeController->release",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -226,10 +226,10 @@ public class PracticeController {
     public ResponseVO cancle(@PathVariable String token,
                              @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeReleaseDTO practiceReleaseDTO){
         try {
-            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrderInProgress(TokenUtil.getUserId("token"));
+            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrderInProgress(TokenUtil.getUserId(token));
             //判断无接单,可取消发布
             if (practiceOrderPO == null) {
-                return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId("token"),practiceReleaseDTO.getGameId(),0);
+                return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0);
             }else {
                 return new ResponseVO(-2,"有正在进行的订单,不可取消,请先结算",null);
             }
