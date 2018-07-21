@@ -18,6 +18,7 @@ public class PracticeOrderPO {
     private int realityStar;
     /** 订单状态，1开始接单，2完成,3未完成并结单*/
     private int status;
+    private int money;
     private Date createTime;
     private Date updateTime;
 
@@ -107,6 +108,14 @@ public class PracticeOrderPO {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
     }
 
     public Date getCreateTime() {

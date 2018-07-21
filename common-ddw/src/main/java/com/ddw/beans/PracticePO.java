@@ -8,7 +8,6 @@ import java.util.Date;
 public class PracticePO {
     private int id;
     private int userId;
-    private int appointment;
     private int storeId;
     private String tableNo;
     private Date createTime;
@@ -28,14 +27,6 @@ public class PracticePO {
 
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    public int getAppointment() {
-        return appointment;
-    }
-
-    public void setAppointment(int appointment) {
-        this.appointment = appointment;
     }
 
     public int getStoreId() {

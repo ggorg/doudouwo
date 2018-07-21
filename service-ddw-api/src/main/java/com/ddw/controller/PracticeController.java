@@ -51,7 +51,7 @@ public class PracticeController {
             String openid = TokenUtil.getUserObject(token).toString();
 
             UserInfoVO user = userInfoService.queryByOpenid(openid);
-            return reviewPracticeService.apply(TokenUtil.getUserId(token),TokenUtil.getUserName(token),gameId,rankId,photograph1,photograph2,photograph3);
+            return reviewPracticeService.apply(TokenUtil.getUserId(token),TokenUtil.getStoreId(token),TokenUtil.getUserName(token),gameId,rankId,photograph1,photograph2,photograph3);
         }catch (Exception e){
             logger.error("PracticeController->apply",e);
             return new ResponseApiVO(-1,"提交失败",null);
@@ -118,7 +118,9 @@ public class PracticeController {
             PracticeVO practiceVO = reviewPracticeService.getPracticeInfo(practiceId);
             //评分
             PracticeEvaluationPO practiceEvaluationPO = reviewPracticeService.getEvaluation(practiceId);
-            PropertyUtils.copyProperties(practiceVO,practiceEvaluationPO);
+            if (practiceEvaluationPO != null) {
+                practiceVO.setStar(practiceEvaluationPO.getStar());
+            }
             // 查询代练信息,舍弃原本会员资料返回,返回代练游戏简历\代练资料\接单数\评分
             List<PhotographPO> photographList = userInfoService.queryPhotograph(practiceId);
             if(photographList.size()>0){
@@ -135,7 +137,7 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "约代练申请,申请状态成功,返回订单编号和代练支付金额预览")
+    @ApiOperation(value = "约代练申请,申请状态成功,返回订单编号和代练支付金额预估")
     @PostMapping("/gameApply/{token}")
     public ResponseApiVO<PracticeGameApplyVO> gameApply(@PathVariable String token,
                                            @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeGameApplyDTO practiceGameApplyDTO){
@@ -145,7 +147,7 @@ public class PracticeController {
             if (practiceGamePO != null && practiceGamePO.getAppointment() == 1) {
                 ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2);
                 if(rv.getReCode() > 0){
-                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId("token"), practiceGameApplyDTO);
+                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token), practiceGameApplyDTO);
                 }
                 ResponseApiVO<PracticeGameApplyVO> responseApiVO = new ResponseApiVO();
                 PropertyUtils.copyProperties(responseApiVO,rv);
@@ -212,7 +214,7 @@ public class PracticeController {
     public ResponseVO release(@PathVariable String token,
                                  @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeReleaseDTO practiceReleaseDTO){
         try {
-            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId("token"),practiceReleaseDTO.getGameId(),1);
+            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),1);
         }catch (Exception e){
             logger.error("PracticeController->release",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -224,10 +226,10 @@ public class PracticeController {
     public ResponseVO cancle(@PathVariable String token,
                              @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeReleaseDTO practiceReleaseDTO){
         try {
-            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrderInProgress(TokenUtil.getUserId("token"));
+            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrderInProgress(TokenUtil.getUserId(token));
             //判断无接单,可取消发布
             if (practiceOrderPO == null) {
-                return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId("token"),practiceReleaseDTO.getGameId(),0);
+                return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0);
             }else {
                 return new ResponseVO(-2,"有正在进行的订单,不可取消,请先结算",null);
             }
