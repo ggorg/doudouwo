@@ -66,6 +66,7 @@ public class ReviewPracticeService extends CommonService {
         ReviewPO reviewPO = this.getReviewByCode(drBusinessCode);
         Map setParams=new HashMap();
         setParams.put("practiceGradeId",1);
+        setParams.put("practiceFlag",1);
         Map searchCondition=new HashMap();
         searchCondition.put("id",reviewPO.getDrProposer());
         //删除审核拒绝缓存
@@ -77,15 +78,26 @@ public class ReviewPracticeService extends CommonService {
         practicePO.setCreateTime(new Date());
         practicePO.setUpdateTime(new Date());
         this.commonInsert("ddw_practice",practicePO);
-        //TODO 判断更新代练段位等级
         //插入代练与游戏关联表
         ReviewPracticePO reviewPracticePO = this.getReviewPracticeByCode(drBusinessCode);
-        PracticeGamePO practiceGamePO = new PracticeGamePO();
-        practiceGamePO.setCreateTime(new Date());
-        practiceGamePO.setGameId(reviewPracticePO.getGameId());
-        practiceGamePO.setRankId(reviewPracticePO.getRankId());
-        practiceGamePO.setAppointment(0);
-        this.commonInsert("ddw_practice_game",practiceGamePO);
+        //判断是否已存在同游戏,是则更新代练段位等级
+        Map searchCondition2=new HashMap();
+        searchCondition2.put("userId",reviewPO.getDrProposer());
+        searchCondition2.put("gameId",reviewPracticePO.getGameId());
+        PracticeGamePO practiceGamePO = this.commonObjectBySearchCondition("ddw_practice_game",searchCondition2,PracticeGamePO.class);
+        if(practiceGamePO == null){
+            PracticeGamePO pg = new PracticeGamePO();
+            pg.setCreateTime(new Date());
+            pg.setUserId(reviewPO.getDrProposer());
+            pg.setGameId(reviewPracticePO.getGameId());
+            pg.setRankId(reviewPracticePO.getRankId());
+            pg.setAppointment(0);
+            this.commonInsert("ddw_practice_game",pg);
+        }else {
+            Map setParams2 = new HashMap<>();
+            setParams2.put("rankId",reviewPracticePO.getRankId());
+            this.commonUpdateByParams("ddw_practice_game",setParams2,searchCondition2);
+        }
         return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
     }
 

@@ -102,7 +102,7 @@ public class PracticeController {
     @ApiOperation(value = "代练资料查询用例")
     @PostMapping("/query/{token}")
     public ResponseApiVO<PracticeVO> query(@PathVariable String token,
-                                           @RequestBody @ApiParam(name = "id",value="会员id,传入json格式,如:{\"id\":\"1\"}", required = false) JSONObject json){
+                                           @RequestBody @ApiParam(name = "id",value="代练id,传入json格式,如:{\"id\":\"1\"}", required = false) JSONObject json){
         try {
             //代练编号
             Integer practiceId = 0;

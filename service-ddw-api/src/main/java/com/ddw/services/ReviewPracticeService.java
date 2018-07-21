@@ -58,19 +58,20 @@ public class ReviewPracticeService extends CommonService {
                 photograph1.isEmpty() || photograph2.isEmpty() ||photograph3.isEmpty()){
             return new ResponseApiVO(-1,"参数不正确",null);
         }else{
-            Map conditionMap = new HashMap<>();
-            conditionMap.put("drProposer",id);
-            conditionMap.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType6.getCode());
-            //查询状态审核未通过
-            conditionMap.put("drReviewStatus,!=",2);
-            ReviewRealNamePO realPO = this.commonObjectBySearchCondition("ddw_review",conditionMap,new ReviewRealNamePO().getClass());
-            if(realPO != null){
-                return new ResponseApiVO(-2,"不允许重复提交申请",null);
-            }
+            //允许重复提交申请
+//            Map conditionMap = new HashMap<>();
+//            conditionMap.put("drProposer",id);
+//            conditionMap.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType6.getCode());
+//            //查询状态审核未通过
+//            conditionMap.put("drReviewStatus,!=",2);
+//            ReviewRealNamePO realPO = this.commonObjectBySearchCondition("ddw_review",conditionMap,new ReviewRealNamePO().getClass());
+//            if(realPO != null){
+//                return new ResponseApiVO(-2,"不允许重复提交申请",null);
+//            }
             //更新会员代练状态为审核中
-            Map setConditionMap = new HashMap<>();
-            setConditionMap.put("practiceFlag",2);
-            this.commonUpdateBySingleSearchParam("ddw_userinfo",setConditionMap,"id",id);
+            Map setParams = new HashMap<>();
+            setParams.put("practiceFlag",2);
+            this.commonUpdateBySingleSearchParam("ddw_userinfo",setParams,"id",id);
             //插入审批表
             ReviewPO reviewPO=new ReviewPO();
             String bussinessCode = String.valueOf(new Date().getTime());
@@ -102,14 +103,14 @@ public class ReviewPracticeService extends CommonService {
                 CommonBeanFiles f1=this.fileService.createCommonBeanFiles(fileInfoVo1);
                 this.fileService.saveFile(f1);
 
-                String ImgName2= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph1.getOriginalFilename());
-                FileInfoVo fileInfoVo2= UploadFileMoveUtil.move( photograph1,mainGlobals.getRsDir(), ImgName1);
+                String ImgName2= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph2.getOriginalFilename());
+                FileInfoVo fileInfoVo2= UploadFileMoveUtil.move( photograph2,mainGlobals.getRsDir(), ImgName2);
                 reviewPracticePO.setPicUrl2(mainGlobals.getServiceUrl()+fileInfoVo2.getUrlPath());
                 CommonBeanFiles f2=this.fileService.createCommonBeanFiles(fileInfoVo2);
                 this.fileService.saveFile(f2);
 
-                String ImgName3= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph1.getOriginalFilename());
-                FileInfoVo fileInfoVo3= UploadFileMoveUtil.move( photograph1,mainGlobals.getRsDir(), ImgName3);
+                String ImgName3= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph3.getOriginalFilename());
+                FileInfoVo fileInfoVo3= UploadFileMoveUtil.move( photograph3,mainGlobals.getRsDir(), ImgName3);
                 reviewPracticePO.setPicUrl3(mainGlobals.getServiceUrl()+fileInfoVo3.getUrlPath());
                 CommonBeanFiles f3=this.fileService.createCommonBeanFiles(fileInfoVo3);
                 this.fileService.saveFile(f3);
