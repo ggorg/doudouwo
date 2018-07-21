@@ -13,7 +13,8 @@ public enum ReviewBusinessStatusEnum implements Dictionary {
     realName11("实名认证申请",11),
     goddessFlag2("申请当女神",2),
     banner7("banner申请",7),
-    practiceFlag5("申请代练",5);
+    practiceFlag5("申请代练",5),
+    withdrawAppl8("提现申请",8);
     private String name;
     private Integer code;
 

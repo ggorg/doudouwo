@@ -3,29 +3,25 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 审批回调业务
+ * 提现状态
  */
-public enum ReviewCallBackEnum implements Dictionary {
-    //订单-取消订单：6，订单-退还：4
-    orderStatus6("取消订单",6),
-    orderStatus4("退还",4),
-    liveRadioCallBack10("executeLiveRadio",10),//申请直播
-    realName11("executeRealName",11),//实名认证申请
-    goddessFlagCallBack2("executeGoddess",2),//申请当女神
-    bannerCallBack7("executeBanner",7),//banner申请
-    practiceFlag5("executePractice",5),//申请代练
-    withdraw8("executeWithdraw",8);//申请代练
+public enum WithdrawStatusEnum implements Dictionary {
+    withdrawStatus0("未提现",0),
+    withdrawStatus1("已提现",1);
+
+
+
     private String name;
     private Integer code;
 
-    private ReviewCallBackEnum(String name, Integer code) {
+    private WithdrawStatusEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }
 
     // 普通方法
     public static String getName(Integer code) {
-        for (ReviewCallBackEnum c : ReviewCallBackEnum.values()) {
+        for (WithdrawStatusEnum c : WithdrawStatusEnum.values()) {
             if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }

@@ -1,15 +1,15 @@
 package com.ddw.services;
 
-import com.ddw.beans.LiveRadioApplDTO;
-import com.ddw.beans.LiveRadioPO;
-import com.ddw.beans.ResponseApiVO;
-import com.ddw.beans.ReviewPO;
+import com.ddw.beans.*;
 import com.ddw.enums.*;
+import com.ddw.token.TokenUtil;
 import com.ddw.util.BusinessCodeUtil;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +29,9 @@ public class ReviewService extends CommonService {
 
     @Autowired
     private LiveRadioService liveRadioService;
+
+    @Value("${withdraw.max.cost:30000}")
+    private Integer withdrawMaxCost;
 
     /**
      * 判断是否未审核直播
@@ -125,7 +128,77 @@ public class ReviewService extends CommonService {
         }
         return this.commonCountBySearchCondition("ddw_review",condition)>0?true:false;
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO applyWithdraw(String token,WithdrawDTO dto)throws Exception{
+        if(StringUtils.isBlank(IncomeTypeEnum.getName(dto.getIncomeType()))){
+            return new ResponseApiVO(-2,"收益类型异常",null);
+        }
+        if(dto.getCode()==null || dto.getCode()<=0){
+            return new ResponseApiVO(-2,"提现途径code异常",null);
+        }
+        if(dto.getMoney()==null || dto.getMoney()<=0){
+            return new ResponseApiVO(-2,"提现金额异常",null);
+        }
+        if(dto.getMoney()<this.withdrawMaxCost){
+            return new ResponseApiVO(-2,"提现金额不能小于"+((double)dto.getMoney()/100)+"元",null);
 
+        }
+        Integer userId= TokenUtil.getUserId(token);
+        if(IncomeTypeEnum.IncomeType1.getCode().equals(dto.getIncomeType())){
+            WalletGoddessInVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userId, WalletGoddessInVO.class);
+           if( balanceVO.getGoddessIncome()==null || dto.getMoney()>balanceVO.getGoddessIncome()){
+               return new ResponseApiVO(-2,"女神收益金额不足",null);
+           }
+
+        }else{
+            WalletPracticeInVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userId, WalletPracticeInVO.class);
+            if( balanceVO.getPracticeIncome()==null || dto.getMoney()>balanceVO.getPracticeIncome()){
+                return new ResponseApiVO(-2,"代练收益金额不足",null);
+            }
+        }
+        Map searchMap=new HashMap();
+        searchMap.put("userId",userId);
+        searchMap.put("id",dto.getCode());
+        Map map=this.commonObjectBySearchCondition("ddw_withdraw_way",searchMap);
+        if(map==null){
+            return new ResponseApiVO(-2,"提现失败-没有绑定的信息",null);
+
+        }
+        Map insertMap=new HashMap();
+        insertMap.put("withdrawWayId",dto.getCode());
+        insertMap.put("money",dto.getMoney());
+        insertMap.put("createTime",new Date());
+        insertMap.put("updateTime",new Date());
+        insertMap.put("status",WithdrawStatusEnum.withdrawStatus0.getCode());
+        insertMap.put("userId",userId);
+        insertMap.put("incomeType",dto.getIncomeType());
+        ResponseVO res=this.commonInsertMap("ddw_withdraw_record",insertMap);
+        if(res.getReCode()!=1){
+            return new ResponseApiVO(-2,"提现失败-添加记录失败",null);
+        }
+        Integer storeId=TokenUtil.getStoreId(token);
+        ReviewPO reviewPO=new ReviewPO();
+        reviewPO.setDrBusinessCode(res.getData().toString());
+        reviewPO.setDrBelongToStoreId(storeId);
+        reviewPO.setCreateTime(new Date());
+
+        reviewPO.setDrProposerName( TokenUtil.getUserName(token));
+        reviewPO.setDrBusinessType(ReviewBusinessTypeEnum.ReviewBusinessType8.getCode());
+        reviewPO.setDrReviewStatus(ReviewStatusEnum.ReviewStatus0.getCode());
+        reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
+        reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType0.getCode());
+        reviewPO.setDrBelongToStoreId(storeId);
+        reviewPO.setDrProposer(userId);
+        reviewPO.setDrApplyDesc("提现申请("+IncomeTypeEnum.getName(dto.getIncomeType())+")");
+        reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.withdrawAppl8.getCode());
+        reviewPO.setDrExtend("提现申请-金额："+(double)dto.getMoney()/100);
+        res=this.commonReviewService.submitAppl(reviewPO);
+        if(res.getReCode()!=1){
+            return new ResponseApiVO(-2,"提现失败-申请审核失败",null);
+        }
+        return new ResponseApiVO(1,"成功",null);
+
+    }
 
 
 }

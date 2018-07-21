@@ -49,7 +49,12 @@ public class ReviewService extends CommonService {
         condtion.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType1.getCode());
         return this.findPage(pageNo,condtion);
     }
-
+    public Page findWithdrawPageByHq(Integer pageNo)throws Exception{
+        Map condtion=new HashMap();
+        condtion.put("drReviewerType",ReviewReviewerTypeEnum.ReviewReviewerType0.getCode());
+        condtion.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType8.getCode());
+        return this.findPage(pageNo,condtion);
+    }
 
     public Page findLiveRadioPageByStore(Integer pageNo,Integer storeId)throws Exception{
         Map condtion=new HashMap();

@@ -206,12 +206,16 @@ public class PayCenterService extends BaseOrderService {
         if(OrderTypeEnum.OrderType4.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(TokenUtil.getStoreId(token));
-            Integer earnest=(Integer)CacheUtil.get("pay","bidding-earnest-pay-"+userId+"-"+codes[0]);
-            if(earnest==null){
-                return new ResponseApiVO(-2,"定金支付失败",null);
+
+
+            String ub=userId+"-"+codes[0];
+            String str=(String)CacheUtil.get("pay","bidding-earnest-pay-"+ub);
+            if(str==null){
+                throw new GenException("定金支付失败");
+
             }
-
-
+            String strs[]=str.split("-");
+            Integer earnest=Integer.parseInt(strs[0]);
             orderPO.setDoCost(earnest);
             ResponseApiVO couponVo=this.executeCoupon(orderPO,couponCode,token);
             if(couponVo.getReCode()!=1){

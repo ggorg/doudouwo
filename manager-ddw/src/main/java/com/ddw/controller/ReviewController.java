@@ -57,6 +57,17 @@ public class ReviewController {
        return "pages/manager/review/list";
 
     }
+    @GetMapping("/to-review-withdra-page")
+    public String toReviewWithdraPageByHq(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+       try {
+
+           model.addAttribute("rPage",this.reviewService.findWithdrawPageByHq(pageNo));
+       }catch (Exception e){
+           logger.error("ReviewController->toReviewWithdraPageByHq",e);
+       }
+       return "pages/manager/review/list";
+
+    }
 
     /**
      * 门店-女神申请直播
