@@ -51,7 +51,7 @@ public class PracticeController {
             String openid = TokenUtil.getUserObject(token).toString();
 
             UserInfoVO user = userInfoService.queryByOpenid(openid);
-            return reviewPracticeService.apply(TokenUtil.getUserId(token),TokenUtil.getUserName(token),gameId,rankId,photograph1,photograph2,photograph3);
+            return reviewPracticeService.apply(TokenUtil.getUserId(token),TokenUtil.getStoreId(token),TokenUtil.getUserName(token),gameId,rankId,photograph1,photograph2,photograph3);
         }catch (Exception e){
             logger.error("PracticeController->apply",e);
             return new ResponseApiVO(-1,"提交失败",null);

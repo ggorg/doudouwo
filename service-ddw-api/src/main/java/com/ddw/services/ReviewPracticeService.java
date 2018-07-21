@@ -52,7 +52,7 @@ public class ReviewPracticeService extends CommonService {
     private PracticeMapper practiceMapper;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO apply(Integer id,String userName, String gameId, String rankId, MultipartFile photograph1,MultipartFile photograph2,MultipartFile photograph3)throws Exception{
+    public ResponseApiVO apply(Integer id,Integer storeId,String userName, String gameId, String rankId, MultipartFile photograph1,MultipartFile photograph2,MultipartFile photograph3)throws Exception{
         if(StringUtils.isBlank(gameId) || StringUtils.isBlank(rankId) ||
                 photograph1 == null || photograph2 == null ||photograph3 == null ||
                 photograph1.isEmpty() || photograph2.isEmpty() ||photograph3.isEmpty()){
@@ -77,6 +77,7 @@ public class ReviewPracticeService extends CommonService {
             reviewPO.setDrBusinessCode(bussinessCode);
             reviewPO.setCreateTime(new Date());
             reviewPO.setDrProposerName(userName);
+            reviewPO.setDrBelongToStoreId(storeId);
             reviewPO.setDrBusinessType(ReviewBusinessTypeEnum.ReviewBusinessType6.getCode());
             reviewPO.setDrReviewStatus(ReviewStatusEnum.ReviewStatus0.getCode());
             reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
@@ -89,6 +90,7 @@ public class ReviewPracticeService extends CommonService {
             if(responseApiVO.getReCode()>0){
                 ReviewPracticePO reviewPracticePO = new ReviewPracticePO();
                 reviewPracticePO.setUserId(Integer.valueOf(id));
+                reviewPracticePO.setStoreId(storeId);
                 reviewPracticePO.setDrBusinessCode(bussinessCode);
                 reviewPracticePO.setGameId(Integer.valueOf(gameId));
                 reviewPracticePO.setRankId(Integer.valueOf(rankId));
@@ -471,4 +473,6 @@ public class ReviewPracticeService extends CommonService {
         }
         return PracticeGameList;
     }
+    //TODO 分页按时间倒序展示已完成订单
+    //TODO 分页展示正在进行的订单
 }
