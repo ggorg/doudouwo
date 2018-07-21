@@ -353,6 +353,7 @@ public class ReviewPracticeService extends CommonService {
         //订单状态，1开始接单，2完成,3未完成并结单
         practiceOrderPO.setStatus(payMoney>=0?2:3);
         practiceOrderPO.setUpdateTime(new Date());
+        practiceOrderPO.setMoney(payMoney);
         Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
         ResponseApiVO responseApiVO = new ResponseApiVO();
