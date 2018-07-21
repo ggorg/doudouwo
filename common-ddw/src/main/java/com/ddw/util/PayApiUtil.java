@@ -3,12 +3,15 @@ package com.ddw.util;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayFundTransToaccountTransferModel;
 import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.domain.AlipayTradeQueryModel;
 import com.alipay.api.domain.AlipayTradeRefundModel;
+import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.request.AlipayTradeRefundRequest;
+import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.alipay.api.response.AlipayTradeRefundResponse;
@@ -170,6 +173,41 @@ public class PayApiUtil {
         }
         return new ResponseVO(-2,"失败",null);
 
+    }
+
+    public static ResponseVO requestAliTransfer(String cost,String no,String accountNo,String accountRealName,String title,String remark){
+        initDdwGlobals();
+        InputStream privateIs=null;
+        InputStream publicIs=null;
+        try {
+            privateIs= PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/private_key");
+            publicIs= PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/ali_public_key");
+            String privateKey= IOUtils.toString(privateIs);
+            String publicKey= IOUtils.toString(publicIs);
+            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER,PayApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
+            AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
+            AlipayFundTransToaccountTransferModel  model=new AlipayFundTransToaccountTransferModel();
+            model.setPayeeType("ALIPAY_LOGONID");
+            model.setAmount(cost);
+            model.setOutBizNo(no);
+            model.setPayeeAccount(accountNo);
+            model.setPayeeRealName(accountRealName);
+            model.setPayerShowName(title);
+            model.setRemark(remark);
+
+            request.setBizModel(model);
+            AlipayFundTransToaccountTransferResponse response=alipayClient.execute(request);
+            if(response.isSuccess()){
+
+                return new ResponseVO(1,"转账成功",null);
+            }
+            logger.info("阿里转账->response->"+response.getBody());
+
+        }catch (Exception e){
+            logger.error("阿里转账异常",e);
+
+        }
+        return new ResponseVO(-2,"转账失败",null);
     }
     public static RequestAliOrderVO requestAliPayOrder(String title, String orderNo, String cost, String ip)throws Exception{
         initDdwGlobals();

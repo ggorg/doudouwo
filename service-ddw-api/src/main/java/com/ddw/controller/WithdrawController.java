@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 import com.ddw.beans.*;
+import com.ddw.services.ReviewService;
 import com.ddw.services.WithdrawService;
 import com.ddw.token.Idemp;
 import com.ddw.token.Token;
@@ -21,6 +22,8 @@ public class WithdrawController {
     @Autowired
     private WithdrawService withdrawService;
 
+    @Autowired
+    private ReviewService reviewService;
 
     @Idemp
     @Token
@@ -30,8 +33,10 @@ public class WithdrawController {
     public ResponseApiVO withdrawMoney(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WithdrawDTO args){
         try {
             logger.info("withdrawMoney->request："+args);
+            ResponseApiVO res=this.reviewService.applyWithdraw(token,args);
+            logger.info("withdrawMoney->response："+res);
 
-            //return this.walletService.searchPayStatus(token,args);
+            return res;
         }catch (Exception e){
             logger.error("WithdrawController-withdrawMoney-》提现申请-》系统异常",e);
         }

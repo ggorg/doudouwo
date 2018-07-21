@@ -466,7 +466,6 @@ public class BaseOrderService extends CommonService {
             ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",map,"id",exitOrderPO.getOrderId());
             if(res.getReCode()!=1){
                 throw new GenException("申请退款失败->更新订单表失败");
-
             }
             map=new HashMap();
             map.put("payStatus",PayStatusEnum.PayStatus2.getCode());
