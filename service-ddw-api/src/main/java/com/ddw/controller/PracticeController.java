@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -107,7 +108,7 @@ public class PracticeController {
             //代练编号
             Integer practiceId = 0;
             boolean focus = false;
-            if(!json.isEmpty()){
+            if(json !=null && !json.isEmpty() && json.containsKey("id") && !StringUtils.isBlank(json.get("id").toString())){
                 practiceId = Integer.valueOf(json.getString("id"));
                 //会员编号
                 Integer userId = TokenUtil.getUserId(token);
