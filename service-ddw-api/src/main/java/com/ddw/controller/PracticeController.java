@@ -205,7 +205,7 @@ public class PracticeController {
         try {
             return new ResponseVO(1,"成功",reviewPracticeService.getPracticeEvaluationDetailList(practiceEvaluationDetailListDTO));
         }catch (Exception e){
-            logger.error("PracticeController->queryList",e);
+            logger.error("PracticeController->getPracticeEvaluationDetailList",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }
@@ -236,6 +236,41 @@ public class PracticeController {
             }
         }catch (Exception e){
             logger.error("PracticeController->cancle",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @Token
+    @ApiOperation(value = "代练订单列表,倒序")
+    @PostMapping("/orderPracticeList/{token}")
+    public ResponseVO getOrderPracticeList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticeEvaluationDetailListDTO practiceEvaluationDetailListDTO){
+        try {
+            return new ResponseVO(1,"成功",reviewPracticeService.getOrderPracticeList(practiceEvaluationDetailListDTO));
+        }catch (Exception e){
+            logger.error("PracticeController->getOrderPracticeList",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @Token
+    @ApiOperation(value = "会员代练订单列表,倒序")
+    @PostMapping("/orderUserList/{token}")
+    public ResponseVO getOrderUserList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO page){
+        try {
+            return new ResponseVO(1,"成功",reviewPracticeService.getOrderUserList(TokenUtil.getUserId(token),page));
+        }catch (Exception e){
+            logger.error("PracticeController->getOrderUserList",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "代练任务发布列表")
+    @PostMapping("/orderUserList/{token}")
+    public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO page){
+        try {
+            return new ResponseVO(1,"成功",reviewPracticeService.getPubTaskList(TokenUtil.getUserId(token),page));
+        }catch (Exception e){
+            logger.error("PracticeController->getPubTaskList",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }
