@@ -461,7 +461,7 @@ public class ReviewPracticeService extends CommonService {
      */
     public List<PracticeGameVO> getPracticeGameList(Integer practiceId)throws Exception{
         Map searchCondition = new HashMap<>();
-        searchCondition.put("id",practiceId);
+        searchCondition.put("userId",practiceId);
         Map conditon=new HashMap();
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_game",null,"t1.gameId,t1.rankId,t1.appointment,ct0.gameName,ct1.rank ",null,null,searchCondition,
                 new CommonChildBean("ddw_game","id","gameId",conditon),new CommonChildBean("ddw_rank","id","rankId",conditon));
