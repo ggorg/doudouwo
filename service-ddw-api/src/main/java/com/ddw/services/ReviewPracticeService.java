@@ -337,19 +337,19 @@ public class ReviewPracticeService extends CommonService {
 
     /**
      * 代练分页按时间倒序展示订单
-     * @param practiceEvaluationDetailListDTO
+     * @param practiceId
+     * @param page
      * @return
      * @throws Exception
      */
-    public Page getOrderPracticeList(PracticeEvaluationDetailListDTO practiceEvaluationDetailListDTO)throws Exception{
+    public Page getOrderPracticeList(Integer practiceId,PageDTO page)throws Exception{
         Map condtion = new HashMap<>();
-        condtion.put("practiceId",practiceEvaluationDetailListDTO.getPracticeId());
-        condtion.put("gameId",practiceEvaluationDetailListDTO.getGameId());
+        condtion.put("practiceId",practiceId);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank",null,null,condtion,cb1,cb2,cb3);
-        return this.commonPage(practiceEvaluationDetailListDTO.getPage().getPageNum(),practiceEvaluationDetailListDTO.getPage().getPageSize(),csb);
+        return this.commonPage(page.getPageNum(),page.getPageSize(),csb);
     }
 
     /**
