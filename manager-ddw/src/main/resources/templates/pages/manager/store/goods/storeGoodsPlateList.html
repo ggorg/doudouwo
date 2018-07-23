@@ -22,7 +22,7 @@
 
             <div id="contentwrapper" class="contentwrapper">
                 <div class="contenttitle2">
-                    <h3>类型列表</h3>
+                    <h3>板块列表</h3>
 
                 </div><!--contenttitle-->
 
@@ -51,7 +51,7 @@
                 </div><!--tableoptions-->
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('350px','230px','新增商品','to-edit')" title="table2">新增商品</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('350px','300px','新增板块','to-edit')" title="table2">新增板块</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -67,9 +67,10 @@
                     <thead>
 
                     <tr>
-                        <th class="head1">类型名称</th>
+                        <th class="head1">板块名称</th>
                         <th class="head1">序号</th>
                         <th class="head1">状态</th>
+                        <th class="head1">版块位置</th>
 
                         <th class="head1">创建时间</th>
 
@@ -82,6 +83,7 @@
                         <td th:text="${obj['dgtName']}">Trident</td>
                         <td th:text="${obj['dgtSort']}">Trident</td>
                         <td th:text=" ${#TdEnum.text('com.ddw.enums.DisabledEnum',obj['dgtDistabled'])}">Win 95+</td>
+                        <td th:text=" ${#TdEnum.text('com.ddw.enums.GoodsPlatePosEnum',obj['platePos'])}">Win 95+</td>
 
 
                         <td th:text="${obj['createTime']}">Win 95+</td>
@@ -89,7 +91,7 @@
                         <td class="center">
                             <div class="layui-btn-group">
                                 <button class="layui-btn layui-btn-sm " th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dgtDistabled']==1?0:1}+',\''+${obj['dgtDistabled']==1?'是否启用':'是否停用'}+'\')'" th:text="${obj['dgtDistabled']==1?'启 用':'停 用'}">启用</button>
-                                <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'350px\',\'230px\',\'修改\',\'to-edit?id='+${obj['id']}+'\')'"  >修改</button>
+                                <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'350px\',\'300px\',\'修改\',\'to-edit?id='+${obj['id']}+'\')'"  >修改</button>
                             </div>
                         </td>
                     </tr>

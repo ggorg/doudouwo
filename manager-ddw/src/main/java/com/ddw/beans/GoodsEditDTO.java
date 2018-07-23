@@ -8,6 +8,8 @@ public class GoodsEditDTO {
     private Integer id;
     private String dgTitle;
     private Integer dgType;
+    private Integer indexPlateId;
+    private Integer goodsPlateId;
     private Integer dgSort;
     private ArrayList isUpdateImg;
     private MultipartFile fileImgShow;
@@ -20,6 +22,22 @@ public class GoodsEditDTO {
     private Integer[] dghActivityPrice;
     private Integer[] dghFormulaId;
     private Integer[] dghStatus;
+
+    public Integer getIndexPlateId() {
+        return indexPlateId;
+    }
+
+    public void setIndexPlateId(Integer indexPlateId) {
+        this.indexPlateId = indexPlateId;
+    }
+
+    public Integer getGoodsPlateId() {
+        return goodsPlateId;
+    }
+
+    public void setGoodsPlateId(Integer goodsPlateId) {
+        this.goodsPlateId = goodsPlateId;
+    }
 
     public Integer getDgRecommend() {
         return dgRecommend;

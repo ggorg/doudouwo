@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 import com.ddw.beans.*;
+import com.ddw.enums.GoodsPlatePosEnum;
 import com.ddw.enums.GoodsTypeEnum;
 import com.ddw.services.GoodsClientService;
 import com.ddw.token.Token;
@@ -37,7 +38,7 @@ public class GoodsContoller {
     @PostMapping("/list/{token}")
     public ResponseApiVO<ListVO> toGoodsList(@PathVariable String token){
         try {
-            return this.goodsClientService.goodsIndex(token);
+            return this.goodsClientService.goodsIndex(token, GoodsPlatePosEnum.GoodsPlatePos2);
         }catch (Exception e){
             logger.error("GoodsContoller->toGoodsList-商列表-》异常",e);
         }

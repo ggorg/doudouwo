@@ -1,13 +1,16 @@
 package com.ddw.controller;
 
 import com.ddw.beans.GoodsEditDTO;
+import com.ddw.beans.GoodsPageModelDTO;
 import com.ddw.beans.StorePO;
 import com.ddw.services.StoreGoodsPlateService;
-import com.ddw.servies.StoreGoodsService;
 import com.ddw.servies.StoreFormulaService;
+import com.ddw.servies.StoreGoodsPageModelService;
+import com.ddw.servies.StoreGoodsService;
 import com.ddw.servies.StoreService;
 import com.ddw.util.Toolsddw;
 import com.gen.common.vo.ResponseVO;
+import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,40 +18,35 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 门店商品
+ * 门店商品页面模板
  */
-@RequestMapping("/manager/goods")
+@RequestMapping("/manager/goods/pagemodel")
 @Controller
-public class StoreGoodsContoller {
+public class StoreGoodsPageModelContoller {
 
-    private final Logger logger = Logger.getLogger(StoreGoodsContoller.class);
+    private final Logger logger = Logger.getLogger(StoreGoodsPageModelContoller.class);
 
     @Autowired
     private StoreService storeService;
 
     @Autowired
     private StoreGoodsService storeGoodsService;
-
     @Autowired
-    private StoreFormulaService storeFormulaService;
+    private StoreGoodsPageModelService storeGoodsPageModelService;
 
-    @Autowired
-    private StoreGoodsPlateService storeGoodsPlateService;
+
 
     @GetMapping("/to-paging")
     public String  toPaging(@RequestParam(defaultValue = "1") Integer pageNo, Model model){
         try{
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-                model.addAttribute("gPage",storeGoodsService.findPage(pageNo,null,spo.getId()));
-                model.addAttribute("goodsPlate",this.storeGoodsPlateService.getGoodsPlate(spo.getId()));
-
-
+                model.addAttribute("p",this.storeGoodsPageModelService.findPage(pageNo,spo.getId()));
             }
         }catch (Exception e){
-            logger.error("StoreGoodsContoller->toPaging->系统异常",e);
+            logger.error("StoreGoodsPageModelContoller->toPaging->系统异常",e);
         }
-        return "pages/manager/store/goods/storeGoodsList";
+        return "pages/manager/store/goods/storeGoodsPageModelList";
     }
 
     @GetMapping("to-edit")
@@ -56,26 +54,27 @@ public class StoreGoodsContoller {
         try{
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-                model.addAttribute("formulaList",this.storeFormulaService.getAllByStore(spo.getId()));
-                model.addAttribute("goods",this.storeGoodsService.getGoods(idStr));
-                model.addAttribute("goodsType",this.storeGoodsPlateService.getGoodsPlate(spo.getId()));
+                model.addAttribute("goodsList", storeGoodsService.getGoodsList(spo.getId()));
+                model.addAttribute("pm", storeGoodsPageModelService.get(idStr));
+
             }
         }catch (Exception e){
-            logger.error("StoreGoodsContoller->toEdit->系统异常",e);
+            logger.error("StoreGoodsPageModelContoller->toEdit->系统异常",e);
         }
-        return "pages/manager/store/goods/storeGoodsEdit";
+        return "pages/manager/store/goods/storeGoodsPageModelEdit";
     }
 
     @PostMapping("do-save")
     @ResponseBody
-    public ResponseVO doSave(GoodsEditDTO dto, Model model){
+    public ResponseVO doSave( GoodsPageModelDTO dto, Model model){
         try{
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-               return this.storeGoodsService.saveGoods(dto,spo.getId());
+                return this.storeGoodsPageModelService.save(dto,spo.getId());
+              // return this.storeGoodsService.saveGoods(dto,spo.getId());
             }
         }catch (Exception e){
-            logger.error("StoreGoodsContoller->doSave->系统异常",e);
+            logger.error("StoreGoodsPageModelContoller->doSave->系统异常",e);
         }
         return new ResponseVO(-1,"提交失败",null);
     }
@@ -83,11 +82,16 @@ public class StoreGoodsContoller {
     @ResponseBody
     public ResponseVO doUpdateStatus(String idStr,Integer status){
         try {
-            return this.storeGoodsService.updateStatus(idStr,status);
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                return this.storeGoodsPageModelService.updateStatus(idStr,status,spo.getId());
+            }
+
         }catch (Exception e){
-            logger.error("StoreGoodsContoller->doUpdateStatus",e);
-            return new ResponseVO(-1,"操作失败",null);
+            logger.error("StoreGoodsPageModelContoller->doUpdateStatus",e);
         }
+        return new ResponseVO(-1,"操作失败",null);
+
     }
 
 }

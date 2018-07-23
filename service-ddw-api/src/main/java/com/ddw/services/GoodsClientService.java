@@ -1,18 +1,19 @@
 package com.ddw.services;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
-import com.ddw.beans.vo.AppIndexBannerVO;
+import com.ddw.enums.GoodsPageModelStatusEnum;
+import com.ddw.enums.GoodsPlatePosEnum;
 import com.ddw.enums.GoodsRecommendEnum;
 import com.ddw.enums.GoodsStatusEnum;
-import com.ddw.enums.GoodsTypeEnum;
 import com.ddw.token.TokenUtil;
-import com.gen.common.dict.Dictionary;
-import com.gen.common.dict.DictionaryUtils;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
-import com.gen.common.util.Tools;
-import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,105 +28,21 @@ import java.util.Map;
 public class GoodsClientService extends CommonService {
 
     @Autowired
-    private StoreGoodsTypeService storeGoodsTypeService;
+    private StoreGoodsPlateService storeGoodsPlateService;
 
     @Autowired
     private BannerService bannerService;
 
    public ResponseApiVO appIndex(String token)throws Exception{
-       Integer storeId= TokenUtil.getStoreId(token);
-       if(storeId==null){
-           return new ResponseApiVO(-2,"请选择门店",null);
+
+       ResponseApiVO<ListVO> responseApiVO=goodsIndex(token,GoodsPlatePosEnum.GoodsPlatePos1);
+       if(responseApiVO.getReCode()!=1){
+           return responseApiVO;
        }
-       Map search=new HashMap();
-       search.put("storeId",storeId);
-       search.put("dgStatus", GoodsStatusEnum.goodsStatus1.getCode());
-       List<Map> gList=this.commonList("ddw_goods","dgRecommend desc,dgSalesNumber desc,dgSort asc",null,null,search);
-       if(gList==null){
-           return new ResponseApiVO(-2,"没有商品上架",null);
-       }
-       search=new HashMap();
-       search.put("storeId",storeId);
-       search.put("dghStatus",GoodsStatusEnum.goodsStatus1.getCode());
-       List<Map> pList=this.commonList("ddw_goods_product","dghSalesPrice asc,dghActivityPrice asc",null,null,search);
-       if(gList==null){
-           return new ResponseApiVO(-2,"没有产品上架",null);
-       }
-       List<Map> gtypeList=this.storeGoodsTypeService.getGoodsType(storeId);
-       if(gtypeList==null){
-           return new ResponseApiVO(-2,"没有商品类型",null);
-
-       }
-       GoodsItemVO vo=null;
-       Integer dgType=null;
-       Integer typeId=null;
-
-       List<Map> listData=new ArrayList();
-       Map  typeMap=new HashMap();
-       Map<Integer,List> pos=new HashMap();
-       List goodsList=new ArrayList();
-       typeMap.put("name","限时折扣");
-       typeMap.put("list",goodsList);
-       listData.add(typeMap);
-       pos.put(-2000,goodsList);
-
-       goodsList=new ArrayList();
-       typeMap=new HashMap();
-       typeMap.put("name","为你优选");
-       typeMap.put("list",goodsList);
-       listData.add(typeMap);
-       pos.put(-3000,goodsList);
-
-       goodsList=new ArrayList();
-       typeMap=new HashMap();
-       typeMap.put("name","餐饮商城");
-       typeMap.put("list",goodsList);
-       listData.add(typeMap);
-       pos.put(-4000,goodsList);
-
-       Integer dgRecommend=null;
-       Integer actPrice=null;
-       Map<Integer,Integer> discountPosMap=new HashMap();
-       for(Map gmap:gList){
-           vo=new GoodsItemVO();
-           PropertyUtils.copyProperties(vo,gmap);
-           vo.setProducts(new ArrayList());
-           dgRecommend=(Integer) gmap.get("dgRecommend");
-           if(GoodsRecommendEnum.goodsRecommend1.getCode().equals(dgRecommend) && pos.get(-2000).size()<5){
-               pos.get(-3000).add(vo);
-           }
-           if(pos.get(-4000).size()<7){
-               pos.get(-4000).add(vo);
-           }
-           for(Map p:pList){
-               if(p.get("dghGoodsId").equals(vo.getId())){
-                   Map pmap=new HashMap();
-                   pmap.put("name",p.get("dghName"));
-                   pmap.put("price",p.get("dghSalesPrice"));
-                   actPrice=(Integer) p.get("dghActivityPrice");
-                   pmap.put("actPrice",actPrice);
-                   pmap.put("code",p.get("id"));
-                   vo.getProducts().add(pmap);
-                   if(actPrice!=null && actPrice>0){
-                       if(discountPosMap.containsKey(vo.getId())){
-                           ((GoodsItemVO)pos.get(-2000).get(discountPosMap.get(vo.getId()))).getProducts().add(pmap);
-                       }else{
-
-                           GoodsItemVO discountGI=new GoodsItemVO();
-                           PropertyUtils.copyProperties(discountGI,vo);
-                           discountGI.setProducts(new ArrayList());
-                           discountGI.getProducts().add(pmap);
-
-                           pos.get(-2000).add(discountGI);
-                           discountPosMap.put(vo.getId(),discountGI.getProducts().size()-1);
-                       }
-                   }
-               }
-           }
-       }
+      Integer storeId=TokenUtil.getStoreId(token);
 
        Map goddessIndex=new HashMap();
-       goddessIndex.put("list",listData);
+       goddessIndex.put("list",responseApiVO.getData().getList());
 
        Object obBanner = CacheUtil.get("publicCache","appIndexBanner"+storeId);
        if(obBanner==null){
@@ -138,12 +55,73 @@ public class GoodsClientService extends CommonService {
    }
 
 
-    public ResponseApiVO goodsIndex(String token)throws Exception{
+    public ResponseApiVO goodsIndex(String token,GoodsPlatePosEnum platePosEnum)throws Exception{
         Integer storeId= TokenUtil.getStoreId(token);
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择门店",null);
         }
         Map search=new HashMap();
+        search.put("storeId",storeId);
+        search.put("platePos", platePosEnum.getCode());
+        search.put("status", GoodsPageModelStatusEnum.goodsStatus1.getCode());
+        List<Map> pmList=this.commonList("ddw_goods_page_model","updateTime desc",1,1,search);
+        if(pmList==null){
+            return new ResponseApiVO(-2,"没有发布页面",null);
+        }
+        Map pm=pmList.get(0);
+
+        String gids=(String)pm.get("gids");
+        if(StringUtils.isBlank(gids)){
+            return new ResponseApiVO(-2,"页面没有发布商品",null);
+        }
+        Map gsearch=new HashMap();
+        gsearch.put("id,in","("+gids+")");
+        gsearch.put("dgStatus",GoodsStatusEnum.goodsStatus1.getCode());
+
+        List<Map> gList= this.commonObjectsBySearchCondition("ddw_goods",gsearch);
+        if(gList==null){
+            return new ResponseApiVO(-2,"没有商品上架",null);
+        }
+        gsearch=new HashMap();
+        gsearch.put("dghGoodsId,in","("+gids+")");
+        gsearch.put("dghStatus",GoodsStatusEnum.goodsStatus1.getCode());
+        List<Map> pList=this.commonList("ddw_goods_product","dghSalesPrice asc,dghActivityPrice asc",null,null,gsearch);
+        JSONArray ja=JSON.parseArray(pm.get("jsonStr").toString());
+        JSONArray gidJa=null;
+        JSONObject json=null;
+        Integer gid=null;
+        List goodsList=null;
+        Map goodsMap=null;
+        GoodsItemVO itemVO=null;
+        GoodsInfoProductVO productVO=null;
+        for(int i=0;i<ja.size();i++){
+            json=ja.getJSONObject(i);
+            gidJa=json.getJSONArray("gids");
+            goodsList=new ArrayList();
+            for(int j=0;j<gidJa.size();j++){
+                gid=gidJa.getInteger(j);
+                for(Map gMap:gList){
+                    if(gid.equals((Integer) gMap.get("id"))){
+                        itemVO=new  GoodsItemVO();
+                        itemVO.setProducts(new ArrayList());
+                        PropertyUtils.copyProperties(itemVO,gMap);
+                        for(Map p:pList){
+                            if(gid.equals((Integer)p.get("dghGoodsId"))){
+                                productVO=new GoodsInfoProductVO();
+                                PropertyUtils.copyProperties(productVO,p);
+                                itemVO.getProducts().add(productVO);
+                            }
+                        }
+                        goodsList.add(itemVO);
+
+                    }
+                }
+            }
+            json.put("list",goodsList);
+            json.remove("gids");
+        }
+        return new ResponseApiVO(1,"成功",new ListVO(ja));
+       /* Map search=new HashMap();
         search.put("storeId",storeId);
         search.put("dgStatus", GoodsStatusEnum.goodsStatus1.getCode());
         List<Map> gList=this.commonList("ddw_goods","dgSalesNumber desc",null,null,search);
@@ -157,7 +135,7 @@ public class GoodsClientService extends CommonService {
         if(gList==null){
             return new ResponseApiVO(-2,"没有产品上架",null);
         }
-        List<Map> gtypeList=this.storeGoodsTypeService.getGoodsType(storeId);
+        List<Map> gtypeList=this.storeGoodsPlateService.getGoodsPlate(storeId);
         if(gtypeList==null){
             return new ResponseApiVO(-2,"没有商品类型",null);
 
@@ -239,8 +217,8 @@ public class GoodsClientService extends CommonService {
             if(pos.get(-1000).size()<5){
                 pos.get(-1000).add(vo);
             }
-        }
-        return new ResponseApiVO(1,"成功",new ListVO(listData));
+        }*/
+       // return new ResponseApiVO(1,"成功",new ListVO(listData));
         //Map menusMap=
     }
 

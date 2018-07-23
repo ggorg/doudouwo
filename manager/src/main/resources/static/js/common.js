@@ -87,6 +87,49 @@ function jQueryCommonSubmit(url,formObject,reqData,callback){
     return false;
 }
 var index =null;
+function commonJsonAjaxFunction(url,params,callback){
+    j=(isFunction(jQuery)?jQuery:$);
+    return {
+        timeout: 20 * 1000,
+        url: url,
+        type: "post",
+        data:params,
+        dataType: "JSON",
+        beforeSend: function(xhr, settings) {
+            // xhr.setRequestHeader("If-Modified-Since", "0");
+
+            index= layer.load();
+            j(".layui-btn,#btn").attr("disabled",true);
+
+        },
+        success: function(data, textStatus, jqXHR) {
+            layer.msg(data.reMsg);
+
+            if(data.reCode==1){
+
+                window.setTimeout(function(){
+                    if(callback!=undefined && isFunction(callback)){
+                        callback(data);
+                    }else{
+                        if(data.data!=null && data.data.jumpUrl!=undefined){
+                            top.location.href= data.data.jumpUrl;
+                        }else{
+                            top.location.href=window.parent.location.href;
+
+                        }
+                    }
+
+                },500)
+            }
+        },
+        error: function(e, xhr, type) {
+
+        },
+        complete: function(xhr, status) {
+            layer.close(index);
+            j(".layui-btn,#btn").removeAttr("disabled");
+        }}
+}
 function commonAjaxFunction(url,params,isUpload,callback){
     j=(isFunction(jQuery)?jQuery:$);
     return {

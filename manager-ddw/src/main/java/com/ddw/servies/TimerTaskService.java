@@ -104,7 +104,7 @@ public class TimerTaskService extends CommonService {
             Map searchBid=new HashMap();
             searchBid.put("endTime,is","null");
 
-            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime","t1.id,t1.bidEndTime,t1.luckyDogUserId,ct0.orderId,t1.userId,t1.groupId,t1.makeSureEndTime,t1.payEndTime",null,null,searchBid,
+            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","t1.createTime","t1.id,t1.bidEndTime,t1.luckyDogUserId,ct0.orderId,t1.userId,t1.groupId,t1.makeSureEndTime,t1.payEndTime,ct0.dorCost,ct0.orderNo",null,null,searchBid,
                     new CommonChildBean("ddw_order_bidding_pay","biddingId","id",null));
 
             List<Map>  listMap= this.getCommonMapper().selectObjects(csb);
@@ -117,19 +117,23 @@ public class TimerTaskService extends CommonService {
                 String cancel=null;
                 Integer bidCode=null;
                 String groupId=null;
+                String orderNo=null;
                 Date bidEndTime=null;
                 Integer luckyUserId=null;
                 Integer goddessUserId=null;
+                Integer dorCost=null;
                 Date makeSureEndTime=null;
                 Date payEndTime=null;
                 for(Map map:listMap){
                     bidEndTime=(Date) map.get("bidEndTime");
-                    luckyUserId=(Integer) map.get("luckyUserId");
+                    luckyUserId=(Integer) map.get("luckyDogUserId");
+                    dorCost=(Integer) map.get("dorCost");
                     goddessUserId=(Integer)map.get("userId");
                     makeSureEndTime=(Date) map.get("makeSureEndTime");
                     payEndTime=(Date) map.get("payEndTime");
                     bidCode=(Integer) map.get("id");
                     groupId=(String)map.get("groupId");
+                    orderNo=(String)map.get("orderNo");
                     if(makeSureEndTime!=null && makeSureEndTime.after(currentDate)){
                         continue;
                     }
@@ -140,7 +144,9 @@ public class TimerTaskService extends CommonService {
                        b.append(luckyUserId).append("-");
                        b.append(bidCode).append("-");
                        b.append(goddessUserId).append("-");
-                       b.append(groupId);
+                       b.append(groupId).append("-");
+                       b.append(dorCost).append("-");
+                       b.append(orderNo);
                         ubgs.add(b.toString());
                        // CacheUtil.get("pay","bidding-cancel-"+(Integer) map.get("id")+"-"+(String)map.get("groupId"));
                     }else if( DateUtils.addMinutes(bidEndTime,60).before(currentDate)){

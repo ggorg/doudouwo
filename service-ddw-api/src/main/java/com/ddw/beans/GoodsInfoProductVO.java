@@ -25,6 +25,7 @@ public class GoodsInfoProductVO<T> {
     private Integer dghActivityPrice;
 
     @ApiModelProperty(name="salesNum",value="销量",example="0")
+    @JsonProperty("salesNum")
     private Integer dghSaleNumber;
 
 

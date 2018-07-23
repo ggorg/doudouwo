@@ -1,7 +1,6 @@
 package com.ddw.servies;
 
 import com.ddw.beans.GoodsEditDTO;
-import com.ddw.beans.GoodsTypeDTO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.GoodsRecommendEnum;
 import com.ddw.enums.GoodsStatusEnum;
@@ -9,20 +8,17 @@ import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
-import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.Page;
 import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import net.coobird.thumbnailator.Thumbnails;
-import net.sf.ehcache.transaction.xa.commands.StoreRemoveCommand;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +47,12 @@ public class StoreGoodsService extends CommonService {
         }
         return this.commonPage("ddw_goods","dgSort asc,updateTime desc",pageNo,10,condtion);
 
+    }
+    public List getGoodsList(Integer storeId)throws Exception{
+        Map condtion=new HashMap();
+        condtion.put("storeId",storeId);
+        condtion.put("dgStatus",GoodsStatusEnum.goodsStatus1.getCode());
+        return this.commonObjectsBySearchCondition("ddw_goods",condtion);
     }
     public List getGoodsProduct(Integer goodsId)throws Exception{
         Map search=new HashMap();
@@ -99,6 +101,8 @@ public class StoreGoodsService extends CommonService {
         goodsMap.put("dgType",dto.getDgType());
         goodsMap.put("updateTime",new Date());
         goodsMap.put("storeId",storeId);
+        goodsMap.put("goodsPlateId",dto.getGoodsPlateId());
+        goodsMap.put("indexPlateId",dto.getIndexPlateId());
 
         if(StringUtils.isNotBlank(GoodsRecommendEnum.getName(dto.getDgRecommend()))){
             goodsMap.put("dgRecommend",dto.getDgRecommend());

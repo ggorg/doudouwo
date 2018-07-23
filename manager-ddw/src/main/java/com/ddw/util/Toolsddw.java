@@ -322,7 +322,17 @@ public class Toolsddw extends Tools {
         }
         return null;
     }
-
+    public static String getPlateStr(List<Map> plates,Integer plateId){
+        if(plateId==null || plates==null){
+            return "无";
+        }
+        for(Map m:plates){
+           if( ((Integer)m.get("id")).equals(plateId)){
+               return m.get("dgtName").toString();
+           }
+        }
+        return "无";
+    }
     public static void main(String[] args) {
         createLiveRadioUrl();
     }

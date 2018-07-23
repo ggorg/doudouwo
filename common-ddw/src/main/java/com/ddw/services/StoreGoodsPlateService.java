@@ -1,6 +1,6 @@
 package com.ddw.services;
 
-import com.ddw.beans.GoodsTypeDTO;
+import com.ddw.beans.GoodsPlateDTO;
 import com.ddw.enums.DisabledEnum;
 import com.ddw.enums.GoodsStatusEnum;
 import com.gen.common.services.CommonService;
@@ -22,29 +22,29 @@ import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
-public class StoreGoodsTypeService extends CommonService {
+public class StoreGoodsPlateService extends CommonService {
 
     public Page page(Integer pageNo, Integer storeId)throws Exception{
 
         Map map=new HashMap();
         map.put("storeId",storeId);
-        return this.commonPage("ddw_goods_type","updateTime desc,dgtSort asc",pageNo,10,map);
+        return this.commonPage("ddw_goods_plate","updateTime desc,dgtSort asc",pageNo,10,map);
     }
-    public Map getGoodsType(Integer id,Integer storeId)throws Exception{
+    public Map getGoodsPlate(Integer id,Integer storeId)throws Exception{
         Map map=new HashMap();
         map.put("storeId",storeId);
         map.put("id",id);
-        return this.commonObjectBySearchCondition("ddw_goods_type",map);
+        return this.commonObjectBySearchCondition("ddw_goods_plate",map);
     }
-    @Cacheable(value = "publicCache",key = "'goodsType-'+#storeId")
-    public List getGoodsType(Integer storeId)throws Exception{
+    @Cacheable(value = "publicCache",key = "'goodsPlate-'+#storeId")
+    public List getGoodsPlate(Integer storeId)throws Exception{
         Map map=new HashMap();
         map.put("storeId",storeId);
         map.put("dgtDistabled",DisabledEnum.disabled0.getCode());
-        return this.commonList("ddw_goods_type","dgtSort asc",null,null,map);
+        return this.commonList("ddw_goods_plate","dgtSort asc",null,null,map);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO saveGoodsType(GoodsTypeDTO dto, Integer storeId){
+    public ResponseVO saveGoodsPlate(GoodsPlateDTO dto, Integer storeId){
         if(StringUtils.isBlank(dto.getDgtName())){
             return new ResponseVO(-2,"类型名称是空",null);
         }
@@ -54,7 +54,7 @@ public class StoreGoodsTypeService extends CommonService {
         if(dto.getId()==null){
             map.put("createTime",new Date());
             map.put("storeId",storeId);
-            ResponseVO vo=this.commonInsertMap("ddw_goods_type",map);
+            ResponseVO vo=this.commonInsertMap("ddw_goods_plate",map);
             if(vo.getReCode()==1){
                 return new ResponseVO(1,"成功",null);
             }
@@ -62,9 +62,9 @@ public class StoreGoodsTypeService extends CommonService {
             Map search=new HashMap();
             search.put("id",dto.getId());
             search.put("storeId",storeId);
-            ResponseVO vo=this.commonUpdateByParams("ddw_goods_type",map,search);
+            ResponseVO vo=this.commonUpdateByParams("ddw_goods_plate",map,search);
             if(vo.getReCode()==1){
-                CacheUtil.delete("publicCache","goodsType-"+storeId);
+                CacheUtil.delete("publicCache","goodsPlate-"+storeId);
                 return new ResponseVO(1,"成功",null);
             }
 
@@ -73,7 +73,7 @@ public class StoreGoodsTypeService extends CommonService {
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO deleteGoodsType(String idStr,Integer storeId){
+    public ResponseVO deleteGoodsPlate(String idStr,Integer storeId){
         String ids= MyEncryptUtil.getRealValue(idStr);
         if(StringUtils.isBlank(ids)){
             return new ResponseVO(-2,"参数异常",null);
@@ -81,9 +81,9 @@ public class StoreGoodsTypeService extends CommonService {
         Map map=new HashMap();
         map.put("id",Integer.parseInt(ids));
         map.put("storeId",storeId);
-        ResponseVO vo=this.commonDeleteByParams("ddw_goods_type",map);
+        ResponseVO vo=this.commonDeleteByParams("ddw_goods_plate",map);
         if(vo.getReCode()==1){
-            CacheUtil.delete("publicCache","goodsType-"+storeId);
+            CacheUtil.delete("publicCache","goodsPlate-"+storeId);
         }
         return vo;
     }
@@ -100,7 +100,7 @@ public class StoreGoodsTypeService extends CommonService {
         Integer id=Integer.parseInt(ids);
         Map map= new HashMap();
         map.put("dgtDistabled",status);
-        ResponseVO ret=this.commonUpdateBySingleSearchParam("ddw_goods_type",map,"id",id);
+        ResponseVO ret=this.commonUpdateBySingleSearchParam("ddw_goods_plate",map,"id",id);
         if(ret.getReCode()==1){
             if(DisabledEnum.disabled0.getCode().equals(status)){
                 return new ResponseVO(1,"启用成功",null);
@@ -108,7 +108,7 @@ public class StoreGoodsTypeService extends CommonService {
                 return new ResponseVO(1,"停用成功",null);
             }
             //@Cacheable(value = "publicCache",key = "'goodsType-'+#storeId")
-            CacheUtil.delete("publicCache","goodsType-"+storeId);
+            CacheUtil.delete("publicCache","goodsPlate-"+storeId);
 
         }
         return new ResponseVO(-2,"操作失败",null);

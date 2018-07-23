@@ -22,11 +22,19 @@
 
     <div  class="layui-form-pane">
       <div class="layui-form-item">
-        <label class="layui-form-label">类型名称</label>
+        <label class="layui-form-label">板块名称</label>
         <div class="layui-input-block">
-          <input type="text" name="dgtName" required="required" title="类型名称"  lay-verify="required|max20" th:value="${goodsType!=null? goodsType['dgtName']:''}" placeholder="请输类型名称" autocomplete="off" class="layui-input" />
+          <input type="text" name="dgtName" required="required" title="板块名称"  lay-verify="required|max20" th:value="${goodsType!=null? goodsType['dgtName']:''}" placeholder="请输板块名称" autocomplete="off" class="layui-input" />
 
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">板块位置</label>
+        <div class="layui-input-block">
 
+          <select name="platePos" required="required">
+            <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.GoodsPlatePosEnum',#maps.isEmpty(goodsType)?'':goodsType['platePos'])}"></th:block>
+          </select>
         </div>
       </div>
 

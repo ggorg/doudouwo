@@ -4,7 +4,7 @@
         <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
         <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
         <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${smpage!=null?smpage.total:0}]]*/ );
+           initPage(/*[[${p!=null?p.total:0}]]*/ );
         </script>
 	</head>
     <body class="withvernav">
@@ -22,7 +22,7 @@
 
             <div id="contentwrapper" class="contentwrapper">
                 <div class="contenttitle2">
-                    <h3>商品列表</h3>
+                    <h3>页面发布列表</h3>
 
                 </div><!--contenttitle-->
 
@@ -51,7 +51,7 @@
                 </div><!--tableoptions-->
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('850px','530px','新增商品','to-edit')" title="table2">新增商品</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('750px','530px','发布新页面','to-edit')" title="table2">发布新页面</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -61,16 +61,14 @@
                         <col class="con0" />
                         <col class="con0" />
                         <col class="con0" />
-                        <col class="con0" />
 
                     </colgroup>
                     <thead>
 
                     <tr>
-                        <th class="head1">商品图片</th>
-                        <th class="head1">商品标题</th>
-                        <th class="head1">上架状态</th>
-                        <th class="head1">类型</th>
+                        <th class="head1">页面类型</th>
+                        <th class="head1">发布状态</th>
+
 
 
                         <th class="head1">创建时间</th>
@@ -80,21 +78,19 @@
                     </thead>
 
                     <tbody>
-                    <tr th:each="obj:${gPage?.result}" >
-                        <td ><img th:src="${obj['fileImgIcoPath']}" style="width:70px;height:60px" /></td>
-                        <td th:text="${obj['dgTitle']}">Trident</td>
+                    <tr th:each="obj:${p?.result}" >
+                        <td th:text=" ${#TdEnum.text('com.ddw.enums.GoodsPlatePosEnum',obj['platePos'])}">Win 95+</td>
 
 
-                        <td th:text=" ${#TdEnum.text('com.ddw.enums.GoodsStatusEnum',obj['dgStatus'])}">Win 95+</td>
-                        <td th:text=" ${#TdEnum.text('com.ddw.enums.GoodsTypeEnum',obj['dgType'])}">Win 95+</td>
+                        <td th:text=" ${#TdEnum.text('com.ddw.enums.GoodsPageModelStatusEnum',obj['status'])}">Win 95+</td>
 
 
                         <td th:text="${obj['createTime']}">Win 95+</td>
 
                         <td class="center">
                             <div class="layui-btn-group">
-                                <button th:if="${obj['dmStatus']!=2}" class="layui-btn layui-btn-sm " th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dgStatus']==1?0:1}+',\''+${obj['dgStatus']==1?'是否撤回发布':'是否发布'}+'\')'" th:text="${obj['dgStatus']==1?'撤回发布':'发 布'}">发布</button>
-                                <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'850px\',\'530px\',\'修改\',\'to-edit?idStr='+${#toolsddw.encrypt(obj['id'])}+'\')'"  >修改</button>
+                                <button th:if="${obj['status']!=2}" class="layui-btn layui-btn-sm " th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['status']==1?0:1}+',\''+${obj['status']==1?'是否撤回发布':'是否发布'}+'\')'" th:text="${obj['status']==1?'撤回发布':'发 布'}">发布</button>
+                                <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'750px\',\'530px\',\'修改\',\'to-edit?idStr='+${#toolsddw.encrypt(obj['id'])}+'\')'"  >修改</button>
                             </div>
                         </td>
                     </tr>

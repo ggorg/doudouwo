@@ -3,26 +3,23 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 商品类型
+ * 商品页面发布状态
  */
-public enum GoodsTypeEnum implements Dictionary {
-    goodsType0("饮品",0),
-    goodsType1("轻食",1),
-    goodsType2("主食",2),
-    goodsType3("套餐",3),
-    goodsType4("其它",4);
+public enum GoodsPageModelStatusEnum implements Dictionary {
+    goodsStatus0("未发布",0),
+    goodsStatus1("已发布",1);
 
-    private String name;
-    private Integer code;
+            private String name;
+            private Integer code;
 
-    private GoodsTypeEnum(String name, Integer code) {
+    private GoodsPageModelStatusEnum(String name, Integer code) {
                 this.name = name;
                 this.code = code;
             }
 
             // 普通方法
-    public static String getName(Integer code) {
-            for (GoodsTypeEnum c : GoodsTypeEnum.values()) {
+        public static String getName(Integer code) {
+            for (GoodsPageModelStatusEnum c : GoodsPageModelStatusEnum.values()) {
                 if (c.getCode() == code || c.getCode().equals(code)) {
                     return c.name;
                 }

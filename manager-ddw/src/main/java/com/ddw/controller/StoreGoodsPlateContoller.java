@@ -1,9 +1,8 @@
 package com.ddw.controller;
 
-import com.ddw.beans.GoodsEditDTO;
-import com.ddw.beans.GoodsTypeDTO;
+import com.ddw.beans.GoodsPlateDTO;
 import com.ddw.beans.StorePO;
-import com.ddw.services.StoreGoodsTypeService;
+import com.ddw.services.StoreGoodsPlateService;
 import com.ddw.servies.StoreService;
 import com.ddw.util.Toolsddw;
 import com.gen.common.vo.ResponseVO;
@@ -13,14 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/manager/goods/type")
+@RequestMapping("/manager/goods/plate")
 @Controller
-public class StoreGoodsTypeContoller {
+public class StoreGoodsPlateContoller {
 
-    private final Logger logger = Logger.getLogger(StoreGoodsTypeContoller.class);
+    private final Logger logger = Logger.getLogger(StoreGoodsPlateContoller.class);
 
     @Autowired
-    private StoreGoodsTypeService storeGoodsTypeService;
+    private StoreGoodsPlateService storeGoodsPlateService;
 
     @Autowired
     private StoreService storeService;
@@ -30,13 +29,13 @@ public class StoreGoodsTypeContoller {
         try{
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-                model.addAttribute("gPage",storeGoodsTypeService.page(pageNo,spo.getId()));
+                model.addAttribute("gPage", storeGoodsPlateService.page(pageNo,spo.getId()));
 
             }
         }catch (Exception e){
             logger.error("StoreGoodsTypeContoller->toPaging->系统异常",e);
         }
-        return "pages/manager/store/goods/storeGoodsTypeList";
+        return "pages/manager/store/goods/storeGoodsPlateList";
     }
 
     @GetMapping("to-edit")
@@ -44,22 +43,22 @@ public class StoreGoodsTypeContoller {
         try{
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-                model.addAttribute("goodsType",this.storeGoodsTypeService.getGoodsType(id,spo.getId()));
+                model.addAttribute("goodsType",this.storeGoodsPlateService.getGoodsPlate(id,spo.getId()));
 
             }
         }catch (Exception e){
             logger.error("StoreGoodsTypeContoller->toEdit->系统异常",e);
         }
-        return "pages/manager/store/goods/storeGoodsTypeEdit";
+        return "pages/manager/store/goods/storeGoodsPlateEdit";
     }
 
     @PostMapping("do-save")
     @ResponseBody
-    public ResponseVO doSave(GoodsTypeDTO dto, Model model){
+    public ResponseVO doSave(GoodsPlateDTO dto, Model model){
         try{
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-                return this.storeGoodsTypeService.saveGoodsType(dto,spo.getId());
+                return this.storeGoodsPlateService.saveGoodsPlate(dto,spo.getId());
             }
         }catch (Exception e){
             logger.error("StoreGoodsTypeContoller->doSave->系统异常",e);
@@ -73,7 +72,7 @@ public class StoreGoodsTypeContoller {
         try {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-                return this.storeGoodsTypeService.updateStatus(idStr,status,spo.getId());
+                return this.storeGoodsPlateService.updateStatus(idStr,status,spo.getId());
 
             }
         }catch (Exception e){

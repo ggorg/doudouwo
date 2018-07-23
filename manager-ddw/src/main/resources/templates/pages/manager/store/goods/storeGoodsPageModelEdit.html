@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/sysframe2/css/style.default.css" type="text/css" />
+
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+  <style type="text/css">
+    .mystyle1{
+      line-height: 35px;
+    }
+    #add .layui-tab-close{
+      display: none
+    }
+
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form">
+  <input type="hidden" th:if="${pm!=null && pm['id']!=null}" name="id" id="pmid" th:value="${pm!=null?pm['id']:''}"/>
+
+    <div  class="layui-form-pane">
+      <div class="layui-form-item">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-block">
+
+          <select name="platePos" required="required" id="platePos" style="width: 100%">
+            <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.GoodsPlatePosEnum',#maps.isEmpty(pm)?'':pm['platePos'])}"></th:block>
+          </select>
+        </div>
+      </div>
+<div class="layui-form-item ">
+
+  <div class="layui-tab layui-tab-card" lay-filter="demo" lay-allowclose="true">
+    <ul class="layui-tab-title">
+      <th:block th:if="${!#lists.isEmpty(pm['goodsObjs'])}">
+        <li th:each="p,pState:${pm['goodsObjs']}" th:text="${p['name']}" th:class="${pState.count==1?'layui-this':''}" th:attr="lay-id=${pState.count}"><</li>
+      </th:block>
+      <th:block th:if="${#lists.isEmpty(pm['goodsObjs'])}">
+        <li class="layui-this" id="first-title" lay-id="one">未命名</li>
+      </th:block>
+      <li lay-id="-1" id="add" style="text-align: left">
+
+        <i class="layui-icon" style="font-size: 30px;"  >&#xe65f;</i>
+
+
+      </li>
+    </ul>
+    <div class="layui-tab-content">
+      <th:block th:if="${!#lists.isEmpty(pm['goodsObjs'])}">
+        <div th:each="p,pState:${pm['goodsObjs']}"  th:class="${pState.count==1?'layui-tab-item layui-show':'layui-tab-item '}" th:attr="item-id=${pState.count}">
+          <div class="layui-form-item" >
+            <label class="layui-form-label" >板块名称</label>
+            <div class="layui-input-block">
+              <input type="text" name="name" onblur="inputBlur(this)" required="required" th:value="${p['name']}" title="板块名称"  lay-verify="required|max20"  placeholder="请输入板块名称" autocomplete="off" class="layui-input" />
+            </div>
+          </div>
+          <div class="layui-form-item  layui-form-text">
+            <label class="layui-form-label">商品</label>
+
+            <div class="layui-input-block" >
+              <table cellpadding="0" cellspacing="0" border="0" class="table2" class="stdtable stdtablecb">
+                <colgroup>
+                  <col class="con0" style="width: 90%"  />
+
+                  <col class="con0" style="width: 10%"  />
+
+                </colgroup>
+                <thead>
+                <tr>
+
+                  <th class="head1">名称</th>
+
+                  <th class="head1">操作</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <th:block th:if="${!#arrays.isEmpty(p['gids'])}">
+                  <tr th:each="o:${p['gids']}">
+
+                    <td>
+                      <select name="goodsId">
+                        <option value="">请选择</option>
+
+                        <option th:each="g:${goodsList}" th:value="${g['id']}" th:text="${g['dgTitle']}" th:selected="${o==g['id']}"></option>
+
+                      </select>
+
+                    </td>
+                    <td>
+                      <button  type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+
+                    </td>
+                  </tr>
+                  <tr class="addtr">
+                    <td colspan="7" align="center">
+
+                      <i class="layui-icon" onclick="add(this)">&#xe654;</i>
+                    </td>
+                  </tr>
+                </th:block>
+                <th:block th:if="${#arrays.isEmpty(p['gids'])}">
+
+                  <tr >
+
+                    <td>
+                      <select name="goodsId">
+                        <option value="">请选择</option>
+
+                        <option th:each="g:${goodsList}" th:value="${g['id']}" th:text="${g['dgTitle']}"></option>
+
+                      </select>
+
+                    </td>
+                    <td>
+                      <button  type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+
+                    </td>
+                  </tr>
+                  <tr class="addtr">
+                    <td colspan="7" align="center">
+
+                      <i class="layui-icon" onclick="add(this)">&#xe654;</i>
+                    </td>
+                  </tr>
+                </th:block>
+
+
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+        </div>
+      </th:block>
+      <th:block th:if="${#lists.isEmpty(pm['goodsObjs'])}">
+        <div class="layui-tab-item layui-show " id="first-item" item-id="one">
+          <div class="layui-form-item" >
+            <label class="layui-form-label">板块名称</label>
+            <div class="layui-input-block">
+              <input type="text" name="name" onblur="inputBlur(this)" required="required" title="板块名称"  lay-verify="required|max20" placeholder="请输入板块名称" autocomplete="off" class="layui-input" />
+            </div>
+          </div>
+          <div class="layui-form-item  layui-form-text">
+            <label class="layui-form-label">商品</label>
+
+            <div class="layui-input-block" >
+              <table cellpadding="0" cellspacing="0" border="0" class="table2" class="stdtable stdtablecb">
+                <colgroup>
+                  <col class="con0" style="width: 90%"  />
+
+                  <col class="con0" style="width: 10%"  />
+
+                </colgroup>
+                <thead>
+                <tr>
+
+                  <th class="head1">名称</th>
+
+                  <th class="head1">操作</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr >
+
+                  <td>
+                    <select name="goodsId">
+                      <option value="">请选择</option>
+
+                      <option th:each="g:${goodsList}" th:value="${g['id']}" th:text="${g['dgTitle']}"></option>
+
+                    </select>
+
+                  </td>
+                  <td>
+                    <button  type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+
+                  </td>
+                </tr>
+                <tr class="addtr">
+                  <td colspan="7" align="center">
+
+                    <i class="layui-icon" onclick="add(this)">&#xe654;</i>
+                  </td>
+                </tr>
+
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </th:block>
+
+      <div class="layui-tab-item" id="add-item">
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+      <div class="layui-form-item" style="display: none">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+      </div>
+  </div>
+</form>
+</body>
+<script type="text/javascript">
+  var form1;
+  var element;
+
+
+  layui.use(['upload','form','layer','element'], function(){
+      var upload = layui.upload;
+      form1=layui.form;
+      initProForm(layui);
+
+      //执行实例
+      element = layui.element;
+
+      //一些事件监听
+      /*element.on('tab(demo)', function(data){
+          var layid=$(this).attr('lay-id');
+          if(layid==-1){
+              alert(layid)
+              var maId=(Math.random()*1000|0);
+              $(this).before("<li lay-id='"+maId+"'>未命名</li>");
+              $("#add-item").before($("#first-item").clone());
+              element.render("tab","demo");
+              element.tabChange("demo", maId+"");
+              $("#add i").remove();
+          }
+      });*/
+
+      $("#add").mousedown(function(){
+          var maId=(Math.random()*1000|0);
+          $(this).before("<li lay-id='"+maId+"'>未命名</li>");
+          var cloneObj=$(".layui-tab-item").eq(0).clone();
+          cloneObj.attr("item-id",maId);
+          var trs=cloneObj.find(".addtr").prevAll();
+          cloneObj.find("input").val("");
+          cloneObj.find("select option").eq(0).attr("selected","selected");
+          if(trs.length>1){
+
+              for(var i=1;i<trs.length;i++){
+                  trs.eq(i).remove();
+              }
+          }
+          $("#add-item").before(cloneObj);
+          element.render("tab","demo");
+          element.tabChange("demo", maId+"");
+          form1.render("select");
+      })
+      element.on('tabDelete(demo)', function(data){
+          var lis=$(".layui-tab-title li");
+
+          element.tabChange("demo", lis.eq(0).attr("lay-id"));
+
+
+      })
+
+
+  });
+  function inputBlur(obj){
+      var itemId=$(obj).parents(".layui-tab-item").eq(0).attr("item-id");
+      $("[lay-id='"+itemId+"']").html($(obj).val());
+      element.render("tab","demo");
+  }
+  function initProForm(layui){
+      var form = layui.form;
+      form.verify({
+          required:function(value,item){
+              var msg=item.getAttribute("placeholder");
+              if(value!=null && value.replace(/[ ]/g,"")==""){
+                  return msg==null?"请输入必填项":msg;
+              }else{
+                  return false;
+              }
+              return msg==null?"请输入必填项":msg;
+          },
+          max20:function(value,item){
+              if(value.length>20){
+                  return '标题至多得20个字符啊';
+              }
+          }
+      })
+      $(".layui-form").submit(function(){
+          window.setTimeout(function(){
+              /*
+              * "platePos":1,
+                  "gitem[0].name":"123",
+                  "gitem[0].gids[0]":1,
+                  "gitem[0].gids[1]":1
+              * */
+              var datas={};
+              datas["platePos"]=$("#platePos").val();
+              if($("#pmid").length>0){
+                  datas["id"]=$("#pmid").val();
+
+              }
+              var items=$(".layui-tab-item");
+              for(var i=0;i<items.length;i++){
+                  var item=items.eq(i);
+                  if(item[0].id!="add-item"){
+                      datas["gitem["+i+"].name"]= item.find("input[name='name']").val();
+                      var selects=item.find("select");
+                      for(var j=0;j<selects.length;j++){
+                          datas["gitem["+i+"].gids["+j+"]"]=selects.eq(j).val();
+                      }
+
+                  }
+              }
+
+              $.ajax( commonJsonAjaxFunction("do-save",datas));
+          },300)
+
+          //return  commonSubmit(url,formObject);
+          return false;
+      })
+  }
+
+    function add(obj){
+        var cloneObj=$(obj).parents("tbody").eq(0).find("tr").eq(0).clone();
+        cloneObj.find("input").val("");
+        cloneObj.find("select option").eq(0).attr("selected","selected");
+        cloneObj.find("[type='hidden']").val("-1");
+       $(obj).parents(".addtr").eq(0).before(cloneObj);
+       form1.render("select");
+    }
+
+    function toDelete(obj){
+        if($("tbody tr").length>2){
+            $(obj).parent().parent().remove()
+        }else{
+            $("tbody tr input").val("");
+            $("tbody tr input[type='hidden']").val("-1");
+        }
+
+    }
+</script>
+</html>

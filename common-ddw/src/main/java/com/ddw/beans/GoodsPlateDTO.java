@@ -4,10 +4,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 
-public class GoodsTypeDTO {
+public class GoodsPlateDTO {
     private Integer id;
     private String dgtName;
     private Integer dgtSort;
+    private Integer platePos;
+
+    public Integer getPlatePos() {
+        return platePos;
+    }
+
+    public void setPlatePos(Integer platePos) {
+        this.platePos = platePos;
+    }
 
     public Integer getId() {
         return id;

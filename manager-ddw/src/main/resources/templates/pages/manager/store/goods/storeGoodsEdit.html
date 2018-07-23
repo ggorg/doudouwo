@@ -32,15 +32,14 @@
       <div class="layui-form-item">
         <label class="layui-form-label">商品类别</label>
         <div class="layui-input-block">
-          <select name="dgType" >
-            <th:block th:unless="${#lists.isEmpty(goodsType)}">
-              <option value="">请选择</option>
-              <option th:each="g:${goodsType}" th:value="${g['id']}" th:text="${g['dgtName']}" th:selected="${g['id']==goods['dgType']}"></option>
-            </th:block>
-          </select>
 
+          <select name="dgType" required="required">
+            <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.GoodsTypeEnum',#maps.isEmpty(goods)?'':goods['dgType'])}"></th:block>
+          </select>
         </div>
       </div>
+
+
       <div class="layui-form-item">
         <label class="layui-form-label">序号</label>
         <div class="layui-input-block">
@@ -49,7 +48,7 @@
 
         </div>
       </div>
-      <div class="layui-form-item">
+ <!--     <div class="layui-form-item">
         <label class="layui-form-label">是否推荐</label>
         <div class="layui-input-block">
           <select name="dgRecommend">
@@ -59,7 +58,7 @@
 
 
         </div>
-      </div>
+      </div>-->
       <div class="layui-form-item">
         <label class="layui-form-label">商品图片</label>
         <div class="layui-input-block">

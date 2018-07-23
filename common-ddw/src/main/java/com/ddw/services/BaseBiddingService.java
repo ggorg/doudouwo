@@ -69,6 +69,7 @@ public class BaseBiddingService extends CommonService {
         Integer userId=Integer.parseInt(ubs[0]);
         Integer bidCode=Integer.parseInt(ubs[1]);
         Integer goddessUserId=Integer.parseInt(ubs[2]);
+
         String groupId=ubs[3];
         String ub=userId+"-"+bidCode;
         Map updateMap=new HashMap();
@@ -78,8 +79,16 @@ public class BaseBiddingService extends CommonService {
         updateMap.put("status", BiddingStatusEnum.Status10.getCode());
         this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",bidCode);
         Map map=(Map) CacheUtil.get("pay","bidding-pay-"+ub);
-        Integer earnestPrice=(Integer) map.get("earnestPrice");
-        this.incomeService.commonIncome(goddessUserId,earnestPrice, IncomeTypeEnum.IncomeType1, OrderTypeEnum.OrderType4,(String)map.get("earnestOrderNo"));
+        Integer earnestPrice=null;
+        String orderNo=null;
+        if(map==null){
+            earnestPrice=Integer.parseInt(ubs[4]);
+            orderNo=ubs[5];
+        }else{
+            earnestPrice=(Integer) map.get("earnestPrice");
+            orderNo=(String)map.get("earnestOrderNo");
+        }
+        this.incomeService.commonIncome(goddessUserId,earnestPrice, IncomeTypeEnum.IncomeType1, OrderTypeEnum.OrderType4,orderNo);
 
         this.baseConsumeRankingListService.save(userId,goddessUserId,earnestPrice,IncomeTypeEnum.IncomeType1);
 
