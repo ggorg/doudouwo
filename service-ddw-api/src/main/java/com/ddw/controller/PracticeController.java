@@ -245,7 +245,7 @@ public class PracticeController {
     @PostMapping("/orderPracticeList/{token}")
     public ResponseVO getOrderPracticeList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO page){
         try {
-            return new ResponseVO(1,"成功",reviewPracticeService.getOrderPracticeList(TokenUtil.getUserId(token),page));
+            return reviewPracticeService.getOrderPracticeList(TokenUtil.getUserId(token),page);
         }catch (Exception e){
             logger.error("PracticeController->getOrderPracticeList",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -257,7 +257,7 @@ public class PracticeController {
     @PostMapping("/orderUserList/{token}")
     public ResponseVO getOrderUserList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO page){
         try {
-            return new ResponseVO(1,"成功",reviewPracticeService.getOrderUserList(TokenUtil.getUserId(token),page));
+            return reviewPracticeService.getOrderUserList(TokenUtil.getUserId(token),page);
         }catch (Exception e){
             logger.error("PracticeController->getOrderUserList",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -268,7 +268,7 @@ public class PracticeController {
     @PostMapping("/pubTaskList/{token}")
     public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO page){
         try {
-            return new ResponseVO(1,"成功",reviewPracticeService.getPubTaskList(TokenUtil.getUserId(token),page));
+            return reviewPracticeService.getPubTaskList(TokenUtil.getUserId(token),page);
         }catch (Exception e){
             logger.error("PracticeController->getPubTaskList",e);
             return new ResponseVO(-1,"提交失败",null);
