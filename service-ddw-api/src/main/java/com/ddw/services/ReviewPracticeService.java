@@ -336,6 +336,70 @@ public class ReviewPracticeService extends CommonService {
     }
 
     /**
+     * 代练分页按时间倒序展示订单
+     * @param practiceId
+     * @param page
+     * @return
+     * @throws Exception
+     */
+    public ResponseVO getOrderPracticeList(Integer practiceId,PageDTO page)throws Exception{
+        Map condtion = new HashMap<>();
+        condtion.put("practiceId",practiceId);
+        CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
+//        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
+//        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb1);
+        JSONObject json = new JSONObject();
+        Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
+        json.put("list",p.getResult());
+        json.put("count",p.getTotal());
+        return new ResponseVO(1,"成功",json);
+    }
+
+    /**
+     * 会员分页按时间倒序展示订单
+     * @param userId
+     * @param page
+     * @return
+     * @throws Exception
+     */
+    public ResponseVO getOrderUserList(Integer userId,PageDTO page)throws Exception{
+        Map condtion = new HashMap<>();
+        condtion.put("userId",userId);
+        CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
+//        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
+//        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb1);
+        JSONObject json = new JSONObject();
+        Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
+        json.put("list",p.getResult());
+        json.put("count",p.getTotal());
+        return new ResponseVO(1,"成功",json);
+    }
+
+    /**
+     * 代练已发布代练任务
+     * @param userId 代练编号
+     * @param page
+     * @return
+     * @throws Exception
+     */
+    public ResponseVO getPubTaskList(Integer userId,PageDTO page)throws Exception{
+        Map condtion = new HashMap<>();
+        condtion.put("userId",userId);
+        condtion.put("appointment,!=",0);
+        CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
+//        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
+//        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb1);
+        JSONObject json = new JSONObject();
+        Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
+        json.put("list",p.getResult());
+        json.put("count",p.getTotal());
+        return new ResponseVO(1,"成功",json);
+    }
+
+    /**
      * 订单结算
      * @param practiceSettlementDTO
      * @return
@@ -474,6 +538,5 @@ public class ReviewPracticeService extends CommonService {
         }
         return PracticeGameList;
     }
-    //TODO 分页按时间倒序展示已完成订单
-    //TODO 分页展示正在进行的订单
+
 }
