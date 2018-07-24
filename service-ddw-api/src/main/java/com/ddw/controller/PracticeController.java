@@ -210,11 +210,14 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "发布代练")
+    @ApiOperation(value = "发布代练,同时只允许发布一个")
     @PostMapping("/release/{token}")
     public ResponseVO release(@PathVariable String token,
                                  @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeReleaseDTO practiceReleaseDTO){
         try {
+            if(reviewPracticeService.countPracticeGame(TokenUtil.getUserId(token))>0){
+                return new ResponseVO(-2,"不允许同时发布多个任务",null);
+            }
             return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),1);
         }catch (Exception e){
             logger.error("PracticeController->release",e);
@@ -266,9 +269,9 @@ public class PracticeController {
     @Token
     @ApiOperation(value = "代练任务发布列表")
     @PostMapping("/pubTaskList/{token}")
-    public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO page){
+    public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticePubTaskDTO practicePubTaskDTO){
         try {
-            return reviewPracticeService.getPubTaskList(TokenUtil.getUserId(token),page);
+            return reviewPracticeService.getPubTaskList(practicePubTaskDTO);
         }catch (Exception e){
             logger.error("PracticeController->getPubTaskList",e);
             return new ResponseVO(-1,"提交失败",null);

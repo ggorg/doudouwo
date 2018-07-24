@@ -269,6 +269,19 @@ public class ReviewPracticeService extends CommonService {
     }
 
     /**
+     * 查询当前代练是否已发布任务,只允许发布一个
+     * @param practiceId
+     * @return
+     * @throws Exception
+     */
+    public long countPracticeGame(Integer practiceId)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("userId",practiceId);
+        searchCondition.put("appointment,!=",0);
+        return super.commonCountBySearchCondition("ddw_practice_game",searchCondition);
+    }
+
+    /**
      * 代练与游戏关联表
      * @param practiceId
      * @param gameId
@@ -379,21 +392,22 @@ public class ReviewPracticeService extends CommonService {
 
     /**
      * 代练已发布代练任务
-     * @param userId 代练编号
-     * @param page
+     * @param practicePubTaskDTO
      * @return
      * @throws Exception
      */
-    public ResponseVO getPubTaskList(Integer userId,PageDTO page)throws Exception{
+    public ResponseVO getPubTaskList(PracticePubTaskDTO practicePubTaskDTO)throws Exception{
         Map condtion = new HashMap<>();
-        condtion.put("userId",userId);
+        if(practicePubTaskDTO.getPracticeId() != null){
+            condtion.put("userId",practicePubTaskDTO.getPracticeId());
+        }
         condtion.put("appointment,!=",0);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
 //        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
 //        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb1);
         JSONObject json = new JSONObject();
-        Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
+        Page p = this.commonPage(practicePubTaskDTO.getPage().getPageNum(),practicePubTaskDTO.getPage().getPageSize(),csb);
         json.put("list",p.getResult());
         json.put("count",p.getTotal());
         return new ResponseVO(1,"成功",json);
