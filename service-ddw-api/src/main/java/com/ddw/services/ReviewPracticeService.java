@@ -359,9 +359,10 @@ public class ReviewPracticeService extends CommonService {
         Map condtion = new HashMap<>();
         condtion.put("practiceId",practiceId);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
-//        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
-//        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb1);
+        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
+        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
+        CommonChildBean cb4=new CommonChildBean("ddw_rank","id","targetRankId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank",null,null,condtion,cb1,cb2,cb3,cb4);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
         json.put("list",p.getResult());
@@ -380,9 +381,10 @@ public class ReviewPracticeService extends CommonService {
         Map condtion = new HashMap<>();
         condtion.put("userId",userId);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
-//        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
-//        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb1);
+        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
+        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
+        CommonChildBean cb4=new CommonChildBean("ddw_rank","id","targetRankId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank",null,null,condtion,cb1,cb2,cb3,cb4);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
         json.put("list",p.getResult());
@@ -437,12 +439,20 @@ public class ReviewPracticeService extends CommonService {
         practiceOrderPO.setMoney(payMoney);
         Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
-        ResponseApiVO responseApiVO = new ResponseApiVO();
-        PropertyUtils.copyProperties(responseApiVO,responseVO);
+        //结算后,修改代练状态为关闭
+        Map setParams = new HashMap<>();
+        setParams.put("appointment",2);
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("userId",practiceOrderPO.getPracticeId());
+        searchCondition.put("gameId",gameId);
+        ResponseVO responseVO2 = super.commonUpdateByParams("ddw_practice_game",setParams,searchCondition);
         PracticeSettlementVO practiceSettlementVO = new PracticeSettlementVO();
         practiceSettlementVO.setPayMoney(payMoney);
-        responseApiVO.setData(practiceSettlementVO);
-        return responseApiVO;
+        if(responseVO.getReCode()>0 && responseVO2.getReCode()>0){
+            return new ResponseApiVO(1,"成功",practiceSettlementVO);
+        }else{
+            return new ResponseApiVO(-1,"失败",null);
+        }
     }
 
     /**
