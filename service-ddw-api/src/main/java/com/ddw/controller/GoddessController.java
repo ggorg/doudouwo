@@ -67,7 +67,7 @@ public class GoddessController {
     @PostMapping("/queryList/{token}")
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
-            return reviewGoddessService.goddessList(token,pageDTO.getPageNum(),pageDTO.getPageSize());
+            return new ResponseVO(1,"成功",reviewGoddessService.goddessList(TokenUtil.getUserId(token),pageDTO));
         }catch (Exception e){
             logger.error("GoddessController->queryList",e);
             return new ResponseVO(-1,"提交失败",null);

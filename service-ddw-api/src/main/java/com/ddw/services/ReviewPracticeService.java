@@ -58,7 +58,7 @@ public class ReviewPracticeService extends CommonService {
                 photograph1.isEmpty() || photograph2.isEmpty() ||photograph3.isEmpty()){
             return new ResponseApiVO(-1,"参数不正确",null);
         }else{
-            //允许重复提交申请
+            //允许重复提交申请,审核通过更新资料
 //            Map conditionMap = new HashMap<>();
 //            conditionMap.put("drProposer",id);
 //            conditionMap.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType6.getCode());
@@ -403,9 +403,9 @@ public class ReviewPracticeService extends CommonService {
         }
         condtion.put("appointment,!=",0);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
-//        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
-//        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb1);
+        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
+        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank",null,null,condtion,cb1,cb2,cb3);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(practicePubTaskDTO.getPage().getPageNum(),practicePubTaskDTO.getPage().getPageSize(),csb);
         json.put("list",p.getResult());

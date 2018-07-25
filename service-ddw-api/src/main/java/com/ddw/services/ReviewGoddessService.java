@@ -6,7 +6,6 @@ import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.dao.GoddessMapper;
 import com.ddw.dao.UserInfoMapper;
 import com.ddw.enums.*;
-import com.ddw.token.TokenUtil;
 import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
@@ -29,6 +28,8 @@ public class ReviewGoddessService extends CommonService {
     private CommonReviewService commonReviewService;
     @Autowired
     private MyAttentionService myAttentionService;
+    @Autowired
+    private LiveRadioClientService liveRadioClientService;
     @Autowired
     private CacheService cacheService;
     @Autowired
@@ -122,49 +123,49 @@ public class ReviewGoddessService extends CommonService {
      * @return
      * @throws Exception
      */
-    public ResponseVO goddessList(String token,Integer pageNum,Integer pageSize)throws Exception{
-        JSONObject json = new JSONObject();
-        if(pageNum == null || pageSize == null){
-            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
-        }
-        Integer storeId = TokenUtil.getStoreId(token);
-        Integer userId = TokenUtil.getUserId(token);
-        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
-        Integer endRow = pageSize;
-        List<AppIndexGoddessVO>AppIndexGoddessList = goddessMapper.getGoddessList(storeId,startRow,endRow);
-        int count = goddessMapper.getGoddessListCount(storeId);
-        ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = AppIndexGoddessList.listIterator();
-        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryGoddessByUserId(userId,1,9999).getData();
-        List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
-        while (appIndexGoddessIterator.hasNext()){
-            AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
-            ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(appIndexGoddessVO.getId(),storeId);
-            /**
-             *    liveStatus0("等待直播",0)-》2,"直播等待中，请前往直播房间
-             liveStatus1("正在直播",1)-》-2002,"直播房间已开，请关闭再申请"
-             liveStatus2("停用",2);其它
-
-             */
-            if(rav.getReCode() == 2){
-                appIndexGoddessVO.setLiveRadioFlag(0);
-            }else if(rav.getReCode() == -2002){
-                appIndexGoddessVO.setLiveRadioFlag(1);
-            }else {
-                appIndexGoddessVO.setLiveRadioFlag(2);
-            }
-            if(myAttentionGoddessList != null){
-                for(UserInfoVO myAttentionGoddess:myAttentionGoddessList){
-                    if(myAttentionGoddess.getId() == appIndexGoddessVO.getId()){
-                        appIndexGoddessVO.setFollowed(true);
-                        break;
-                    }
-                }
-            }
-        }
-        json.put("list",AppIndexGoddessList);
-        json.put("count",count);
-        return new ResponseVO(1,"成功",json);
-    }
+//    public ResponseVO goddessList(String token,Integer pageNum,Integer pageSize)throws Exception{
+//        JSONObject json = new JSONObject();
+//        if(pageNum == null || pageSize == null){
+//            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+//        }
+//        Integer storeId = TokenUtil.getStoreId(token);
+//        Integer userId = TokenUtil.getUserId(token);
+//        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+//        Integer endRow = pageSize;
+//        List<AppIndexGoddessVO>AppIndexGoddessList = goddessMapper.getGoddessList(storeId,startRow,endRow);
+//        int count = goddessMapper.getGoddessListCount(storeId);
+//        ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = AppIndexGoddessList.listIterator();
+//        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryGoddessByUserId(userId,1,9999).getData();
+//        List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
+//        while (appIndexGoddessIterator.hasNext()){
+//            AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
+//            ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(appIndexGoddessVO.getId(),storeId);
+//            /**
+//             *    liveStatus0("等待直播",0)-》2,"直播等待中，请前往直播房间
+//             liveStatus1("正在直播",1)-》-2002,"直播房间已开，请关闭再申请"
+//             liveStatus2("停用",2);其它
+//
+//             */
+//            if(rav.getReCode() == 2){
+//                appIndexGoddessVO.setLiveRadioFlag(0);
+//            }else if(rav.getReCode() == -2002){
+//                appIndexGoddessVO.setLiveRadioFlag(1);
+//            }else {
+//                appIndexGoddessVO.setLiveRadioFlag(2);
+//            }
+//            if(myAttentionGoddessList != null){
+//                for(UserInfoVO myAttentionGoddess:myAttentionGoddessList){
+//                    if(myAttentionGoddess.getId() == appIndexGoddessVO.getId()){
+//                        appIndexGoddessVO.setFollowed(true);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//        json.put("list",AppIndexGoddessList);
+//        json.put("count",count);
+//        return new ResponseVO(1,"成功",json);
+//    }
 
     /**
      * 当前门店女神列表,不判断关注状态
@@ -174,49 +175,82 @@ public class ReviewGoddessService extends CommonService {
      * @return
      * @throws Exception
      */
-    public ResponseVO goddessNoAttentionList(String token,Integer pageNum,Integer pageSize)throws Exception{
-        if(pageNum == null || pageSize == null){
-            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
-        }
-        Integer storeId = TokenUtil.getStoreId(token);
-        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
-        Integer endRow = pageSize;
-        List<AppIndexGoddessVO>AppIndexGoddessList = goddessMapper.getGoddessList(storeId,startRow,endRow);
-        ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = AppIndexGoddessList.listIterator();
-        while (appIndexGoddessIterator.hasNext()){
-            AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
-            ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(appIndexGoddessVO.getId(),storeId);
-            LiveRadioPO liveRadioP = (LiveRadioPO)rav.getData();
-            /**
-             *    liveStatus0("等待直播",0)-》2,"直播等待中，请前往直播房间
-             liveStatus1("正在直播",1)-》-2002,"直播房间已开，请关闭再申请"
-             liveStatus2("停用",2);其它
+//    public ResponseVO goddessNoAttentionList(String token,Integer pageNum,Integer pageSize)throws Exception{
+//        if(pageNum == null || pageSize == null){
+//            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+//        }
+//        Integer storeId = TokenUtil.getStoreId(token);
+//        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+//        Integer endRow = pageSize;
+//        List<AppIndexGoddessVO>AppIndexGoddessList = goddessMapper.getGoddessList(storeId,startRow,endRow);
+//        ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = AppIndexGoddessList.listIterator();
+//        while (appIndexGoddessIterator.hasNext()){
+//            AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
+//            ResponseApiVO rav = reviewService.getLiveRadioReviewStatus(appIndexGoddessVO.getId(),storeId);
+//            LiveRadioPO liveRadioP = (LiveRadioPO)rav.getData();
+//            /**
+//             *    liveStatus0("等待直播",0)-》2,"直播等待中，请前往直播房间
+//             liveStatus1("正在直播",1)-》-2002,"直播房间已开，请关闭再申请"
+//             liveStatus2("停用",2);其它
+//
+//             */
+//            if(rav.getReCode() == 2){
+//                appIndexGoddessVO.setLiveRadioFlag(0);
+//            }else if(rav.getReCode() == -2002){
+//                appIndexGoddessVO.setLiveRadioFlag(1);
+//                appIndexGoddessVO.setCode(liveRadioP.getId());
+//            }else{
+//                appIndexGoddessVO.setLiveRadioFlag(2);
+//                /*
+////            }else {
+////                //判断审核缓存是否存在
+////                if (CacheUtil.get("review", "liveRadio" + appIndexGoddessVO.getId()) == null) {
+////                    Map condition1 = new HashMap();
+////                    condition1.put("drProposer", appIndexGoddessVO.getId());
+////                    condition1.put("drBusinessType", ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
+////                    condition1.put("drReviewStatus", ReviewStatusEnum.ReviewStatus2.getCode());
+////                    List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review", condition1));
+////                    if (list1.size() > 0) {
+////                        CacheUtil.put("review", "liveRadio" + appIndexGoddessVO.getId(), 3);
+////                        appIndexGoddessVO.setLiveRadioFlag(3);
+////                    }
+////                } else {
+////                    appIndexGoddessVO.setLiveRadioFlag((Integer) CacheUtil.get("review", "liveRadio" + appIndexGoddessVO.getId()));
+////                }
+//*/
+//            }
+//        }
+//        return new ResponseVO(1,"成功",AppIndexGoddessList);
+//    }
 
-             */
-            if(rav.getReCode() == 2){
-                appIndexGoddessVO.setLiveRadioFlag(0);
-            }else if(rav.getReCode() == -2002){
-                appIndexGoddessVO.setLiveRadioFlag(1);
-                appIndexGoddessVO.setCode(liveRadioP.getId());
-            }else{
-                appIndexGoddessVO.setLiveRadioFlag(2);
-//            }else {
-//                //判断审核缓存是否存在
-//                if (CacheUtil.get("review", "liveRadio" + appIndexGoddessVO.getId()) == null) {
-//                    Map condition1 = new HashMap();
-//                    condition1.put("drProposer", appIndexGoddessVO.getId());
-//                    condition1.put("drBusinessType", ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
-//                    condition1.put("drReviewStatus", ReviewStatusEnum.ReviewStatus2.getCode());
-//                    List<Map> list1 = this.getCommonMapper().selectObjects(new CommonSearchBean("ddw_review", condition1));
-//                    if (list1.size() > 0) {
-//                        CacheUtil.put("review", "liveRadio" + appIndexGoddessVO.getId(), 3);
-//                        appIndexGoddessVO.setLiveRadioFlag(3);
-//                    }
-//                } else {
-//                    appIndexGoddessVO.setLiveRadioFlag((Integer) CacheUtil.get("review", "liveRadio" + appIndexGoddessVO.getId()));
-//                }
-            }
+    /**
+     * 先查询直播女神列表,列表不足由未直播女神补上,根据粉丝数量降序,展示女神数据,列表不包含自己
+     * @param userId 会员id
+     * @param page
+     * @return
+     * @throws Exception
+     */
+    public List<AppIndexGoddessVO> goddessList(Integer userId,PageDTO page)throws Exception{
+        List<Map> list = liveRadioClientService.getLiveRadioList(userId, page);
+        List<Integer> userIdList = new ArrayList<>();
+        for(Map map : list){
+            userIdList.add((Integer) map.get("userId"));
         }
-        return new ResponseVO(1,"成功",AppIndexGoddessList);
+        Integer pageNum = page.getPageNum();
+        Integer pageSize = page.getPageSize();
+        Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+        Integer end = pageSize;
+        List<AppIndexGoddessVO> appIndexGoddess = new ArrayList<AppIndexGoddessVO>();
+        if(userIdList.size() > 0){
+            appIndexGoddess = goddessMapper.getGoddessListByIds(userIdList,userId,start,end);
+            if(page.getPageSize()-appIndexGoddess.size()>0){
+                end = page.getPageSize()-appIndexGoddess.size();
+                List<AppIndexGoddessVO> appIndexGoddess2 = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
+                appIndexGoddess.addAll(appIndexGoddess2);
+            }
+        }else{
+            appIndexGoddess = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
+        }
+        return appIndexGoddess;
     }
 }

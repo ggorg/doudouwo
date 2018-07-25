@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.AppIndexVO;
+import com.ddw.beans.PageDTO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.vo.AppIndexBannerVO;
 import com.ddw.beans.vo.AppIndexButtonVO;
@@ -43,13 +44,16 @@ public class AppIndexService {
             return new ResponseApiVO(-2,"请选择门店",null);
         }
         AppIndexVO appIndexVO = new AppIndexVO();
-        Object obGoddess = CacheUtil.get("publicCache","appIndexGoddess"+storeId);
+        Object obGoddess = CacheUtil.get("publicCache","appIndexGoddess");
         if(obGoddess == null){
-            ResponseVO goddessList = reviewGoddessService.goddessNoAttentionList(token,1,4);
-            appIndexVO.setGoddessList((List<AppIndexGoddessVO>)goddessList.getData());
-            CacheUtil.put("publicCache","appIndexGoddess"+storeId,appIndexVO.getGoddessList());
+            PageDTO page = new PageDTO();
+            page.setPageNum(1);
+            page.setPageSize(4);
+            //查询所有门店女神,直播优先,列表不包括当前查询会员id
+            appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),page));
+            CacheUtil.put("publicCache","appIndexGoddess",appIndexVO.getGoddessList());
         }else{
-            appIndexVO.setGoddessList((List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess"+storeId));
+            appIndexVO.setGoddessList((List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess"));
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){

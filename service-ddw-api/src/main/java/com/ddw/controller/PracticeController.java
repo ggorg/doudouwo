@@ -138,7 +138,7 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "约代练申请,申请状态成功,返回订单编号和代练支付金额预估")
+    @ApiOperation(value = "约代练申请,申请状态成功,返回订单编号和代练支付金额")
     @PostMapping("/gameApply/{token}")
     public ResponseApiVO<PracticeGameApplyVO> gameApply(@PathVariable String token,
                                            @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeGameApplyDTO practiceGameApplyDTO){

@@ -5,7 +5,6 @@ import com.ddw.enums.GoddessFlagEnum;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.Distance;
-import com.ddw.util.LanglatComparator;
 import com.ddw.util.LiveRadioApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -13,10 +12,7 @@ import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
-import com.tls.sigcheck.tls_sigcheck;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.codec.StringEncoderComparator;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +20,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +49,7 @@ public class LiveRadioClientService  extends CommonService{
         if(upo==null){
             return new ResponseApiVO(-2000,"用户不存在",null);
         }
-        if(!GoddessFlagEnum.goddessFlag1.getCode().equals((Integer) upo.get("goddessFlag"))){
+        if(!GoddessFlagEnum.goddessFlag1.getCode().equals(upo.get("goddessFlag"))){
             return new ResponseApiVO(-2001,"请先申请当女神",null);
         }
         Integer userid=(Integer) upo.get("id");
@@ -127,6 +122,18 @@ public class LiveRadioClientService  extends CommonService{
         ListVO list=new ListVO(newList);
         return new ResponseApiVO(1,"成功",list);
     }
+
+    public List<Map> getLiveRadioList(Integer userId,PageDTO page)throws Exception{
+        Map condition=new HashMap();
+        condition.put("liveStatus",LiveStatusEnum.liveStatus1.getCode());
+        condition.put("endDate,>=",new Date());
+        condition.put("userid,!=",userId);
+        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label,ct0.id userId",null,null,condition,cb);
+        Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
+        return p.getResult();
+    }
+
     public ResponseApiVO selectLiveRadio(CodeDTO dto, String token)throws Exception{
         Integer storeId=TokenUtil.getStoreId(token);
         if(storeId==null){

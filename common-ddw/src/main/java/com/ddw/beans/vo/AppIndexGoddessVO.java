@@ -15,8 +15,6 @@ public class AppIndexGoddessVO implements Serializable{
     private Integer id;
     @ApiModelProperty(name="nickName",value="昵称",example="女神")
     private String nickName;
-    @ApiModelProperty(name="imgUrl",value="相册第一张",example="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529384238691&di=7e0db331f1a4b1d1b11e2643e8bb6ac3&imgtype=0&src=http%3A%2F%2Fi1.mopimg.cn%2Fimg%2Fdzh%2F2015-07%2F414%2F20150717120946794.jpg")
-    private String imgUrl;
     @ApiModelProperty(name="headImgUrl",value="头像URL",example="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522752012429&di=b26668f45e547cb644bb85d054242abe&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fbba1cd11728b4710655829d1c9cec3fdfc0323bc.jpg")
     private String headImgUrl;
     @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
@@ -29,12 +27,15 @@ public class AppIndexGoddessVO implements Serializable{
     private Integer liveRadioFlag;
     @ApiModelProperty(name="code",value="直播房间号,直播状态为1时才有",example="1")
     private Integer code;
-
+    @ApiModelProperty(name="storeId",value="门店编号",example="1")
+    private Integer storeId;
+    @ApiModelProperty(name="dsName",value="门店名称",example="成都店")
+    private String dsName;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
     private Integer fans;
-
     @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
     private boolean followed;
+
     public Integer getId() {
         return id;
     }
@@ -49,14 +50,6 @@ public class AppIndexGoddessVO implements Serializable{
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
     }
 
     public String getHeadImgUrl() {
@@ -105,6 +98,22 @@ public class AppIndexGoddessVO implements Serializable{
 
     public void setCode(Integer code) {
         this.code = code;
+    }
+
+    public Integer getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Integer storeId) {
+        this.storeId = storeId;
+    }
+
+    public String getDsName() {
+        return dsName;
+    }
+
+    public void setDsName(String dsName) {
+        this.dsName = dsName;
     }
 
     public Integer getFans() {
