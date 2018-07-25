@@ -92,7 +92,7 @@ public class PracticeController {
     @PostMapping("/queryList/{token}")
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
-            //TODO 根据接单排行代练信息
+            //TODO 根据接单排行代练信息,不包含自己
             return reviewPracticeService.practiceList(token,pageDTO.getPageNum(),pageDTO.getPageSize());
         }catch (Exception e){
             logger.error("PracticeController->queryList",e);
@@ -134,6 +134,28 @@ public class PracticeController {
             return new ResponseApiVO(1,"成功",practiceVO);
         }catch (Exception e){
             logger.error("PracticeController->query",e);
+            return new ResponseApiVO(-1,"提交失败",null);
+        }
+    }
+
+    @ApiOperation(value = "预估代练支付金额")
+    @PostMapping("/estimatedAmount/{token}")
+    public ResponseApiVO<PracticeGameApplyVO> estimatedAmount(@PathVariable String token,
+                                                        @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeGameApplyDTO practiceGameApplyDTO){
+        try {
+            //判断代练是否开启预约,提交游戏编号,当前段位包含几星,目标段位包含几星,代练编号,计算支付金额
+            PracticeGamePO practiceGamePO = reviewPracticeService.getPracticeGamePO(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId());
+            if (practiceGamePO != null && practiceGamePO.getAppointment() == 1) {
+                PracticeEstimatedAmountVO practiceEstimatedAmountVO = new PracticeEstimatedAmountVO();
+                practiceEstimatedAmountVO.setPayMoney(reviewPracticeService.payMoney(practiceGameApplyDTO.getGameId(),
+                        practiceGameApplyDTO.getRankId(),practiceGameApplyDTO.getStar(),
+                        practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar()));
+                return new ResponseApiVO(1,"成功",practiceEstimatedAmountVO);
+            }else {
+                return new ResponseApiVO(-2,"代练未开启预约或在代练中",null);
+            }
+        }catch (Exception e){
+            logger.error("PracticeController->estimatedAmount",e);
             return new ResponseApiVO(-1,"提交失败",null);
         }
     }
