@@ -41,7 +41,7 @@ public class StoreGoodsContoller {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
                 model.addAttribute("gPage",storeGoodsService.findPage(pageNo,null,spo.getId()));
-                model.addAttribute("goodsPlate",this.storeGoodsPlateService.getGoodsPlate(spo.getId()));
+               // model.addAttribute("goodsPlate",this.storeGoodsPlateService.getGoodsPlate(spo.getId()));
 
 
             }
@@ -58,7 +58,7 @@ public class StoreGoodsContoller {
             if(spo!=null){
                 model.addAttribute("formulaList",this.storeFormulaService.getAllByStore(spo.getId()));
                 model.addAttribute("goods",this.storeGoodsService.getGoods(idStr));
-                model.addAttribute("goodsType",this.storeGoodsPlateService.getGoodsPlate(spo.getId()));
+               // model.addAttribute("goodsType",this.storeGoodsPlateService.getGoodsPlate(spo.getId()));
             }
         }catch (Exception e){
             logger.error("StoreGoodsContoller->toEdit->系统异常",e);
