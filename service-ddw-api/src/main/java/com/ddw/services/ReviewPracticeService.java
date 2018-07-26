@@ -137,26 +137,26 @@ public class ReviewPracticeService extends CommonService {
             return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
         }
         Integer storeId = TokenUtil.getStoreId(token);
-        Integer userId = TokenUtil.getUserId(token);
+        Integer practiceId = TokenUtil.getUserId(token);
         Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer endRow = pageSize;
-        List<AppIndexPracticeVO>AppIndexPracticeList = practiceMapper.getPracticeList(storeId,startRow,endRow);
-        int count = practiceMapper.getPracticeListCount(storeId);
-        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(userId,1,9999).getData();
+        List<AppIndexPracticeVO>appIndexPracticeList = practiceMapper.getPracticeList(practiceId,storeId,startRow,endRow);
+        int count = practiceMapper.getPracticeListCount(practiceId,storeId);
+        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(practiceId,1,9999).getData();
         List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
-        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = AppIndexPracticeList.listIterator();
+        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPracticeList.listIterator();
         while (appIndexPracticeIterator.hasNext()){
             AppIndexPracticeVO appIndexPracticeVO = appIndexPracticeIterator.next();
             if (myAttentionGoddessList != null) {
                 for(UserInfoVO userInfoVO:myAttentionGoddessList){
-                    if(userInfoVO.getId() == appIndexPracticeVO.getId()){
+                    if(userInfoVO.getId() == appIndexPracticeVO.getUserId()){
                         appIndexPracticeVO.setFollowed(true);
                         break;
                     }
                 }
             }
         }
-        json.put("list",AppIndexPracticeList);
+        json.put("list",appIndexPracticeList);
         json.put("count",count);
         return new ResponseVO(1,"成功",json);
     }
@@ -169,16 +169,17 @@ public class ReviewPracticeService extends CommonService {
      * @return
      * @throws Exception
      */
-    public ResponseVO practiceNoAttentionList(String token, Integer pageNum, Integer pageSize)throws Exception{
-        if(pageNum == null || pageSize == null){
-            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
-        }
-        Integer storeId = TokenUtil.getStoreId(token);
-        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
-        Integer endRow = pageSize;
-        List<AppIndexPracticeVO>AppIndexPracticeList = practiceMapper.getPracticeList(storeId,startRow,endRow);
-        return new ResponseVO(1,"成功",AppIndexPracticeList);
-    }
+//    public ResponseVO practiceNoAttentionList(String token, Integer pageNum, Integer pageSize)throws Exception{
+//        if(pageNum == null || pageSize == null){
+//            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+//        }
+//        Integer storeId = TokenUtil.getStoreId(token);
+//        Integer pacticeId = TokenUtil.getUserId(token);
+//        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+//        Integer endRow = pageSize;
+//        List<AppIndexPracticeVO>AppIndexPracticeList = practiceMapper.getPracticeList(pacticeId,storeId,startRow,endRow);
+//        return new ResponseVO(1,"成功",AppIndexPracticeList);
+//    }
 
     /**
      * 插入评价

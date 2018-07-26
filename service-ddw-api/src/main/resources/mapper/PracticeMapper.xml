@@ -5,27 +5,37 @@
 <mapper namespace="com.ddw.dao.PracticeMapper">
 
     <resultMap id="BaseResultMap" type="com.ddw.beans.vo.AppIndexPracticeVO">
-        <id property="id" column="id"/>
+        <id property="userId" column="userId"/>
         <result property="nickName" column="nickName"/>
         <result property="headImgUrl" column="headImgUrl"/>
         <result property="pgradeName" column="pgradeName"/>
         <result property="label" column="label"/>
-        <result property="fans" column="fans"/>
+        <result property="ordersCount" column="ordersCount"/>
+        <result property="gameId" column="gameId"/>
+        <result property="gameName" column="gameName"/>
+        <result property="rankId" column="rankId"/>
+        <result property="rank" column="rank"/>
     </resultMap>
 
 
     <select id="getPracticeList" parameterType="int" resultMap="BaseResultMap">
-        select t3.id,t3.nickName,t3.headImgUrl,t3.label,t4.gradeName pgradeName,count(1) AS fans
-        from ddw_practice t1 left join ddw_my_attention t2 on t1.userId=t2.practiceId and t1.storeId = #{storeId}
-        LEFT join ddw_userinfo t3 on t1.userId = t3.id
+        select t1.userId,t1.gameId,t1.rankId,t3.nickName,t3.headImgUrl,t3.label,
+        t4.gradeName pgradeName,count(t2.practiceId) AS ordersCount,t6.gameName,t7.rank
+        from ddw_practice_game t1
+		left join ddw_practice_order t2 on t1.userId=t2.practiceId
+        left join ddw_userinfo t3 on t1.userId = t3.id
         left join ddw_practice_grade t4 on t4.id=t3.practiceGradeId
-        group  by t1.userId
-        order by count(1) desc
+		left join ddw_practice t5 on t5.userId=t1.userId and t5.storeId=#{storeId}
+		left join ddw_game t6 on t6.id=t1.gameId
+		left join ddw_rank t7 on t7.id=t1.rankId
+		where  t1.appointment !=0 and t1.userId !=#{practiceId}
+        group  by t1.userId,t1.gameId,t1.rankId
+        order by count(t2.practiceId) desc
         limit #{start},#{end}
     </select>
 
     <select id="getPracticeListCount" parameterType="int" resultType="int">
-        SELECT count(*) from ddw_practice where storeId = #{storeId}
+        SELECT count(*) from ddw_practice where storeId = #{storeId} and userId != #{practiceId}
     </select>
 
 </mapper>
