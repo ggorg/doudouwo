@@ -289,7 +289,7 @@ public class PayCenterService extends BaseOrderService {
             search.put("storeId",TokenUtil.getStoreId(token));
             search.put("dghStatus",GoodsStatusEnum.goodsStatus1.getCode());
             search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
-            CommonSearchBean csb=new CommonSearchBean("ddw_goods_product",null,"t1.dghActivityPrice,t1.dghSalesPrice,t1.dghDesc,t1.id,ct0.fileImgIcoPath headImg",null,null,search,new CommonChildBean("ddw_goods","id","dghGoodsId",null));
+            CommonSearchBean csb=new CommonSearchBean("ddw_goods_product",null,"t1.dghActivityPrice,t1.dghSalesPrice,t1.dghFormulaId,t1.dghDesc,t1.id,ct0.fileImgIcoPath headImg",null,null,search,new CommonChildBean("ddw_goods","id","dghGoodsId",null));
             List<Map> goodsPruductList=this.getCommonMapper().selectObjects(csb);
            // List<Map> goodsPruductList= this.commonObjectsBySearchCondition("ddw_goods_product",search);
             if(goodsPruductList==null || goodsPruductList.isEmpty()){

@@ -65,7 +65,7 @@ public class GoodsClientService extends CommonService {
         search.put("platePos", platePosEnum.getCode());
         search.put("status", GoodsPageModelStatusEnum.goodsStatus1.getCode());
         List<Map> pmList=this.commonList("ddw_goods_page_model","updateTime desc",1,1,search);
-        if(pmList==null){
+        if(pmList==null || pmList.isEmpty() || pmList.size()==0){
             return new ResponseApiVO(-2,"没有发布页面",null);
         }
         Map pm=pmList.get(0);
@@ -79,7 +79,7 @@ public class GoodsClientService extends CommonService {
         gsearch.put("dgStatus",GoodsStatusEnum.goodsStatus1.getCode());
 
         List<Map> gList= this.commonObjectsBySearchCondition("ddw_goods",gsearch);
-        if(gList==null){
+        if(gList==null ||gList.isEmpty() || gList.size()==0){
             return new ResponseApiVO(-2,"没有商品上架",null);
         }
         gsearch=new HashMap();
