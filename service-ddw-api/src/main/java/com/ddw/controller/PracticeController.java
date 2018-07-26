@@ -59,20 +59,6 @@ public class PracticeController {
         }
     }
 
-
-//    @Token
-//    @ApiOperation(value = "代练信息查询")
-//    @PostMapping("/query/{token}")
-//    public ResponseVO query(@PathVariable String token){
-//        try {
-//            UserInfoVO user = userInfoService.query(TokenUtil.getUserId(token));
-//            return new ResponseVO(1,"成功",user);
-//        }catch (Exception e){
-//            logger.error("GoddessController->query",e);
-//            return new ResponseVO(-1,"提交失败",null);
-//        }
-//    }
-
     @Token
     @ApiOperation(value = "游戏列表")
     @PostMapping("/gameList/{token}")
@@ -92,7 +78,7 @@ public class PracticeController {
     @PostMapping("/queryList/{token}")
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
-            //TODO 根据接单排行代练信息,不包含自己
+            //TODO 查询已发布代练任务的代练,根据接单排行代练信息,不包含自己
             return reviewPracticeService.practiceList(token,pageDTO.getPageNum(),pageDTO.getPageSize());
         }catch (Exception e){
             logger.error("PracticeController->queryList",e);

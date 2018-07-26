@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.AppIndexVO;
 import com.ddw.beans.PageDTO;
 import com.ddw.beans.ResponseApiVO;
@@ -9,7 +10,6 @@ import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.beans.vo.AppIndexPracticeVO;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
-import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,9 +57,11 @@ public class AppIndexService {
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
-            ResponseVO practiceList = reviewPracticeService.practiceNoAttentionList(token,1,4);
-            appIndexVO.setPracticeList((List<AppIndexPracticeVO>)practiceList.getData());
-            CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
+            JSONObject practiceList = (JSONObject)reviewPracticeService.practiceList(token,1,4).getData();
+            appIndexVO.setPracticeList((List<AppIndexPracticeVO>)practiceList.get("list"));
+            if(appIndexVO.getPracticeList().size()>0){
+                CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
+            }
         }else{
             appIndexVO.setPracticeList((List<AppIndexPracticeVO>)CacheUtil.get("publicCache","appIndexPractice"+storeId));
         }

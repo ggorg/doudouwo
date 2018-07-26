@@ -49,10 +49,20 @@ public class ReviewPracticeService extends CommonService {
     }
 
     public ReviewPracticePO getReviewPracticeByCode(String drBusinessCode)throws Exception{
-        Map conditoin=new HashMap();
-        conditoin.put("drBusinessCode",drBusinessCode);
         return this.commonObjectBySingleParam("ddw_review_practice","drBusinessCode",drBusinessCode,ReviewPracticePO.class);
 
+    }
+
+    public PracticePO getPractice(Integer practiceId)throws Exception{
+        Map conditoin=new HashMap();
+        conditoin.put("practiceId",practiceId);
+        return this.commonObjectBySearchCondition("ddw_practice",conditoin,PracticePO.class);
+    }
+
+    public ResponseVO updatePractice(Integer practiceId,Integer storeId)throws Exception{
+        Map setParams = new HashMap<>();
+        setParams.put("storeId",storeId);
+        return this.commonUpdateBySingleSearchParam("ddw_practice",setParams,"practiceId",practiceId);
     }
 
     /**
@@ -71,13 +81,18 @@ public class ReviewPracticeService extends CommonService {
         searchCondition.put("id",reviewPO.getDrProposer());
         //删除审核拒绝缓存
         CacheUtil.delete("review","practice"+reviewPO.getDrProposer());
-        //插入代练表
-        PracticePO practicePO = new PracticePO();
-        practicePO.setUserId(reviewPO.getDrProposer());
-        practicePO.setStoreId(reviewPO.getDrBelongToStoreId());
-        practicePO.setCreateTime(new Date());
-        practicePO.setUpdateTime(new Date());
-        this.commonInsert("ddw_practice",practicePO);
+        //判断是否存在代练表,不存在则插入代练表,已存在判断门店是否相同,不相同,更新代练门店,相同不做任何操作
+        PracticePO practicePO = this.getPractice(reviewPO.getDrProposer());
+        if(practicePO == null){
+            practicePO = new PracticePO();
+            practicePO.setUserId(reviewPO.getDrProposer());
+            practicePO.setStoreId(reviewPO.getDrBelongToStoreId());
+            practicePO.setCreateTime(new Date());
+            practicePO.setUpdateTime(new Date());
+            this.commonInsert("ddw_practice",practicePO);
+        }else if(practicePO.getStoreId() != reviewPO.getDrBelongToStoreId()){
+            this.updatePractice(reviewPO.getDrProposer(),reviewPO.getDrBelongToStoreId());
+        }
         //插入代练与游戏关联表
         ReviewPracticePO reviewPracticePO = this.getReviewPracticeByCode(drBusinessCode);
         //判断是否已存在同游戏,是则更新代练段位等级
