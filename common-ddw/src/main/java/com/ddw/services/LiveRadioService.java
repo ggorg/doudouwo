@@ -128,7 +128,8 @@ public class LiveRadioService extends CommonService{
         String[] str = streamId.split("_");
         String storeId = str[1];
         Integer userId = Integer.getInteger(str[2]);
-        List<AppIndexGoddessVO> appIndexGoddessList= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndex"+storeId);
+       // List<AppIndexGoddessVO> appIndexGoddessList= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndex"+storeId);
+        List<AppIndexGoddessVO> appIndexGoddessList= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
         if(appIndexGoddessList != null){
             ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
             while (appIndexGoddessIterator.hasNext()){
@@ -137,7 +138,8 @@ public class LiveRadioService extends CommonService{
                     appIndexGoddessVO.setLiveRadioFlag(flag);
                 }
             }
-            CacheUtil.put("publicCache","appIndexGoddess"+storeId,appIndexGoddessList);
+           // CacheUtil.put("publicCache","appIndexGoddess"+storeId,appIndexGoddessList);
+            CacheUtil.put("publicCache","appIndexGoddess",appIndexGoddessList);
         }
     }
     /*public ResponseVO addPersonNum(String groupId){

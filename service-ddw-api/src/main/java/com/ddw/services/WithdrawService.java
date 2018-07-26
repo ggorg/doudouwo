@@ -1,13 +1,15 @@
 package com.ddw.services;
 
-import com.ddw.beans.CodeDTO;
-import com.ddw.beans.ListVO;
-import com.ddw.beans.ResponseApiVO;
-import com.ddw.beans.WithdrawWayDTO;
+import com.ddw.beans.*;
+import com.ddw.enums.ReviewStatusEnum;
+import com.ddw.enums.WithdrawStatusEnum;
 import com.ddw.enums.WithdrawTypeEnum;
 import com.ddw.token.TokenUtil;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
+import com.gen.common.util.Page;
 import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +22,29 @@ import java.util.*;
 @Service
 @Transactional(readOnly = true)
 public class WithdrawService extends CommonService {
+
+    public ResponseApiVO searchWithdrawDetail(String token, PageNoDTO pageNoDTO){
+        Map searchMap = new HashMap();
+        searchMap.put("userId", TokenUtil.getUserId(token));//drReviewStatus,//drReviewDesc
+        Page page=new Page(pageNoDTO.getPageNo()==null?1:pageNoDTO.getPageNo(),10);
+        CommonSearchBean csb=new CommonSearchBean("ddw_withdraw_record","t1.updateTime desc","t1.incomeType type,t1.money,DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') applTime,ct1.accountType,ct0.drReviewStatus reviewStatus,ct0.drReviewDesc reviewDesc,DATE_FORMAT(ct0.updateTime,'%Y-%m-%d %H:%i:%S') reviewTime",page.getStartRow(),page.getEndRow(),searchMap,
+                new CommonChildBean("ddw_review","drBusinessCode","id",null),
+                new CommonChildBean("ddw_withdraw_way","id","withdrawWayId",null)
+        );
+
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
+        if(list==null || list.isEmpty()){
+            return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+        }
+        //WithdrawStatusEnum.
+        list.forEach(a->{
+            Integer reviewCode=(Integer) a.get("reviewStatus");
+            a.put("reviewStatusName",ReviewStatusEnum.getName(reviewCode));
+            a.put("accountTypeName",WithdrawTypeEnum.getName((Integer) a.get("accountType")));
+        });
+        return new ResponseApiVO(1,"成功",new ListVO<>(list));
+
+    }
 
     public ResponseApiVO search(String token)throws Exception{
         Map searchMap = new HashMap();

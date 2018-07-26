@@ -43,6 +43,22 @@ public class WithdrawController {
         return new ResponseApiVO(-1,"提现申请失败",null);
     }
 
+    @Token
+    @ApiOperation(value = "提现明细",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/searchWithdrawDetail/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<WithdrawDetailVO>> searchWithdrawDetail(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+        try {
+            logger.info("searchWithdrawDetail->request："+args);
+            ResponseApiVO res=this.withdrawService.searchWithdrawDetail(token,args);
+            logger.info("searchWithdrawDetail->response："+res);
+            return res;
+        }catch (Exception e){
+            logger.error("WithdrawController-searchWithdrawDetail-》提现明细-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"提现明细失败",null);
+    }
+
 
     @Token
     @ApiOperation(value = "解除绑定",produces = MediaType.APPLICATION_JSON_VALUE)
