@@ -78,7 +78,7 @@ public class PracticeController {
     @PostMapping("/queryList/{token}")
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
-            //TODO 查询已发布代练任务的代练,根据接单排行代练信息,不包含自己
+            //查询已发布代练任务的代练,根据接单排行代练信息,不包含自己
             return reviewPracticeService.practiceList(token,pageDTO.getPageNum(),pageDTO.getPageSize());
         }catch (Exception e){
             logger.error("PracticeController->queryList",e);

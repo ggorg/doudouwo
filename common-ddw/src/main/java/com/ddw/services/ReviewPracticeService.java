@@ -55,7 +55,7 @@ public class ReviewPracticeService extends CommonService {
 
     public PracticePO getPractice(Integer practiceId)throws Exception{
         Map conditoin=new HashMap();
-        conditoin.put("practiceId",practiceId);
+        conditoin.put("userId",practiceId);
         return this.commonObjectBySearchCondition("ddw_practice",conditoin,PracticePO.class);
     }
 
