@@ -404,7 +404,7 @@ public class ReviewPracticeService extends CommonService {
         if(practicePubTaskDTO.getPracticeId() != null){
             condtion.put("userId",practicePubTaskDTO.getPracticeId());
         }
-        condtion.put("appointment,!=",0);
+        condtion.put("appointment",1);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
@@ -479,7 +479,7 @@ public class ReviewPracticeService extends CommonService {
                         sort = rankPO.getSort();//段位序号
                     }
                     if(realityRankId == rankPO.getId()){
-                        realitySort = rankPO.getSort();//段位序号
+                        realitySort = rankPO.getSort();//实际段位序号
                         money = rankPO.getMoney();//星单价
                     }
                 }
@@ -490,7 +490,7 @@ public class ReviewPracticeService extends CommonService {
                                 int upStar = 0;
                                 if(i == 0){
                                     upStar = rankPO.getStar()-star;
-                                }else if(i != 0){
+                                }else if(i > 0){
                                     upStar = rankPO.getStar();
                                 }else if(i == realitySort-sort){
                                     upStar = realityStar;
@@ -500,16 +500,16 @@ public class ReviewPracticeService extends CommonService {
                         }
                     }
                 }else if(realitySort == sort){//同等段位
-                    if(realityStar > star){
+//                    if(realityStar > star){
                         payMoney = (realityStar - star) * money;
-                    }else if(realityStar < star){//降星,双倍赔偿
-                        payMoney = (realityStar - star) * money*2;
-                    }
+//                    }else if(realityStar < star){//降星,双倍赔偿
+//                        payMoney = (realityStar - star) * money;
+//                    }
                 }else{//降段降星
                     for (RankPO rankPO:rankPOList){
                         for(int i=0;i<sort-realitySort;i++){
                             if(rankPO.getSort() == realitySort+i){
-                                payMoney += (rankPO.getStar()-star)*rankPO.getMoney()*2;
+                                payMoney += (rankPO.getStar()-star)*rankPO.getMoney();
                             }
                         }
                     }
