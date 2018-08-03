@@ -146,7 +146,7 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "约代练申请,申请状态成功,返回订单编号和代练支付金额")
+    @ApiOperation(value = "约代练支付申请,返回订单编号和代练支付金额")
     @PostMapping("/gameApply/{token}")
     public ResponseApiVO<PracticeGameApplyVO> gameApply(@PathVariable String token,
                                            @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeGameApplyDTO practiceGameApplyDTO){
@@ -166,6 +166,7 @@ public class PracticeController {
                         practiceGameApplyDTO.getRankId(),practiceGameApplyDTO.getStar(),
                         practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar()));
                 responseApiVO.setData(practiceGameApplyVO);
+                //TODO 调用支付接口,需处理回调和结算接口
                 return responseApiVO;
             }else {
                 return new ResponseApiVO(-2,"代练未开启预约或在代练中",null);
@@ -285,4 +286,6 @@ public class PracticeController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
+
+    //TODO 退款申请
 }
