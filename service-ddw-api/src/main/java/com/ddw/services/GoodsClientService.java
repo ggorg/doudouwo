@@ -91,7 +91,7 @@ public class GoodsClientService extends CommonService {
         JSONObject json=null;
         Integer gid=null;
         List goodsList=null;
-        Map goodsMap=null;
+        //Map goodsMap=null;
         GoodsItemVO itemVO=null;
         GoodsInfoProductVO productVO=null;
         for(int i=0;i<ja.size();i++){
