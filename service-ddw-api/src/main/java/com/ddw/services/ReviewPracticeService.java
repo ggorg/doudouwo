@@ -485,7 +485,7 @@ public class ReviewPracticeService extends CommonService {
                 }
                 if(realitySort > sort){
                     for (RankPO rankPO:rankPOList){
-                        for(int i=0;i<realitySort-sort;i++){
+                        for(int i=0;i<=realitySort-sort;i++){
                             if(rankPO.getSort() == sort+i){
                                 int upStar = 0;
                                 if(i == 0){
@@ -507,10 +507,21 @@ public class ReviewPracticeService extends CommonService {
 //                    }
                 }else{//降段降星
                     for (RankPO rankPO:rankPOList){
-                        for(int i=0;i<sort-realitySort;i++){
+                        for(int i=0;i<=sort-realitySort;i++){
                             if(rankPO.getSort() == realitySort+i){
-                                payMoney += (rankPO.getStar()-star)*rankPO.getMoney();
+                                int upStar = 0;
+                                if(i == 0){
+                                    upStar = rankPO.getStar()-star;
+                                }else if(i > 0){
+                                    upStar = rankPO.getStar();
+                                }else if(i == sort - realitySort){
+                                    upStar = realityStar;
+                                }
+                                payMoney += upStar*rankPO.getMoney();
                             }
+//                            if(rankPO.getSort() == realitySort+i){
+//                                payMoney += (rankPO.getStar()-star)*rankPO.getMoney();
+//                            }
                         }
                     }
                     payMoney = payMoney*-1;
@@ -552,7 +563,7 @@ public class ReviewPracticeService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("userId",practiceId);
         Map conditon=new HashMap();
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game",null,"t1.gameId,t1.rankId,t1.appointment,ct0.gameName,ct1.rank ",null,null,searchCondition,
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.gameId,t1.rankId,t1.appointment,ct0.gameName,ct1.rank ",null,null,searchCondition,
                 new CommonChildBean("ddw_game","id","gameId",conditon),new CommonChildBean("ddw_rank","id","rankId",conditon));
         List<Map> list=this.getCommonMapper().selectObjects(csb);
         List<PracticeGameVO> PracticeGameList = new ArrayList<>();
