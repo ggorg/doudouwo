@@ -126,7 +126,7 @@ public class LiveRadioService extends CommonService{
     public void updateAppIndexCache(String streamId,Integer flag){
         String[] str = streamId.split("_");
         String storeId = str[1];
-        Integer userId = Integer.getInteger(str[2]);
+        Integer userId = Integer.parseInt(str[2]);
         List<AppIndexGoddessVO> appIndexGoddessList= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
         if(appIndexGoddessList != null){
             ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
