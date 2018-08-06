@@ -30,7 +30,7 @@ public class GoddessService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("storeId",storeId);
         Map conditon=new HashMap();
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess",null,"t1.id,t1.userId,t1.storeId," +
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess","createTime desc","t1.id,t1.userId,t1.storeId," +
                 "t1.appointment,t1.tableNo,t1.bidPrice,t1.earnest,t1.createTime,t1.updateTime,ct0.userName,ct0.nickName,ct0.idcardFrontUrl ",0,99999,searchCondition,new CommonChildBean("ddw_userinfo","id","userId",conditon));
         Page page = this.commonPage(pageNo,10,csb);
         return page;
