@@ -94,6 +94,7 @@ public class LiveRadioService extends CommonService{
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateLiveRadioStatus(String streamId,LiveStatusEnum liveStatusEnum)throws Exception{
+        this.updateAppIndexCache(streamId,liveStatusEnum.getCode());
         Map param=new HashMap();
         param.put("liveStatus",liveStatusEnum.getCode());
         Map condition=new HashMap();
@@ -110,14 +111,12 @@ public class LiveRadioService extends CommonService{
                     IMApiUtil.setDdwGlobals(ddwGlobals);
                     boolean flag=IMApiUtil.destoryGroup(streamId.replace(LiveRadioConstant.BIZID+"_",""));
                     if(flag){
-                        this.updateAppIndexCache(streamId,2);
                         return new ResponseVO(1,"关闭直播成功",null);
                     }else{
                         return new ResponseVO(-2,"关闭直播失败",null);
                     }
                 }
             }else if(LiveEventTypeEnum.eventType1.getCode().equals(eventType)){
-                this.updateAppIndexCache(streamId,1);
                 return this.updateLiveRadioStatus(streamId,LiveStatusEnum.liveStatus1);
             }
         }
@@ -128,7 +127,6 @@ public class LiveRadioService extends CommonService{
         String[] str = streamId.split("_");
         String storeId = str[1];
         Integer userId = Integer.getInteger(str[2]);
-       // List<AppIndexGoddessVO> appIndexGoddessList= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndex"+storeId);
         List<AppIndexGoddessVO> appIndexGoddessList= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
         if(appIndexGoddessList != null){
             ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
@@ -138,7 +136,6 @@ public class LiveRadioService extends CommonService{
                     appIndexGoddessVO.setLiveRadioFlag(flag);
                 }
             }
-           // CacheUtil.put("publicCache","appIndexGoddess"+storeId,appIndexGoddessList);
             CacheUtil.put("publicCache","appIndexGoddess",appIndexGoddessList);
         }
     }
