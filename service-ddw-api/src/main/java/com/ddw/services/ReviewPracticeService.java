@@ -563,7 +563,7 @@ public class ReviewPracticeService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("userId",practiceId);
         Map conditon=new HashMap();
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.gameId,t1.rankId,t1.appointment,ct0.gameName,ct1.rank ",null,null,searchCondition,
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","t1.createTime desc","t1.gameId,t1.rankId,t1.appointment,ct0.gameName,ct1.rank ",null,null,searchCondition,
                 new CommonChildBean("ddw_game","id","gameId",conditon),new CommonChildBean("ddw_rank","id","rankId",conditon));
         List<Map> list=this.getCommonMapper().selectObjects(csb);
         List<PracticeGameVO> PracticeGameList = new ArrayList<>();
