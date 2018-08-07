@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ddw.dao.StoreProductFormulaMaterialMapper">
+
+
+
+
+    <select id="getFormulaMaterialWeight" parameterType="java.lang.String" resultType="com.ddw.beans.StoreProductFormulaMaterialPO" >
+		 SELECT
+			ct1.materialId,
+			sum( ct1.weight ) weight,
+			ct2.dsCountNumber countNumber,
+			ct2.dsCountNetWeight countNetWeight,
+			ct0.dghDesc proDesc,
+			ct3.dmName mName,
+			ct3.dmNetWeight mNetWeight
+		FROM
+			ddw_order_product t1
+			INNER JOIN ddw_goods_product ct0 ON t1.productId = ct0.id
+			INNER JOIN ddw_formula_store_material ct1 ON ct1.formulaId = ct0.dghFormulaId
+			INNER JOIN ddw_store_material ct2 ON ct2.id = ct1.materialId
+			INNER JOIN ddw_material ct3 ON ct3.id = ct2.materialId
+		WHERE
+			t1.orderNo = #{orderNo}
+		GROUP BY
+			ct1.materialId
+    </select>
+
+
+
+</mapper>

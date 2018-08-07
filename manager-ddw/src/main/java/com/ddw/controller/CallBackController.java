@@ -69,9 +69,9 @@ public class CallBackController {
     public String liveExecute( @RequestBody LiveRadioCallBackDTO dto){
         try {
             logger.info("liveExecute-request："+dto);
-            if(proxyCallBackHost!=null){
+            /*if(proxyCallBackHost!=null){
                 asyncService.requestProxyHost(proxyCallBackHost+"/manager/live/execute", JSON.toJSONString(dto));
-            }
+            }*/
             if(dto.getEvent_type().equals(LiveEventTypeEnum.eventType1.getCode())){
                 ResponseVO responseVO=this.liveRadioService.handleLiveRadioStatus(dto.getStream_id(),dto.getEvent_type());
                 if(responseVO.getReCode()==1){
