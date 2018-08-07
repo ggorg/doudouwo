@@ -3,7 +3,9 @@ package com.ddw.servies;
 import com.ddw.beans.MaterialPO;
 import com.ddw.beans.OrderMaterialPO;
 import com.ddw.beans.OrderPO;
+import com.ddw.beans.StoreProductFormulaMaterialPO;
 import com.ddw.controller.ClientOrderController;
+import com.ddw.dao.StoreProductFormulaMaterialMapper;
 import com.ddw.enums.*;
 import com.ddw.services.BaseOrderService;
 import com.ddw.services.OrderViewService;
@@ -46,6 +48,19 @@ public class OrderService extends BaseOrderService {
 
     @Autowired
     private OrderViewService orderViewService;
+
+    @Autowired
+    private StoreProductFormulaMaterialMapper spfmm;
+
+    private ResponseVO checkWeight(String orderNo){
+        List<StoreProductFormulaMaterialPO> list=spfmm.getFormulaMaterialWeight(orderNo);
+        if(list!=null && !list.isEmpty() && list.size()>0){
+            for(StoreProductFormulaMaterialPO s:list){
+
+            }
+        }
+        return null;
+    }
 
 
     /**
