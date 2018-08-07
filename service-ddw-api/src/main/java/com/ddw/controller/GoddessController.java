@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.PageDTO;
 import com.ddw.beans.UserInfoVO;
 import com.ddw.services.ReviewGoddessService;
@@ -67,7 +68,9 @@ public class GoddessController {
     @PostMapping("/queryList/{token}")
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
-            return new ResponseVO(1,"成功",reviewGoddessService.goddessList(TokenUtil.getUserId(token),pageDTO));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("list",reviewGoddessService.goddessList(TokenUtil.getUserId(token),pageDTO));
+            return new ResponseVO(1,"成功",jsonObject);
         }catch (Exception e){
             logger.error("GoddessController->queryList",e);
             return new ResponseVO(-1,"提交失败",null);
