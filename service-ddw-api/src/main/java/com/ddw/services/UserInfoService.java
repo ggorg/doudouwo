@@ -328,9 +328,11 @@ public class UserInfoService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO deletePhotograph(String photograph)throws Exception{
-        HashSet<String> hs = new HashSet<String>();
-        hs.add(photograph);
+    public ResponseVO deletePhotograph(Integer[] photograph)throws Exception{
+        HashSet<Integer> hs = new HashSet<Integer>();
+        for(Integer photo:photograph){
+            hs.add(photo);
+        }
         List<PhotographPO> photographPOList = photographMapper.findListByIds(hs);
         //删除本地图片
         for(PhotographPO photographPO : photographPOList){
@@ -338,7 +340,7 @@ public class UserInfoService extends CommonService {
         }
         Map searchCondition = new HashMap<>();
         StringBuffer sb = new StringBuffer();
-        for(String photo:photograph.split(",")){
+        for(Integer photo:photograph){
             sb = sb.append("'").append(photo).append("'").append(",");
         }
         if(sb.lastIndexOf(",")==sb.length()-1){
