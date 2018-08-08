@@ -235,7 +235,7 @@ public class BiddingService extends CommonService {
 
         Map searchMap=new HashMap();
         searchMap.put("luckyDogUserId",TokenUtil.getUserId(token));
-        if(dto!=null && dto!=null && dto.getBidCode()>0){
+        if(dto!=null && dto.getBidCode()!=null && dto.getBidCode()>0){
             searchMap.put("id",dto.getBidCode());
         }else  if(StringUtils.isNotBlank(groupId)){
             searchMap.put("groupId",groupId);
@@ -734,7 +734,7 @@ public class BiddingService extends CommonService {
         String groupId=null;
        if(StringUtils.isBlank(streamId) && (dto.getBidCode()==null ||dto.getBidCode()<=0)){
            return new ResponseApiVO(-2,"参数异常",null);
-       }else if(dto!=null && dto.getBidCode()<=0){
+       }else if(dto!=null && dto.getBidCode()!=null && dto.getBidCode()<=0){
            return new ResponseApiVO(-2,"竞价code异常",null);
        }else if(dto.getBidCode()==null){
            groupId=streamId.replaceFirst("[0-9]+_","");

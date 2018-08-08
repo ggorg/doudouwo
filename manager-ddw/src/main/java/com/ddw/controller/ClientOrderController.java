@@ -64,6 +64,7 @@ public class ClientOrderController {
         try{
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
+
                 return this.orderService.updateClientOrderStatus(null, ShipStatusEnum.ShipStatus1.getCode(),spo.getId(),orderNo);
 
             }
