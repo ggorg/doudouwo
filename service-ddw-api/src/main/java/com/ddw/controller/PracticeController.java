@@ -288,4 +288,19 @@ public class PracticeController {
     }
 
     //TODO 退款申请
+    @Token
+    @ApiOperation(value = "退款申请,订单24小时内可申请,退款通过后台审核发放退款,退款金额=约代练支付金额-结算金额")
+    @PostMapping("/refund/{token}")
+    public ResponseVO refund(@PathVariable String token,
+                             @RequestParam(value = "orderId") @ApiParam(name = "orderId",value="订单编号", required = true) Integer orderId,
+                             @RequestParam(value = "reason") @ApiParam(name = "reason",value="退款原因", required = true) String reason,
+                             @RequestParam(value = "describe") @ApiParam(name = "describe",value="描述", required = true) String describe,
+                             @RequestParam(value = "pic") @ApiParam(name = "pic",value="凭证", required = true) MultipartFile pic){
+        try {
+            return new ResponseVO(1,"成功",null);
+        }catch (Exception e){
+            logger.error("PracticeController->refund",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
 }

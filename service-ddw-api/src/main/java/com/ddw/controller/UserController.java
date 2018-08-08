@@ -1,7 +1,6 @@
 package com.ddw.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.UserInfoService;
@@ -81,12 +80,15 @@ public class UserController {
 
     @ApiOperation(value = "会员资料查询用例")
     @PostMapping("/query/{token}")
-    public ResponseApiVO<UserInfoVO> query(@PathVariable String token,
-                                           @RequestBody @ApiParam(name = "id",value="会员id,传入json格式,如:{\"id\":\"1\"}", required = false) JSONObject json){
+    public ResponseApiVO<UserInfoVO> query(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=false)UserQueryDTO userQueryDTO){
         try {
             UserInfoVO userVO = new UserInfoVO();
-            if(!json.isEmpty()){
-                userVO = userInfoService.query(Integer.valueOf(json.getString("id")));
+            if(userQueryDTO != null && (userQueryDTO.getId() != null || !StringUtils.isBlank(userQueryDTO.getOpenid()))){
+                if(userQueryDTO.getId() != null){
+                    userVO = userInfoService.query(userQueryDTO.getId());
+                }else {
+                    userVO = userInfoService.queryByOpenid(userQueryDTO.getOpenid());
+                }
             }else{
                 userVO = userInfoService.query(TokenUtil.getUserId(token));
             }
@@ -153,11 +155,10 @@ public class UserController {
 
     @ApiOperation(value = "删除会员相册用例")
     @PostMapping("/deletePhotograph/{token}")
-    public ResponseVO deletePhotograph(@PathVariable String token,
-                                           @RequestBody @ApiParam(name = "photograph",value="相册id,传入json格式,如:{\"photograph\":\"1,2,3\"}", required = true) JSONObject json){
+    public ResponseVO deletePhotograph(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true) UserDeletePhotoDTO userDeletePhotoDTO){
         try {
-            if(!json.isEmpty() && json.containsKey("photograph")){
-                return userInfoService.deletePhotograph(json.getString("photograph"));
+            if(userDeletePhotoDTO != null){
+                return userInfoService.deletePhotograph(userDeletePhotoDTO.getPhotograph());
             }else{
                 return new ResponseVO(-2,"photograph不能为空",null);
             }
