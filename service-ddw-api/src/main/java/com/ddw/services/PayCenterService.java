@@ -227,11 +227,15 @@ public class PayCenterService extends BaseOrderService {
             orderPO.setDoSellerId(TokenUtil.getStoreId(token));
             Integer bidCost=0;
             Map bidMap=null;
+
             for(Integer code:codes){
                 bidMap=(Map)CacheUtil.get("pay","bidding-pay-"+userId+"-"+code);
+
                 if(bidMap==null){
                     return new ResponseApiVO(-2,"竞价金额支付失败",null);
 
+                }else if(CacheUtil.get("publicCache","bidding-finish-pay-"+code+"-"+(Integer) bidMap.get("goddessUserId"))!=null){
+                    return new ResponseApiVO(-2,"竞价金额已支付",null);
                 }else{
                     bidCost=bidCost+Integer.parseInt((String) bidMap.get("needPayPrice"));
                 }
