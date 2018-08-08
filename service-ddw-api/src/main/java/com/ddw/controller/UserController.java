@@ -67,7 +67,7 @@ public class UserController {
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
                     userInfoService.setLiveRadioFlag(userVO,token);
-//                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
+                    userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
                     return new ResponseApiVO(2, "账号已存在", userVO);
                 }
