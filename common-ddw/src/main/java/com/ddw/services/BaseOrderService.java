@@ -7,14 +7,11 @@ import com.ddw.beans.OrderViewPO;
 import com.ddw.enums.*;
 import com.ddw.util.BiddingTimer;
 import com.ddw.util.PayApiUtil;
-import com.gen.common.beans.CommonChildBean;
-import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.vo.ResponseVO;
-import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -343,6 +340,24 @@ public class BaseOrderService extends CommonService {
                     po.setStoreId(cacheOrder.getDoSellerId());
                     this.orderViewService.saveOrderView(po);
                 }
+            }else if(OrderTypeEnum.OrderType10.getCode().equals(doType)){
+                Integer price =(Integer) CacheUtil.get("pay","pre-pay-"+orderNo);
+                OrderViewPO po=null;
+                po=new OrderViewPO();
+                po.setCreateTime(new Date());
+                po.setName(OrderTypeEnum.OrderType10.getName());
+                po.setHeadImg(null);
+                po.setNum(1);
+                po.setOrderId(OrderUtil.getOrderId(orderNo));
+                po.setOrderNo(orderNo);
+                po.setPrice(price);
+                po.setOrderType(OrderTypeEnum.OrderType10.getCode());
+
+                po.setUserId(cacheOrder.getDoCustomerUserId());
+                po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
+                po.setShipStatus(cacheOrder.getDoShipStatus());
+                po.setStoreId(cacheOrder.getDoSellerId());
+                this.orderViewService.saveOrderView(po);
 
             }/*else if(OrderTypeEnum.OrderType6.getCode().equals(doType)){
                 String jsonStr =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
@@ -432,7 +447,7 @@ public class BaseOrderService extends CommonService {
             if(inserRes.getReCode()!=1){
                 throw new GenException("新建退订单失败");
             }
-            if(PayTypeEnum.PayType1.getCode().equals((Integer) o.get("doPayType"))){
+            if(PayTypeEnum.PayType1.getCode().equals(o.get("doPayType"))){
 
                 Map<String,String> callMap= PayApiUtil.reqeustWeiXinExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitOrderNo(),exitOrderPO.getExitCost(),exitOrderPO.getExitCost());
                 logger.info("reqeustWeiXinExitOrder->response->"+callMap);
@@ -443,13 +458,13 @@ public class BaseOrderService extends CommonService {
 
                 }*/
 
-            }else if(PayTypeEnum.PayType2.getCode().equals((Integer) o.get("doPayType"))){
+            }else if(PayTypeEnum.PayType2.getCode().equals(o.get("doPayType"))){
                 ResponseVO resvo=PayApiUtil.requestAliExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitCost());
                 if(resvo.getReCode()!=1){
                     throw new GenException("阿里申请退款失败");
 
                 }
-            }else if(PayTypeEnum.PayType5.getCode().equals((Integer) o.get("doPayType"))){
+            }else if(PayTypeEnum.PayType5.getCode().equals(o.get("doPayType"))){
                 Map walletSearchMap=new HashMap();
                 walletSearchMap.put("userId",exitOrderPO.getCreater());
                 Map setMap=new HashMap();

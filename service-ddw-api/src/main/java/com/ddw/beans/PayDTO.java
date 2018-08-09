@@ -1,6 +1,5 @@
 package com.ddw.beans;
 
-import com.ddw.enums.PayTypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,11 +11,11 @@ public class PayDTO {
     @ApiModelProperty(name="money",value="金额,单位分",example="1000")
     private Integer money;
 
-    @ApiModelProperty(name="orderType",value="订单类型,商品：1，充值：3，竞价定金：4，竞价金额：5，门票：7，逗币充值：8，约玩续费：9",example="3")
+    @ApiModelProperty(name="orderType",value="订单类型,商品：1，充值：3，竞价定金：4，竞价金额：5，门票：7，逗币充值：8，约玩续费：9,代练支付:10",example="3")
     private Integer orderType;
 
 
-    @ApiModelProperty(name="codes",value="所购买的多个物品编号（充值卷的ID，商品ID，礼物ID，竞价ID，定金ID等）,",example="[1]")
+    @ApiModelProperty(name="codes",value="所购买的多个物品编号（充值卷的ID，商品ID，礼物ID，竞价ID，定金ID,代练订单ID等）,",example="[1]")
     private Integer codes[];
 
     @ApiModelProperty(name="couponCode",value="优惠卷code",example="")

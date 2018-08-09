@@ -15,13 +15,14 @@ public enum OrderTypeEnum  implements Dictionary {
     OrderType6("女神-礼物",6),
     OrderType7("门票",7),
     OrderType8("逗币充值",8),
-    OrderType9("竞价续费",9);
+    OrderType9("竞价续费",9),
+    OrderType10("代练支付",10);
 
 
     private String name;
     private Integer code;
 
-    private OrderTypeEnum(String name, Integer code) {
+    OrderTypeEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }
