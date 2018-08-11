@@ -3,10 +3,7 @@ package com.ddw.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
-import com.ddw.services.GameService;
-import com.ddw.services.MyAttentionService;
-import com.ddw.services.ReviewPracticeService;
-import com.ddw.services.UserInfoService;
+import com.ddw.services.*;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
@@ -154,19 +151,19 @@ public class PracticeController {
             //判断代练是否开启预约,提交游戏编号,当前段位包含几星,目标段位包含几星,代练编号,写进订单,更新代练预约状态
             PracticeGamePO practiceGamePO = reviewPracticeService.getPracticeGamePO(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId());
             if (practiceGamePO != null && practiceGamePO.getAppointment() == 1) {
+                int payMoney = reviewPracticeService.payMoney(practiceGameApplyDTO.getGameId(),
+                        practiceGameApplyDTO.getRankId(),practiceGameApplyDTO.getStar(),
+                        practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar());
                 ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2);
                 if(rv.getReCode() > 0){
-                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token), practiceGameApplyDTO);
+                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token), practiceGameApplyDTO,payMoney);
                 }
                 ResponseApiVO<PracticeGameApplyVO> responseApiVO = new ResponseApiVO();
                 PropertyUtils.copyProperties(responseApiVO,rv);
                 PracticeGameApplyVO practiceGameApplyVO = new PracticeGameApplyVO();
                 practiceGameApplyVO.setOrderId((Integer)rv.getData());
-                practiceGameApplyVO.setPayMoney(reviewPracticeService.payMoney(practiceGameApplyDTO.getGameId(),
-                        practiceGameApplyDTO.getRankId(),practiceGameApplyDTO.getStar(),
-                        practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar()));
+                practiceGameApplyVO.setPayMoney(payMoney);
                 responseApiVO.setData(practiceGameApplyVO);
-                //TODO 调用支付接口,需处理回调和结算接口
                 return responseApiVO;
             }else {
                 return new ResponseApiVO(-2,"代练未开启预约或在代练中",null);

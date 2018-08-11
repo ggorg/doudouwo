@@ -1,7 +1,6 @@
 package com.ddw.services;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alipay.api.internal.util.AlipaySignature;
 import com.ddw.beans.*;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.*;
@@ -11,15 +10,12 @@ import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
-import com.gen.common.services.CommonService;
-import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -30,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -675,6 +670,18 @@ public class PayCenterService extends BaseOrderService {
 
                 }
                 orderCacheData=insertList;
+            }else if(OrderTypeEnum.OrderType10.getCode().equals(orderType)){
+                Map setParams = new HashMap<>();
+                setParams.put("orderId",insertResponseVO.getData());
+                setParams.put("orderNo",orderNo);
+                setParams.put("updateTime",new Date());
+                Map searchCondition = new HashMap<>();
+                searchCondition.put("id",codes[0]);
+                resVo=this.commonUpdateByParams("ddw_practice_order",setParams,searchCondition);
+                if(resVo.getReCode()!=1){
+                    throw new GenException("代练支付失败");
+                }
+                orderCacheData=codes[0];
             }
 
             if(resVo.getReCode()==1){

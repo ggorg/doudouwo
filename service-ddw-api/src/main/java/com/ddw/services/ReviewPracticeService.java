@@ -338,12 +338,13 @@ public class ReviewPracticeService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO insertPracticeOrder(int userId,PracticeGameApplyDTO practiceGameApplyDTO)throws Exception{
+    public ResponseVO insertPracticeOrder(int userId,PracticeGameApplyDTO practiceGameApplyDTO,int money)throws Exception{
         PracticeOrderPO practiceOrderPO = new PracticeOrderPO();
         PropertyUtils.copyProperties(practiceOrderPO,practiceGameApplyDTO);
         practiceOrderPO.setUserId(userId);
         //订单状态，1开始接单，2完成,3未完成并结单
         practiceOrderPO.setStatus(1);
+        practiceOrderPO.setMoney(money);
         practiceOrderPO.setCreateTime(new Date());
         practiceOrderPO.setUpdateTime(new Date());
         return super.commonInsert("ddw_practice_order",practiceOrderPO);
@@ -437,7 +438,7 @@ public class ReviewPracticeService extends CommonService {
         //订单状态，1开始接单，2完成,3未完成并结单
         practiceOrderPO.setStatus(payMoney>=0?2:3);
         practiceOrderPO.setUpdateTime(new Date());
-        practiceOrderPO.setMoney(payMoney);
+        practiceOrderPO.setRealityMoney(payMoney);
         Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
         //结算后,修改代练状态为关闭
