@@ -9,6 +9,24 @@ public class StoreProductFormulaMaterialPO {
     private String proDesc;
     private String mName;
     private Integer mNetWeight;
+    private String dsUnit;
+    private Integer id;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDsUnit() {
+        return dsUnit;
+    }
+
+    public void setDsUnit(String dsUnit) {
+        this.dsUnit = dsUnit;
+    }
 
     public Integer getMaterialId() {
         return materialId;

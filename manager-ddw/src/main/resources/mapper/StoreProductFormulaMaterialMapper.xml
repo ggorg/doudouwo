@@ -10,12 +10,14 @@
     <select id="getFormulaMaterialWeight" parameterType="java.lang.String" resultType="com.ddw.beans.StoreProductFormulaMaterialPO" >
 		 SELECT
 			ct1.materialId,
+			ct2.id,
 			sum( ct1.weight ) weight,
 			ct2.dsCountNumber countNumber,
 			ct2.dsCountNetWeight countNetWeight,
 			ct0.dghDesc proDesc,
 			ct3.dmName mName,
-			ct3.dmNetWeight mNetWeight
+			ct3.dmNetWeight mNetWeight,
+			ct2.dsUnit
 		FROM
 			ddw_order_product t1
 			INNER JOIN ddw_goods_product ct0 ON t1.productId = ct0.id
