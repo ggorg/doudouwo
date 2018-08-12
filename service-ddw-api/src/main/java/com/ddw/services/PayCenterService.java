@@ -434,7 +434,11 @@ public class PayCenterService extends BaseOrderService {
             }
             orderPO.setDoCost(sumPrice);
         }else if(OrderTypeEnum.OrderType10.getCode().equals(orderType)){
-            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrder(codes[0]);
+            PracticeOrderPO practiceOrderPO=(PracticeOrderPO)CacheUtil.get("pay","practice-order-"+userId);
+            if(practiceOrderPO==null){
+                return new ResponseApiVO(-2,"代练订单支付失败",null);
+
+            }
             orderPO.setDoCost(practiceOrderPO.getMoney());
         }
         if(PayTypeEnum.PayType5.getCode().equals(payType)){

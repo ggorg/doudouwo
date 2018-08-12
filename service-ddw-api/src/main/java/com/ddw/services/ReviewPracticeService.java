@@ -15,6 +15,7 @@ import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.util.UploadFileMoveUtil;
 import com.gen.common.vo.FileInfoVo;
@@ -348,6 +349,7 @@ public class ReviewPracticeService extends CommonService {
         practiceOrderPO.setMoney(money);
         practiceOrderPO.setCreateTime(new Date());
         practiceOrderPO.setUpdateTime(new Date());
+        CacheUtil.put("pay","practice-order-"+userId,practiceOrderPO);
         return super.commonInsert("ddw_practice_order",practiceOrderPO);
     }
 

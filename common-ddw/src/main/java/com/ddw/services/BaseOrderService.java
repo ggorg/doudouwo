@@ -358,7 +358,9 @@ public class BaseOrderService extends CommonService {
                 po.setShipStatus(cacheOrder.getDoShipStatus());
                 po.setStoreId(cacheOrder.getDoSellerId());
                 this.orderViewService.saveOrderView(po);
-
+                CacheUtil.delete("pay","practice-order-"+cacheOrder.getDoCustomerUserId());
+                CacheUtil.delete("pay","pre-pay-"+orderNo);
+                CacheUtil.delete("pay","orderObject-"+orderNo);
             }/*else if(OrderTypeEnum.OrderType6.getCode().equals(doType)){
                 String jsonStr =(String) CacheUtil.get("pay","pre-pay-"+orderNo);
                 if(jsonStr==null){
