@@ -171,10 +171,14 @@ function commonAjaxFunction(url,params,isUpload,callback){
 
         },
         complete: function(xhr, status) {
+
             layer.close(index);
             j(".layui-btn,#btn").removeAttr("disabled");
+
+
         }}
 }
+
 function commonSubmit(url,formObject,reqData){
     //alert(url+","+$("div").length);
 

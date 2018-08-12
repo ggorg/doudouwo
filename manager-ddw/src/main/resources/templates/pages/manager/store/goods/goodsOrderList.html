@@ -126,23 +126,52 @@
                 //layer.close(index);
             });
         }
-        function toAccept(orderNo){
-            layer.confirm("是否接单？", {icon: 3, title:'提示'}, function(index){
-                if(index>0){
-                    //toCheckWeight
-                    jQueryCommonSubmit("toCheckWeight",null,{orderNo,orderNo},function(data){
-                        if(data.reCode==2){
-                            layer.confirm("是否接单？", {icon: 3, title:'提示'}, function(indexd){
-                                if(indexd>0){
-                                    jQueryCommonSubmit("do-accept-order",null,{orderNo,orderNo});
-                                }
-                            })
-                        }else if(data.reCode==1){
-                            jQueryCommonSubmit("do-accept-order",null,{orderNo,orderNo});
+        function doAccept(orderNo,data){
+            jQuery.post("do-accept-order",{orderNo,orderNo},function(da){
+                layer.close(index);
+                jQuery(".layui-btn,#btn").removeAttr("disabled");
+                layer.msg(da.reMsg);
+
+                if(data.reCode==1){
+
+                    window.setTimeout(function(){
+
+                        if(da.data!=null && da.data.jumpUrl!=undefined){
+                            top.location.href= da.data.jumpUrl;
+                        }else{
+                            top.location.href=window.parent.location.href;
 
                         }
 
-                    });
+
+                    },500)
+                }
+            },"JSON")
+        }
+        function toAccept(orderNo){
+            layer.confirm("是否接单？", {icon: 3, title:'提示'}, function(indexd){
+                if(indexd>0){
+                    index= layer.load();
+                    jQuery(".layui-btn,#btn").attr("disabled",true);
+                    jQuery.post("toCheckWeight",{orderNo,orderNo},function(data){
+                        var flag=false;
+                        if(data.reCode==2){
+                            layer.confirm(data.reMsg+"，是否接单？", {icon: 3, title:'提示'}, function(){
+                                doAccept(orderNo,data)
+
+                            },function(){
+                                layer.close(index);
+                                jQuery(".layui-btn,#btn").removeAttr("disabled");
+                            })
+                        }else if(data.reCode==1){
+                            doAccept(orderNo,data)
+
+                        }else{
+                            layer.msg(data.reMsg);
+                        }
+
+                    },"JSON")
+
 
                 }
                 //layer.close(index);

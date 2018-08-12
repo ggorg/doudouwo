@@ -63,6 +63,7 @@ public class OrderService extends BaseOrderService {
     @Autowired
     private MessageService messageService;
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO checkWeight(String orderNoEncypt,Integer storeId){
         String orderNo=MyEncryptUtil.getRealValue(orderNoEncypt);
         if(StringUtils.isBlank(orderNo)){
@@ -74,10 +75,10 @@ public class OrderService extends BaseOrderService {
             StringBuilder builder=new StringBuilder();
             for(StoreProductFormulaMaterialPO s:list){
                 if(s.getWeight()>=s.getCountNetWeight()){
-                    builder.append("材料【").append(s.getmName()).append("】已用完").append("/n/t");
+                    builder.append("材料【").append(s.getmName()).append("】已用完");
                 }else if(s.getCountNetWeight()-s.getWeight()<=s.getmNetWeight()){
                     builder.append("材料【").append(s.getmName()).append("】库存不足，还剩");
-                    builder.append(s.getCountNetWeight()).append(s.getDsUnit()).append("/n/t");
+                    builder.append(s.getCountNetWeight()).append(s.getDsUnit());
                 }
             }
             CacheUtil.put("validCodeCache","weight-"+orderNo, JSON.toJSONString(list));
@@ -650,7 +651,7 @@ public class OrderService extends BaseOrderService {
                 inserMap.put("orderId",OrderUtil.getOrderId(orderNo));
                 inserMap.put("storeMaterialId",jsonObj .getInteger("id"));
                 inserMap.put("weight",jsonObj.getInteger("weight"));
-                res=this.commonInsert("ddw_store_material_out",inserMap);
+                res=this.commonInsertMap("ddw_store_material_out",inserMap);
                 if(res.getReCode()!=1){
                     throw new GenException("添加材料消耗记录失败");
 
