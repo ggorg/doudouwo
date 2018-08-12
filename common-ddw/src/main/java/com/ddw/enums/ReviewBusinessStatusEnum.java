@@ -14,11 +14,12 @@ public enum ReviewBusinessStatusEnum implements Dictionary {
     goddessFlag2("申请当女神",2),
     banner7("banner申请",7),
     practiceFlag5("申请代练",5),
-    withdrawAppl8("提现申请",8);
+    withdrawAppl8("提现申请",8),
+    practiceRefund9("代练订单退款",9);
     private String name;
     private Integer code;
 
-    private ReviewBusinessStatusEnum(String name, Integer code) {
+    ReviewBusinessStatusEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }

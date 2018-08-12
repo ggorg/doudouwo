@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.ws.Response;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,8 @@ public class ReviewCallBackService extends CommonService {
     private ReviewPracticeService reviewPracticeService;
     @Autowired
     private ReviewBannerService reviewBannerService;
+    @Autowired
+    private ReviewPracticeRefundService reviewPracticeRefundService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeLiveRadio(ReviewCallBackBean rb)throws Exception{
@@ -79,7 +80,7 @@ public class ReviewCallBackService extends CommonService {
             if(res.getReCode()!=1){
                 throw new GenException("更新钱包失败");
             }
-            if(WithdrawTypeEnum.WithdrawType1.getCode().equals((Integer) map.get("accountType"))){
+            if(WithdrawTypeEnum.WithdrawType1.getCode().equals(map.get("accountType"))){
                 String dcost=(double)money/100+"";
                res= PayApiUtil.requestAliTransfer(dcost,rb.getBusinessCode(),(String) map.get("accountNoStr"),(String) map.get("accountRealName"),IncomeTypeEnum.getName(incomeType)+"提现",IncomeTypeEnum.getName(incomeType)+"提现");
                 if(res.getReCode()!=1){
@@ -112,6 +113,12 @@ public class ReviewCallBackService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeBanner(ReviewCallBackBean rb)throws Exception{
         return reviewBannerService.updateReviewBanner(rb.getBusinessCode());
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO executePracticeRefund(ReviewCallBackBean rb)throws Exception{
+        return reviewPracticeRefundService.updateReviewPracticeRefund(rb.getBusinessCode());
 
     }
 }

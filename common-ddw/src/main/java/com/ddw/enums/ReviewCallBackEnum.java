@@ -14,11 +14,12 @@ public enum ReviewCallBackEnum implements Dictionary {
     goddessFlagCallBack2("executeGoddess",2),//申请当女神
     bannerCallBack7("executeBanner",7),//banner申请
     practiceFlag5("executePractice",5),//申请代练
-    withdraw8("executeWithdraw",8);//申请代练
+    withdraw8("executeWithdraw",8),
+    practiceRefund9("executePracticeRefund",9);//代练订单退款
     private String name;
     private Integer code;
 
-    private ReviewCallBackEnum(String name, Integer code) {
+    ReviewCallBackEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }

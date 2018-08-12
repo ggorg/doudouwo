@@ -338,10 +338,11 @@ public class ReviewPracticeService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO insertPracticeOrder(int userId,PracticeGameApplyDTO practiceGameApplyDTO,int money)throws Exception{
+    public ResponseVO insertPracticeOrder(int userId,int storeId,PracticeGameApplyDTO practiceGameApplyDTO,int money)throws Exception{
         PracticeOrderPO practiceOrderPO = new PracticeOrderPO();
         PropertyUtils.copyProperties(practiceOrderPO,practiceGameApplyDTO);
         practiceOrderPO.setUserId(userId);
+        practiceOrderPO.setStoreId(storeId);
         //订单状态，1开始接单，2完成,3未完成并结单
         practiceOrderPO.setStatus(1);
         practiceOrderPO.setMoney(money);
@@ -364,7 +365,8 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
         CommonChildBean cb4=new CommonChildBean("ddw_rank","id","targetRankId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank",null,null,condtion,cb1,cb2,cb3,cb4);
+        CommonChildBean cb5=new CommonChildBean("ddw_store","id","storeId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
         json.put("list",p.getResult());
@@ -386,11 +388,27 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
         CommonChildBean cb4=new CommonChildBean("ddw_rank","id","targetRankId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank",null,null,condtion,cb1,cb2,cb3,cb4);
+        CommonChildBean cb5=new CommonChildBean("ddw_store","id","storeId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
         json.put("list",p.getResult());
         json.put("count",p.getTotal());
+        return new ResponseVO(1,"成功",json);
+    }
+
+    public ResponseVO getPracticeOrder(Integer id)throws Exception{
+        Map condtion = new HashMap<>();
+        condtion.put("id",id);
+        CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
+        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
+        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
+        CommonChildBean cb4=new CommonChildBean("ddw_rank","id","targetRankId",null);
+        CommonChildBean cb5=new CommonChildBean("ddw_store","id","storeId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5);
+        JSONObject json = new JSONObject();
+        Page p = this.commonPage(1,10,csb);
+        json.put("list",p.getResult());
         return new ResponseVO(1,"成功",json);
     }
 
@@ -443,7 +461,7 @@ public class ReviewPracticeService extends CommonService {
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
         //结算后,修改代练状态为关闭
         Map setParams = new HashMap<>();
-        setParams.put("appointment",2);
+        setParams.put("appointment",0);
         Map searchCondition = new HashMap<>();
         searchCondition.put("userId",practiceOrderPO.getPracticeId());
         searchCondition.put("gameId",gameId);
@@ -574,6 +592,58 @@ public class ReviewPracticeService extends CommonService {
             PracticeGameList.add(pg);
         }
         return PracticeGameList;
+    }
+
+    public ResponseVO refund(Integer userId,Integer orderId,String realName, String reason, String describe, MultipartFile pic)throws Exception{
+        if(orderId == null){
+            return new ResponseVO(-1,"订单号不能为空",null);
+        }else{
+            Map conditionMap = new HashMap<>();
+            conditionMap.put("drProposer",userId);
+            conditionMap.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType9.getCode());
+            //查询状态审核未通过
+            conditionMap.put("drReviewStatus,!=",ReviewStatusEnum.ReviewStatus2.getCode());
+            ReviewPO rePO = this.commonObjectBySearchCondition("ddw_review",conditionMap,new ReviewPO().getClass());
+            if(rePO != null){
+                return new ResponseVO(-2,"不允许重复提交申请",null);
+            }
+            //插入审批表
+            ReviewPO reviewPO=new ReviewPO();
+            String bussinessCode = String.valueOf(new Date().getTime());
+            reviewPO.setDrBusinessCode(bussinessCode);
+            reviewPO.setCreateTime(new Date());
+            reviewPO.setDrProposerName(realName);
+            reviewPO.setDrBusinessType(ReviewBusinessTypeEnum.ReviewBusinessType9.getCode());
+            reviewPO.setDrReviewStatus(ReviewStatusEnum.ReviewStatus0.getCode());
+            reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
+            reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
+            reviewPO.setDrProposer(Integer.valueOf(userId));
+            reviewPO.setDrApplyDesc("代练订单退款");
+            reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.practiceRefund9.getCode());
+            ResponseVO responseVO = this.commonReviewService.submitAppl(reviewPO);
+            //插入代练退款表
+            if(responseVO.getReCode()>0){
+                PracticeRefundPO practiceRefundPO = new PracticeRefundPO();
+                practiceRefundPO.setUserId(userId);
+                practiceRefundPO.setOrderId(orderId);
+                practiceRefundPO.setDrBusinessCode(bussinessCode);
+                practiceRefundPO.setReason(reason);
+                practiceRefundPO.setDescribe(describe);
+                practiceRefundPO.setStatus(0);
+                practiceRefundPO.setCreateTime(new Date());
+                practiceRefundPO.setUpdateTime(new Date());
+                String imgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( pic.getOriginalFilename());
+                FileInfoVo fileInfoVo= UploadFileMoveUtil.move( pic,mainGlobals.getRsDir(), imgName);
+
+                practiceRefundPO.setPicUrl(mainGlobals.getServiceUrl()+fileInfoVo.getUrlPath());
+                CommonBeanFiles f=this.fileService.createCommonBeanFiles(fileInfoVo);
+                this.fileService.saveFile(f);
+
+                Map updatePoMap= BeanToMapUtil.beanToMap(practiceRefundPO);
+                responseVO =this.commonInsertMap("ddw_practice_refund",updatePoMap);
+            }
+            return responseVO;
+        }
     }
 
 }

@@ -48,6 +48,8 @@ public class PayCenterService extends BaseOrderService {
 
     @Autowired
     private DoubiClientService doubiClientService;
+    @Autowired
+    private ReviewPracticeService reviewPracticeService;
 
 
     @Autowired
@@ -229,7 +231,7 @@ public class PayCenterService extends BaseOrderService {
                 if(bidMap==null){
                     return new ResponseApiVO(-2,"竞价金额支付失败",null);
 
-                }else if(CacheUtil.get("publicCache","bidding-finish-pay-"+code+"-"+(Integer) bidMap.get("goddessUserId"))!=null){
+                }else if(CacheUtil.get("publicCache","bidding-finish-pay-"+code+"-"+ bidMap.get("goddessUserId"))!=null){
                     return new ResponseApiVO(-2,"竞价金额已支付",null);
                 }else{
                     bidCost=bidCost+Integer.parseInt((String) bidMap.get("needPayPrice"));
@@ -431,8 +433,9 @@ public class PayCenterService extends BaseOrderService {
                 insertList.add(orderTicket);
             }
             orderPO.setDoCost(sumPrice);
-
-
+        }else if(OrderTypeEnum.OrderType10.getCode().equals(orderType)){
+            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrder(codes[0]);
+            orderPO.setDoCost(practiceOrderPO.getMoney());
         }
         if(PayTypeEnum.PayType5.getCode().equals(payType)){
             if(StringUtils.isBlank(TokenUtil.getPayCode(token))){

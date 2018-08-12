@@ -8,6 +8,8 @@ import java.util.Date;
 public class PracticeOrderPO {
     private int id;
     private int userId;
+    private int orderId;
+    private String orderNo;
     private int practiceId;
     private int gameId;
     private int rankId;
@@ -20,6 +22,7 @@ public class PracticeOrderPO {
     private int status;
     private int money;
     private int realityMoney;
+    private int storeId;
     private Date createTime;
     private Date updateTime;
 
@@ -37,6 +40,22 @@ public class PracticeOrderPO {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
     }
 
     public int getPracticeId() {
@@ -125,6 +144,14 @@ public class PracticeOrderPO {
 
     public void setRealityMoney(int realityMoney) {
         this.realityMoney = realityMoney;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
 
     public Date getCreateTime() {

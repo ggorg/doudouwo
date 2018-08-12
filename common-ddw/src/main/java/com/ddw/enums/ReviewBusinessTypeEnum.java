@@ -14,13 +14,14 @@ public enum ReviewBusinessTypeEnum implements Dictionary {
     ReviewBusinessType5("女神",5),
     ReviewBusinessType6("代练",6),
     ReviewBusinessType7("banner申请",7),
-    ReviewBusinessType8("提现",8);
+    ReviewBusinessType8("提现",8),
+    ReviewBusinessType9("代练订单退款",9);
 
 
     private String name;
     private Integer code;
 
-    private ReviewBusinessTypeEnum(String name, Integer code) {
+    ReviewBusinessTypeEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }

@@ -156,7 +156,7 @@ public class PracticeController {
                         practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar());
                 ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2);
                 if(rv.getReCode() > 0){
-                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token), practiceGameApplyDTO,payMoney);
+                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token),TokenUtil.getStoreId(token), practiceGameApplyDTO,payMoney);
                 }
                 ResponseApiVO<PracticeGameApplyVO> responseApiVO = new ResponseApiVO();
                 PropertyUtils.copyProperties(responseApiVO,rv);
@@ -273,6 +273,18 @@ public class PracticeController {
         }
     }
     @Token
+    @ApiOperation(value = "订单详情查询")
+    @PostMapping("/practiceOrder/{token}")
+    public ResponseVO getPracticeOrder(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticeOrderDTO practiceOrderDTO){
+        try {
+            return reviewPracticeService.getPracticeOrder(practiceOrderDTO.getId());
+        }catch (Exception e){
+            logger.error("PracticeController->getPracticeOrder",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @Token
     @ApiOperation(value = "代练任务发布列表")
     @PostMapping("/pubTaskList/{token}")
     public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticePubTaskDTO practicePubTaskDTO){
@@ -284,7 +296,6 @@ public class PracticeController {
         }
     }
 
-    //TODO 退款申请
     @Token
     @ApiOperation(value = "退款申请,订单24小时内可申请,退款通过后台审核发放退款,退款金额=约代练支付金额-结算金额")
     @PostMapping("/refund/{token}")
@@ -294,7 +305,7 @@ public class PracticeController {
                              @RequestParam(value = "describe") @ApiParam(name = "describe",value="描述", required = true) String describe,
                              @RequestParam(value = "pic") @ApiParam(name = "pic",value="凭证", required = true) MultipartFile pic){
         try {
-            return new ResponseVO(1,"成功",null);
+            return reviewPracticeService.refund(TokenUtil.getUserId(token),orderId,TokenUtil.getUserName(token),reason,describe,pic);
         }catch (Exception e){
             logger.error("PracticeController->refund",e);
             return new ResponseVO(-1,"提交失败",null);
