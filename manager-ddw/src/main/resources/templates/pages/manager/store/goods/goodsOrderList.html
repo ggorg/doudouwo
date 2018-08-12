@@ -129,7 +129,20 @@
         function toAccept(orderNo){
             layer.confirm("是否接单？", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
-                    jQueryCommonSubmit("do-accept-order",null,{orderNo,orderNo});
+                    //toCheckWeight
+                    jQueryCommonSubmit("toCheckWeight",null,{orderNo,orderNo},function(data){
+                        if(data.reCode==2){
+                            layer.confirm("是否接单？", {icon: 3, title:'提示'}, function(indexd){
+                                if(indexd>0){
+                                    jQueryCommonSubmit("do-accept-order",null,{orderNo,orderNo});
+                                }
+                            })
+                        }else if(data.reCode==1){
+                            jQueryCommonSubmit("do-accept-order",null,{orderNo,orderNo});
+
+                        }
+
+                    });
 
                 }
                 //layer.close(index);

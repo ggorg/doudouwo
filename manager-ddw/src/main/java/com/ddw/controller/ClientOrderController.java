@@ -7,6 +7,7 @@ import com.ddw.enums.ShipStatusEnum;
 import com.ddw.servies.OrderService;
 import com.ddw.servies.StoreService;
 import com.ddw.util.Toolsddw;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.vo.ResponseVO;
 import org.apache.log4j.Logger;
@@ -65,7 +66,7 @@ public class ClientOrderController {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
 
-                return this.orderService.updateClientOrderStatus(null, ShipStatusEnum.ShipStatus1.getCode(),spo.getId(),orderNo);
+                return this.orderService.updateOrderStatusAndWeight(null, ShipStatusEnum.ShipStatus1.getCode(),spo.getId(),orderNo);
 
             }
 
@@ -73,6 +74,27 @@ public class ClientOrderController {
             logger.error("ClientOrderController->toAcceptOrder",e);
         }
         return new ResponseVO(-1,"接受订单失败",null);
+    }
+
+    /**
+     * 门店-检查商品材材库存用量
+     * @param orderNo
+     * @return
+     */
+    @PostMapping("toCheckWeight")
+    @ResponseBody
+    public ResponseVO toCheckWeight(String orderNo){
+        try{
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+
+                return this.orderService.checkWeight(orderNo,spo.getId());
+
+            }
+        }catch (Exception e){
+            logger.error("ClientOrderController->toCheckWeight",e);
+        }
+        return new ResponseVO(-1,"检查商品材材库存用量",null);
     }
     /**
      * 门店-确认发货

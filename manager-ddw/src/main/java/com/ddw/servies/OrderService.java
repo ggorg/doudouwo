@@ -1,5 +1,8 @@
 package com.ddw.servies;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.MaterialPO;
 import com.ddw.beans.OrderMaterialPO;
 import com.ddw.beans.OrderPO;
@@ -13,9 +16,14 @@ import com.ddw.util.Constant;
 import com.ddw.util.Toolsddw;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonDeleteBean;
+import com.gen.common.beans.CommonMessageBean;
 import com.gen.common.beans.CommonSearchBean;
+import com.gen.common.enums.MessageStatusEnum;
+import com.gen.common.enums.MessageTypeEnum;
+import com.gen.common.enums.MessageUserTypeEnum;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
+import com.gen.common.services.MessageService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.OrderUtil;
@@ -52,14 +60,42 @@ public class OrderService extends BaseOrderService {
     @Autowired
     private StoreProductFormulaMaterialMapper spfmm;
 
-    private ResponseVO checkWeight(String orderNo){
+    @Autowired
+    private MessageService messageService;
+
+    public ResponseVO checkWeight(String orderNoEncypt,Integer storeId){
+        String orderNo=MyEncryptUtil.getRealValue(orderNoEncypt);
+        if(StringUtils.isBlank(orderNo)){
+            return new ResponseVO(-2,"订单号异常",null);
+
+        }
         List<StoreProductFormulaMaterialPO> list=spfmm.getFormulaMaterialWeight(orderNo);
         if(list!=null && !list.isEmpty() && list.size()>0){
+            StringBuilder builder=new StringBuilder();
             for(StoreProductFormulaMaterialPO s:list){
+                if(s.getWeight()>=s.getCountNetWeight()){
+                    builder.append("材料【").append(s.getmName()).append("】已用完").append("/n/t");
+                }else if(s.getCountNetWeight()-s.getWeight()<=s.getmNetWeight()){
+                    builder.append("材料【").append(s.getmName()).append("】库存不足，还剩");
+                    builder.append(s.getCountNetWeight()).append(s.getDsUnit()).append("/n/t");
+                }
+            }
+            CacheUtil.put("validCodeCache","weight-"+orderNo, JSON.toJSONString(list));
+            if(builder.length()>0){
+                CommonMessageBean cmb=new CommonMessageBean();
+                cmb.setMsg(builder.toString());
+                cmb.setCreateTime(new Date());
+                cmb.setUpdateTime(new Date());
+                cmb.setStatus(MessageStatusEnum.MessageStatus0.getCode());
+                cmb.setType(MessageTypeEnum.MessageType1.getCode());
+                cmb.setBusId(storeId);
+                cmb.setUserType(MessageUserTypeEnum.userType2.getCode());
+                this.messageService.saveMsg(cmb);
+                return new ResponseVO(2,builder.toString(),null);
 
             }
         }
-        return null;
+        return new ResponseVO(1,"成功",null);
     }
 
 
@@ -586,6 +622,47 @@ public class OrderService extends BaseOrderService {
     public ResponseVO updateOrderPayStatus(PayStatusEnum payStatusEnum,String orderNo)throws Exception{
        return this.pulbicUpdateOrderPayStatus(payStatusEnum,orderNo);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updateOrderStatusAndWeight(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
+        ResponseVO res=updateClientOrderStatus(payStatus,shipStatus,storeId,orderNoEncypt);
+        if(res.getReCode()!=1){
+            return res;
+        }
+        String orderNo=MyEncryptUtil.getRealValue(orderNoEncypt);
+        String jsonStr=(String)CacheUtil.get("validCodeCache","weight-"+orderNo);
+        if(StringUtils.isNotBlank(jsonStr)){
+            JSONArray jsonArray=JSON.parseArray(jsonStr);
+            JSONObject jsonObj=null;
+            for(int i=0;i<jsonArray.size();i++){
+                jsonObj=jsonArray.getJSONObject(i);
+                Map set=new HashMap();
+                set.put("dsCountNetWeight",-jsonObj.getInteger("weight"));
+                Map search=new HashMap();
+                search.put("id", jsonObj .getInteger("id"));
+                res=this.commonCalculateOptimisticLockUpdateByParam("ddw_store_material",set,search,"dsVersion",new String[]{"dsCountNetWeight"});
+                if(res.getReCode()!=1){
+                   throw new GenException("更新材料消耗失败");
+                }
+                Map inserMap=new HashMap();
+                inserMap.put("createTime",new Date());
+                inserMap.put("orderNo",orderNo);
+                inserMap.put("orderId",OrderUtil.getOrderId(orderNo));
+                inserMap.put("storeMaterialId",jsonObj .getInteger("id"));
+                inserMap.put("weight",jsonObj.getInteger("weight"));
+                res=this.commonInsert("ddw_store_material_out",inserMap);
+                if(res.getReCode()!=1){
+                    throw new GenException("添加材料消耗记录失败");
+
+                }
+                //inserMap.put("creater",jsonObj.getInteger("weight"));
+                        //
+            }
+        }
+        return new ResponseVO(1,"成功",null);
+    }
+
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateClientOrderStatus(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
         ResponseVO vo=this.updateOrderStatus(payStatus,shipStatus,storeId,orderNoEncypt);
