@@ -158,10 +158,10 @@ public class PracticeController {
                         practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar());
                 ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2);
                 if(rv.getReCode() > 0){
-                    rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token),TokenUtil.getStoreId(token), practiceGameApplyDTO,payMoney);
-                    if(rv.getReCode() > 0){
+                    ResponseVO rv2 = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token),TokenUtil.getStoreId(token), practiceGameApplyDTO,payMoney);
+                    if(rv2.getReCode() > 0){
                         PracticeGameApplyVO practiceGameApplyVO = new PracticeGameApplyVO();
-                        practiceGameApplyVO.setOrderId((Integer)rv.getData());
+                        practiceGameApplyVO.setOrderId((Integer)rv2.getData());
                         practiceGameApplyVO.setPayMoney(payMoney);
                         return new ResponseApiVO(1,"成功",practiceGameApplyVO);
                     }else {
