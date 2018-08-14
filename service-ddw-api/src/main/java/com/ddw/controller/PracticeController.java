@@ -3,14 +3,16 @@ package com.ddw.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
-import com.ddw.services.*;
+import com.ddw.services.GameService;
+import com.ddw.services.MyAttentionService;
+import com.ddw.services.ReviewPracticeService;
+import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,14 +159,17 @@ public class PracticeController {
                 ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2);
                 if(rv.getReCode() > 0){
                     rv = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token),TokenUtil.getStoreId(token), practiceGameApplyDTO,payMoney);
+                    if(rv.getReCode() > 0){
+                        PracticeGameApplyVO practiceGameApplyVO = new PracticeGameApplyVO();
+                        practiceGameApplyVO.setOrderId((Integer)rv.getData());
+                        practiceGameApplyVO.setPayMoney(payMoney);
+                        return new ResponseApiVO(1,"成功",practiceGameApplyVO);
+                    }else {
+                        return new ResponseApiVO(rv.getReCode(),rv.getReMsg(),rv.getData());
+                    }
+                }else {
+                    return new ResponseApiVO(rv.getReCode(),rv.getReMsg(),rv.getData());
                 }
-                ResponseApiVO<PracticeGameApplyVO> responseApiVO = new ResponseApiVO();
-                PropertyUtils.copyProperties(responseApiVO,rv);
-                PracticeGameApplyVO practiceGameApplyVO = new PracticeGameApplyVO();
-                practiceGameApplyVO.setOrderId((Integer)rv.getData());
-                practiceGameApplyVO.setPayMoney(payMoney);
-                responseApiVO.setData(practiceGameApplyVO);
-                return responseApiVO;
             }else {
                 return new ResponseApiVO(-2,"代练未开启预约或在代练中",null);
             }

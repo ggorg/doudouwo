@@ -1,11 +1,13 @@
 package com.ddw.beans;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Jacky on 2018/7/12.
  */
-public class PracticeOrderPO {
+public class PracticeOrderPO implements Serializable{
+    private static final long serialVersionUID = 4891646275143545349L;
     private int id;
     private int userId;
     private int orderId;
