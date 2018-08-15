@@ -9,6 +9,7 @@ import com.ddw.services.ReviewPracticeService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -158,6 +159,7 @@ public class PracticeController {
                         practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar());
                 ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2);
                 if(rv.getReCode() > 0){
+                    CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
                     ResponseVO rv2 = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token),TokenUtil.getStoreId(token), practiceGameApplyDTO,payMoney);
                     if(rv2.getReCode() > 0){
                         PracticeGameApplyVO practiceGameApplyVO = new PracticeGameApplyVO();
@@ -229,6 +231,7 @@ public class PracticeController {
             if(reviewPracticeService.countPracticeGame(TokenUtil.getUserId(token))>0){
                 return new ResponseVO(-2,"不允许同时发布多个任务",null);
             }
+            CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
             return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),1);
         }catch (Exception e){
             logger.error("PracticeController->release",e);
