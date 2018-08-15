@@ -346,6 +346,7 @@ public class ReviewPracticeService extends CommonService {
         practiceOrderPO.setStoreId(storeId);
         //订单状态，1开始接单，2完成,3未完成并结单
         practiceOrderPO.setStatus(1);
+        practiceOrderPO.setPayState(0);
         practiceOrderPO.setMoney(money);
         practiceOrderPO.setCreateTime(new Date());
         practiceOrderPO.setUpdateTime(new Date());

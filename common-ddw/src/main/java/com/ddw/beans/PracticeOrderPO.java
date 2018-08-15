@@ -25,6 +25,7 @@ public class PracticeOrderPO implements Serializable{
     private int money;
     private int realityMoney;
     private int storeId;
+    private int payState;
     private Date createTime;
     private Date updateTime;
 
@@ -154,6 +155,14 @@ public class PracticeOrderPO implements Serializable{
 
     public void setStoreId(int storeId) {
         this.storeId = storeId;
+    }
+
+    public int getPayState() {
+        return payState;
+    }
+
+    public void setPayState(int payState) {
+        this.payState = payState;
     }
 
     public Date getCreateTime() {

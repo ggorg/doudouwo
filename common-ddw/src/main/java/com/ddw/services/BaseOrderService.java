@@ -358,6 +358,11 @@ public class BaseOrderService extends CommonService {
                 po.setShipStatus(cacheOrder.getDoShipStatus());
                 po.setStoreId(cacheOrder.getDoSellerId());
                 this.orderViewService.saveOrderView(po);
+                Map setParams = new HashMap<>();
+                setParams.put("payState",1);
+                Map searchCondition = new HashMap<>();
+                searchCondition.put("orderId",OrderUtil.getOrderId(orderNo));
+                this.commonUpdateByParams("ddw_practice_order",setParams,searchCondition);
                 CacheUtil.delete("pay","practice-order-"+cacheOrder.getDoCustomerUserId());
                 CacheUtil.delete("pay","pre-pay-"+orderNo);
                 CacheUtil.delete("pay","orderObject-"+orderNo);
