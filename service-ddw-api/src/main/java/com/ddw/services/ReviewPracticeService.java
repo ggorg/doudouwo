@@ -460,6 +460,9 @@ public class ReviewPracticeService extends CommonService {
         practiceOrderPO.setStatus(payMoney>=0?2:3);
         practiceOrderPO.setUpdateTime(new Date());
         practiceOrderPO.setRealityMoney(payMoney);
+        if(practiceOrderPO.getPayState() != 1){
+            practiceOrderPO.setPayState(2);
+        }
         Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
         //结算后,修改代练状态为关闭
