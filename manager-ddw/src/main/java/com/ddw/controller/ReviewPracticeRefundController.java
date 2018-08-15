@@ -21,7 +21,7 @@ public class ReviewPracticeRefundController {
     private ReviewPracticeRefundService reviewPracticeRefundService;
 
     /**
-     * 门店退款申请列表
+     * 代练订单退款申请列表
      * @param pageNo
      * @param model
      * @return
@@ -29,11 +29,11 @@ public class ReviewPracticeRefundController {
     @GetMapping("/to-review-page")
     public String toReviewPage(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
        try {
-           model.addAttribute("rPage",this.reviewPracticeRefundService.findRefundPageByHq(pageNo));
+           model.addAttribute("refundPage",this.reviewPracticeRefundService.findRefundPageByHq(pageNo));
        }catch (Exception e){
            logger.error("ReviewPracticeRefundController->toReviewPage",e);
        }
-       return "pages/manager/reviewRealName/list";
+       return "pages/manager/reviewPracticeRefund/list";
 
     }
 
@@ -47,16 +47,16 @@ public class ReviewPracticeRefundController {
             ReviewPO reviewPO = this.reviewPracticeRefundService.getReviewById(id);
             model.addAttribute("review",reviewPO);
             if (reviewPO != null) {
-                model.addAttribute("reviewRealName",this.reviewPracticeRefundService.getReviewRefundByCode(reviewPO.getDrBusinessCode()));
+                model.addAttribute("reviewPracticeRefund",this.reviewPracticeRefundService.getReviewRefundByCode(reviewPO.getDrBusinessCode()));
             }
-            return "pages/manager/reviewRealName/reviewInfo";
+            return "pages/manager/reviewPracticeRefund/reviewInfo";
 
 
         }catch (Exception e){
             logger.error("ReviewPracticeRefundController->toReviewInfoByIdHtml",e);
         }
 
-        return "pages/manager/reviewRealName/reviewInfo";
+        return "pages/manager/reviewPracticeRefund/reviewInfo";
     }
 
 }

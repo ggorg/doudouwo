@@ -600,6 +600,7 @@ public class ReviewPracticeService extends CommonService {
         return PracticeGameList;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO refund(Integer userId,Integer orderId,String realName, String reason, String describe, MultipartFile pic)throws Exception{
         if(orderId == null){
             return new ResponseVO(-1,"订单号不能为空",null);
