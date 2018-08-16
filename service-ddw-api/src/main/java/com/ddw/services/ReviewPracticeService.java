@@ -142,7 +142,7 @@ public class ReviewPracticeService extends CommonService {
         Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer endRow = pageSize;
         List<AppIndexPracticeVO>appIndexPracticeList = practiceMapper.getPracticeList(practiceId,storeId,startRow,endRow);
-        int count = practiceMapper.getPracticeListCount(practiceId,storeId);
+        Integer count = practiceMapper.getPracticeListCount(practiceId,storeId);
         MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(practiceId,1,9999).getData();
         List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
         ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPracticeList.listIterator();
@@ -158,7 +158,7 @@ public class ReviewPracticeService extends CommonService {
             }
         }
         json.put("list",appIndexPracticeList);
-        json.put("count",count);
+        json.put("count",count == null?0:count);
         return new ResponseVO(1,"成功",json);
     }
 
