@@ -9,6 +9,7 @@
         socketTimeoutMillis=2000"/>
     <!--切换为ehcache 缓存时使用-->
     <cache name="commonCache" maxElementsInMemory="1000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0" />
+    <cache name="validCodeCache" maxElementsInMemory="300" timeToLiveSeconds="60" />
 
     <cache name="reviewInfo"  maxElementsInMemory="1000" timeToLiveSeconds="86400" diskPersistent="false" maxElementsOnDisk="0" />
    <cache name="pcShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="86400" diskPersistent="true" maxElementsOnDisk="0" />

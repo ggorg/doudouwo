@@ -42,6 +42,7 @@ public class OrderUtil {
     public static void main(String[] args)throws Exception {
         //System.out.println(getOrderId(createOrderNo(DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"),1,1,1000000000)));
         System.out.println(getOrderId("01201807201932090401000000000148"));
+        System.out.println(getOrderId("0120180814135354010100000000150"));
         System.out.println(getOrderTime("01201808141631131001000000000154"));
     }
 }
