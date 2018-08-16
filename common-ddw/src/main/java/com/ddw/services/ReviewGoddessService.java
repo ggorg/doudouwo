@@ -1,11 +1,11 @@
 package com.ddw.services;
 
 import com.ddw.beans.GoddessPO;
+import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.services.CommonService;
-import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.springframework.stereotype.Service;
@@ -44,26 +44,28 @@ public class ReviewGoddessService extends CommonService {
 
     /**
      * 审核后回调更新会员资料
-     * @param drBusinessCode
+     * @param rb
      * @return
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO updateReviewGoddess(String drBusinessCode)throws Exception{
-        ReviewPO reviewPO = this.getReviewByCode(drBusinessCode);
-        Map setParams=new HashMap();
-        setParams.put("goddessFlag",1);
-        Map searchCondition=new HashMap();
-        searchCondition.put("id",reviewPO.getDrProposer());
-        //删除审核拒绝缓存
-        CacheUtil.delete("review","goddess"+reviewPO.getDrProposer());
-        //插入女神表
-        GoddessPO goddessPO = new GoddessPO();
-        goddessPO.setUserId(reviewPO.getDrProposer());
-        goddessPO.setStoreId(reviewPO.getDrBelongToStoreId());
-        goddessPO.setCreateTime(new Date());
-        goddessPO.setUpdateTime(new Date());
-        this.commonInsert("ddw_goddess",goddessPO);
-        return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
+    public ResponseVO updateReviewGoddess(ReviewCallBackBean rb)throws Exception{
+        //根据审核结果处理
+        if(rb.getReviewPO().getDrReviewStatus() == 1) {
+            ReviewPO reviewPO = this.getReviewByCode(rb.getBusinessCode());
+            Map setParams = new HashMap();
+            setParams.put("goddessFlag", 1);
+            Map searchCondition = new HashMap();
+            searchCondition.put("id", reviewPO.getDrProposer());
+            //插入女神表
+            GoddessPO goddessPO = new GoddessPO();
+            goddessPO.setUserId(reviewPO.getDrProposer());
+            goddessPO.setStoreId(reviewPO.getDrBelongToStoreId());
+            goddessPO.setCreateTime(new Date());
+            goddessPO.setUpdateTime(new Date());
+            this.commonInsert("ddw_goddess", goddessPO);
+            return this.commonUpdateByParams("ddw_userinfo", setParams, searchCondition);
+        }
+        return new ResponseVO(1,"成功",null);
     }
 }

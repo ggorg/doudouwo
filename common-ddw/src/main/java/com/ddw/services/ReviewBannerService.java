@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.BannerPO;
+import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
@@ -58,16 +59,20 @@ public class ReviewBannerService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO updateReviewBanner(String drBusinessCode)throws Exception{
-        BannerPO bannerPO = this.getReviewBannerByCode(drBusinessCode);
-        CacheUtil.delete("publicCache","appIndexBanner"+bannerPO.getStoreId());
-        Map setParams=new HashMap();
-        setParams.put("status",1);
-        setParams.put("enable",1);
-        Map searchCondition=new HashMap();
-        searchCondition.put("drBusinessCode",drBusinessCode);
-        searchCondition.put("status",0);//未审核
-        return this.commonUpdateByParams("ddw_review_banner",setParams,searchCondition);
+    public ResponseVO updateReviewBanner(ReviewCallBackBean rb)throws Exception{
+        //根据审核结果处理
+        if(rb.getReviewPO().getDrReviewStatus() == 1) {
+            BannerPO bannerPO = this.getReviewBannerByCode(rb.getBusinessCode());
+            CacheUtil.delete("publicCache", "appIndexBanner" + bannerPO.getStoreId());
+            Map setParams = new HashMap();
+            setParams.put("status", 1);
+            setParams.put("enable", 1);
+            Map searchCondition = new HashMap();
+            searchCondition.put("drBusinessCode", rb.getBusinessCode());
+            searchCondition.put("status", 0);//未审核
+            return this.commonUpdateByParams("ddw_review_banner", setParams, searchCondition);
+        }
+        return new ResponseVO(1,"成功",null);
     }
 
 }

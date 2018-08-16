@@ -94,31 +94,31 @@ public class ReviewCallBackService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeRealName(ReviewCallBackBean rb)throws Exception{
-        return reviewRealNameService.updateReviewRealName(rb.getBusinessCode());
+        return reviewRealNameService.updateReviewRealName(rb);
 
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeGoddess(ReviewCallBackBean rb)throws Exception{
-        return reviewGoddessService.updateReviewGoddess(rb.getBusinessCode());
+        return reviewGoddessService.updateReviewGoddess(rb);
 
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executePractice(ReviewCallBackBean rb)throws Exception{
-        return reviewPracticeService.updateReviewPractice(rb.getBusinessCode());
+        return reviewPracticeService.updateReviewPractice(rb);
 
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeBanner(ReviewCallBackBean rb)throws Exception{
-        return reviewBannerService.updateReviewBanner(rb.getBusinessCode());
+        return reviewBannerService.updateReviewBanner(rb);
 
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executePracticeRefund(ReviewCallBackBean rb)throws Exception{
-        return reviewPracticeRefundService.updateReviewPracticeRefund(rb.getBusinessCode());
+        return reviewPracticeRefundService.updateReviewPracticeRefund(rb);
 
     }
 }

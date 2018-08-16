@@ -1,7 +1,8 @@
 package com.ddw.services;
 
-import com.ddw.beans.ReviewPO;
 import com.ddw.beans.PracticeRefundPO;
+import com.ddw.beans.ReviewCallBackBean;
+import com.ddw.beans.ReviewPO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.services.CommonService;
@@ -45,16 +46,19 @@ public class ReviewPracticeRefundService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO updateReviewPracticeRefund(String drBusinessCode)throws Exception{
+    public ResponseVO updateReviewPracticeRefund(ReviewCallBackBean rb)throws Exception{
         //退款成功回调,更新状态,退款
-        PracticeRefundPO practiceRefundPO = this.getReviewRefundByCode(drBusinessCode);
-        //TODO 退款成功后修改
+        PracticeRefundPO practiceRefundPO = this.getReviewRefundByCode(rb.getBusinessCode());
+        if(rb.getReviewPO().getDrReviewStatus() == 1){
+            //TODO 审批成功后调用退款接口进行退款
+
+        }
         Map setParams=new HashMap();
-        setParams.put("status",1);
+        setParams.put("status",rb.getReviewPO().getDrReviewStatus());
         setParams.put("updateTime",new Date());
         Map searchCondition=new HashMap();
-        searchCondition.put("drBusinessCode",drBusinessCode);
-        searchCondition.put("status",0);//未审核
+        searchCondition.put("drBusinessCode",rb.getBusinessCode());
+        searchCondition.put("status",0);//查询未审核
         return this.commonUpdateByParams("ddw_practice_refund",setParams,searchCondition);
     }
 

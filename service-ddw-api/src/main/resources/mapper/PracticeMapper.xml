@@ -35,7 +35,16 @@
     </select>
 
     <select id="getPracticeListCount" parameterType="int" resultType="int">
-        SELECT count(*) from ddw_practice where appointment =1 and storeId = #{storeId} and userId != #{practiceId}
+        select count(*)
+        from ddw_practice_game t1
+		left join ddw_practice_order t2 on t1.userId=t2.practiceId
+        left join ddw_userinfo t3 on t1.userId = t3.id
+        left join ddw_practice_grade t4 on t4.id=t3.practiceGradeId
+		left join ddw_practice t5 on t5.userId=t1.userId and t5.storeId=#{storeId}
+		left join ddw_game t6 on t6.id=t1.gameId
+		left join ddw_rank t7 on t7.id=t1.rankId
+		where  t1.appointment =1 and t1.userId !=#{practiceId}
+        group  by t1.userId,t1.gameId,t1.rankId
     </select>
 
 </mapper>

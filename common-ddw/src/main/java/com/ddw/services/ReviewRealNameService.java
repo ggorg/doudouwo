@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
 import com.ddw.beans.ReviewRealNamePO;
 import com.ddw.enums.ReviewBusinessTypeEnum;
@@ -46,23 +47,28 @@ public class ReviewRealNameService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO updateReviewRealName(String drBusinessCode)throws Exception{
-        Map setParams=new HashMap();
-        setParams.put("status",1);
-        setParams.put("updateTime",new Date());
-        Map searchCondition=new HashMap();
-        searchCondition.put("drBusinessCode",drBusinessCode);
-        searchCondition.put("status",0);//未审核
-        this.commonUpdateByParams("ddw_review_realname",setParams,searchCondition);
-        ReviewRealNamePO reviewRealNamePO = this.getReviewRealNameByCode(drBusinessCode);
-        Map setParams2=new HashMap();
-        setParams2.put("realName",reviewRealNamePO.getRealName());
-        setParams2.put("idcard",reviewRealNamePO.getIdcard());
-        setParams2.put("idcardFrontUrl",reviewRealNamePO.getIdcardFrontUrl());
-        setParams2.put("idcardOppositeUrl",reviewRealNamePO.getIdcardOppositeUrl());
-        Map searchCondition2=new HashMap();
-        searchCondition2.put("id",reviewRealNamePO.getUserId());
-        return this.commonUpdateByParams("ddw_userinfo",setParams2,searchCondition2);
+    public ResponseVO updateReviewRealName(ReviewCallBackBean rb)throws Exception{
+        //根据审核结果处理
+        if(rb.getReviewPO().getDrReviewStatus() == 1){
+            Map setParams=new HashMap();
+            setParams.put("status",1);
+            setParams.put("updateTime",new Date());
+            Map searchCondition=new HashMap();
+            searchCondition.put("drBusinessCode",rb.getBusinessCode());
+            searchCondition.put("status",0);//未审核
+            this.commonUpdateByParams("ddw_review_realname",setParams,searchCondition);
+            ReviewRealNamePO reviewRealNamePO = this.getReviewRealNameByCode(rb.getBusinessCode());
+            Map setParams2=new HashMap();
+            setParams2.put("realName",reviewRealNamePO.getRealName());
+            setParams2.put("idcard",reviewRealNamePO.getIdcard());
+            setParams2.put("idcardFrontUrl",reviewRealNamePO.getIdcardFrontUrl());
+            setParams2.put("idcardOppositeUrl",reviewRealNamePO.getIdcardOppositeUrl());
+            Map searchCondition2=new HashMap();
+            searchCondition2.put("id",reviewRealNamePO.getUserId());
+            return this.commonUpdateByParams("ddw_userinfo",setParams2,searchCondition2);
+        }
+        return new ResponseVO(1,"成功",null);
+
     }
 
 }

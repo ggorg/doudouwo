@@ -1,13 +1,9 @@
 package com.ddw.services;
 
-import com.ddw.beans.PracticeGamePO;
-import com.ddw.beans.PracticePO;
-import com.ddw.beans.ReviewPO;
-import com.ddw.beans.ReviewPracticePO;
+import com.ddw.beans.*;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.services.CommonService;
-import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.springframework.stereotype.Service;
@@ -67,53 +63,55 @@ public class ReviewPracticeService extends CommonService {
 
     /**
      * 审核后回调更新会员资料
-     * @param drBusinessCode
+     * @param rb
      * @return
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO updateReviewPractice(String drBusinessCode)throws Exception{
-        ReviewPO reviewPO = this.getReviewByCode(drBusinessCode);
-        Map setParams=new HashMap();
-        setParams.put("practiceGradeId",1);
-        setParams.put("practiceFlag",1);
-        Map searchCondition=new HashMap();
-        searchCondition.put("id",reviewPO.getDrProposer());
-        //删除审核拒绝缓存
-        CacheUtil.delete("review","practice"+reviewPO.getDrProposer());
-        //判断是否存在代练表,不存在则插入代练表,已存在判断门店是否相同,不相同,更新代练门店,相同不做任何操作
-        PracticePO practicePO = this.getPractice(reviewPO.getDrProposer());
-        if(practicePO == null){
-            practicePO = new PracticePO();
-            practicePO.setUserId(reviewPO.getDrProposer());
-            practicePO.setStoreId(reviewPO.getDrBelongToStoreId());
-            practicePO.setCreateTime(new Date());
-            practicePO.setUpdateTime(new Date());
-            this.commonInsert("ddw_practice",practicePO);
-        }else if(practicePO.getStoreId() != reviewPO.getDrBelongToStoreId()){
-            this.updatePractice(reviewPO.getDrProposer(),reviewPO.getDrBelongToStoreId());
+    public ResponseVO updateReviewPractice(ReviewCallBackBean rb)throws Exception{
+        //根据审核结果处理
+        if(rb.getReviewPO().getDrReviewStatus() == 1) {
+            ReviewPO reviewPO = this.getReviewByCode(rb.getBusinessCode());
+            Map setParams = new HashMap();
+            setParams.put("practiceGradeId", 1);
+            setParams.put("practiceFlag", 1);
+            Map searchCondition = new HashMap();
+            searchCondition.put("id", reviewPO.getDrProposer());
+            //判断是否存在代练表,不存在则插入代练表,已存在判断门店是否相同,不相同,更新代练门店,相同不做任何操作
+            PracticePO practicePO = this.getPractice(reviewPO.getDrProposer());
+            if (practicePO == null) {
+                practicePO = new PracticePO();
+                practicePO.setUserId(reviewPO.getDrProposer());
+                practicePO.setStoreId(reviewPO.getDrBelongToStoreId());
+                practicePO.setCreateTime(new Date());
+                practicePO.setUpdateTime(new Date());
+                this.commonInsert("ddw_practice", practicePO);
+            } else if (practicePO.getStoreId() != reviewPO.getDrBelongToStoreId()) {
+                this.updatePractice(reviewPO.getDrProposer(), reviewPO.getDrBelongToStoreId());
+            }
+            //插入代练与游戏关联表
+            ReviewPracticePO reviewPracticePO = this.getReviewPracticeByCode(rb.getBusinessCode());
+            //判断是否已存在同游戏,是则更新代练段位等级
+            Map searchCondition2 = new HashMap();
+            searchCondition2.put("userId", reviewPO.getDrProposer());
+            searchCondition2.put("gameId", reviewPracticePO.getGameId());
+            PracticeGamePO practiceGamePO = this.commonObjectBySearchCondition("ddw_practice_game", searchCondition2, PracticeGamePO.class);
+            if (practiceGamePO == null) {
+                PracticeGamePO pg = new PracticeGamePO();
+                pg.setCreateTime(new Date());
+                pg.setUserId(reviewPO.getDrProposer());
+                pg.setGameId(reviewPracticePO.getGameId());
+                pg.setRankId(reviewPracticePO.getRankId());
+                pg.setAppointment(0);
+                this.commonInsert("ddw_practice_game", pg);
+            } else {
+                Map setParams2 = new HashMap<>();
+                setParams2.put("rankId", reviewPracticePO.getRankId());
+                this.commonUpdateByParams("ddw_practice_game", setParams2, searchCondition2);
+            }
+            return this.commonUpdateByParams("ddw_userinfo", setParams, searchCondition);
         }
-        //插入代练与游戏关联表
-        ReviewPracticePO reviewPracticePO = this.getReviewPracticeByCode(drBusinessCode);
-        //判断是否已存在同游戏,是则更新代练段位等级
-        Map searchCondition2=new HashMap();
-        searchCondition2.put("userId",reviewPO.getDrProposer());
-        searchCondition2.put("gameId",reviewPracticePO.getGameId());
-        PracticeGamePO practiceGamePO = this.commonObjectBySearchCondition("ddw_practice_game",searchCondition2,PracticeGamePO.class);
-        if(practiceGamePO == null){
-            PracticeGamePO pg = new PracticeGamePO();
-            pg.setCreateTime(new Date());
-            pg.setUserId(reviewPO.getDrProposer());
-            pg.setGameId(reviewPracticePO.getGameId());
-            pg.setRankId(reviewPracticePO.getRankId());
-            pg.setAppointment(0);
-            this.commonInsert("ddw_practice_game",pg);
-        }else {
-            Map setParams2 = new HashMap<>();
-            setParams2.put("rankId",reviewPracticePO.getRankId());
-            this.commonUpdateByParams("ddw_practice_game",setParams2,searchCondition2);
-        }
-        return this.commonUpdateByParams("ddw_userinfo",setParams,searchCondition);
+        return new ResponseVO(1,"成功",null);
     }
 
     public List<Map> gameList(){
