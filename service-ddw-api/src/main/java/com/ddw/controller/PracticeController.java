@@ -79,7 +79,7 @@ public class PracticeController {
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
             //查询已发布代练任务的代练,根据接单排行代练信息,不包含自己
-            return reviewPracticeService.practiceList(token,pageDTO.getPageNum(),pageDTO.getPageSize());
+            return new ResponseVO(1,"成功",reviewPracticeService.practiceList(token,pageDTO));
         }catch (Exception e){
             logger.error("PracticeController->queryList",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -194,6 +194,20 @@ public class PracticeController {
         }
     }
 
+    @ApiOperation(value = "代练结束上传凭证,结束代练")
+    @PostMapping("/endThePractice/{token}")
+    public ResponseVO endThePractice(@PathVariable String token,
+                                                              @RequestParam(value = "orderId") @ApiParam(name = "orderId",value="订单编号ID", required = true) Integer orderId,
+                                                              @RequestParam(value = "photograph") @ApiParam(name = "photograph",value="游戏截图", required = true) MultipartFile photograph){
+        try {
+            // 原段位包含几星(不可修改),目前段位包含几星,代练编号,返回需要支付金额,如果段位星级比原段位星级低,则走赔付流程,双倍赔付
+            return reviewPracticeService.endThePractice(orderId,photograph);
+        }catch (Exception e){
+            logger.error("PracticeController->endThePractice",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
     @ApiOperation(value = "评价")
     @PostMapping("/evaluation/{token}")
     public ResponseVO evaluation(@PathVariable String token,
@@ -297,7 +311,7 @@ public class PracticeController {
     @PostMapping("/pubTaskList/{token}")
     public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticePubTaskDTO practicePubTaskDTO){
         try {
-            return reviewPracticeService.getPubTaskList(practicePubTaskDTO);
+            return reviewPracticeService.getPubTaskList(TokenUtil.getUserId(token),practicePubTaskDTO);
         }catch (Exception e){
             logger.error("PracticeController->getPubTaskList",e);
             return new ResponseVO(-1,"提交失败",null);

@@ -1,6 +1,5 @@
 package com.ddw.services;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.AppIndexVO;
 import com.ddw.beans.PageDTO;
 import com.ddw.beans.ResponseApiVO;
@@ -45,20 +44,21 @@ public class AppIndexService {
         }
         AppIndexVO appIndexVO = new AppIndexVO();
         Object obGoddess = CacheUtil.get("publicCache","appIndexGoddess");
+        PageDTO page = new PageDTO();
+        page.setPageNum(1);
+        page.setPageSize(4);
         if(obGoddess == null){
-            PageDTO page = new PageDTO();
-            page.setPageNum(1);
-            page.setPageSize(4);
             //查询所有门店女神,直播优先,列表不包括当前查询会员id
             appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),page));
-            CacheUtil.put("publicCache","appIndexGoddess",appIndexVO.getGoddessList());
+            if(appIndexVO.getGoddessList().size()>0) {
+                CacheUtil.put("publicCache", "appIndexGoddess", appIndexVO.getGoddessList());
+            }
         }else{
             appIndexVO.setGoddessList((List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess"));
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
-            JSONObject practiceList = (JSONObject)reviewPracticeService.practiceList(token,1,4).getData();
-            appIndexVO.setPracticeList((List<AppIndexPracticeVO>)practiceList.get("list"));
+            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,page));
             if(appIndexVO.getPracticeList().size()>0){
                 CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
             }
