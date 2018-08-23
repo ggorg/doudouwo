@@ -423,8 +423,20 @@ public class BaseOrderService extends CommonService {
 
     }
 
+    /**
+     *
+     * @param map ,key->orderId，value->退款金额(分钱)
+     * @return
+     * @throws Exception
+     */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO baseExitOrder(List<Integer> orderIds)throws Exception{
+    public ResponseVO baseExitOrderByMap(Map<Integer,Integer> map)throws Exception{
+        List list=new ArrayList(map.keySet());
+        return this.baseExitOrder(list,map);
+
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO baseExitOrder(List<Integer> orderIds,Map ...exitOrderMaps)throws Exception{
         if(orderIds==null){
             return new ResponseVO(-2,"参数异常",null);
 
@@ -437,15 +449,25 @@ public class BaseOrderService extends CommonService {
         searchMap.put("id,in",orderIds.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
         searchMap.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
         List<Map> orders=this.commonObjectsBySearchCondition("ddw_order",searchMap);
-
+        Map<Integer,Integer> exitCostMap=null;
+        if(exitOrderMaps!=null && exitOrderMaps.length>0){
+            exitCostMap=exitOrderMaps[0];
+        }
+        Integer intBaseExitCost=null;
         for(Map o:orders){
             // orderPO=this.commonObjectBySingleParam("ddw_order","id",OrderUtil.getOrderId(o),OrderPO.class);
+            if(exitCostMap!=null){
+                intBaseExitCost=exitCostMap.get((Integer) o.get("id"));
+            }
             exitOrderPO=new ExitOrderPO();
             exitOrderPO.setCreater((Integer) o.get("doCustomerUserId"));
             exitOrderPO.setCreaterName((String) o.get("creater"));
             exitOrderPO.setCreateTime(new Date());
-            exitOrderPO.setExitCost((Integer) o.get("doCost"));
-            exitOrderPO.setTotalCost(exitOrderPO.getExitCost());
+            exitOrderPO.setTotalCost((Integer) o.get("doCost"));
+            exitOrderPO.setExitCost(intBaseExitCost!=null?intBaseExitCost:exitOrderPO.getTotalCost());
+            if(exitOrderPO.getExitCost()>exitOrderPO.getTotalCost()){
+                throw new GenException("退款金额比总金额大");
+            }
             exitOrderPO.setOrderId((Integer) o.get("id"));
             exitOrderPO.setOrderType((Integer)o.get("doType"));
             exitOrderPO.setOrderNo(OrderUtil.createOrderNo((String)o.get("doOrderDate"),(Integer) o.get("doType"),(Integer) o.get("doPayType"),exitOrderPO.getOrderId()));
@@ -456,7 +478,7 @@ public class BaseOrderService extends CommonService {
             }
             if(PayTypeEnum.PayType1.getCode().equals(o.get("doPayType"))){
 
-                Map<String,String> callMap= PayApiUtil.reqeustWeiXinExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitOrderNo(),exitOrderPO.getExitCost(),exitOrderPO.getExitCost());
+                Map<String,String> callMap= PayApiUtil.reqeustWeiXinExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitOrderNo(),exitOrderPO.getTotalCost(),exitOrderPO.getExitCost());
                 logger.info("reqeustWeiXinExitOrder->response->"+callMap);
                 if(callMap==null ||  "FAIL".equals(callMap.get("return_code")) ||  "FAIL".equals(callMap.get("result_code"))){
                     throw new GenException("微信申请退款失败");
@@ -498,6 +520,7 @@ public class BaseOrderService extends CommonService {
 
             }
             //ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
+            intBaseExitCost=null;
 
         }
         return new ResponseVO(1,"成功",null);

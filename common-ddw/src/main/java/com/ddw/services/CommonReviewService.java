@@ -3,12 +3,11 @@ package com.ddw.services;
 import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
 import com.ddw.enums.ReviewCallBackEnum;
-import com.ddw.util.ReviewCallBackUtil;
+import com.ddw.util.CallBackInvokeUtil;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
-import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +55,7 @@ public class CommonReviewService extends CommonService {
             rb.setReviewPO(rpo);
             //回调处理
             if(StringUtils.isNotBlank(ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()))){
-                ResponseVO callBackRes=(ResponseVO) ReviewCallBackUtil.invoke(reviewCallBackService, ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()), rb);
+                ResponseVO callBackRes=(ResponseVO) CallBackInvokeUtil.reviewInvoke(reviewCallBackService, ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()), rb);
 
             }
 
