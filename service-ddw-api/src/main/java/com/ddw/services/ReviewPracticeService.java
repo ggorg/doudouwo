@@ -131,7 +131,7 @@ public class ReviewPracticeService extends CommonService {
      * @return
      * @throws Exception
      */
-    public List<AppIndexPracticeVO> practiceList(String token,PageDTO page)throws Exception{
+    public List<AppIndexPracticeVO> practiceList(String token,PageDTO page,Integer appointment)throws Exception{
         Integer storeId = TokenUtil.getStoreId(token);
         Integer practiceId = TokenUtil.getUserId(token);
         Integer pageNum = page.getPageNum();
@@ -139,13 +139,13 @@ public class ReviewPracticeService extends CommonService {
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();
-        List<AppIndexPracticeVO>appIndexPractice = practiceMapper.getPracticeList(practiceId,storeId,start,end);
+        List<AppIndexPracticeVO>appIndexPractice = practiceMapper.getPracticeList(practiceId,storeId,start,end,appointment);
         for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice){
             userIdList.add(appIndexPracticeVO.getUserId());
         }
         if(page.getPageSize()-appIndexPractice.size()>0){
             end = page.getPageSize()-appIndexPractice.size();
-            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeListByNotInIds(userIdList,practiceId,storeId,start,end);
+            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeListByNotInIds(userIdList,practiceId,storeId,start,end,appointment);
             appIndexPractice.addAll(appIndexPractice2);
         }
         //设置关注状态
@@ -390,6 +390,7 @@ public class ReviewPracticeService extends CommonService {
         //订单状态，1开始接单，2完成,3未完成并结单
         practiceOrderPO.setStatus(1);
         practiceOrderPO.setPayState(0);
+        practiceOrderPO.setIncomeState(0);
         practiceOrderPO.setMoney(money);
         practiceOrderPO.setCreateTime(new Date());
         practiceOrderPO.setUpdateTime(new Date());

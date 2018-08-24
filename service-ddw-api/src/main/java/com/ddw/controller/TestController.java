@@ -3,7 +3,9 @@ package com.ddw.controller;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.services.StraregyService;
 import com.ddw.token.Token;
+import com.gen.common.util.CacheUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,21 @@ public class TestController {
            logger.error("TestController->recharge-》系统异常",e);
            return new ResponseApiVO(-1,"失败",null);
        }
+    }
+    @ApiOperation(value = "清缓存")
+    @PostMapping("/cleanCache/{token}")
+    @ResponseBody
+    @Token
+    public ResponseApiVO cleanCache(@PathVariable String token,
+                                    @RequestParam(value = "storeId") @ApiParam(name = "storeId",defaultValue = "1",value="门店ID", required = false) Integer storeId){
+        try{
+            CacheUtil.delete("publicCache","appIndexPractice"+storeId);
+            CacheUtil.delete("publicCache", "appIndexGoddess");
+            return new ResponseApiVO(1,"成功",null);
+        }catch (Exception e){
+            logger.error("TestController->cleanCache-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
     }
 
 }

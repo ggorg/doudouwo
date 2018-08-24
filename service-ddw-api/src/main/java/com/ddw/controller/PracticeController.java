@@ -79,7 +79,9 @@ public class PracticeController {
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
             //查询已发布代练任务的代练,根据接单排行代练信息,不包含自己
-            return new ResponseVO(1,"成功",reviewPracticeService.practiceList(token,pageDTO));
+            JSONObject json = new JSONObject();
+            json.put("list",reviewPracticeService.practiceList(token,pageDTO,null));
+            return new ResponseVO(1,"成功",json);
         }catch (Exception e){
             logger.error("PracticeController->queryList",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -186,7 +188,7 @@ public class PracticeController {
     public ResponseApiVO<PracticeSettlementVO> settlement(@PathVariable String token,
                                                @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeSettlementDTO practiceSettlementDTO){
         try {
-            // 原段位包含几星(不可修改),目前段位包含几星,代练编号,返回需要支付金额,如果段位星级比原段位星级低,则走赔付流程,双倍赔付
+            // 原段位包含几星(不可修改),目前段位包含几星,代练编号,返回需要支付金额,如果段位星级比原段位星级低,则走赔付流程
             return reviewPracticeService.settlement(practiceSettlementDTO);
         }catch (Exception e){
             logger.error("PracticeController->settlement",e);

@@ -1,11 +1,12 @@
 package com.ddw.servies;
 
+import com.ddw.beans.PracticeGamePO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.BiddingStatusEnum;
+import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.enums.LiveEventTypeEnum;
-import com.ddw.services.BaseBiddingService;
-import com.ddw.services.BaseOrderService;
-import com.ddw.services.LiveRadioService;
+import com.ddw.enums.OrderTypeEnum;
+import com.ddw.services.*;
 import com.ddw.util.BiddingTimer;
 import com.ddw.util.LiveRadioApiUtil;
 import com.ddw.util.PayApiUtil;
@@ -24,9 +25,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.context.support.UiApplicationContextUtils;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -50,6 +48,10 @@ public class TimerTaskService extends CommonService {
 
     @Autowired
     private DDWGlobals ddwGlobals;
+    @Autowired
+    protected IncomeService incomeService;
+    @Autowired
+    protected BaseConsumeRankingListService baseConsumeRankingListService;
 
     /**
      * 黑房间定时处理，每10分钟扫描一次
@@ -206,10 +208,61 @@ public class TimerTaskService extends CommonService {
 
 
     }
+
+    /**
+     * 查询订单支付超过30分钟的,设置过期,释放代练状态为0
+     */
     @Scheduled(cron = "0 0/30 * * * *")
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public void testExitOrder(){
+    public void expirePracticeOrder(){
+        Map<String,Object> searchCondition = new HashMap<>();
+        searchCondition.put("payState",0);//未支付
+        searchCondition.put("updateTime,>",new Date(new Date().getTime() - 30*60*1000));
+        try {
+            List<Map> list = this.commonObjectsBySearchCondition("ddw_practice_order",searchCondition);
+            Map setParams = new HashMap<>();
+            setParams.put("payState",2);
+            Map setParams3 = new HashMap<>();
+            setParams3.put("appointment",0);
+            for (Map map:list){
+                this.commonUpdateBySingleSearchParam("ddw_practice_order",setParams,"id",map.get("id"));
+                Map setParams2 = new HashMap<>();
+                setParams2.put("userId",map.get("practiceId"));
+                setParams2.put("gameId",map.get("gameId"));
+                PracticeGamePO practiceGamePO = this.commonObjectBySearchCondition("ddw_practice_game",setParams2, PracticeGamePO.class);
+                if(practiceGamePO.getAppointment()==2){
+                    Map searchCondition3 = new HashMap<>();
+                    this.commonUpdateByParams("ddw_practice_game",setParams2,searchCondition3);
+                }
 
+            }
+        } catch (Exception e) {
+            logger.error("TimerTaskService->expirePracticeOrder",e);
+        }
+    }
+
+    /**
+     * 每小时查询订单计算收益
+     */
+    @Scheduled(cron = "0 0 */1 * * *")
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void incomePractice(){
+        Map<String,Object> searchCondition = new HashMap<>();
+        searchCondition.put("payState",1);//已支付
+        searchCondition.put("incomeState",0);//未计算收益
+        try {
+            List<Map> list = this.commonObjectsBySearchCondition("ddw_practice_order",searchCondition);
+            Map setParams = new HashMap<>();
+            setParams.put("incomeState",1);//已计算收益
+            for(Map map:list){
+                this.incomeService.commonIncome((Integer) map.get("practiceId"),(Integer)map.get("realityMoney"), IncomeTypeEnum.IncomeType2, OrderTypeEnum.OrderType10,map.get("orderNo").toString());
+                this.baseConsumeRankingListService.save((Integer) map.get("userId"),(Integer) map.get("practiceId"),(Integer)map.get("realityMoney"),IncomeTypeEnum.IncomeType2);
+                //更新状态为已计算收益
+                this.commonUpdateBySingleSearchParam("ddw_practice_order",setParams,"id",map.get("id"));
+            }
+        } catch (Exception e) {
+            logger.error("TimerTaskService->incomePractice",e);
+        }
     }
 
     @PostConstruct

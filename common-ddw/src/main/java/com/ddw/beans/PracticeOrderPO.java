@@ -25,11 +25,11 @@ public class PracticeOrderPO implements Serializable{
     private int money;
     private int realityMoney;
     private int storeId;
-    private int payState;
+    private int incomeState;
     private String picUrl;
+    private int payState;
     private Date createTime;
     private Date updateTime;
-
 
     public int getId() {
         return id;
@@ -159,12 +159,12 @@ public class PracticeOrderPO implements Serializable{
         this.storeId = storeId;
     }
 
-    public int getPayState() {
-        return payState;
+    public int getIncomeState() {
+        return incomeState;
     }
 
-    public void setPayState(int payState) {
-        this.payState = payState;
+    public void setIncomeState(int incomeState) {
+        this.incomeState = incomeState;
     }
 
     public String getPicUrl() {
@@ -173,6 +173,14 @@ public class PracticeOrderPO implements Serializable{
 
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
+    }
+
+    public int getPayState() {
+        return payState;
+    }
+
+    public void setPayState(int payState) {
+        this.payState = payState;
     }
 
     public Date getCreateTime() {

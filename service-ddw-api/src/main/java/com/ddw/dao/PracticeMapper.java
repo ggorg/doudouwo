@@ -11,8 +11,8 @@ import java.util.List;
  */
 @Mapper
 public interface PracticeMapper {
-    List<AppIndexPracticeVO> getPracticeList(@Param("practiceId") Integer practiceId, @Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end);
-    Integer getPracticeListCount(@Param("practiceId") Integer practiceId, @Param("storeId") Integer storeId);
+    List<AppIndexPracticeVO> getPracticeList(@Param("practiceId") Integer practiceId, @Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end,@Param("appointment") Integer appointment);
+    Integer getPracticeListCount(@Param("practiceId") Integer practiceId, @Param("storeId") Integer storeId,@Param("appointment") Integer appointment);
 
-    List<AppIndexPracticeVO> getPracticeListByNotInIds(@Param("userIdList") List<Integer> userIdList,@Param("practiceId") Integer practiceId, @Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end);
+    List<AppIndexPracticeVO> getPracticeListByNotInIds(@Param("userIdList") List<Integer> userIdList,@Param("practiceId") Integer practiceId, @Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end,@Param("appointment") Integer appointment);
 }
