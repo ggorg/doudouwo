@@ -261,6 +261,7 @@ public class ReviewPracticeService extends CommonService {
             responseVO = super.commonUpdateByParams("ddw_practice_evaluation",params,searchCondition);
         }else{
             practiceEvaluationPO = new PracticeEvaluationPO();
+            practiceEvaluationPO.setPracticeId(practiceEvaluationDetailDTO.getPracticeId());
             practiceEvaluationPO.setAllStar(practiceEvaluationDetailDTO.getStar());
             practiceEvaluationPO.setCountEvaluation(1);
             practiceEvaluationPO.setStar(Math.round(practiceEvaluationDetailDTO.getStar()));
@@ -480,6 +481,13 @@ public class ReviewPracticeService extends CommonService {
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank",null,null,condtion,cb1,cb2,cb3);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(practicePubTaskDTO.getPage().getPageNum(),practicePubTaskDTO.getPage().getPageSize(),csb);
+        ListIterator<Map> listIterator = p.getResult().listIterator();
+        while (listIterator.hasNext()){
+            Map map = listIterator.next();
+            PracticeEvaluationPO practiceEvaluationPO = this.getEvaluation((Integer) map.get("userId"));
+            int star = practiceEvaluationPO==null?0:practiceEvaluationPO.getStar();
+            map.put("star",star);
+        }
         json.put("list",p.getResult());
         json.put("count",p.getTotal());
         return new ResponseVO(1,"成功",json);

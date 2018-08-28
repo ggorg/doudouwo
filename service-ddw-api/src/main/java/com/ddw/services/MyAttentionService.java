@@ -132,8 +132,14 @@ public class MyAttentionService extends CommonService {
             myAttentionVO.setUserInfoList(userInfoList);
         }
         myAttentionVO.setUserId(userId);
-        myAttentionVO.setGoddessCount(count.intValue());
+        myAttentionVO.setPracticeCount(count.intValue());
         return new ResponseVO(1,"成功",myAttentionVO);
+    }
+
+    public Long queryPracticeFansCountByUserId(Integer userId)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("practiceId",userId);
+        return this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
