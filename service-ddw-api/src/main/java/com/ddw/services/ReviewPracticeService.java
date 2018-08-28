@@ -154,6 +154,8 @@ public class ReviewPracticeService extends CommonService {
         List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
         while (appIndexPracticeIterator.hasNext()){
             AppIndexPracticeVO appIndexPracticeVO = appIndexPracticeIterator.next();
+            Long fans = myAttentionService.queryPracticeFansCountByUserId(appIndexPracticeVO.getUserId());
+            appIndexPracticeVO.setFans(fans==null?0:fans);
             if (myAttentionGoddessList != null) {
                 for(UserInfoVO userInfoVO:myAttentionGoddessList){
                     if(userInfoVO.getId() == appIndexPracticeVO.getUserId()){
