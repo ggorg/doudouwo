@@ -156,6 +156,9 @@ public class ReviewPracticeService extends CommonService {
             AppIndexPracticeVO appIndexPracticeVO = appIndexPracticeIterator.next();
             Long fans = myAttentionService.queryPracticeFansCountByUserId(appIndexPracticeVO.getUserId());
             appIndexPracticeVO.setFans(fans==null?0:fans);
+            PracticeEvaluationPO practiceEvaluationPO = this.getEvaluation(appIndexPracticeVO.getUserId());
+            int star = practiceEvaluationPO == null?0:practiceEvaluationPO.getStar();
+            appIndexPracticeVO.setStar(star);
             if (myAttentionGoddessList != null) {
                 for(UserInfoVO userInfoVO:myAttentionGoddessList){
                     if(userInfoVO.getId() == appIndexPracticeVO.getUserId()){
@@ -472,10 +475,11 @@ public class ReviewPracticeService extends CommonService {
      */
     public ResponseVO getPubTaskList(Integer userId,PracticePubTaskDTO practicePubTaskDTO)throws Exception{
         Map condtion = new HashMap<>();
-        if(practicePubTaskDTO.getPracticeId() != null){
+        if(practicePubTaskDTO !=null && practicePubTaskDTO.getPracticeId() != null){
             condtion.put("userId",practicePubTaskDTO.getPracticeId());
+        }else {
+            condtion.put("userId,!=",userId);
         }
-        condtion.put("userId,!=",userId);
         condtion.put("appointment",1);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
@@ -514,7 +518,7 @@ public class ReviewPracticeService extends CommonService {
         payMoney = this.payMoney(gameId,rankId,star,realityRankId,realityStar);
         PropertyUtils.copyProperties(practiceOrderPO,practiceSettlementDTO);
         //订单状态，1开始接单，2完成,3未完成并结单
-        practiceOrderPO.setStatus(payMoney>=0?2:3);
+        practiceOrderPO.setStatus(payMoney>=practiceOrderPO.getMoney()?2:3);
         practiceOrderPO.setUpdateTime(new Date());
         practiceOrderPO.setRealityMoney(payMoney);
         if(practiceOrderPO.getPayState() != 1){
