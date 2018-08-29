@@ -475,10 +475,11 @@ public class ReviewPracticeService extends CommonService {
      */
     public ResponseVO getPubTaskList(Integer userId,PracticePubTaskDTO practicePubTaskDTO)throws Exception{
         Map condtion = new HashMap<>();
-        if(practicePubTaskDTO.getPracticeId() != null){
+        if(practicePubTaskDTO !=null && practicePubTaskDTO.getPracticeId() != null){
             condtion.put("userId",practicePubTaskDTO.getPracticeId());
+        }else {
+            condtion.put("userId,!=",userId);
         }
-        condtion.put("userId,!=",userId);
         condtion.put("appointment",1);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
@@ -486,27 +487,6 @@ public class ReviewPracticeService extends CommonService {
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank",null,null,condtion,cb1,cb2,cb3);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(practicePubTaskDTO.getPage().getPageNum(),practicePubTaskDTO.getPage().getPageSize(),csb);
-        ListIterator<Map> listIterator = p.getResult().listIterator();
-        while (listIterator.hasNext()){
-            Map map = listIterator.next();
-            PracticeEvaluationPO practiceEvaluationPO = this.getEvaluation((Integer) map.get("userId"));
-            int star = practiceEvaluationPO==null?0:practiceEvaluationPO.getStar();
-            map.put("star",star);
-        }
-        json.put("list",p.getResult());
-        json.put("count",p.getTotal());
-        return new ResponseVO(1,"成功",json);
-    }
-    public ResponseVO getPracticeTask(Integer userId)throws Exception{
-        Map condtion = new HashMap<>();
-        condtion.put("userId",userId);
-        condtion.put("appointment",1);
-        CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
-        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
-        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank",null,null,condtion,cb1,cb2,cb3);
-        JSONObject json = new JSONObject();
-        Page p = this.commonPage(1,1,csb);
         ListIterator<Map> listIterator = p.getResult().listIterator();
         while (listIterator.hasNext()){
             Map map = listIterator.next();
