@@ -309,13 +309,25 @@ public class PracticeController {
     }
 
     @Token
-    @ApiOperation(value = "代练任务发布列表")
+    @ApiOperation(value = "代练任务发布列表,不包含自己")
     @PostMapping("/pubTaskList/{token}")
     public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticePubTaskDTO practicePubTaskDTO){
         try {
             return reviewPracticeService.getPubTaskList(TokenUtil.getUserId(token),practicePubTaskDTO);
         }catch (Exception e){
             logger.error("PracticeController->getPubTaskList",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @Token
+    @ApiOperation(value = "代练自己任务查看")
+    @PostMapping("/practiceTask/{token}")
+    public ResponseVO getPracticeTask(@PathVariable String token){
+        try {
+            return reviewPracticeService.getPracticeTask(TokenUtil.getUserId(token));
+        }catch (Exception e){
+            logger.error("PracticeController->getPracticeTask",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }

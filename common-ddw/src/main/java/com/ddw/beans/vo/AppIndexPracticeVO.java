@@ -39,6 +39,8 @@ public class AppIndexPracticeVO implements Serializable {
     private String rank;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
     private Long fans;
+    @ApiModelProperty(name = "star",value = "评价星",example = "2")
+    private int star;
 
     public Integer getUserId() {
         return userId;
@@ -142,5 +144,13 @@ public class AppIndexPracticeVO implements Serializable {
 
     public void setFans(Long fans) {
         this.fans = fans;
+    }
+
+    public int getStar() {
+        return star;
+    }
+
+    public void setStar(int star) {
+        this.star = star;
     }
 }
