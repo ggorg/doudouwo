@@ -518,7 +518,7 @@ public class ReviewPracticeService extends CommonService {
         payMoney = this.payMoney(gameId,rankId,star,realityRankId,realityStar);
         PropertyUtils.copyProperties(practiceOrderPO,practiceSettlementDTO);
         //订单状态，1开始接单，2完成,3未完成并结单
-        practiceOrderPO.setStatus(payMoney>=0?2:3);
+        practiceOrderPO.setStatus(payMoney>=practiceOrderPO.getMoney()?2:3);
         practiceOrderPO.setUpdateTime(new Date());
         practiceOrderPO.setRealityMoney(payMoney);
         if(practiceOrderPO.getPayState() != 1){
