@@ -9,6 +9,7 @@ import com.ddw.enums.LiveEventTypeEnum;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.enums.ReviewStatusEnum;
 import com.ddw.util.IMApiUtil;
+import com.ddw.util.IndexGoddessComparator;
 import com.ddw.util.LiveRadioApiUtil;
 import com.ddw.util.LiveRadioConstant;
 import com.gen.common.beans.CommonChildBean;
@@ -124,6 +125,10 @@ public class LiveRadioService extends CommonService{
     }
     //更新缓存首页女神直播状态
     public void updateAppIndexCache(String streamId,Integer flag){
+        if(LiveEventTypeEnum.eventType1.getCode().equals(flag)){
+            CacheUtil.delete("publicCache","appIndexGoddess");
+            return ;
+        }
         String[] str = streamId.split("_");
         String storeId = str[1];
         Integer userId = Integer.parseInt(str[2]);
@@ -136,6 +141,8 @@ public class LiveRadioService extends CommonService{
                     appIndexGoddessVO.setLiveRadioFlag(flag);
                 }
             }
+           // appIndexGoddessList.
+            Collections.sort(appIndexGoddessList,new IndexGoddessComparator());
             CacheUtil.put("publicCache","appIndexGoddess",appIndexGoddessList);
         }
     }
@@ -206,7 +213,6 @@ public class LiveRadioService extends CommonService{
         liveRadioPO.setUserName(StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName());
         ResponseVO res=this.commonInsertMap("ddw_live_radio_space",BeanToMapUtil.beanToMap(liveRadioPO));
         if(res.getReCode()==1){
-            CacheUtil.delete("publicCache","appIndexGoddess");
             res.setReMsg("创建直播成功");
         }else{
             res.setReMsg("创建直播失败");

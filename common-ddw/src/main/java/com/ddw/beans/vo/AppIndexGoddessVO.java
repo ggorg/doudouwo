@@ -131,4 +131,13 @@ public class AppIndexGoddessVO implements Serializable{
     public void setFollowed(boolean followed) {
         this.followed = followed;
     }
+
+    @Override
+    public String toString() {
+        return "AppIndexGoddessVO{" +
+                ", liveRadioFlag=" + liveRadioFlag +
+                ", dsName='" + dsName + '\'' +
+                ", fans=" + fans +
+                '}';
+    }
 }
