@@ -1,13 +1,12 @@
 package com.ddw.servies;
 
 import com.ddw.beans.PracticeGamePO;
+import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.config.DDWGlobals;
-import com.ddw.enums.BiddingStatusEnum;
-import com.ddw.enums.IncomeTypeEnum;
-import com.ddw.enums.LiveEventTypeEnum;
-import com.ddw.enums.OrderTypeEnum;
+import com.ddw.enums.*;
 import com.ddw.services.*;
 import com.ddw.util.BiddingTimer;
+import com.ddw.util.IMApiUtil;
 import com.ddw.util.LiveRadioApiUtil;
 import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
@@ -59,7 +58,7 @@ public class TimerTaskService extends CommonService {
     //private Map<String,Integer> backRoomMap=new HashMap();
     @Scheduled(cron = "0 0/10 * * * *")
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public void handleBackRoom(){
+    public void handleBackRoom()throws Exception{
         List<Map> list=liveRadioService.getAllActLiveRadio();
         Map<String,Integer> backRoomMap=(Map<String, Integer>) cacheService.get("backRoom");
         if(backRoomMap==null){
@@ -68,6 +67,9 @@ public class TimerTaskService extends CommonService {
         if(list!=null){
             String streamId=null;
             Integer num=null;
+            //计算pv和观看人数
+            handleLiveMemberNum(list);
+            //扫黑房
             for(Map m:list){
                streamId=(String)m.get("streamid");
                 num= backRoomMap.get(streamId);
@@ -98,6 +100,41 @@ public class TimerTaskService extends CommonService {
                }
             }
         }
+    }
+
+    //@Scheduled(cron = "0 0/10 * * * *")
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void handleLiveMemberNum(List<Map> list )throws Exception{
+        logger.info("计算直播访问量和观看数量-》"+list);
+
+        final List groupIds=new ArrayList();
+        list.forEach(a->groupIds.add(a.get("groupId")));
+        Map map=IMApiUtil.getMemberNum(groupIds);
+        Set<String> keys=map.keySet();
+        Map param=null;
+        Integer pv=null;
+        Map search=null;
+        List<AppIndexGoddessVO> alist= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
+
+        for(String k:keys){
+            param=new HashMap();
+            search=new HashMap();
+            pv=(Integer) CacheUtil.get("publicCache","livePv-"+k);
+            param.put("pv",pv==null?0:pv);
+            if(map.containsKey(k)){
+                param.put("maxGroupNum",map.get(k));
+            }
+            alist.forEach(a->{
+                Integer userid=Integer.parseInt(k.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2"));
+                if(a.getId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
+                    a.setViewingNum((Integer) map.get(k));
+                }
+            });
+            search.put("groupId",k);
+            this.commonOptimisticLockUpdateByParam("ddw_live_radio_space",param,search,"version");
+        }
+        CacheUtil.put("publicCache", "appIndexGoddess",alist);
+
     }
     @Scheduled(cron = "0 0/30 * * * *")
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -268,6 +305,7 @@ public class TimerTaskService extends CommonService {
     @PostConstruct
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public void init()throws Exception{
+        IMApiUtil.setDdwGlobals(ddwGlobals);
         PayApiUtil.setDdwGlobals(ddwGlobals);
         handleFreeBid();
         initBiddingTimer();

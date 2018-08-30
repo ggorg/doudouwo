@@ -1,9 +1,11 @@
 package com.ddw.util;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.UserInfoPO;
 import com.ddw.config.DDWGlobals;
+import com.gen.common.exception.GenException;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.HttpUtil;
 import com.gen.common.util.Tools;
@@ -12,7 +14,6 @@ import com.tls.sigcheck.tls_sigcheck;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.xml.ws.Response;
 import java.util.*;
 
 public class IMApiUtil {
@@ -70,6 +71,35 @@ public class IMApiUtil {
         sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
        return  HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(map));
 
+    }
+    public static Map getMemberNum(List<String> groupIds)throws Exception{
+        initDDWGlobls();
+        Map param=new HashMap();
+        param.put("GroupIdList",groupIds);
+        StringBuilder sb=new StringBuilder();
+        sb.append(baseUri);
+        sb.append("/group_open_http_svc/get_group_info");
+        sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
+        String callBack=HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(param));
+        if(StringUtils.isBlank(callBack)){
+            throw new GenException("获取群成员数异常");
+        }
+        JSONObject jsonObject= JSON.parseObject(callBack);
+        String actionStatus=jsonObject.getString("ActionStatus");
+        if(!"OK".equals(actionStatus)){
+            throw new GenException("获取群成员数异常->"+callBack);
+        }
+        Map m=new HashMap();
+        JSONArray array=jsonObject.getJSONArray("GroupInfo");
+        JSONObject item=null;
+        for(int i=0;i<array.size();i++){
+            item=array.getJSONObject(i);
+            if(item.getInteger("ErrorCode")==0){
+
+                m.put(item.getString("GroupId"),item.getInteger("MemberNum"));
+            }
+        }
+        return m;
     }
     public static boolean destoryGroup(String groupId){
         Map param=new HashMap();
@@ -141,6 +171,7 @@ public class IMApiUtil {
             ddwGlobals= Tools.getWebapplication().getBean(DDWGlobals.class);
         }
     }
+
     private static String createSignParams(String identifier){
         initDDWGlobls();
         tls_sigcheck ts=new tls_sigcheck();
@@ -150,7 +181,7 @@ public class IMApiUtil {
         String userSign=(String) CacheUtil.get("imSign","sign");
         if(StringUtils.isBlank(userSign)){
             userSign=ts.createSign(identifier);
-            CacheUtil.put("imSign","sign",userSign);
+           // CacheUtil.put("imSign","sign",userSign);
         }
         sb.append("usersig=").append(userSign).append("&");
         sb.append("identifier=").append(LiveRadioConstant.ADMIN_ACCOUNT).append("&");
@@ -167,14 +198,16 @@ public class IMApiUtil {
         pro.load(tls_sigcheck.class.getClassLoader().getResourceAsStream("application-dev.properties"));
         DDWGlobals ddwGlobals=new DDWGlobals();
         ddwGlobals.setLibpath(pro.getProperty("im.tls.sigcheck.lib.path"));
+        ddwGlobals.setPrivateKeypath(pro.getProperty("im.tls.sigcheck.lib.privatekey.path"));
         ts.setDdwGlobals(ddwGlobals);
         setDdwGlobals(ddwGlobals);
 
-        UserInfoPO userInfoPO=new UserInfoPO();
+       /* UserInfoPO userInfoPO=new UserInfoPO();
         userInfoPO.setOpenid("gen");
         userInfoPO.setNickName("我是测试的");
         userInfoPO.setHeadImgUrl("http://wx.qlogo.cn/mmopen/Q3auHgzwzM70nZPOZLa6PTYzFKZp4xm9KRQITutLibgqjUAesTBciaFCpSzUicPwHT7mKeYDHhGYJX1FJlAPphe3UWKKvOOYC8dGNbSuibz9MOI/132");
-        System.out.println(importUser(userInfoPO,null));
-       //System.out.println(createGroup("gen","ddw3","mygroup"));;
+        System.out.println(importUser(userInfoPO,null));*/
+
+       System.out.println(getMemberNum(Arrays.asList("1_8_180503191514","1_8_180504013649","1_59_180829224224","1_41_180829211729")));;
     }
 }

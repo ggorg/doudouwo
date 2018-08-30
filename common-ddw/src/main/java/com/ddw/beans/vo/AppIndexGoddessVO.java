@@ -10,7 +10,8 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexGoddessVO implements Serializable{
 
-    private static final long serialVersionUID = -8407930715107323949L;
+
+    private static final long serialVersionUID = -5332689512101751207L;
     @ApiModelProperty(name="id",value="女神id,对应会员表id",example="1")
     private Integer id;
     @ApiModelProperty(name="nickName",value="昵称",example="女神")
@@ -35,6 +36,17 @@ public class AppIndexGoddessVO implements Serializable{
     private Integer fans;
     @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
     private boolean followed;
+
+    @ApiModelProperty(name="viewingNum",value="观看人数",example="1")
+    private Integer viewingNum;
+
+    public Integer getViewingNum() {
+        return viewingNum;
+    }
+
+    public void setViewingNum(Integer viewingNum) {
+        this.viewingNum = viewingNum;
+    }
 
     public Integer getId() {
         return id;

@@ -105,7 +105,7 @@ public class LiveRadioClientService  extends CommonService{
         condition.put("endDate,>=",new Date());
         condition.put("userid,!=",TokenUtil.getUserId(token));
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label,ct0.id userId",page.getStartRow(),page.getEndRow(),condition,cb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label,ct0.id userId,t1.maxGroupNum",page.getStartRow(),page.getEndRow(),condition,cb);
         List<Map> lists=this.getCommonMapper().selectObjects(csb);
         LiveRadioListVO vo=null;
         List newList=new ArrayList();
@@ -116,6 +116,7 @@ public class LiveRadioClientService  extends CommonService{
             vo.setAge("20岁");
             vo.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
             vo.setBackImgUrl(userInfoService.getPhotograph((Integer) o.get("userId")));
+            vo.setViewingNum((Integer)o.get("maxGroupNum"));
             newList.add(vo);
         }
         lists.clear();
@@ -159,7 +160,13 @@ public class LiveRadioClientService  extends CommonService{
                 svo.setAttention(1);
             }
 
-
+            Integer pv=(Integer) CacheUtil.get("publicCache","livePv-"+(String)po.get("groupId"));
+            if(pv==null){
+                pv=1;
+            }else{
+                pv++;
+            }
+            CacheUtil.put("publicCache","livePv-"+(String)po.get("groupId"),pv);
             return new ResponseApiVO(1,"成功",svo);
         }
         return new ResponseApiVO(-2,"选择直播房间",null);

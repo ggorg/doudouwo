@@ -37,6 +37,18 @@ public class LiveRadioListVO {
     @ApiModelProperty(name="backImgUrl",value="背景图",example="http://xxxx")
     private String backImgUrl;
 
+
+    @ApiModelProperty(name="viewingNum",value="观看人数",example="1")
+    private Integer viewingNum;
+
+    public Integer getViewingNum() {
+        return viewingNum;
+    }
+
+    public void setViewingNum(Integer viewingNum) {
+        this.viewingNum = viewingNum;
+    }
+
     public String getBackImgUrl() {
         return backImgUrl;
     }

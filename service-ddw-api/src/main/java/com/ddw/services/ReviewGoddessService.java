@@ -232,9 +232,15 @@ public class ReviewGoddessService extends CommonService {
      */
     public List<AppIndexGoddessVO> goddessList(Integer userId,PageDTO page)throws Exception{
         List<Map> list = liveRadioClientService.getLiveRadioList(userId, page);
-        List<Integer> userIdList = new ArrayList<>();
+        List<Integer> userIdList =null;
+        Map<Integer,Integer> userIdMap = new HashMap<>();
         for(Map map : list){
-            userIdList.add((Integer) map.get("userId"));
+            userIdMap.put((Integer) map.get("userId"),map.get("maxGroupNum")==null?1:(Integer) map.get("maxGroupNum"));
+
+            //userIdList.add((Integer) map.get("userId"));
+        }
+        if(userIdMap.size()>0){
+            userIdList = new ArrayList<>(userIdMap.keySet());
         }
         Integer pageNum = page.getPageNum();
         Integer pageSize = page.getPageSize();
@@ -248,6 +254,7 @@ public class ReviewGoddessService extends CommonService {
                 List<AppIndexGoddessVO> appIndexGoddess2 = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
                 appIndexGoddess.addAll(appIndexGoddess2);
             }
+            appIndexGoddess.forEach(a->a.setViewingNum(userIdMap.get(a.getId())));
         }else{
             appIndexGoddess = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
         }

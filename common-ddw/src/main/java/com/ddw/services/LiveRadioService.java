@@ -112,6 +112,7 @@ public class LiveRadioService extends CommonService{
                     IMApiUtil.setDdwGlobals(ddwGlobals);
                     boolean flag=IMApiUtil.destoryGroup(streamId.replace(LiveRadioConstant.BIZID+"_",""));
                     if(flag){
+                        CacheUtil.delete("publicCache","livePv-"+streamId.replaceFirst("[0-9]+_",""));
                         return new ResponseVO(1,"关闭直播成功",null);
                     }else{
                         return new ResponseVO(-2,"关闭直播失败",null);
@@ -139,6 +140,7 @@ public class LiveRadioService extends CommonService{
                 AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
                 if(appIndexGoddessVO.getId() == userId || appIndexGoddessVO.getId() .equals( userId)){
                     appIndexGoddessVO.setLiveRadioFlag(flag);
+                    appIndexGoddessVO.setViewingNum(null);
                 }
             }
            // appIndexGoddessList.
