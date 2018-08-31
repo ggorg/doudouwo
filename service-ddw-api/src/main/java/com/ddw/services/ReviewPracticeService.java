@@ -405,6 +405,16 @@ public class ReviewPracticeService extends CommonService {
     }
 
     /**
+     * 代练动态,根据订单更新时间倒序
+     * @param practiceId
+     * @return
+     * @throws Exception
+     */
+    public List getPracticeDynamic(Integer practiceId)throws Exception{
+        return practiceMapper.getPracticeDynamic(practiceId);
+    }
+
+    /**
      * 代练分页按时间倒序展示订单
      * @param practiceId
      * @param page
