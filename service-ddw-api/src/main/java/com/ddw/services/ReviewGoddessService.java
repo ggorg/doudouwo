@@ -6,6 +6,9 @@ import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.dao.GoddessMapper;
 import com.ddw.dao.UserInfoMapper;
 import com.ddw.enums.*;
+import com.ddw.token.TokenUtil;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
@@ -247,7 +250,7 @@ public class ReviewGoddessService extends CommonService {
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer end = pageSize;
         List<AppIndexGoddessVO> appIndexGoddess = new ArrayList<AppIndexGoddessVO>();
-        if(userIdList.size() > 0){
+        if(userIdList!=null && userIdList.size()>0){
             appIndexGoddess = goddessMapper.getGoddessListByIds(userIdList,userId,start,end);
             if(page.getPageSize()-appIndexGoddess.size()>0){
                 end = page.getPageSize()-appIndexGoddess.size();
@@ -259,5 +262,37 @@ public class ReviewGoddessService extends CommonService {
             appIndexGoddess = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
         }
         return appIndexGoddess;
+    }
+    public ResponseApiVO getGoddessFansAndContr(String token,Integer goddessCode)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("goddessId",goddessCode);
+        Long fansCount = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
+
+        searchCondition = new HashMap<>();
+        searchCondition.put("userId",goddessCode);
+        Long attenCount = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
+
+        searchCondition=new HashMap();
+        searchCondition.put("userId", TokenUtil.getUserId(token));
+        searchCondition.put("goddessId",goddessCode);
+        Map ower=this.commonObjectBySearchCondition("ddw_my_attention",searchCondition);
+
+        searchCondition=new HashMap();
+        searchCondition.put("incomeUserId",goddessCode);
+        searchCondition.put("type",IncomeTypeEnum.IncomeType1.getCode());
+        Long sum = this.commonSumByBySingleSearchMap("ddw_consume_ranking_list","consumePrice",searchCondition);
+
+        Map userMap=this.commonObjectBySingleParam("ddw_userinfo","id",goddessCode);
+        GoddessInfoVO vo=new GoddessInfoVO();
+        vo.setAttentionNum(attenCount==null?0:attenCount.intValue());
+        vo.setFansNum(fansCount==null?0:fansCount.intValue());
+        vo.setContributeNum(sum==null?0:sum.intValue());
+        vo.setName(userMap.get("nickName").toString());
+        vo.setHeadImg(userMap.get("headImgUrl").toString());
+        vo.setIsAttenion(ower==null?0:1);
+        return new ResponseApiVO(1,"成功",vo);
+
+
+
     }
 }

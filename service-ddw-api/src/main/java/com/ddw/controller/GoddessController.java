@@ -2,8 +2,7 @@ package com.ddw.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.ddw.beans.PageDTO;
-import com.ddw.beans.UserInfoVO;
+import com.ddw.beans.*;
 import com.ddw.services.ReviewGoddessService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
@@ -60,6 +59,17 @@ public class GoddessController {
         }catch (Exception e){
             logger.error("GoddessController->query",e);
             return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "女神（关注，粉丝，贡献）查询")
+    @PostMapping("/query/afc/{token}")
+    public ResponseApiVO<GoddessInfoVO> queryAfc(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoddessCodeDTO dto){
+        try {
+            return this.reviewGoddessService.getGoddessFansAndContr(token,dto.getGoddessCode());
+        }catch (Exception e){
+            logger.error("GoddessController->queryAfc",e);
+            return new ResponseApiVO(-1,"查询失败",null);
         }
     }
 
