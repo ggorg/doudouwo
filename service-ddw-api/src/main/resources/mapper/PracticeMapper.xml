@@ -81,4 +81,19 @@
         limit #{start},#{end}
     </select>
 
+    <select id="getPracticeDynamic" parameterType="int" resultType="java.util.HashMap">
+        SELECT
+        t1.gameId,ct1.gameName,t1.rankId,ct2.rank,t1.realityRankId,ct3.rank as realityRank,IFNULL(ct4.star,0)star
+        FROM
+        ddw_practice_order t1
+        INNER JOIN ddw_game ct1 ON ct1.id = t1.gameId
+        INNER JOIN ddw_rank ct2 ON ct2.id = t1.rankId
+        INNER JOIN ddw_rank ct3 ON ct3.id = t1.targetRankId
+        LEFT JOIN ddw_practice_evaluation ct4 ON ct4.practiceId = t1.practiceId
+        WHERE
+        t1.practiceId = #{practiceId}
+        AND t1.payState = 1
+        ORDER BY t1.updateTime desc
+    </select>
+
 </mapper>
