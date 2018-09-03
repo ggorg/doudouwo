@@ -7,6 +7,8 @@ import com.ddw.services.UserInfoService;
 import com.ddw.services.WalletService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.MsgUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
 import io.swagger.annotations.Api;
@@ -56,7 +58,7 @@ public class UserController {
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
                     userVO.setInviteCode(userInfoService.createInviteCode(userVO.getId()));
-//                    userInfoService.setLiveRadioFlag(userVO,token);
+                    userInfoService.setLiveRadioFlag(userVO,token);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
                     userInfoService.update(userVO);//更新邀请码
@@ -175,6 +177,35 @@ public class UserController {
             return userInfoService.getPhotograph(TokenUtil.getUserId(token),pageDTO.getPageNum(),pageDTO.getPageSize());
         }catch (Exception e){
             logger.error("UserController->getPhotograph",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @ApiOperation(value = "获取手机验证码")
+    @PostMapping("/sendVaildCode/{token}")
+    public ResponseVO sendVaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneDTO userValidPhoneDTO){
+        try {
+            MsgUtil.sendVaildCode(userValidPhoneDTO.getTelphone());
+            return new ResponseVO(1,"成功",null);
+        }catch (Exception e){
+            logger.error("UserController->sendVaildCode",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @ApiOperation(value = "手机短信认证")
+    @PostMapping("/vaildCode/{token}")
+    public ResponseVO vaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
+        try {
+            String code = (String) CacheUtil.get("validCodeCache","telphone-"+userValidPhoneCodeDTO.getTelphone());
+            if(code != null && code.equals(userValidPhoneCodeDTO.getCode())){
+                userInfoService.updatePhone(TokenUtil.getUserId(token),userValidPhoneCodeDTO.getTelphone());
+                return new ResponseVO(1,"成功",null);
+            }else {
+                return new ResponseVO(-2,"失败,验证码不对",null);
+            }
+        }catch (Exception e){
+            logger.error("UserController->vaildCode",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }

@@ -87,6 +87,14 @@ public class UserInfoService extends CommonService {
         return this.commonUpdateBySingleSearchParam("ddw_userinfo",updatePoMap,"id",userInfoPO.getId());
     }
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updatePhone(Integer id,String phone)throws Exception{
+        Map setParams= new HashMap<>();
+        setParams.put("phone",phone);
+        setParams.put("updateTime",new Date());
+        return this.commonUpdateBySingleSearchParam("ddw_userinfo",setParams,"id",id);
+    }
+
     public UserInfoVO query(Integer id)throws Exception{
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",id);
@@ -369,4 +377,5 @@ public class UserInfoService extends CommonService {
     public String createInviteCode(Integer id){
         return RC4.encry_RC4_string(String.format("%07d",id), UUID.randomUUID().toString());
     }
+
 }
