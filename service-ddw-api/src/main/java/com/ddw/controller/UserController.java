@@ -8,7 +8,6 @@ import com.ddw.services.WalletService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.MsgUtil;
-import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
 import io.swagger.annotations.Api;
@@ -58,7 +57,7 @@ public class UserController {
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
                     userVO.setInviteCode(userInfoService.createInviteCode(userVO.getId()));
-                    userInfoService.setLiveRadioFlag(userVO,token);
+                    userVO.setLiveRadioFlag(0);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
                     userInfoService.update(userVO);//更新邀请码
@@ -197,8 +196,7 @@ public class UserController {
     @PostMapping("/vaildCode/{token}")
     public ResponseVO vaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
         try {
-            String code = (String) CacheUtil.get("validCodeCache","telphone-"+userValidPhoneCodeDTO.getTelphone());
-            if(code != null && code.equals(userValidPhoneCodeDTO.getCode())){
+            if(MsgUtil.verifyCode(userValidPhoneCodeDTO.getTelphone(),userValidPhoneCodeDTO.getCode())){
                 userInfoService.updatePhone(TokenUtil.getUserId(token),userValidPhoneCodeDTO.getTelphone());
                 return new ResponseVO(1,"成功",null);
             }else {

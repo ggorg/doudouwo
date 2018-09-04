@@ -197,7 +197,7 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "提交结算申请,用户或者代练都可提交结算")
+    @ApiOperation(value = "提交结算申请,只有用户可提交结算")
     @PostMapping("/settlement/{token}")
     public ResponseApiVO<PracticeSettlementVO> settlement(@PathVariable String token,
                                                @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeSettlementDTO practiceSettlementDTO){
@@ -260,6 +260,9 @@ public class PracticeController {
         try {
             if(reviewPracticeService.countPracticeGame(TokenUtil.getUserId(token))>0){
                 return new ResponseVO(-2,"不允许同时发布多个任务",null);
+            }
+            if(reviewPracticeService.countPracticeOrder(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId())>0){
+                return new ResponseVO(-3,"请先结束订单再发布",null);
             }
             CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
             return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),1);

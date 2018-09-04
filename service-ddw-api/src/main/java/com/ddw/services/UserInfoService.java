@@ -146,7 +146,7 @@ public class UserInfoService extends CommonService {
                 userInfoVO.setRealnameFlag(1);
             }
             //女神状态
-            if(userInfoVO.getGoddessFlag() !=null && userInfoVO.getGoddessFlag() != 1){
+            if(userInfoVO.getGoddessFlag() !=null && userInfoVO.getGoddessFlag().equals("1")){
                 //判断审核缓存是否存在
                 if(CacheUtil.get("review","goddess"+userInfoVO.getId()) == null){
                     Map condition1=new HashMap();
@@ -165,7 +165,7 @@ public class UserInfoService extends CommonService {
                 }
             }
             //代练状态
-            if(userInfoVO.getPracticeFlag() !=null && userInfoVO.getPracticeFlag() != 1){
+            if(userInfoVO.getPracticeFlag() !=null && userInfoVO.getPracticeFlag().equals("1")){
                 //判断审核缓存是否存在
                 if(CacheUtil.get("review","practice"+userInfoVO.getId()) == null){
                     Map condition1=new HashMap();
