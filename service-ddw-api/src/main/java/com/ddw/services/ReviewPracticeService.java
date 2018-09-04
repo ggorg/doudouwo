@@ -50,6 +50,10 @@ public class ReviewPracticeService extends CommonService {
     @Autowired
     private GameService gameService;
     @Autowired
+    protected IncomeService incomeService;
+    @Autowired
+    protected BaseConsumeRankingListService baseConsumeRankingListService;
+    @Autowired
     private PracticeMapper practiceMapper;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -333,6 +337,21 @@ public class ReviewPracticeService extends CommonService {
     }
 
     /**
+     * 查询未结束订单不允许发布任务
+     * @param practiceId
+     * @param gameId
+     * @return
+     * @throws Exception
+     */
+    public long countPracticeOrder(Integer practiceId,Integer gameId)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("practiceId",practiceId);
+        searchCondition.put("gameId",gameId);
+        searchCondition.put("status",1);
+        return super.commonCountBySearchCondition("ddw_practice_order",searchCondition);
+    }
+
+    /**
      * 代练与游戏关联表
      * @param practiceId
      * @param gameId
@@ -404,12 +423,6 @@ public class ReviewPracticeService extends CommonService {
         return super.commonInsert("ddw_practice_order",practiceOrderPO);
     }
 
-    /**
-     * 代练动态,根据订单更新时间倒序
-     * @param practiceId
-     * @return
-     * @throws Exception
-     */
     public List getPracticeDynamic(Integer practiceId)throws Exception{
         return practiceMapper.getPracticeDynamic(practiceId);
     }
@@ -429,7 +442,7 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
         CommonChildBean cb4=new CommonChildBean("ddw_rank","id","targetRankId",null);
         CommonChildBean cb5=new CommonChildBean("ddw_store","id","storeId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct0.openid,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
         json.put("list",p.getResult());
@@ -447,13 +460,12 @@ public class ReviewPracticeService extends CommonService {
     public ResponseVO getOrderUserList(Integer userId,PageDTO page)throws Exception{
         Map condtion = new HashMap<>();
         condtion.put("userId",userId);
-        CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
+        CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","practiceId",null);
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
         CommonChildBean cb4=new CommonChildBean("ddw_rank","id","targetRankId",null);
         CommonChildBean cb5=new CommonChildBean("ddw_store","id","storeId",null);
-        CommonChildBean cb6=new CommonChildBean("ddw_userinfo","id","practiceId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName,ct5.nickName pnickName,ct5.headImgUrl pheadImgUrl",null,null,condtion,cb1,cb2,cb3,cb4,cb5,cb6);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct0.openid,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
         json.put("list",p.getResult());
@@ -534,6 +546,11 @@ public class ReviewPracticeService extends CommonService {
         if(practiceOrderPO.getPayState() != 1){
             practiceOrderPO.setPayState(2);
         }
+        //计算收益
+        this.incomeService.commonIncome(practiceOrderPO.getPracticeId(),payMoney, IncomeTypeEnum.IncomeType2, OrderTypeEnum.OrderType10,practiceOrderPO.getOrderNo());
+        this.baseConsumeRankingListService.save(practiceOrderPO.getUserId(),practiceOrderPO.getPracticeId(),payMoney,IncomeTypeEnum.IncomeType2);
+        //更新状态为已计算收益
+        practiceOrderPO.setIncomeState(1);
         Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
         //结算后,修改代练状态为关闭

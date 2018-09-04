@@ -197,7 +197,7 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "提交结算申请,用户或者代练都可提交结算")
+    @ApiOperation(value = "提交结算申请,只有用户可提交结算")
     @PostMapping("/settlement/{token}")
     public ResponseApiVO<PracticeSettlementVO> settlement(@PathVariable String token,
                                                @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeSettlementDTO practiceSettlementDTO){
@@ -261,6 +261,9 @@ public class PracticeController {
             if(reviewPracticeService.countPracticeGame(TokenUtil.getUserId(token))>0){
                 return new ResponseVO(-2,"不允许同时发布多个任务",null);
             }
+//            if(reviewPracticeService.countPracticeOrder(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId())>0){
+//                return new ResponseVO(-3,"请先结束订单再发布",null);
+//            }
             CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
             return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),1);
         }catch (Exception e){
@@ -276,11 +279,11 @@ public class PracticeController {
         try {
             PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrderInProgress(TokenUtil.getUserId(token));
             //判断无接单,可取消发布
-            if (practiceOrderPO == null) {
+//            if (practiceOrderPO == null) {
                 return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0);
-            }else {
-                return new ResponseVO(-2,"有正在进行的订单,不可取消,请先结算",null);
-            }
+//            }else {
+//                return new ResponseVO(-2,"有正在进行的订单,不可取消,请先结算",null);
+//            }
         }catch (Exception e){
             logger.error("PracticeController->cancle",e);
             return new ResponseVO(-1,"提交失败",null);

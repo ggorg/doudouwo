@@ -279,7 +279,7 @@ public class TimerTaskService extends CommonService {
     }
 
     /**
-     * 每小时查询订单计算收益
+     * 每小时查询超过24小时订单计算收益
      */
     @Scheduled(cron = "0 0 */1 * * *")
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -287,6 +287,7 @@ public class TimerTaskService extends CommonService {
         Map<String,Object> searchCondition = new HashMap<>();
         searchCondition.put("payState",1);//已支付
         searchCondition.put("incomeState",0);//未计算收益
+        searchCondition.put("updateTime,>",new Date(new Date().getTime() - 24*60*60*1000));
         try {
             List<Map> list = this.commonObjectsBySearchCondition("ddw_practice_order",searchCondition);
             Map setParams = new HashMap<>();
