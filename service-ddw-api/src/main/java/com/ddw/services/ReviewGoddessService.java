@@ -13,6 +13,9 @@ import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -41,6 +44,12 @@ public class ReviewGoddessService extends CommonService {
     private GoddessMapper goddessMapper;
     @Autowired
     private ReviewService reviewService;
+
+    @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
+    private BasePhotoService photoService;
 
 
     public GoddessPO getAppointment(Integer userid,Integer storeId)throws Exception{
@@ -237,8 +246,10 @@ public class ReviewGoddessService extends CommonService {
         List<Map> list = liveRadioClientService.getLiveRadioList(userId, page);
         List<Integer> userIdList =null;
         Map<Integer,Integer> userIdMap = new HashMap<>();
+        Map<Integer,Integer> userIdLiveCodeMap = new HashMap<>();
         for(Map map : list){
             userIdMap.put((Integer) map.get("userId"),map.get("maxGroupNum")==null?1:(Integer) map.get("maxGroupNum"));
+            userIdLiveCodeMap.put((Integer) map.get("userId"),(Integer) map.get("id"));
 
             //userIdList.add((Integer) map.get("userId"));
         }
@@ -257,9 +268,15 @@ public class ReviewGoddessService extends CommonService {
                 List<AppIndexGoddessVO> appIndexGoddess2 = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
                 appIndexGoddess.addAll(appIndexGoddess2);
             }
-            appIndexGoddess.forEach(a->a.setViewingNum(userIdMap.get(a.getId())));
+            appIndexGoddess.forEach(a->{
+                a.setViewingNum(userIdMap.get(a.getId()));
+                a.setCode(userIdLiveCodeMap.get(a.getId()));
+            });
         }else{
             appIndexGoddess = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
+        }
+        if(appIndexGoddess!=null){
+            appIndexGoddess.forEach(a->a.setHeadImgUrl(photoService.getPhotograph(a.getId())));
         }
         return appIndexGoddess;
     }
@@ -293,6 +310,28 @@ public class ReviewGoddessService extends CommonService {
         return new ResponseApiVO(1,"成功",vo);
 
 
-
     }
+    public ResponseApiVO getDynamics(String token,Integer dynRoleType,DynamicsDTO pageNoDTO)throws Exception{
+        if(StringUtils.isBlank(DynamicsRoleTypeEnum.getName(dynRoleType))){
+            return new ResponseApiVO(-2,"类型有误",null);
+        }
+        if(pageNoDTO.getCode()==null || pageNoDTO.getCode()<1){
+            return new ResponseApiVO(-2,"女神code有误",null);
+        }
+        Map searchMap=new HashMap();
+        searchMap.put("userId",pageNoDTO.getCode());
+        searchMap.put("roleType",dynRoleType);
+        List<Map> list=this.commonList("ddw_dynamics","createTime desc",pageNoDTO.getPageNo()==null?1:pageNoDTO.getPageNo(),10,searchMap);
+        if(list!=null && list.size()>0){
+            list.forEach(a->{
+                a.remove("id");
+                a.remove("roleType");
+                a.remove("userId");
+                a.put("createTime",DateFormatUtils.format((Date)a.get("createTime"),"yyyy-MM-dd HH:mm"));
+            });
+            return new ResponseApiVO(1,"成功",new ListVO<>(list));
+        }
+        return new ResponseApiVO(1,"成功", new ListVO<>(new ArrayList<>()));
+    }
+
 }

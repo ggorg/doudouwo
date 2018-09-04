@@ -4,6 +4,7 @@ import com.ApiApplication;
 import com.ddw.beans.CodeDTO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.services.LiveRadioClientService;
+import com.ddw.services.LiveRadioService;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
 import org.junit.Test;
@@ -19,6 +20,9 @@ public class LiveRadioTest {
     @Autowired
     private LiveRadioClientService liveRadioClientService;
 
+    @Autowired
+    private LiveRadioService liveRadioService;
+
     @Test
     public void selectLiveRadioTest()throws Exception{
         CodeDTO codeDTO=new CodeDTO();
@@ -29,5 +33,9 @@ public class LiveRadioTest {
         ResponseApiVO vo=liveRadioClientService.selectLiveRadio(codeDTO,token);
         System.out.println(vo);
        // System.out.println(vo..getData());
+    }
+    @Test
+    public void saveDyn()throws Exception{
+        liveRadioService.saveGoddessLiveDyn("23115_1_8_180830214823");
     }
 }

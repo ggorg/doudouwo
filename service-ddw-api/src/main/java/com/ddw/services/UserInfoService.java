@@ -215,23 +215,7 @@ public class UserInfoService extends CommonService {
             }
         }
     }
-    public String getPhotograph(Integer userId) {
-        String imgUrl = (String) CacheUtil.get("commonCache", "goddess-photo-" + userId);
-        if (StringUtils.isBlank(imgUrl)) {
-            Map searchMap = new HashMap();
-            searchMap.put("userId", userId);
-            List<Map> list = this.commonList("ddw_photograph", "createTime desc", 1, 1, searchMap);
-            if (list != null && !list.isEmpty()) {
-                String imgUrlVo = (String) list.get(0).get("imgUrl");
-                CacheUtil.put("commonCache", "goddess-photo-" + userId, imgUrlVo);
-                return imgUrlVo;
-            }
-        }else{
-            return imgUrl;
-        }
-        return "";
 
-    }
 
     public void resetCacheGoddessPhoto(Integer userId,String imgUrlVo,boolean isDelete){
         if(isDelete){

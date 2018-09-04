@@ -31,11 +31,12 @@ public class LiveRadioClientService  extends CommonService{
     @Autowired
     private ReviewGoddessService reviewGoddessService;
 
-    @Autowired
-    private UserInfoService userInfoService;
 
     @Autowired
     private MyAttentionService myAttentionService;
+
+    @Autowired
+    private BasePhotoService basePhotoService;
 
 
     public ResponseApiVO toLiveRadio(String token)throws Exception{
@@ -115,7 +116,7 @@ public class LiveRadioClientService  extends CommonService{
             vo.setCity(city);
             vo.setAge("20岁");
             vo.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
-            vo.setBackImgUrl(userInfoService.getPhotograph((Integer) o.get("userId")));
+            vo.setBackImgUrl(basePhotoService.getPhotograph((Integer) o.get("userId")));
             vo.setViewingNum((Integer)o.get("maxGroupNum"));
             newList.add(vo);
         }

@@ -3,6 +3,7 @@ package com.ddw.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
+import com.ddw.enums.DynamicsRoleTypeEnum;
 import com.ddw.services.ReviewGoddessService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
@@ -50,11 +51,23 @@ public class GoddessController {
 
 
     @Token
-    @ApiOperation(value = "女神信息查询")
+    @ApiOperation(value = "女神信息查询(女神)")
     @PostMapping("/query/{token}")
     public ResponseVO query(@PathVariable String token){
         try {
             UserInfoVO user = userInfoService.query(TokenUtil.getUserId(token));
+            return new ResponseVO(1,"成功",user);
+        }catch (Exception e){
+            logger.error("GoddessController->query",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "女神信息查询(用户)")
+    @PostMapping("/queryGoddess/user/{token}")
+    public ResponseVO queryGoddess(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO dto){
+        try {
+            UserInfoVO user = userInfoService.query(dto.getCode());
             return new ResponseVO(1,"成功",user);
         }catch (Exception e){
             logger.error("GoddessController->query",e);
@@ -70,6 +83,17 @@ public class GoddessController {
         }catch (Exception e){
             logger.error("GoddessController->queryAfc",e);
             return new ResponseApiVO(-1,"查询失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "女神动态")
+    @PostMapping("/query/dynamics/{token}")
+    public ResponseApiVO<DynamicsVO> queryDynamics(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)DynamicsDTO dto){
+        try {
+            return this.reviewGoddessService.getDynamics(token, DynamicsRoleTypeEnum.RoleType1.getCode(),dto);
+        }catch (Exception e){
+            logger.error("GoddessController->queryDynamics",e);
+            return new ResponseApiVO(-1,"女神动态",null);
         }
     }
 
