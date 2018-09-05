@@ -24,6 +24,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,6 +40,7 @@ import java.util.*;
 @Service
 @Transactional(readOnly = true)
 public class ReviewPracticeService extends CommonService {
+    private final Logger logger = Logger.getLogger(ReviewPracticeService.class);
     @Autowired
     private FileService fileService;
     @Autowired
@@ -95,6 +97,7 @@ public class ReviewPracticeService extends CommonService {
             //插入代练认证审核表
             if(responseApiVO.getReCode()>0){
                 ReviewPracticePO reviewPracticePO = new ReviewPracticePO();
+                logger.info("申请成为代练apply->UserId->"+id+"->storeId->"+storeId+"->userName->"+userName+"->gameId->"+gameId+"->rankId->"+rankId);
                 reviewPracticePO.setUserId(Integer.valueOf(id));
                 reviewPracticePO.setStoreId(storeId);
                 reviewPracticePO.setDrBusinessCode(bussinessCode);

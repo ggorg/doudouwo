@@ -11,11 +11,13 @@ import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CacheService;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -332,6 +334,79 @@ public class ReviewGoddessService extends CommonService {
             return new ResponseApiVO(1,"成功",new ListVO<>(list));
         }
         return new ResponseApiVO(1,"成功", new ListVO<>(new ArrayList<>()));
+    }
+
+    /**
+     * 插入评价
+     * @param goddessEvaluationDetailDTO
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO insertGoddessEvaluationDetail(GoddessEvaluationDetailDTO goddessEvaluationDetailDTO)throws Exception{
+        GoddessEvaluationDetailPO goddessEvaluationDetailPO = new GoddessEvaluationDetailPO();
+        PropertyUtils.copyProperties(goddessEvaluationDetailPO,goddessEvaluationDetailDTO);
+        goddessEvaluationDetailPO.setCreateTime(new Date());
+        return super.commonInsert("ddw_goddess_evaluation_detail",goddessEvaluationDetailPO);
+    }
+
+    /**
+     * 插入女神平均评分
+     * @param goddessEvaluationDetailDTO
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO insertGoddessEvaluation(GoddessEvaluationDetailDTO goddessEvaluationDetailDTO)throws Exception{
+        GoddessEvaluationPO goddessEvaluationPO = super.commonObjectBySingleParam("ddw_goddess_evaluation","goddessId",goddessEvaluationDetailDTO.getGoddessId(),GoddessEvaluationPO.class);
+        ResponseVO responseVO = new ResponseVO();
+        if (goddessEvaluationPO != null) {
+            int allStar = goddessEvaluationPO.getAllStar();
+            int countEvaluation = goddessEvaluationPO.getCountEvaluation();
+            Map params= BeanToMapUtil.beanToMap(goddessEvaluationPO);
+            params.put("countEvaluation",countEvaluation+1);
+            params.put("allStar",allStar+goddessEvaluationDetailDTO.getStar());
+            params.put("star",Math.round(goddessEvaluationPO.getAllStar()/goddessEvaluationPO.getCountEvaluation()));
+            params.put("updateTime",new Date());
+            Map searchCondition = new HashMap<>();
+            searchCondition.put("goddessId",goddessEvaluationDetailDTO.getGoddessId());
+            responseVO = super.commonUpdateByParams("ddw_goddess_evaluation",params,searchCondition);
+        }else{
+            goddessEvaluationPO = new GoddessEvaluationPO();
+            goddessEvaluationPO.setGoddessId(goddessEvaluationDetailDTO.getGoddessId());
+            goddessEvaluationPO.setAllStar(goddessEvaluationDetailDTO.getStar());
+            goddessEvaluationPO.setCountEvaluation(1);
+            goddessEvaluationPO.setStar(Math.round(goddessEvaluationDetailDTO.getStar()));
+            goddessEvaluationPO.setCreateTime(new Date());
+            responseVO = super.commonInsert("ddw_goddess_evaluation",goddessEvaluationPO);
+        }
+        return responseVO;
+    }
+
+    /**
+     * 查询女神平均评分
+     * @param goddessId 女神编号
+     * @return
+     * @throws Exception
+     */
+    public GoddessEvaluationPO getEvaluation(Integer goddessId)throws Exception {
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("goddessId", goddessId);
+        return super.commonObjectBySearchCondition("ddw_goddess_evaluation", searchCondition, GoddessEvaluationPO.class);
+    }
+
+    /**
+     * 查看女神详细评价
+     * @param goddessEvaluationDetailListDTO
+     * @return
+     * @throws Exception
+     */
+    public Page getGoddessEvaluationDetailList(GoddessEvaluationDetailListDTO goddessEvaluationDetailListDTO)throws Exception{
+        Map condtion = new HashMap<>();
+        condtion.put("goddessId",goddessEvaluationDetailListDTO.getGoddessId());
+        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_evaluation_detail","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb);
+        return this.commonPage(goddessEvaluationDetailListDTO.getPage().getPageNum(),goddessEvaluationDetailListDTO.getPage().getPageSize(),csb);
     }
 
 }
