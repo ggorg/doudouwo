@@ -111,4 +111,33 @@ public class GoddessController {
         }
     }
 
+    @ApiOperation(value = "评价")
+    @PostMapping("/evaluation/{token}")
+    public ResponseVO evaluation(@PathVariable String token,
+                                 @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) GoddessEvaluationDetailDTO goddessEvaluationDetailDTO){
+        try {
+            //写入ddw_goddess_evaluation_detail女神评分明细表,以及更新ddw_goddess_evaluation女神平均评分表
+            ResponseVO responseVO = reviewGoddessService.insertGoddessEvaluationDetail(goddessEvaluationDetailDTO);
+            if(responseVO.getReCode() == 1){
+                reviewGoddessService.insertGoddessEvaluation(goddessEvaluationDetailDTO);
+            }
+            return responseVO;
+        }catch (Exception e){
+            logger.error("GoddessController->evaluation",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @Token
+    @ApiOperation(value = "女神评价详情")
+    @PostMapping("/evaluationDetailList/{token}")
+    public ResponseVO getGoddessEvaluationDetailList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoddessEvaluationDetailListDTO goddessEvaluationDetailListDTO){
+        try {
+            return new ResponseVO(1,"成功",reviewGoddessService.getGoddessEvaluationDetailList(goddessEvaluationDetailListDTO));
+        }catch (Exception e){
+            logger.error("GoddessController->getGoddessEvaluationDetailList",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
 }

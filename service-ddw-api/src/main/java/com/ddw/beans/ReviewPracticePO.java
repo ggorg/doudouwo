@@ -6,26 +6,25 @@ import java.util.Date;
  * Created by Jacky on 2018/5/12.
  */
 public class ReviewPracticePO {
-    private int id;
+    private Integer id;
     private String drBusinessCode;
-    private int userId;
-    private int storeId;
-    private int gameId;
-    private int rankId;
+    private Integer userId;
+    private Integer storeId;
+    private Integer gameId;
+    private Integer rankId;
     private String picUrl1;
     private String picUrl2;
     private String picUrl3;
-    private int status;
+    private Integer status;
     private Date createTime;
-
     private Date updateTime;
 
-    public Date getCreateTime() {
-        return createTime;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getDrBusinessCode() {
@@ -36,20 +35,36 @@ public class ReviewPracticePO {
         this.drBusinessCode = drBusinessCode;
     }
 
-    public int getGameId() {
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Integer storeId) {
+        this.storeId = storeId;
+    }
+
+    public Integer getGameId() {
         return gameId;
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 
-    public int getId() {
-        return id;
+    public Integer getRankId() {
+        return rankId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setRankId(Integer rankId) {
+        this.rankId = rankId;
     }
 
     public String getPicUrl1() {
@@ -76,28 +91,20 @@ public class ReviewPracticePO {
         this.picUrl3 = picUrl3;
     }
 
-    public int getRankId() {
-        return rankId;
-    }
-
-    public void setRankId(int rankId) {
-        this.rankId = rankId;
-    }
-
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public int getStoreId() {
-        return storeId;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setStoreId(int storeId) {
-        this.storeId = storeId;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public Date getUpdateTime() {
@@ -106,13 +113,5 @@ public class ReviewPracticePO {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 }
