@@ -64,7 +64,7 @@ public class TimerTaskService extends CommonService {
         if(backRoomMap==null){
             backRoomMap=new HashMap();
         }
-        if(list!=null){
+        if(list!=null && !list.isEmpty() && list.size()>0){
             String streamId=null;
             Integer num=null;
             //计算pv和观看人数
