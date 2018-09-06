@@ -22,6 +22,8 @@ public class MsgUtil {
     private final static Integer bid_id=176000;
     //实名验证ID
     private final static Integer cert_id=175991;
+    //找回支付密码
+    private final static Integer paypwd_id=0;
 
     /**
      * 您申请的实名认证短信验证码{1}
@@ -48,10 +50,7 @@ public class MsgUtil {
         if(StringUtils.isBlank(string)){
             return false;
         }
-        if(string.equals(validCode)){
-            return true;
-        }
-        return false;
+        return string.equals(validCode);
     }
 
     /**
@@ -73,6 +72,17 @@ public class MsgUtil {
     public static void  sendBidMsg(String telphone,String content)throws Exception{
         commonModel(bid_id,telphone,content);
     }
+
+    /**
+     *
+     * @param telphone
+     * @param content
+     * @throws Exception
+     */
+    public static void  sendPayPwdMsg(String telphone,String content)throws Exception{
+        commonModel(paypwd_id,telphone,content);
+    }
+
     public static void commonModel(Integer templateId,String telphone,String content)throws Exception{
         SmsSingleSender sender=new SmsSingleSender(MsgConstant.APP_ID,MsgConstant.APP_KEY);
         ArrayList list=new ArrayList();

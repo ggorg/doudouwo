@@ -120,6 +120,10 @@ public class UserInfoService extends CommonService {
         return this.setFlag(list);
     }
 
+    public UserInfoPO querySimple(Integer id)throws Exception{
+        return this.commonObjectBySingleParam("ddw_my_wallet","userId",id, UserInfoPO.class);
+    }
+
     public UserInfoVO setFlag(List list) throws Exception{
         if(list!=null && list.size()>0){
             UserInfoVO userInfoVO=new UserInfoVO();

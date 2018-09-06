@@ -200,6 +200,20 @@ public class WalletController {
     }
 
     @Token
+    @ApiOperation(value = "忘记钱包密码",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/forgetPayPwd/{token}")
+    @ResponseBody
+    public ResponseApiVO forgetPayPwd(@PathVariable String token){
+        try {
+            return this.walletService.forgetPayPwd(TokenUtil.getUserId(token));
+        }catch (Exception e){
+            logger.error("WalletController-updatePayPwd-》修改钱包支付密码-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"失败",null);
+
+    }
+
+    @Token
     @ApiOperation(value = "校验钱包密码",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/verifyPayPwd/{token}")
     @ResponseBody
@@ -207,7 +221,7 @@ public class WalletController {
         try {
             ResponseApiVO responseApiVO = this.walletService.verifyPayPwd(TokenUtil.getUserId(token),args.getPayPwd());
             if(responseApiVO.getReCode() == 1){
-                String payCode = this.walletService.getRandomCode(8);
+                String payCode = WalletService.getRandomCode(8);
                 TokenUtil.putPayCode(token,payCode);
             }
             return responseApiVO;
