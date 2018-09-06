@@ -135,6 +135,7 @@ public class ReviewPracticeService extends CommonService {
      * 先查询根据订单排序代练列表,列表不足由从未生成过订单的代练根据开启预约时间先后补上,列表不包含自己
      * @param token
      * @param page
+     * @param appointment 1的时候查询发布代练,null的时候所有
      * @return
      * @throws Exception
      */
@@ -146,13 +147,14 @@ public class ReviewPracticeService extends CommonService {
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();
-        List<AppIndexPracticeVO>appIndexPractice = practiceMapper.getPracticeList(practiceId,storeId,start,end,appointment);
+        //TODO 优先取发布的代练
+        List<AppIndexPracticeVO>appIndexPractice = practiceMapper.getPracticeList(storeId,start,end,appointment);
         for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice){
             userIdList.add(appIndexPracticeVO.getUserId());
         }
         if(page.getPageSize()-appIndexPractice.size()>0){
             end = page.getPageSize()-appIndexPractice.size();
-            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeListByNotInIds(userIdList,practiceId,storeId,start,end,appointment);
+            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,appointment);
             appIndexPractice.addAll(appIndexPractice2);
         }
         //设置关注状态
@@ -332,11 +334,11 @@ public class ReviewPracticeService extends CommonService {
      * @return
      * @throws Exception
      */
-    public long countPracticeGame(Integer practiceId)throws Exception{
+    public List<Map> practiceGame(Integer practiceId)throws Exception{
         Map searchCondition = new HashMap<>();
         searchCondition.put("userId",practiceId);
         searchCondition.put("appointment,!=",0);
-        return super.commonCountBySearchCondition("ddw_practice_game",searchCondition);
+        return super.commonObjectsBySearchCondition("ddw_practice_game",searchCondition);
     }
 
     /**
