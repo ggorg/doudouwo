@@ -29,10 +29,8 @@
 		left join ddw_game t6 on t6.id=t1.gameId
 		left join ddw_rank t7 on t7.id=t1.rankId
         left join ddw_practice_evaluation t8 on t8.practiceId=t1.userId
-		where
-		t1.userId !=#{practiceId}
         <if test="appointment != null">
-            and t1.appointment =#{appointment}
+            where t1.appointment =#{appointment}
         </if>
         group  by t1.userId,t1.gameId
         order by count(t2.practiceId) desc
@@ -48,10 +46,8 @@
 		left join ddw_practice t5 on t5.userId=t1.userId and t5.storeId=#{storeId}
 		left join ddw_game t6 on t6.id=t1.gameId
 		left join ddw_rank t7 on t7.id=t1.rankId
-		where
-		t1.userId !=#{practiceId}
         <if test="appointment != null">
-            and t1.appointment =#{appointment}
+            where t1.appointment =#{appointment}
         </if>
         group  by t1.userId,t1.gameId
     </select>
@@ -67,7 +63,7 @@
         left join ddw_rank t7 on t7.id=t1.rankId
         left join ddw_practice_evaluation t8 on t8.practiceId=t1.userId
         where
-        t1.userId !=#{practiceId}
+        1=1
         <if test="appointment != null">
             and t1.appointment =#{appointment}
         </if>

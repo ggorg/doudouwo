@@ -263,15 +263,13 @@ public class TimerTaskService extends CommonService {
             setParams3.put("appointment",0);
             for (Map map:list){
                 this.commonUpdateBySingleSearchParam("ddw_practice_order",setParams,"id",map.get("id"));
-                Map setParams2 = new HashMap<>();
-                setParams2.put("userId",map.get("practiceId"));
-                setParams2.put("gameId",map.get("gameId"));
-                PracticeGamePO practiceGamePO = this.commonObjectBySearchCondition("ddw_practice_game",setParams2, PracticeGamePO.class);
+                Map searchCondition2 = new HashMap<>();
+                searchCondition2.put("userId",map.get("practiceId"));
+                searchCondition2.put("gameId",map.get("gameId"));
+                PracticeGamePO practiceGamePO = this.commonObjectBySearchCondition("ddw_practice_game",searchCondition2, PracticeGamePO.class);
                 if(practiceGamePO.getAppointment()==2){
-                    Map searchCondition3 = new HashMap<>();
-                    this.commonUpdateByParams("ddw_practice_game",setParams2,searchCondition3);
+                    this.commonUpdateByParams("ddw_practice_game",setParams3,searchCondition2);
                 }
-
             }
         } catch (Exception e) {
             logger.error("TimerTaskService->expirePracticeOrder",e);

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 访问地址：/swagger-ui.html
@@ -167,6 +168,9 @@ public class PracticeController {
     public ResponseApiVO<PracticeGameApplyVO> gameApply(@PathVariable String token,
                                            @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeGameApplyDTO practiceGameApplyDTO){
         try {
+            if(TokenUtil.getUserId(token).equals(practiceGameApplyDTO.getPracticeId())){
+                return new ResponseApiVO(-3,"不可预约自己代练",null);
+            }
             //判断代练是否开启预约,提交游戏编号,当前段位包含几星,目标段位包含几星,代练编号,写进订单,更新代练预约状态
             PracticeGamePO practiceGamePO = reviewPracticeService.getPracticeGamePO(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId());
             if (practiceGamePO != null && practiceGamePO.getAppointment() == 1) {
@@ -216,7 +220,7 @@ public class PracticeController {
                                                               @RequestParam(value = "orderId") @ApiParam(name = "orderId",value="订单编号ID", required = true) Integer orderId,
                                                               @RequestParam(value = "photograph") @ApiParam(name = "photograph",value="游戏截图", required = true) MultipartFile photograph){
         try {
-            // 原段位包含几星(不可修改),目前段位包含几星,代练编号,返回需要支付金额,如果段位星级比原段位星级低,则走赔付流程,双倍赔付
+            // 原段位包含几星(不可修改),目前段位包含几星,代练编号,返回需要支付金额,如果段位星级比原段位星级低,则走赔付流程
             return reviewPracticeService.endThePractice(orderId,photograph);
         }catch (Exception e){
             logger.error("PracticeController->endThePractice",e);
@@ -258,8 +262,16 @@ public class PracticeController {
     public ResponseVO release(@PathVariable String token,
                                  @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeReleaseDTO practiceReleaseDTO){
         try {
-            if(reviewPracticeService.countPracticeGame(TokenUtil.getUserId(token))>0){
-                return new ResponseVO(-2,"不允许同时发布多个任务",null);
+            List<Map> list = reviewPracticeService.practiceGame(TokenUtil.getUserId(token));
+            if(list.size()>0){
+                for(Map map:list){
+                    if(map.get("appointment").toString().equals("2")){
+                        return new ResponseVO(-3,"有代练任务在进行中,请先结束再重新发布",null);
+                    }
+                    if(map.get("appointment").toString().equals("1")){
+                        return new ResponseVO(-2,"不允许同时发布多个任务",null);
+                    }
+                }
             }
 //            if(reviewPracticeService.countPracticeOrder(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId())>0){
 //                return new ResponseVO(-3,"请先结束订单再发布",null);
@@ -326,7 +338,7 @@ public class PracticeController {
     }
 
     @Token
-    @ApiOperation(value = "代练任务发布列表,不传practiceId,查询所有代练任务不包含自己,传practiceId,只查询practiceId的代练任务")
+    @ApiOperation(value = "代练任务发布列表,不传practiceId,查询所有代练任务,传practiceId,只查询practiceId的代练任务")
     @PostMapping("/pubTaskList/{token}")
     public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=false)PracticePubTaskDTO practicePubTaskDTO){
         try {

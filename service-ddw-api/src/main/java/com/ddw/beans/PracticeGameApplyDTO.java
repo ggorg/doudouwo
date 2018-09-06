@@ -7,63 +7,63 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class PracticeGameApplyDTO {
     @ApiModelProperty(name = "practiceId",value = "代练编号",example = "1")
-    private int practiceId;
+    private Integer practiceId;
     @ApiModelProperty(name = "gameId",value = "游戏编号",example = "1")
-    private int gameId;
+    private Integer gameId;
     @ApiModelProperty(name = "rankId",value = "段位编号",example = "1")
-    private int rankId;
+    private Integer rankId;
     @ApiModelProperty(name = "star",value = "星",example = "1")
-    private int star;
+    private Integer star;
     @ApiModelProperty(name = "targetRankId",value = "目标段位编号",example = "2")
-    private int targetRankId;
+    private Integer targetRankId;
     @ApiModelProperty(name = "targetStar",value = "目标星",example = "1")
-    private int targetStar;
+    private Integer targetStar;
 
-    public int getPracticeId() {
+    public Integer getPracticeId() {
         return practiceId;
     }
 
-    public void setPracticeId(int practiceId) {
+    public void setPracticeId(Integer practiceId) {
         this.practiceId = practiceId;
     }
 
-    public int getGameId() {
+    public Integer getGameId() {
         return gameId;
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 
-    public int getRankId() {
+    public Integer getRankId() {
         return rankId;
     }
 
-    public void setRankId(int rankId) {
+    public void setRankId(Integer rankId) {
         this.rankId = rankId;
     }
 
-    public int getStar() {
+    public Integer getStar() {
         return star;
     }
 
-    public void setStar(int star) {
+    public void setStar(Integer star) {
         this.star = star;
     }
 
-    public int getTargetRankId() {
+    public Integer getTargetRankId() {
         return targetRankId;
     }
 
-    public void setTargetRankId(int targetRankId) {
+    public void setTargetRankId(Integer targetRankId) {
         this.targetRankId = targetRankId;
     }
 
-    public int getTargetStar() {
+    public Integer getTargetStar() {
         return targetStar;
     }
 
-    public void setTargetStar(int targetStar) {
+    public void setTargetStar(Integer targetStar) {
         this.targetStar = targetStar;
     }
 }

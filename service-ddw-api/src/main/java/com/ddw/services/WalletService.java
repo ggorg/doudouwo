@@ -7,6 +7,7 @@ import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.enums.OrderTypeEnum;
 import com.ddw.enums.PayStatusEnum;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.MsgUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
@@ -31,6 +32,8 @@ public class WalletService extends CommonService {
     private DDWGlobals ddwGlobals;
     @Autowired
     private WalletErrorLogMapper walletErrorLogMapper;
+    @Autowired
+    private UserInfoService userInfoService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO transferMoney(String token ,WalletTransferMoneyDTO dto)throws Exception{
@@ -257,6 +260,24 @@ public class WalletService extends CommonService {
         WalletPracticeInVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletPracticeInVO.class);
 
         return new ResponseApiVO(1,"成功",balanceVO);
+    }
+
+    /**
+     * 忘记支付密码
+     * @param userid
+     * @return
+     * @throws Exception
+     */
+    public ResponseApiVO forgetPayPwd(Integer userid)throws Exception{
+        UserInfoPO userInfoPO = userInfoService.querySimple(userid);
+        //查询用户是否有手机号码,有则发送密码到手机上
+        if(!StringUtils.isBlank(userInfoPO.getPhone())){
+            WalletPO walletPO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletPO.class);
+            MsgUtil.sendPayPwdMsg(userInfoPO.getPhone(),walletPO.getPayPwd());
+            return new ResponseApiVO(1,"成功",null);
+        }else {
+            return new ResponseApiVO(-1,"没绑定手机号码",null);
+        }
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO createWallet(Integer userid){
