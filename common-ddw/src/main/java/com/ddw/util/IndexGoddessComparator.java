@@ -14,7 +14,6 @@ public class IndexGoddessComparator implements Comparator {
     public int compare(Object o1, Object o2) {
         AppIndexGoddessVO a1=(AppIndexGoddessVO)o1;
         AppIndexGoddessVO a2=(AppIndexGoddessVO)o2;
-        System.out.println(a1.getDsName()+","+a2.getDsName());
         if(LiveStatusEnum.liveStatus1.getCode().equals(a1.getLiveRadioFlag()) && LiveStatusEnum.liveStatus1.getCode().equals(a2.getLiveRadioFlag())){
             if(a1.getFans()<a2.getFans()){
                 return 1;
