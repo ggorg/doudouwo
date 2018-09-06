@@ -85,6 +85,17 @@ public class GoddessController {
             return new ResponseApiVO(-1,"查询失败",null);
         }
     }
+   /* @Token
+    @ApiOperation(value = "查询对女神的贡献值")
+    @PostMapping("/query/cons/{token}")
+    public ResponseApiVO<GoddessUserRankingInfoVO> queryCons(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoddessCodeDTO dto){
+        try {
+            return this.reviewGoddessService.getGoddessRanking(token,dto.getGoddessCode());
+        }catch (Exception e){
+            logger.error("GoddessController->queryCons",e);
+            return new ResponseApiVO(-1,"查询对女神的贡献值失败",null);
+        }
+    }*/
     @Token
     @ApiOperation(value = "女神动态")
     @PostMapping("/query/dynamics/{token}")

@@ -298,6 +298,7 @@ public class ReviewGoddessService extends CommonService {
 
         searchCondition=new HashMap();
         searchCondition.put("incomeUserId",goddessCode);
+        searchCondition.put("consumeUserId",TokenUtil.getUserId(token));
         searchCondition.put("type",IncomeTypeEnum.IncomeType1.getCode());
         Long sum = this.commonSumByBySingleSearchMap("ddw_consume_ranking_list","consumePrice",searchCondition);
 
@@ -311,6 +312,30 @@ public class ReviewGoddessService extends CommonService {
         vo.setIsAttenion(ower==null?0:1);
         return new ResponseApiVO(1,"成功",vo);
 
+    }
+    public ResponseApiVO getGoddessRanking(String token,Integer goddessCode)throws Exception{
+        Map searchCondition = new HashMap<>();
+
+
+        searchCondition=new HashMap();
+        searchCondition.put("userId", TokenUtil.getUserId(token));
+        searchCondition.put("goddessId",goddessCode);
+        Map ower=this.commonObjectBySearchCondition("ddw_my_attention",searchCondition);
+
+        searchCondition=new HashMap();
+        searchCondition.put("incomeUserId",goddessCode);
+        searchCondition.put("consumeUserId",TokenUtil.getUserId(token));
+        searchCondition.put("type",IncomeTypeEnum.IncomeType1.getCode());
+        Long sum = this.commonSumByBySingleSearchMap("ddw_consume_ranking_list","consumePrice",searchCondition);
+
+        Map userMap=this.commonObjectBySingleParam("ddw_userinfo","id",goddessCode);
+        GoddessUserRankingInfoVO vo=new GoddessUserRankingInfoVO();
+
+        vo.setContributeNum(sum==null?0:sum.intValue());
+        vo.setName(userMap.get("nickName").toString());
+        vo.setHeadImg(userMap.get("headImgUrl").toString());
+        vo.setIsAttenion(ower==null?0:1);
+        return new ResponseApiVO(1,"成功",vo);
 
     }
     public ResponseApiVO getDynamics(String token,Integer dynRoleType,DynamicsDTO pageNoDTO)throws Exception{
