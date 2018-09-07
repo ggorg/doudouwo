@@ -23,7 +23,7 @@ public class MsgUtil {
     //实名验证ID
     private final static Integer cert_id=175991;
     //找回支付密码
-    private final static Integer paypwd_id=0;
+    private final static Integer paypwd_id=189074;
 
     /**
      * 您申请的实名认证短信验证码{1}
