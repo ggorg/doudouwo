@@ -254,7 +254,7 @@ public class TimerTaskService extends CommonService {
     public void expirePracticeOrder(){
         Map<String,Object> searchCondition = new HashMap<>();
         searchCondition.put("payState",0);//未支付
-        searchCondition.put("updateTime,>",new Date(new Date().getTime() - 30*60*1000));
+        searchCondition.put("updateTime,<",new Date(new Date().getTime() - 30*60*1000));
         try {
             List<Map> list = this.commonObjectsBySearchCondition("ddw_practice_order",searchCondition);
             Map setParams = new HashMap<>();
