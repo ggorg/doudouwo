@@ -222,6 +222,7 @@ public class BaseOrderService extends CommonService {
 
 
                     po=new OrderViewPO();
+                    po.setBusId(gid);
                     po.setCreateTime(new Date());
                     po.setName(OrderTypeEnum.OrderType5.getName());
                     po.setHeadImg(headImgUrl);
@@ -262,6 +263,7 @@ public class BaseOrderService extends CommonService {
 
 
                 OrderViewPO po=new OrderViewPO();
+                po.setBusId(gid);
                 po.setCreateTime(new Date());
                 po.setName(OrderTypeEnum.OrderType9.getName());
                 po.setHeadImg(null);
@@ -302,6 +304,7 @@ public class BaseOrderService extends CommonService {
                         throw new GenException("更新货品销量失败");
                     }
                     po=new OrderViewPO();
+                    po.setBusId((Integer) m.get("productId"));
                     po.setCreateTime(new Date());
                     po.setName((String)m.get("productName"));
                     po.setHeadImg((String)m.get("headImg"));
@@ -325,6 +328,7 @@ public class BaseOrderService extends CommonService {
                 OrderViewPO po=null;
                 for(Map ticketMap:ticketList){
                     po=new OrderViewPO();
+                    po.setBusId((Integer) ticketMap.get("ticketId"));
                     po.setCreateTime(new Date());
                     po.setName((String)ticketMap.get("ticketName"));
                     po.setHeadImg(null);

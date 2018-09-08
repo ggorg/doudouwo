@@ -1,6 +1,7 @@
 package com.ddw.beans;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -36,6 +37,27 @@ public class OrderViewVO {
 
     @ApiModelProperty(name="shipStatusName",value="发货状态名称",example="1")
     private String shipStatusName;
+    @ApiModelProperty(name="isEvaluate",value="是否已评价",example="是否已评价,未评价：0，已评价：1")
+    private Integer isEvaluate;
+    @ApiModelProperty(name="code",value="编号",example="编号")
+    @JsonProperty("code")
+    private Integer id;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getIsEvaluate() {
+        return isEvaluate;
+    }
+
+    public void setIsEvaluate(Integer isEvaluate) {
+        this.isEvaluate = isEvaluate;
+    }
 
     public String getOrderTypeName() {
         return orderTypeName;

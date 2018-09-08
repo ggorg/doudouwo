@@ -16,6 +16,24 @@ public class OrderViewPO {
     private Integer storeId;
     private Integer shipStatus;
     private Integer payStatus;
+    private Integer isEvaluate;
+    private Integer busId;
+
+    public Integer getBusId() {
+        return busId;
+    }
+
+    public void setBusId(Integer busId) {
+        this.busId = busId;
+    }
+
+    public Integer getIsEvaluate() {
+        return isEvaluate;
+    }
+
+    public void setIsEvaluate(Integer isEvaluate) {
+        this.isEvaluate = isEvaluate;
+    }
 
     public Integer getShipStatus() {
         return shipStatus;
