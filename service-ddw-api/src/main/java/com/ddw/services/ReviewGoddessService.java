@@ -15,7 +15,6 @@ import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -365,7 +364,7 @@ public class ReviewGoddessService extends CommonService {
 
     /**
      * 插入评价
-     * @param goddessEvaluationDetailDTO
+     * @param dto
      * @return
      * @throws Exception
      */

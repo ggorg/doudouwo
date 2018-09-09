@@ -261,14 +261,17 @@ public class TimerTaskService extends CommonService {
             setParams.put("payState",2);
             Map setParams3 = new HashMap<>();
             setParams3.put("appointment",0);
-            for (Map map:list){
-                this.commonUpdateBySingleSearchParam("ddw_practice_order",setParams,"id",map.get("id"));
-                Map searchCondition2 = new HashMap<>();
-                searchCondition2.put("userId",map.get("practiceId"));
-                searchCondition2.put("gameId",map.get("gameId"));
-                PracticeGamePO practiceGamePO = this.commonObjectBySearchCondition("ddw_practice_game",searchCondition2, PracticeGamePO.class);
-                if(practiceGamePO.getAppointment()==2){
-                    this.commonUpdateByParams("ddw_practice_game",setParams3,searchCondition2);
+            if(!list.isEmpty()){
+                for (Map map:list){
+                    logger.info("处理代练支付订单超时："+map.get("id"));
+                    this.commonUpdateBySingleSearchParam("ddw_practice_order",setParams,"id",map.get("id"));
+                    Map searchCondition2 = new HashMap<>();
+                    searchCondition2.put("userId",map.get("practiceId"));
+                    searchCondition2.put("gameId",map.get("gameId"));
+                    PracticeGamePO practiceGamePO = this.commonObjectBySearchCondition("ddw_practice_game",searchCondition2, PracticeGamePO.class);
+                    if(practiceGamePO.getAppointment()==2){
+                        this.commonUpdateByParams("ddw_practice_game",setParams3,searchCondition2);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -285,12 +288,14 @@ public class TimerTaskService extends CommonService {
         Map<String,Object> searchCondition = new HashMap<>();
         searchCondition.put("payState",1);//已支付
         searchCondition.put("incomeState",0);//未计算收益
-        searchCondition.put("updateTime,>",new Date(new Date().getTime() - 24*60*60*1000));
+        searchCondition.put("updateTime,<",new Date(new Date().getTime() - 24*60*60*1000));
         try {
             List<Map> list = this.commonObjectsBySearchCondition("ddw_practice_order",searchCondition);
             Map setParams = new HashMap<>();
             setParams.put("incomeState",1);//已计算收益
             for(Map map:list){
+                logger.info("计算超过24小时代练已支付订单："+map.get("id"));
+                logger.info("收益代练->practiceId："+map.get("practiceId")+"->realityMoney->"+map.get("realityMoney"));
                 this.incomeService.commonIncome((Integer) map.get("practiceId"),(Integer)map.get("realityMoney"), IncomeTypeEnum.IncomeType2, OrderTypeEnum.OrderType10,map.get("orderNo").toString());
                 this.baseConsumeRankingListService.save((Integer) map.get("userId"),(Integer) map.get("practiceId"),(Integer)map.get("realityMoney"),IncomeTypeEnum.IncomeType2);
                 //更新状态为已计算收益

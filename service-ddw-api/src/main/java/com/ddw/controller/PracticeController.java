@@ -79,7 +79,7 @@ public class PracticeController {
     @PostMapping("/queryList/{token}")
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
         try {
-            //查询已发布代练任务的代练,根据接单排行代练信息,不包含自己
+            //查询已发布代练任务的代练,根据接单排行代练信息
             JSONObject json = new JSONObject();
             json.put("list",reviewPracticeService.practiceList(token,pageDTO,null));
             return new ResponseVO(1,"成功",json);
@@ -233,10 +233,21 @@ public class PracticeController {
     public ResponseVO evaluation(@PathVariable String token,
                                                 @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeEvaluationDetailDTO practiceEvaluationDetailDTO){
         try {
+            ResponseVO rv = reviewPracticeService.getPracticeOrder(practiceEvaluationDetailDTO.getOrderId());
+            if(rv.getData() !=null){
+                List<Map> list = (List<Map>) JSONObject.parseObject(rv.getData().toString()).get("list");
+                if(!list.isEmpty()){
+                    Integer evaluationStatus = (Integer) list.get(0).get("evaluationStatus");
+                    if(evaluationStatus.equals(1)){
+                        return new ResponseVO(-2,"抱歉，已评价过",null);
+                    }
+                }
+            }
+            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrder(practiceEvaluationDetailDTO.getOrderId());
             //写入ddw_practice_evaluation_detail代练评分明细表,以及更新ddw_practice_evaluation代练平均评分表
-            ResponseVO responseVO = reviewPracticeService.insertPracticeEvaluationDetail(practiceEvaluationDetailDTO);
+            ResponseVO responseVO = reviewPracticeService.insertPracticeEvaluationDetail(practiceEvaluationDetailDTO,practiceOrderPO);
             if(responseVO.getReCode() == 1){
-                reviewPracticeService.insertPracticeEvaluation(practiceEvaluationDetailDTO);
+                reviewPracticeService.insertPracticeEvaluation(practiceEvaluationDetailDTO,practiceOrderPO.getPracticeId());
             }
             return responseVO;
         }catch (Exception e){

@@ -28,6 +28,7 @@ public class PracticeOrderPO implements Serializable{
     private int incomeState;
     private String picUrl;
     private int payState;
+    private int evaluationStatus;
     private Date createTime;
     private Date updateTime;
 
@@ -181,6 +182,14 @@ public class PracticeOrderPO implements Serializable{
 
     public void setPayState(int payState) {
         this.payState = payState;
+    }
+
+    public int getEvaluationStatus() {
+        return evaluationStatus;
+    }
+
+    public void setEvaluationStatus(int evaluationStatus) {
+        this.evaluationStatus = evaluationStatus;
     }
 
     public Date getCreateTime() {

@@ -147,18 +147,28 @@ public class ReviewPracticeService extends CommonService {
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();
-        //TODO 优先取发布的代练
-        List<AppIndexPracticeVO>appIndexPractice = practiceMapper.getPracticeList(storeId,start,end,appointment);
-        for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice){
+        // 优先取发布的代练
+        List<AppIndexPracticeVO> appIndexPractice1 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,1);
+        for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
             userIdList.add(appIndexPracticeVO.getUserId());
         }
-        if(page.getPageSize()-appIndexPractice.size()>0){
-            end = page.getPageSize()-appIndexPractice.size();
-            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,appointment);
-            appIndexPractice.addAll(appIndexPractice2);
+        if(page.getPageSize()-appIndexPractice1.size()>0){
+            end = page.getPageSize()-appIndexPractice1.size();
+            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,appointment);
+            appIndexPractice1.addAll(appIndexPractice2);
         }
+        if(page.getPageSize()-appIndexPractice1.size()>0){
+            end = page.getPageSize()-appIndexPractice1.size();
+            userIdList.clear();
+            for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
+                userIdList.add(appIndexPracticeVO.getUserId());
+            }
+            List<AppIndexPracticeVO> appIndexPractice3 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,null);
+            appIndexPractice1.addAll(appIndexPractice3);
+        }
+
         //设置关注状态
-        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPractice.listIterator();
+        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPractice1.listIterator();
         MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(practiceId,1,9999).getData();
         List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
         while (appIndexPracticeIterator.hasNext()){
@@ -177,66 +187,9 @@ public class ReviewPracticeService extends CommonService {
                 }
             }
         }
-        return appIndexPractice;
+        return appIndexPractice1;
     }
 
-    /**
-     * 当前门店代练列表,包含关注状态
-     * @param token
-     * @param pageNum
-     * @param pageSize
-     * @return
-     * @throws Exception
-     */
-//    public ResponseVO practiceList(String token, Integer pageNum, Integer pageSize)throws Exception{
-//        JSONObject json = new JSONObject();
-//        if(pageNum == null || pageSize == null){
-//            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
-//        }
-//        Integer storeId = TokenUtil.getStoreId(token);
-//        Integer practiceId = TokenUtil.getUserId(token);
-//        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
-//        Integer endRow = pageSize;
-//        List<AppIndexPracticeVO>appIndexPracticeList = practiceMapper.getPracticeList(practiceId,storeId,startRow,endRow);
-//        Integer count = practiceMapper.getPracticeListCount(practiceId,storeId);
-//        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(practiceId,1,9999).getData();
-//        List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
-//        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPracticeList.listIterator();
-//        while (appIndexPracticeIterator.hasNext()){
-//            AppIndexPracticeVO appIndexPracticeVO = appIndexPracticeIterator.next();
-//            if (myAttentionGoddessList != null) {
-//                for(UserInfoVO userInfoVO:myAttentionGoddessList){
-//                    if(userInfoVO.getId() == appIndexPracticeVO.getUserId()){
-//                        appIndexPracticeVO.setFollowed(true);
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        json.put("list",appIndexPracticeList);
-//        json.put("count",count == null?0:count);
-//        return new ResponseVO(1,"成功",json);
-//    }
-
-    /**
-     * 当前门店代练列表,不判断关注状态
-     * @param token
-     * @param pageNum
-     * @param pageSize
-     * @return
-     * @throws Exception
-     */
-//    public ResponseVO practiceNoAttentionList(String token, Integer pageNum, Integer pageSize)throws Exception{
-//        if(pageNum == null || pageSize == null){
-//            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
-//        }
-//        Integer storeId = TokenUtil.getStoreId(token);
-//        Integer pacticeId = TokenUtil.getUserId(token);
-//        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
-//        Integer endRow = pageSize;
-//        List<AppIndexPracticeVO>AppIndexPracticeList = practiceMapper.getPracticeList(pacticeId,storeId,startRow,endRow);
-//        return new ResponseVO(1,"成功",AppIndexPracticeList);
-//    }
 
     /**
      * 插入评价
@@ -245,9 +198,16 @@ public class ReviewPracticeService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO insertPracticeEvaluationDetail(PracticeEvaluationDetailDTO practiceEvaluationDetailDTO)throws Exception{
+    public ResponseVO insertPracticeEvaluationDetail(PracticeEvaluationDetailDTO practiceEvaluationDetailDTO,PracticeOrderPO practiceOrderPO)throws Exception{
+        Map setParams = new HashMap<>();
+        setParams.put("evaluationStatus",1);//评价状态
+        this.commonUpdateBySingleSearchParam("ddw_practice_order",setParams,"id",practiceEvaluationDetailDTO.getOrderId());
         PracticeEvaluationDetailPO practiceEvaluationDetailPO = new PracticeEvaluationDetailPO();
-        PropertyUtils.copyProperties(practiceEvaluationDetailPO,practiceEvaluationDetailDTO);
+        practiceEvaluationDetailPO.setPracticeId(practiceOrderPO.getPracticeId());
+        practiceEvaluationDetailPO.setGameId(practiceOrderPO.getGameId());
+        practiceEvaluationDetailPO.setStar(practiceEvaluationDetailDTO.getStar());
+        practiceEvaluationDetailPO.setUserId(practiceOrderPO.getUserId());
+        practiceEvaluationDetailPO.setDescribe(practiceEvaluationDetailDTO.getDescribe());
         practiceEvaluationDetailPO.setCreateTime(new Date());
         return super.commonInsert("ddw_practice_evaluation_detail",practiceEvaluationDetailPO);
     }
@@ -259,8 +219,8 @@ public class ReviewPracticeService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO insertPracticeEvaluation(PracticeEvaluationDetailDTO practiceEvaluationDetailDTO)throws Exception{
-        PracticeEvaluationPO practiceEvaluationPO = super.commonObjectBySingleParam("ddw_practice_evaluation","practiceId",practiceEvaluationDetailDTO.getPracticeId(),PracticeEvaluationPO.class);
+    public ResponseVO insertPracticeEvaluation(PracticeEvaluationDetailDTO practiceEvaluationDetailDTO,Integer practiceId)throws Exception{
+        PracticeEvaluationPO practiceEvaluationPO = super.commonObjectBySingleParam("ddw_practice_evaluation","practiceId",practiceId,PracticeEvaluationPO.class);
         ResponseVO responseVO = new ResponseVO();
         if (practiceEvaluationPO != null) {
             int allStar = practiceEvaluationPO.getAllStar();
@@ -271,11 +231,11 @@ public class ReviewPracticeService extends CommonService {
             params.put("star",Math.round(practiceEvaluationPO.getAllStar()/practiceEvaluationPO.getCountEvaluation()));
             params.put("updateTime",new Date());
             Map searchCondition = new HashMap<>();
-            searchCondition.put("practiceId",practiceEvaluationDetailDTO.getPracticeId());
+            searchCondition.put("practiceId",practiceId);
             responseVO = super.commonUpdateByParams("ddw_practice_evaluation",params,searchCondition);
         }else{
             practiceEvaluationPO = new PracticeEvaluationPO();
-            practiceEvaluationPO.setPracticeId(practiceEvaluationDetailDTO.getPracticeId());
+            practiceEvaluationPO.setPracticeId(practiceId);
             practiceEvaluationPO.setAllStar(practiceEvaluationDetailDTO.getStar());
             practiceEvaluationPO.setCountEvaluation(1);
             practiceEvaluationPO.setStar(Math.round(practiceEvaluationDetailDTO.getStar()));
@@ -597,7 +557,7 @@ public class ReviewPracticeService extends CommonService {
     }
 
     /**
-     * 计算段位和星需要支付金额,负数则为降星双倍赔偿
+     * 计算段位和星需要支付金额,负数则为降星赔偿
      * @param gameId 游戏id
      * @param rankId 原段位id
      * @param star 原星
