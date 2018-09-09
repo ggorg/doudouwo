@@ -52,6 +52,8 @@ public class ReviewGoddessService extends CommonService {
 
     @Autowired
     private BasePhotoService photoService;
+    @Autowired
+    private BiddingService biddingService;
 
 
     public GoddessPO getAppointment(Integer userid,Integer storeId)throws Exception{
@@ -368,40 +370,62 @@ public class ReviewGoddessService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO insertGoddessEvaluationDetail(GoddessEvaluationDetailDTO goddessEvaluationDetailDTO)throws Exception{
+    public ResponseVO insertGoddessEvaluationDetail(String token,GoddessEvaluationDetailDTO dto)throws Exception{
+        Map searchMap=new HashMap();
+        Integer userId=TokenUtil.getUserId(token);
+        searchMap.put("luckyDogUserId",userId);
+        searchMap.put("id",dto.getBidCode());
+        Map bidMap=biddingService.getCurrentBidMapBySearchMap(searchMap);
+        if(bidMap==null || bidMap.size()==0){
+            return new ResponseVO(-2,"记录不存在",null);
+        }
+        Integer isEvaluate=(Integer) bidMap.get("isEvaluate");
+        if(isEvaluate!=null && isEvaluate==1){
+            return new ResponseVO(-2,"抱歉，已评价过",null);
+
+        }
         GoddessEvaluationDetailPO goddessEvaluationDetailPO = new GoddessEvaluationDetailPO();
-        PropertyUtils.copyProperties(goddessEvaluationDetailPO,goddessEvaluationDetailDTO);
+       // PropertyUtils.copyProperties(goddessEvaluationDetailPO,goddessEvaluationDetailDTO);
+        goddessEvaluationDetailPO.setDescribe(dto.getDescribe());
+        goddessEvaluationDetailPO.setStar(dto.getStar());
+        goddessEvaluationDetailPO.setUserId(userId);
+        goddessEvaluationDetailPO.setGoddessId((Integer) bidMap.get("userId"));
         goddessEvaluationDetailPO.setCreateTime(new Date());
-        return super.commonInsert("ddw_goddess_evaluation_detail",goddessEvaluationDetailPO);
+        super.commonInsert("ddw_goddess_evaluation_detail",goddessEvaluationDetailPO);
+        Map updateMap=new HashMap();
+        updateMap.put("isEvaluate",1);
+
+        this.commonOptimisticLockUpdateByParam("ddw_goddess_bidding",updateMap,searchMap,"version");
+        insertGoddessEvaluation(dto.getStar(),goddessEvaluationDetailPO.getGoddessId());
+        return new ResponseVO(1,"成功",null);
     }
 
     /**
      * 插入女神平均评分
-     * @param goddessEvaluationDetailDTO
      * @return
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO insertGoddessEvaluation(GoddessEvaluationDetailDTO goddessEvaluationDetailDTO)throws Exception{
-        GoddessEvaluationPO goddessEvaluationPO = super.commonObjectBySingleParam("ddw_goddess_evaluation","goddessId",goddessEvaluationDetailDTO.getGoddessId(),GoddessEvaluationPO.class);
+    public ResponseVO insertGoddessEvaluation(Integer start,Integer goddessId)throws Exception{
+        GoddessEvaluationPO goddessEvaluationPO = super.commonObjectBySingleParam("ddw_goddess_evaluation","goddessId",goddessId,GoddessEvaluationPO.class);
         ResponseVO responseVO = new ResponseVO();
         if (goddessEvaluationPO != null) {
             int allStar = goddessEvaluationPO.getAllStar();
             int countEvaluation = goddessEvaluationPO.getCountEvaluation();
             Map params= BeanToMapUtil.beanToMap(goddessEvaluationPO);
             params.put("countEvaluation",countEvaluation+1);
-            params.put("allStar",allStar+goddessEvaluationDetailDTO.getStar());
+            params.put("allStar",allStar+start);
             params.put("star",Math.round(goddessEvaluationPO.getAllStar()/goddessEvaluationPO.getCountEvaluation()));
             params.put("updateTime",new Date());
             Map searchCondition = new HashMap<>();
-            searchCondition.put("goddessId",goddessEvaluationDetailDTO.getGoddessId());
+            searchCondition.put("goddessId",goddessId);
             responseVO = super.commonUpdateByParams("ddw_goddess_evaluation",params,searchCondition);
         }else{
             goddessEvaluationPO = new GoddessEvaluationPO();
-            goddessEvaluationPO.setGoddessId(goddessEvaluationDetailDTO.getGoddessId());
-            goddessEvaluationPO.setAllStar(goddessEvaluationDetailDTO.getStar());
+            goddessEvaluationPO.setGoddessId(goddessId);
+            goddessEvaluationPO.setAllStar(start);
             goddessEvaluationPO.setCountEvaluation(1);
-            goddessEvaluationPO.setStar(Math.round(goddessEvaluationDetailDTO.getStar()));
+            goddessEvaluationPO.setStar(Math.round(start));
             goddessEvaluationPO.setCreateTime(new Date());
             responseVO = super.commonInsert("ddw_goddess_evaluation",goddessEvaluationPO);
         }
@@ -422,16 +446,23 @@ public class ReviewGoddessService extends CommonService {
 
     /**
      * 查看女神详细评价
-     * @param goddessEvaluationDetailListDTO
+     * @param dto
      * @return
      * @throws Exception
      */
-    public Page getGoddessEvaluationDetailList(GoddessEvaluationDetailListDTO goddessEvaluationDetailListDTO)throws Exception{
+    public ResponseApiVO getGoddessEvaluationDetailList(GoddessEvaluationDetailListDTO dto)throws Exception{
         Map condtion = new HashMap<>();
-        condtion.put("goddessId",goddessEvaluationDetailListDTO.getGoddessId());
+        condtion.put("goddessId",dto.getGoddessId());
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_evaluation_detail","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb);
-        return this.commonPage(goddessEvaluationDetailListDTO.getPage().getPageNum(),goddessEvaluationDetailListDTO.getPage().getPageSize(),csb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_evaluation_detail","t1.createTime desc","DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') time,t1.star,t1.describe,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb);
+        Page p=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
+        List list=this.getCommonMapper().selectObjects(csb);
+        if(list==null || list.size()==0){
+            return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+
+        }
+        return new ResponseApiVO(1,"成功",new ListVO<>(list));
+
     }
 
 }

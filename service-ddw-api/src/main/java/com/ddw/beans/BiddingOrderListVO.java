@@ -40,8 +40,28 @@ public class BiddingOrderListVO implements Serializable {
     private String createTime;
     @ApiModelProperty(name="headImgUrl",value="头像",example="头像")
     private String headImgUrl;
+    @ApiModelProperty(name="openid",value="openid",example="openid")
+    private String openid;
     @ApiModelProperty(name="bidCode",value="竞价code",example="bidCode")
     private Integer bidCode;
+    @ApiModelProperty(name="isEvaluate",value="评价",example="是否已评价,未评价：0，已评价：1")
+    private Integer isEvaluate;
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
+    }
+
+    public Integer getIsEvaluate() {
+        return isEvaluate;
+    }
+
+    public void setIsEvaluate(Integer isEvaluate) {
+        this.isEvaluate = isEvaluate;
+    }
 
     public String getMakeSureEndTime() {
         return makeSureEndTime;

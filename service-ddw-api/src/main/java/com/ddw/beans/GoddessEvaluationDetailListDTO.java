@@ -10,8 +10,8 @@ import io.swagger.annotations.ApiModelProperty;
 public class GoddessEvaluationDetailListDTO {
     @ApiModelProperty(name = "goddessId",value = "女神编号",example = "1")
     private Integer goddessId;
-    @ApiModelProperty(name = "page",value = "分页",example = "")
-    private PageDTO page;
+    @ApiModelProperty(name = "pageNo",value = "分页",example = "")
+    private Integer pageNo;
 
     public Integer getGoddessId() {
         return goddessId;
@@ -21,11 +21,11 @@ public class GoddessEvaluationDetailListDTO {
         this.goddessId = goddessId;
     }
 
-    public PageDTO getPage() {
-        return page;
+    public Integer getPageNo() {
+        return pageNo;
     }
 
-    public void setPage(PageDTO page) {
-        this.page = page;
+    public void setPageNo(Integer pageNo) {
+        this.pageNo = pageNo;
     }
 }

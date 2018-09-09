@@ -8,29 +8,19 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel
 public class GoddessEvaluationDetailDTO {
-    @ApiModelProperty(name = "userId",value = "会员编号",example = "1")
-    private Integer userId;
-    @ApiModelProperty(name = "goddessId",value = "女神编号",example = "1")
-    private Integer goddessId;
-    @ApiModelProperty(name = "star",value = "星,最低两颗星",example = "2")
+    @ApiModelProperty(name = "bidCode",value = "约玩Id",example = "约玩Id")
+    private Integer bidCode;
+    @ApiModelProperty(name = "star",value = "星,最低两颗星",example = "分数，1分：1，2分：2，3分：3，4分：4，5分：5")
     private Integer star;
     @ApiModelProperty(name = "describe",value = "评价",example = "这个女神好漂亮")
     private String describe;
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getBidCode() {
+        return bidCode;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getGoddessId() {
-        return goddessId;
-    }
-
-    public void setGoddessId(Integer goddessId) {
-        this.goddessId = goddessId;
+    public void setBidCode(Integer bidCode) {
+        this.bidCode = bidCode;
     }
 
     public Integer getStar() {
