@@ -190,6 +190,60 @@ public class ReviewPracticeService extends CommonService {
         return appIndexPractice1;
     }
 
+    /**
+     * 根据订单排序代练列表,列表不足由从未生成过订单的代练补上
+     * @param token
+     * @param page
+     * @param appointment 1的时候查询发布代练,null的时候所有
+     * @return
+     * @throws Exception
+     */
+    public List<AppIndexPracticeVO> leaderboard(String token,PageDTO page,Integer appointment)throws Exception{
+        Integer storeId = TokenUtil.getStoreId(token);
+        Integer practiceId = TokenUtil.getUserId(token);
+        Integer pageNum = page.getPageNum();
+        Integer pageSize = page.getPageSize();
+        Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+        Integer end = pageSize;
+        List<Integer> userIdList = new ArrayList<>();
+
+        List<AppIndexPracticeVO> appIndexPractice1 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,appointment);
+        for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
+            userIdList.add(appIndexPracticeVO.getUserId());
+        }
+        if(page.getPageSize()-appIndexPractice1.size()>0){
+            end = page.getPageSize()-appIndexPractice1.size();
+            userIdList.clear();
+            for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
+                userIdList.add(appIndexPracticeVO.getUserId());
+            }
+            List<AppIndexPracticeVO> appIndexPractice3 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,null);
+            appIndexPractice1.addAll(appIndexPractice3);
+        }
+
+        //设置关注状态
+        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPractice1.listIterator();
+        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(practiceId,1,9999).getData();
+        List<UserInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
+        while (appIndexPracticeIterator.hasNext()){
+            AppIndexPracticeVO appIndexPracticeVO = appIndexPracticeIterator.next();
+            Long fans = myAttentionService.queryPracticeFansCountByUserId(appIndexPracticeVO.getUserId());
+            appIndexPracticeVO.setFans(fans==null?0:fans);
+            PracticeEvaluationPO practiceEvaluationPO = this.getEvaluation(appIndexPracticeVO.getUserId());
+            int star = practiceEvaluationPO == null?0:practiceEvaluationPO.getStar();
+            appIndexPracticeVO.setStar(star);
+            if (myAttentionGoddessList != null) {
+                for(UserInfoVO userInfoVO:myAttentionGoddessList){
+                    if(userInfoVO.getId() == appIndexPracticeVO.getUserId()){
+                        appIndexPracticeVO.setFollowed(true);
+                        break;
+                    }
+                }
+            }
+        }
+        return appIndexPractice1;
+    }
+
 
     /**
      * 插入评价
