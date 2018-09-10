@@ -51,23 +51,15 @@ public class GoddessController {
 
 
     @Token
-    @ApiOperation(value = "女神信息查询(女神)")
+    @ApiOperation(value = "女神信息查询,不传参数默认查询自己")
     @PostMapping("/query/{token}")
-    public ResponseVO query(@PathVariable String token){
+    public ResponseVO query(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=false)CodeDTO dto){
         try {
-            UserInfoVO user = userInfoService.query(TokenUtil.getUserId(token));
-            return new ResponseVO(1,"成功",user);
-        }catch (Exception e){
-            logger.error("GoddessController->query",e);
-            return new ResponseVO(-1,"提交失败",null);
-        }
-    }
-    @Token
-    @ApiOperation(value = "女神信息查询(用户)")
-    @PostMapping("/queryGoddess/user/{token}")
-    public ResponseVO queryGoddess(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO dto){
-        try {
-            UserInfoVO user = userInfoService.query(dto.getCode());
+            int userId = TokenUtil.getUserId(token);
+            if(dto != null && dto.getCode() !=null){
+                userId = dto.getCode();
+            }
+            UserInfoVO user = userInfoService.query(userId);
             return new ResponseVO(1,"成功",user);
         }catch (Exception e){
             logger.error("GoddessController->query",e);
