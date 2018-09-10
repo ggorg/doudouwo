@@ -2,6 +2,7 @@ package com.ddw.controller;
 
 
 import com.ddw.beans.*;
+import com.ddw.services.ConsumeRankingListService;
 import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.UserInfoService;
 import com.ddw.services.WalletService;
@@ -38,6 +39,9 @@ public class UserController {
 
     @Autowired
     private tls_sigcheck ts;
+
+    @Autowired
+    private ConsumeRankingListService consumeRankingListService;
 
     @ApiOperation(value = "会员注册用例")
     // @ApiImplicitParam(name = "args", value = "参数", required = true, dataType = "UserInfoDTO")
@@ -207,5 +211,15 @@ public class UserController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
-
+    @Token
+    @ApiOperation(value = "查询用户的贡献值")
+    @PostMapping("/query/user/allcons/{token}")
+    public ResponseApiVO<ContributeNumVO> queryCons(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)OpenIdDTO dto){
+        try {
+            return this.consumeRankingListService.getUserSum(token,dto);
+        }catch (Exception e){
+            logger.error("UserController->queryCons",e);
+            return new ResponseApiVO(-1,"查询用户的贡献值失败",null);
+        }
+    }
 }
