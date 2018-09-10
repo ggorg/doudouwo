@@ -43,7 +43,16 @@ public abstract class CommonBean {
 	 * true表示 条件默认以and并接，false表示手动加括号或者or,and
 	 */
 	public Boolean isAuto=true;
-	
+
+	public String jointName="inner";
+
+	public String getJointName() {
+		return jointName;
+	}
+
+	public void setJointName(String jointName) {
+		this.jointName = jointName;
+	}
 
 	public Boolean isAuto() {
 		return isAuto;
