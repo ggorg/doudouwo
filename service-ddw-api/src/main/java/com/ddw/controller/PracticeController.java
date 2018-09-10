@@ -368,7 +368,7 @@ public class PracticeController {
                              @RequestParam(value = "describe") @ApiParam(name = "describe",value="描述", required = true) String describe,
                              @RequestParam(value = "pic") @ApiParam(name = "pic",value="凭证", required = true) MultipartFile pic){
         try {
-            return reviewPracticeService.refund(TokenUtil.getUserId(token),orderId,TokenUtil.getUserName(token),reason,describe,pic);
+            return reviewPracticeService.refund(TokenUtil.getUserId(token),TokenUtil.getStoreId(token),orderId,TokenUtil.getUserName(token),reason,describe,pic);
         }catch (Exception e){
             logger.error("PracticeController->refund",e);
             return new ResponseVO(-1,"提交失败",null);
