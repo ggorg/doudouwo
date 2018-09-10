@@ -520,7 +520,7 @@ public class ReviewPracticeService extends CommonService {
         if(practicePubTaskDTO !=null && practicePubTaskDTO.getPracticeId() != null){
             condtion.put("userId",practicePubTaskDTO.getPracticeId());
         }else {
-            condtion.put("userId,!=",userId);
+            condtion.put("userId",userId);
         }
         condtion.put("appointment",1);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
