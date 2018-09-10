@@ -374,4 +374,16 @@ public class PracticeController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
+
+    @Token
+    @ApiOperation(value = "退款拒绝反馈")
+    @PostMapping("/refundReason/{token}")
+    public ResponseVO refundReason(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticeOrderDTO practiceOrderDTO){
+        try {
+            return new ResponseVO(1,"成功",reviewPracticeService.refundReason(practiceOrderDTO.getId()));
+        }catch (Exception e){
+            logger.error("PracticeController->refund",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
 }

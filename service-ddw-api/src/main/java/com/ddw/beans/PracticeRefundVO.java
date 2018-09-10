@@ -1,46 +1,29 @@
 package com.ddw.beans;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 /**
- * Created by Jacky on 2018/4/29.
+ * Created by Jacky on 2018/7/5.
  */
-public class PracticeRefundPO {
-    private Integer id;
-    private String drBusinessCode;
-    private Integer userId;
+public class PracticeRefundVO {
+    @ApiModelProperty(name = "orderId",value = "订单编号",example = "1")
     private Integer orderId;
+    @ApiModelProperty(name = "reason",value = "退款原因",example = "态度恶劣")
     private String reason;
+    @ApiModelProperty(name = "describe",value = "描述",example = "看不顺眼")
     private String describe;
-    private String picUrl;
-    private Integer status;
+    @ApiModelProperty(name = "feedback",value = "拒绝原因反馈",example = "代练操作合规,未有明显出格行为")
     private String feedback;
+    @ApiModelProperty(name = "picUrl",value = "凭证",example = "")
+    private String picUrl;
+    @ApiModelProperty(name = "status",value = "退款状态，0未退款，1成功,2拒绝",example = "2")
+    private Integer status;
+    @ApiModelProperty(name = "createTime",value = "创建日期",example = "")
     private Date createTime;
+    @ApiModelProperty(name = "updateTime",value = "更新日期",example = "")
     private Date updateTime;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getDrBusinessCode() {
-        return drBusinessCode;
-    }
-
-    public void setDrBusinessCode(String drBusinessCode) {
-        this.drBusinessCode = drBusinessCode;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
 
     public Integer getOrderId() {
         return orderId;
@@ -66,6 +49,14 @@ public class PracticeRefundPO {
         this.describe = describe;
     }
 
+    public String getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(String feedback) {
+        this.feedback = feedback;
+    }
+
     public String getPicUrl() {
         return picUrl;
     }
@@ -80,14 +71,6 @@ public class PracticeRefundPO {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public String getFeedback() {
-        return feedback;
-    }
-
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
     }
 
     public Date getCreateTime() {

@@ -432,7 +432,7 @@ public class ReviewPracticeService extends CommonService {
         practiceOrderPO.setUserId(userId);
         practiceOrderPO.setStoreId(storeId);
         //订单状态，1开始接单，2完成,3未完成并结单
-        practiceOrderPO.setStatus(1);
+        practiceOrderPO.setStatus(PracticeOrderStatusEnum.orderStatus1.getCode());
         practiceOrderPO.setPayState(0);
         practiceOrderPO.setIncomeState(0);
         practiceOrderPO.setMoney(money);
@@ -743,6 +743,13 @@ public class ReviewPracticeService extends CommonService {
             if(rePO != null){
                 return new ResponseVO(-2,"不允许重复提交申请",null);
             }
+            //更新代练订单表状态
+            Map setParams2 = new HashMap<>();
+            setParams2.put("status", PracticeOrderStatusEnum.orderStatus4.getCode());
+            Map searchCondition2 = new HashMap<>();
+            searchCondition2.put("id",orderId);
+            this.commonUpdateByParams("ddw_practice_order",setParams2,searchCondition2);
+
             //插入审批表
             ReviewPO reviewPO=new ReviewPO();
             String bussinessCode = String.valueOf(new Date().getTime());
@@ -777,9 +784,18 @@ public class ReviewPracticeService extends CommonService {
 
                 Map updatePoMap= BeanToMapUtil.beanToMap(practiceRefundPO);
                 responseVO =this.commonInsertMap("ddw_practice_refund",updatePoMap);
+
             }
             return responseVO;
         }
     }
 
+    public PracticeRefundVO refundReason(Integer id)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("orderId",id);
+        PracticeOrderPO practiceOrderPO = super.commonObjectBySearchCondition("ddw_practice_refund",searchCondition,PracticeOrderPO.class);
+        PracticeRefundVO  practiceRefundVO = new PracticeRefundVO();
+        PropertyUtils.copyProperties(practiceRefundVO,practiceOrderPO);
+        return practiceRefundVO;
+    }
 }

@@ -4,6 +4,7 @@ import com.ddw.beans.PracticeOrderPO;
 import com.ddw.beans.PracticeRefundPO;
 import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
+import com.ddw.enums.PracticeOrderStatusEnum;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.services.CommonService;
@@ -40,12 +41,21 @@ public class ReviewPracticeRefundService extends CommonService {
 
     public ReviewPO getReviewById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_review","id",id,ReviewPO.class);
+    }
+
+    public ReviewPO getReviewByCode(String drBusinessCode)throws Exception{
+        Map conditoin=new HashMap();
+        conditoin.put("drBusinessCode",drBusinessCode);
+        return this.commonObjectBySingleParam("ddw_review","drBusinessCode",drBusinessCode,ReviewPO.class);
 
     }
 
     public PracticeRefundPO getReviewRefundByCode(String drBusinessCode)throws Exception{
         return this.commonObjectBySingleParam("ddw_practice_refund","drBusinessCode",drBusinessCode,PracticeRefundPO.class);
+    }
 
+    public PracticeOrderPO getPracticeOrder(Integer id)throws Exception{
+        return this.commonObjectBySingleParam("ddw_practice_order","id",id,PracticeOrderPO.class);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -65,16 +75,31 @@ public class ReviewPracticeRefundService extends CommonService {
                     setParams.put("updateTime",new Date());
                     Map searchCondition = new HashMap<>();
                     searchCondition.put("drBusinessCode",rb.getBusinessCode());
+
+                    Map setParams2 = new HashMap<>();
+                    setParams2.put("status", PracticeOrderStatusEnum.orderStatus5.getCode());
+                    Map searchCondition2 = new HashMap<>();
+                    searchCondition2.put("id",practiceRefundPO.getOrderId());
+                    this.commonUpdateByParams("ddw_practice_order",setParams2,searchCondition2);
                     return this.commonUpdateByParams("ddw_practice_refund",setParams,searchCondition);
                 }
                 return rv;
             }
         }else if(rb.getReviewPO().getDrReviewStatus() == 2){
+            ReviewPO reviewPO = this.getReviewByCode(rb.getBusinessCode());
+
             Map setParams = new HashMap<>();
             setParams.put("status",2);
+            setParams.put("feedback",reviewPO.getDrReviewDesc());
             setParams.put("updateTime",new Date());
             Map searchCondition = new HashMap<>();
             searchCondition.put("drBusinessCode",rb.getBusinessCode());
+
+            Map setParams2 = new HashMap<>();
+            setParams2.put("status", PracticeOrderStatusEnum.orderStatus6.getCode());
+            Map searchCondition2 = new HashMap<>();
+            searchCondition2.put("id",practiceRefundPO.getOrderId());
+            this.commonUpdateByParams("ddw_practice_order",setParams2,searchCondition2);
             return this.commonUpdateByParams("ddw_practice_refund",setParams,searchCondition);
         }
         return new ResponseVO(1,"成功",null);
