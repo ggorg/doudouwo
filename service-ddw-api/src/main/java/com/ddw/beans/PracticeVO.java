@@ -19,6 +19,8 @@ public class PracticeVO {
     private String headImgUrl;
     @ApiModelProperty(name="pgradeName",value="代练等级名称",example="青铜")
     private String pgradeName;
+    @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
+    private String starSign;
     @ApiModelProperty(name="orders",value="接单数",example="3243")
     private long orders;
     @ApiModelProperty(name="star",value="评价星级，一颗星等于2，半颗为1，最低为2",example="10")
@@ -66,6 +68,14 @@ public class PracticeVO {
 
     public void setPgradeName(String pgradeName) {
         this.pgradeName = pgradeName;
+    }
+
+    public String getStarSign() {
+        return starSign;
+    }
+
+    public void setStarSign(String starSign) {
+        this.starSign = starSign;
     }
 
     public long getOrders() {
