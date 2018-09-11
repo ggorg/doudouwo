@@ -49,7 +49,7 @@ public class WithdrawService extends CommonService {
     public ResponseApiVO search(String token)throws Exception{
         Map searchMap = new HashMap();
         searchMap.put("userId", TokenUtil.getUserId(token));
-        List<Map> list=this.commonList("ddw_withdraw_way",null,"t1.id code,t1.accountNoStr,t1.accountType,t1.accountRealName",null,null,searchMap);
+        List<Map> list=this.commonList("ddw_withdraw_way","createTime desc","t1.id code,t1.accountNoStr,t1.accountType,t1.accountRealName",null,null,searchMap);
         if(list==null || list.isEmpty()){
 
             return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
