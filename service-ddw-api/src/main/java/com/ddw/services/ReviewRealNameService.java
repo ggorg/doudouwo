@@ -41,7 +41,7 @@ public class ReviewRealNameService extends CommonService {
     private CommonReviewService commonReviewService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO realName(Integer userId, String realName, String idcard, MultipartFile idcardFront, MultipartFile idcardOpposite)throws Exception{
+    public ResponseApiVO realName(Integer userId, String realName,String phone, String idcard, MultipartFile idcardFront, MultipartFile idcardOpposite)throws Exception{
         if(userId == null || StringUtils.isBlank(realName) || idcardFront.isEmpty() || idcardOpposite.isEmpty()){
             return new ResponseApiVO(-1,"参数不正确",null);
         }else{
@@ -74,6 +74,7 @@ public class ReviewRealNameService extends CommonService {
                 reviewRealNamePO.setUserId(Integer.valueOf(userId));
                 reviewRealNamePO.setDrBusinessCode(bussinessCode);
                 reviewRealNamePO.setRealName(realName);
+                reviewRealNamePO.setPhone(phone);
                 reviewRealNamePO.setIdcard(idcard);
                 reviewRealNamePO.setCreateTime(new Date());
                 reviewRealNamePO.setStatus(0);

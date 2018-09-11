@@ -479,6 +479,7 @@ public class ReviewPracticeService extends CommonService {
     public ResponseVO getOrderUserList(Integer userId,PageDTO page)throws Exception{
         Map condtion = new HashMap<>();
         condtion.put("userId",userId);
+        condtion.put("status,in","(1,2,3)");
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","practiceId",null);
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
@@ -519,7 +520,7 @@ public class ReviewPracticeService extends CommonService {
         if(practicePubTaskDTO !=null && practicePubTaskDTO.getPracticeId() != null){
             condtion.put("userId",practicePubTaskDTO.getPracticeId());
         }else {
-            condtion.put("userId,!=",userId);
+            condtion.put("userId",userId);
         }
         condtion.put("appointment",1);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
@@ -730,7 +731,7 @@ public class ReviewPracticeService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO refund(Integer userId,Integer orderId,String realName, String reason, String describe, MultipartFile pic)throws Exception{
+    public ResponseVO refund(Integer userId,Integer storeId,Integer orderId,String realName, String reason, String describe, MultipartFile pic)throws Exception{
         if(orderId == null){
             return new ResponseVO(-1,"订单号不能为空",null);
         }else{
@@ -762,6 +763,7 @@ public class ReviewPracticeService extends CommonService {
             reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
             reviewPO.setDrProposer(Integer.valueOf(userId));
             reviewPO.setDrApplyDesc("代练订单退款");
+            reviewPO.setDrBelongToStoreId(storeId);
             reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.practiceRefund9.getCode());
             ResponseVO responseVO = this.commonReviewService.submitAppl(reviewPO);
             //插入代练退款表

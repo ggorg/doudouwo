@@ -10,6 +10,7 @@ public class ReviewRealNamePO {
     private String drBusinessCode;
     private Integer userId;
     private String realName;
+    private String phone;
     private String idcard;
     private String idcardFrontUrl;
     private String idcardOppositeUrl;
@@ -18,21 +19,6 @@ public class ReviewRealNamePO {
     private String describe;
     private Date createTime;
     private Date updateTime;
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getDescribe() {
-        return describe;
-    }
-
-    public void setDescribe(String describe) {
-        this.describe = describe;
-    }
 
     public Integer getId() {
         return id;
@@ -40,6 +26,38 @@ public class ReviewRealNamePO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getDrBusinessCode() {
+        return drBusinessCode;
+    }
+
+    public void setDrBusinessCode(String drBusinessCode) {
+        this.drBusinessCode = drBusinessCode;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getIdcard() {
@@ -74,14 +92,6 @@ public class ReviewRealNamePO {
         this.operator = operator;
     }
 
-    public String getRealName() {
-        return realName;
-    }
-
-    public void setRealName(String realName) {
-        this.realName = realName;
-    }
-
     public Integer getStatus() {
         return status;
     }
@@ -90,27 +100,27 @@ public class ReviewRealNamePO {
         this.status = status;
     }
 
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
     public Date getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getDrBusinessCode() {
-        return drBusinessCode;
-    }
-
-    public void setDrBusinessCode(String drBusinessCode) {
-        this.drBusinessCode = drBusinessCode;
     }
 }

@@ -60,6 +60,7 @@ public class ReviewRealNameService extends CommonService {
             ReviewRealNamePO reviewRealNamePO = this.getReviewRealNameByCode(rb.getBusinessCode());
             Map setParams2=new HashMap();
             setParams2.put("realName",reviewRealNamePO.getRealName());
+            setParams2.put("phone",reviewRealNamePO.getPhone());
             setParams2.put("idcard",reviewRealNamePO.getIdcard());
             setParams2.put("idcardFrontUrl",reviewRealNamePO.getIdcardFrontUrl());
             setParams2.put("idcardOppositeUrl",reviewRealNamePO.getIdcardOppositeUrl());

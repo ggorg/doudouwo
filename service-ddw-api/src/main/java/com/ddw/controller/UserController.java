@@ -130,11 +130,17 @@ public class UserController {
     @PostMapping("/realName/{token}")
     public ResponseApiVO realName( @PathVariable String token,
                                 @RequestParam(value = "realName") @ApiParam(name = "realName",value="真实姓名", required = true) String realName,
+                                @RequestParam(value = "phone") @ApiParam(name = "phone",value="手机号码", required = true) String phone,
+                                @RequestParam(value = "codde") @ApiParam(name = "code",value="验证码", required = true) String code,
                                 @RequestParam(value = "idcard") @ApiParam(name = "idcard",value="身份证", required = true) String idcard,
                                 @RequestParam(value = "idcardFront") @ApiParam(name = "idcardFront",value="身份证正面", required = true) MultipartFile idcardFront,
                                 @RequestParam(value = "idcardOpposite") @ApiParam(name = "idcardOpposite",value="身份证反面", required = true) MultipartFile idcardOpposite){
         try {
-            return reviewRealNameService.realName(TokenUtil.getUserId(token),realName,idcard,idcardFront,idcardOpposite);
+            if(MsgUtil.verifyCode(phone,code)){
+                return reviewRealNameService.realName(TokenUtil.getUserId(token),realName,phone,idcard,idcardFront,idcardOpposite);
+            }else {
+                return new ResponseApiVO(-2,"失败,验证码不对",null);
+            }
         }catch (Exception e){
             logger.error("UserController->realName",e);
             return new ResponseApiVO(-1,"提交失败",null);
@@ -184,7 +190,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "获取手机验证码")
+    @ApiOperation(value = "发送手机验证码")
     @PostMapping("/sendVaildCode/{token}")
     public ResponseVO sendVaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneDTO userValidPhoneDTO){
         try {
@@ -203,12 +209,27 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "手机短信认证")
+    @ApiOperation(value = "手机短信认证,绑定手机")
+    @PostMapping("/bindPhone/{token}")
+    public ResponseVO bindPhone(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
+        try {
+            if(MsgUtil.verifyCode(userValidPhoneCodeDTO.getTelphone(),userValidPhoneCodeDTO.getCode())){
+                userInfoService.updatePhone(TokenUtil.getUserId(token),userValidPhoneCodeDTO.getTelphone());
+                return new ResponseVO(1,"成功",null);
+            }else {
+                return new ResponseVO(-2,"失败,验证码不对",null);
+            }
+        }catch (Exception e){
+            logger.error("UserController->bindPhone",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+
+    @ApiOperation(value = "只验证手机验证码")
     @PostMapping("/vaildCode/{token}")
     public ResponseVO vaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
         try {
             if(MsgUtil.verifyCode(userValidPhoneCodeDTO.getTelphone(),userValidPhoneCodeDTO.getCode())){
-                userInfoService.updatePhone(TokenUtil.getUserId(token),userValidPhoneCodeDTO.getTelphone());
                 return new ResponseVO(1,"成功",null);
             }else {
                 return new ResponseVO(-2,"失败,验证码不对",null);
@@ -218,6 +239,7 @@ public class UserController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
+
     @Token
     @ApiOperation(value = "查询用户的贡献值")
     @PostMapping("/query/user/allcons/{token}")
