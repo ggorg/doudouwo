@@ -331,6 +331,20 @@ public class WalletService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO forgetPayPwd(Integer userId,String newPwd)throws Exception{
+        if(StringUtils.isBlank(newPwd)){
+            return new ResponseApiVO(-1,"密码不能为空",null);
+        }
+        //修改钱包密码
+        Map setParams = new HashMap();
+        setParams.put("payPwd",newPwd);
+        Map searchCondition = new HashMap();
+        searchCondition.put("userId",userId);
+        ResponseVO vo = this.commonOptimisticLockUpdateByParam("ddw_my_wallet",setParams,searchCondition,"version");
+        return new ResponseApiVO(vo.getReCode(),vo.getReMsg(),null);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO insertPayPwdErrorLog(Integer userId,String payPwd)throws Exception{
         Map payPwdErrorLog = new HashMap<>();
         payPwdErrorLog.put("userId",userId);
