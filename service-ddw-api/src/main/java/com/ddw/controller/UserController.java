@@ -190,7 +190,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "获取手机验证码")
+    @ApiOperation(value = "发送手机验证码")
     @PostMapping("/sendVaildCode/{token}")
     public ResponseVO sendVaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneDTO userValidPhoneDTO){
         try {
@@ -203,8 +203,8 @@ public class UserController {
     }
 
     @ApiOperation(value = "手机短信认证,绑定手机")
-    @PostMapping("/vaildCode/{token}")
-    public ResponseVO vaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
+    @PostMapping("/bindPhone/{token}")
+    public ResponseVO bindPhone(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
         try {
             if(MsgUtil.verifyCode(userValidPhoneCodeDTO.getTelphone(),userValidPhoneCodeDTO.getCode())){
                 userInfoService.updatePhone(TokenUtil.getUserId(token),userValidPhoneCodeDTO.getTelphone());
@@ -213,14 +213,14 @@ public class UserController {
                 return new ResponseVO(-2,"失败,验证码不对",null);
             }
         }catch (Exception e){
-            logger.error("UserController->vaildCode",e);
+            logger.error("UserController->bindPhone",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }
 
-    @ApiOperation(value = "纯验证手机验证码")
-    @PostMapping("/onlyVaildCode/{token}")
-    public ResponseVO onlyVaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
+    @ApiOperation(value = "只验证手机验证码")
+    @PostMapping("/vaildCode/{token}")
+    public ResponseVO vaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
         try {
             if(MsgUtil.verifyCode(userValidPhoneCodeDTO.getTelphone(),userValidPhoneCodeDTO.getCode())){
                 return new ResponseVO(1,"成功",null);
@@ -228,7 +228,7 @@ public class UserController {
                 return new ResponseVO(-2,"失败,验证码不对",null);
             }
         }catch (Exception e){
-            logger.error("UserController->onlyVaildCode",e);
+            logger.error("UserController->vaildCode",e);
             return new ResponseVO(-1,"提交失败",null);
         }
     }
