@@ -25,7 +25,7 @@ public class AppOrderService extends CommonService {
         Map searchMap=new HashMap();
         searchMap.put("creater",TokenUtil.getUserId(token));
         CommonChildBean cb=new CommonChildBean("ddw_order_view","orderId","orderId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_exit_order","t1.createTime desc","DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') refundTime,t1.exitCost price,ct0.name,ct0.orderNo,ct0.headImg imgUrl",p.getStartRow(),p.getEndRow(),searchMap,cb);
+        CommonSearchBean csb=new CommonSearchBean("ddw_exit_order","t1.createTime desc","DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') refundTime,t1.exitCost price,ct0.name,right(ct0.orderNo,16) orderNo,ct0.headImg imgUrl",p.getStartRow(),p.getEndRow(),searchMap,cb);
         List<Map> orderList=this.getCommonMapper().selectObjects(csb);
 
         if(orderList==null && orderList.isEmpty()){
@@ -51,8 +51,18 @@ public class AppOrderService extends CommonService {
         for(Map m:orderList){
             orderViewVO=new OrderViewVO();
             PropertyUtils.copyProperties(orderViewVO,m);
+            if(OrderTypeEnum.OrderType7.getCode().equals(orderViewVO.getOrderType())){
+                if(ClientShipStatusEnum.ShipStatus0.getCode().equals(orderViewVO.getShipStatus())){
+                    orderViewVO.setShipStatusName("未使用");
+                }else{
+                    orderViewVO.setShipStatusName("已使用");
+                }
+            }else{
+                orderViewVO.setShipStatusName(ClientShipStatusEnum.getName(orderViewVO.getShipStatus()));
+            }
             orderViewVO.setOrderTypeName(OrderTypeEnum.getName(orderViewVO.getOrderType()));
-            orderViewVO.setShipStatusName(ClientShipStatusEnum.getName(orderViewVO.getShipStatus()));
+
+            orderViewVO.setOrderNo(orderViewVO.getOrderNo().substring(16));
             dataList.add(orderViewVO);
 
         }

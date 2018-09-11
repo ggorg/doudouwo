@@ -25,6 +25,19 @@ public class MsgUtil {
     //找回支付密码
     private final static Integer paypwd_id=189074;
 
+    private static String sendMsgTimes(String telphone){
+        Integer n=(Integer) CacheUtil.get("msgTimesTimeOut","telphone-"+telphone);
+        if(n>=5){
+            return "-2";
+        }
+        if(n==null || n==0){
+            n=1;
+        }else{
+            n=n+1;
+        }
+        CacheUtil.put("msgTimesTimeOut","telphone-"+telphone,n);
+        return "1";
+    }
     /**
      * 您申请的实名认证短信验证码{1}
      * @param telphone
@@ -32,6 +45,14 @@ public class MsgUtil {
      * @throws Exception
      */
     public static String sendVaildCode(String telphone)throws Exception{
+        String string=(String)CacheUtil.get("validCodeCache","telphone-"+telphone);
+        if(StringUtils.isNotBlank(string)){
+            return "-1";
+        }
+        string=sendMsgTimes(telphone);
+        if(string.equals("-2")){
+            return string;
+        }
         String random= RandomStringUtils.randomNumeric(6);
         commonModel(cert_id,telphone,random);
         logger.info("实名验证验证码："+random);
@@ -79,8 +100,19 @@ public class MsgUtil {
      * @param content
      * @throws Exception
      */
-    public static void  sendPayPwdMsg(String telphone,String content)throws Exception{
+    public static String  sendPayPwdMsg(String telphone,String content)throws Exception{
+        String string=(String)CacheUtil.get("validCodeCache","telphone-"+telphone);
+        if(StringUtils.isNotBlank(string)){
+            return "-1";
+        }
+        string=sendMsgTimes(telphone);
+        if(string.equals("-2")){
+            return string;
+        }
         commonModel(paypwd_id,telphone,content);
+        logger.info("忘记密码");
+        CacheUtil.put("validCodeCache","telphone-"+telphone,"true");
+        return string;
     }
 
     public static void commonModel(Integer templateId,String telphone,String content)throws Exception{

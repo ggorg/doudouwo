@@ -188,7 +188,14 @@ public class UserController {
     @PostMapping("/sendVaildCode/{token}")
     public ResponseVO sendVaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneDTO userValidPhoneDTO){
         try {
-            MsgUtil.sendVaildCode(userValidPhoneDTO.getTelphone());
+            String res=MsgUtil.sendVaildCode(userValidPhoneDTO.getTelphone());
+            if(res.equals("-1")){
+                return new ResponseVO(-2,"抱歉，操作过于频繁",null);
+
+            }if(res.equals("-2")){
+                return new ResponseVO(-2,"抱歉，短信发送已超过一天5条上限",null);
+
+            }
             return new ResponseVO(1,"成功",null);
         }catch (Exception e){
             logger.error("UserController->sendVaildCode",e);
