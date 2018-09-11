@@ -202,7 +202,7 @@ public class UserController {
         }
     }
 
-    @ApiOperation(value = "手机短信认证")
+    @ApiOperation(value = "手机短信认证,绑定手机")
     @PostMapping("/vaildCode/{token}")
     public ResponseVO vaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneCodeDTO userValidPhoneCodeDTO){
         try {
