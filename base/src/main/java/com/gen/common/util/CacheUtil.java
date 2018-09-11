@@ -19,9 +19,11 @@ public class CacheUtil {
         Cache cache=createCache(cacheName);
         if(cache!=null && cache.isKeyInCache(key)){
             Element element=cache.getQuiet(key);
-            cache.flush();
+            //
             if(element!=null){
-                return element.getObjectValue();
+                Object obj=element.getObjectValue();
+               // cache.flush();
+                return obj;
             }
         }
         return null;

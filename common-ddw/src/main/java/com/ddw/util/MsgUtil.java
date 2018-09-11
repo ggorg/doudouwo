@@ -27,7 +27,7 @@ public class MsgUtil {
 
     private static String sendMsgTimes(String telphone){
         Integer n=(Integer) CacheUtil.get("msgTimesTimeOut","telphone-"+telphone);
-        if(n>=5){
+        if(n!=null && n>=5){
             return "-2";
         }
         if(n==null || n==0){
