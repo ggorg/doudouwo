@@ -11,8 +11,6 @@ public class UserInfoUpdateDTO {
     private String userPwd;
     @ApiModelProperty(name="nickName",value="昵称",example="某某某")
     private String nickName;
-    @ApiModelProperty(name="phone",value="手机号码",example="18500000000")
-    private String phone;
     @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
     private String label;
     @ApiModelProperty(name="interest",value="兴趣",example="LOL/美食/旅游")
@@ -54,14 +52,6 @@ public class UserInfoUpdateDTO {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getLabel() {

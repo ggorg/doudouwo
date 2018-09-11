@@ -6,6 +6,7 @@ import com.ddw.services.WalletService;
 import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.MsgUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -186,7 +187,7 @@ public class WalletController {
     }
 
     @Token
-    @ApiOperation(value = "修改钱包密码",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "修改钱包支付密码",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/updatePayPwd/{token}")
     @ResponseBody
     public ResponseApiVO updatePayPwd(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式,oldPwd钱包原支付密码,首次原密码为空,newPwd新密码",required=true)WalletUpdatePayPwdDTO args){
@@ -203,11 +204,15 @@ public class WalletController {
     @ApiOperation(value = "忘记钱包密码",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/forgetPayPwd/{token}")
     @ResponseBody
-    public ResponseApiVO forgetPayPwd(@PathVariable String token){
+    public ResponseApiVO forgetPayPwd(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletForgetPayPwdDTO walletForgetPayPwdDTO){
         try {
-            return this.walletService.forgetPayPwd(TokenUtil.getUserId(token));
+            if(MsgUtil.verifyCode(walletForgetPayPwdDTO.getTelphone(),walletForgetPayPwdDTO.getCode())){
+                return this.walletService.forgetPayPwd(TokenUtil.getUserId(token),walletForgetPayPwdDTO.getNewPwd());
+            }else {
+                return new ResponseApiVO(-2,"失败,验证码不对",null);
+            }
         }catch (Exception e){
-            logger.error("WalletController-updatePayPwd-》修改钱包支付密码-》系统异常",e);
+            logger.error("WalletController-forgetPayPwd-》忘记钱包密码-》系统异常",e);
         }
         return new ResponseApiVO(-1,"失败",null);
 
