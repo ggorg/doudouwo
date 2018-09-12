@@ -132,7 +132,7 @@ public class PracticeController {
             //接单数
             practiceVO.setOrders(reviewPracticeService.getOrderCount(practiceId));
             practiceVO.setFocus(focus);
-            practiceVO.setPracticeGameList(reviewPracticeService.getPracticeGameList(practiceId));
+            practiceVO.setReviewPracticeList(reviewPracticeService.getReviewPracticeList(practiceId,TokenUtil.getStoreId(token)));
             return new ResponseApiVO(1,"成功",practiceVO);
         }catch (Exception e){
             logger.error("PracticeController->query",e);

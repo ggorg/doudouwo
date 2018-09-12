@@ -104,6 +104,7 @@ public class ReviewPracticeService extends CommonService {
                 reviewPracticePO.setGameId(Integer.valueOf(gameId));
                 reviewPracticePO.setRankId(Integer.valueOf(rankId));
                 reviewPracticePO.setCreateTime(new Date());
+                reviewPracticePO.setUpdateTime(new Date());
                 reviewPracticePO.setStatus(0);
                 String ImgName1= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph1.getOriginalFilename());
                 FileInfoVo fileInfoVo1= UploadFileMoveUtil.move( photograph1,mainGlobals.getRsDir(), ImgName1);
@@ -726,6 +727,24 @@ public class ReviewPracticeService extends CommonService {
             PracticeGameList.add(pg);
         }
         return PracticeGameList;
+    }
+
+    /**
+     * 获取代练简历
+     * @param practiceId
+     * @param storeId
+     * @return
+     * @throws Exception
+     */
+    public List<ReviewPracticeVO> getReviewPracticeList(Integer practiceId,Integer storeId)throws Exception{
+        List<Map> list = practiceMapper.getReviewPracticeList(practiceId,storeId);
+        List<ReviewPracticeVO> reviewPracticeList = new ArrayList<>();
+        for(Map map:list){
+            ReviewPracticeVO rp = new ReviewPracticeVO();
+            PropertyUtils.copyProperties(rp,map);
+            reviewPracticeList.add(rp);
+        }
+        return reviewPracticeList;
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

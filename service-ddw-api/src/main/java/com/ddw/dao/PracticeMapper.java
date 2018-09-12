@@ -19,4 +19,6 @@ public interface PracticeMapper {
     List<AppIndexPracticeVO> getPracticeListByNotInIds(@Param("userIdList") List<Integer> userIdList, @Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end,@Param("appointment") Integer appointment);
 
     List getPracticeDynamic(@Param("practiceId") Integer practiceId);
+
+    List getReviewPracticeList(@Param("practiceId") Integer practiceId, @Param("storeId") Integer storeId);
 }

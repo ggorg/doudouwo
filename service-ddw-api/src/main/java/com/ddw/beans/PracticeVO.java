@@ -1,6 +1,5 @@
 package com.ddw.beans;
 
-import com.ddw.beans.vo.PracticeGameVO;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
@@ -27,8 +26,8 @@ public class PracticeVO {
     private int star;
     @ApiModelProperty(name="focus",value="是否关注,关注true,未关注false",example="true")
     private boolean focus;
-    @ApiModelProperty(name="practiceGameList",value="代练游戏列表",example="")
-    private List<PracticeGameVO> practiceGameList;
+    @ApiModelProperty(name="practiceGameList",value="代练简历列表",example="")
+    private List<ReviewPracticeVO> reviewPracticeList;
 
     public int getUserId() {
         return userId;
@@ -102,11 +101,11 @@ public class PracticeVO {
         this.focus = focus;
     }
 
-    public List<PracticeGameVO> getPracticeGameList() {
-        return practiceGameList;
+    public List<ReviewPracticeVO> getReviewPracticeList() {
+        return reviewPracticeList;
     }
 
-    public void setPracticeGameList(List<PracticeGameVO> practiceGameList) {
-        this.practiceGameList = practiceGameList;
+    public void setReviewPracticeList(List<ReviewPracticeVO> reviewPracticeList) {
+        this.reviewPracticeList = reviewPracticeList;
     }
 }

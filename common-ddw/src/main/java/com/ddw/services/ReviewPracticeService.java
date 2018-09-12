@@ -70,8 +70,8 @@ public class ReviewPracticeService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateReviewPractice(ReviewCallBackBean rb)throws Exception{
         //根据审核结果处理
+        ReviewPO reviewPO = this.getReviewByCode(rb.getBusinessCode());
         if(rb.getReviewPO().getDrReviewStatus() == 1) {
-            ReviewPO reviewPO = this.getReviewByCode(rb.getBusinessCode());
             Map setParams = new HashMap();
             setParams.put("practiceGradeId", 1);
             setParams.put("practiceFlag", 1);
@@ -109,7 +109,21 @@ public class ReviewPracticeService extends CommonService {
                 setParams2.put("rankId", reviewPracticePO.getRankId());
                 this.commonUpdateByParams("ddw_practice_game", setParams2, searchCondition2);
             }
+            //更新代练审核表
+            Map searchCondition3 = new HashMap();
+            searchCondition3.put("drBusinessCode", rb.getBusinessCode());
+            Map setParams3 = new HashMap<>();
+            setParams3.put("status",1 );//审核状态，0未审核，1审核通过，2审核拒绝
+            setParams3.put("describe",reviewPO.getDrReviewDesc() );//审核说明
+            this.commonUpdateByParams("ddw_review_practice", setParams3, searchCondition3);
             return this.commonUpdateByParams("ddw_userinfo", setParams, searchCondition);
+        }else{
+            Map searchCondition = new HashMap();
+            searchCondition.put("drBusinessCode", rb.getBusinessCode());
+            Map setParams = new HashMap<>();
+            setParams.put("status",2 );//审核状态，0未审核，1审核通过，2审核拒绝
+            setParams.put("describe",reviewPO.getDrReviewDesc() );//审核说明
+            this.commonUpdateByParams("ddw_review_practice", setParams, searchCondition);
         }
         return new ResponseVO(1,"成功",null);
     }

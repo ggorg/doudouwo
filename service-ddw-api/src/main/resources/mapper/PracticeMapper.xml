@@ -17,7 +17,6 @@
         <result property="rank" column="rank"/>
     </resultMap>
 
-
     <select id="getPracticeList" parameterType="int" resultMap="BaseResultMap">
         select t1.userId,t1.gameId,t1.rankId,t3.nickName,t3.headImgUrl,t3.label,
         t4.gradeName pgradeName,count(t2.practiceId) AS ordersCount,t6.gameName,t7.rank,IFNULL(t8.star,0)star
@@ -118,6 +117,22 @@
         t1.practiceId = #{practiceId}
         AND t1.payState = 1
         ORDER BY t1.updateTime desc
+    </select>
+
+    <select id="getReviewPracticeList" parameterType="int" resultType="java.util.HashMap">
+        SELECT id,drBusinessCode,userId,storeId,gameId,rankId,gameName,rank,
+        picUrl1,picUrl2,picUrl3,status,`describe`,createTime,updateTime
+        FROM
+        (SELECT t1.id,t1.drBusinessCode,t1.userId,t1.storeId,t1.gameId,t1.rankId,ct1.gameName,ct2.rank,
+        t1.picUrl1,t1.picUrl2,t1.picUrl3,t1.`status`,t1.`describe`,t1.createTime,t1.updateTime
+        FROM ddw_review_practice t1
+		INNER JOIN ddw_game ct1 ON ct1.id = t1.gameId
+        INNER JOIN ddw_rank ct2 ON ct2.id = t1.rankId
+        WHERE
+        userId = #{practiceId}
+        AND storeId=#{storeId}
+         ORDER BY updateTime desc)
+         AS a GROUP BY userId,gameId
     </select>
 
 </mapper>
