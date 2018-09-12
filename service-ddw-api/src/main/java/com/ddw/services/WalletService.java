@@ -263,16 +263,16 @@ public class WalletService extends CommonService {
     }
 
     /**
-     * 忘记支付密码
-     * @param userid
+     * 忘记支付密码,忘记密码改为不发送支付密码,直接修改密码,故此方法暂时不用,用以下的忘记支付密码方法
+     * @param userId
      * @return
      * @throws Exception
      */
-    public ResponseApiVO forgetPayPwd(Integer userid)throws Exception{
-        UserInfoPO userInfoPO = userInfoService.querySimple(userid);
+    public ResponseApiVO forgetPayPwd(Integer userId)throws Exception{
+        UserInfoPO userInfoPO = userInfoService.querySimple(userId);
         //查询用户是否有手机号码,有则发送密码到手机上
         if(!StringUtils.isBlank(userInfoPO.getPhone())){
-            WalletPO walletPO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletPO.class);
+            WalletPO walletPO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userId, WalletPO.class);
             String str=MsgUtil.sendPayPwdMsg(userInfoPO.getPhone(),walletPO.getPayPwd());
             if(str.equals("-1")){
                 return new ResponseApiVO(-2,"抱歉，操作过于频繁",null);
@@ -286,6 +286,39 @@ public class WalletService extends CommonService {
             return new ResponseApiVO(-1,"没绑定手机号码",null);
         }
     }
+
+    /**
+     * 忘记支付密码
+     * @param userId
+     * @param walletForgetPayPwdDTO
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO forgetPayPwd(Integer userId,WalletForgetPayPwdDTO walletForgetPayPwdDTO)throws Exception{
+        UserInfoPO userInfoPO = userInfoService.querySimple(userId);
+        if(!StringUtils.isBlank(userInfoPO.getPhone())){
+            if(!userInfoPO.getPhone().equals(walletForgetPayPwdDTO.getTelphone())){
+                return new ResponseApiVO(-2,"与绑定手机不一致",null);
+            }
+            if(StringUtils.isBlank(walletForgetPayPwdDTO.getNewPwd())){
+                return new ResponseApiVO(-3,"密码不能为空",null);
+            }
+            if(!MsgUtil.verifyCode(walletForgetPayPwdDTO.getTelphone(),walletForgetPayPwdDTO.getCode())){
+                return new ResponseApiVO(-4,"失败,验证码不对",null);
+            }
+            //修改钱包密码
+            Map setParams = new HashMap();
+            setParams.put("payPwd",walletForgetPayPwdDTO.getNewPwd());
+            Map searchCondition = new HashMap();
+            searchCondition.put("userId",userId);
+            ResponseVO vo = this.commonOptimisticLockUpdateByParam("ddw_my_wallet",setParams,searchCondition,"version");
+            return new ResponseApiVO(vo.getReCode(),vo.getReMsg(),null);
+        }else {
+            return new ResponseApiVO(-1,"没绑定手机号码",null);
+        }
+    }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO createWallet(Integer userid){
         Map wallet=new HashMap();
@@ -320,20 +353,6 @@ public class WalletService extends CommonService {
             if(!oldPwd.equals(walletPO.getPayPwd())){
                 return new ResponseApiVO(-2,"原密码不正确",null);
             }
-        }
-        //修改钱包密码
-        Map setParams = new HashMap();
-        setParams.put("payPwd",newPwd);
-        Map searchCondition = new HashMap();
-        searchCondition.put("userId",userId);
-        ResponseVO vo = this.commonOptimisticLockUpdateByParam("ddw_my_wallet",setParams,searchCondition,"version");
-        return new ResponseApiVO(vo.getReCode(),vo.getReMsg(),null);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO forgetPayPwd(Integer userId,String newPwd)throws Exception{
-        if(StringUtils.isBlank(newPwd)){
-            return new ResponseApiVO(-1,"密码不能为空",null);
         }
         //修改钱包密码
         Map setParams = new HashMap();

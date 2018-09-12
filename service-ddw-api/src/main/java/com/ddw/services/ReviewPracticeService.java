@@ -519,8 +519,6 @@ public class ReviewPracticeService extends CommonService {
         Map condtion = new HashMap<>();
         if(practicePubTaskDTO !=null && practicePubTaskDTO.getPracticeId() != null){
             condtion.put("userId",practicePubTaskDTO.getPracticeId());
-        }else {
-            condtion.put("userId",userId);
         }
         condtion.put("appointment",1);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
