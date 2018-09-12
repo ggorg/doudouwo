@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.config.DDWGlobals;
-import com.ddw.enums.DynamicsRoleTypeEnum;
-import com.ddw.enums.LiveEventTypeEnum;
-import com.ddw.enums.LiveStatusEnum;
-import com.ddw.enums.ReviewStatusEnum;
+import com.ddw.enums.*;
 import com.ddw.util.IMApiUtil;
 import com.ddw.util.IndexGoddessComparator;
 import com.ddw.util.LiveRadioApiUtil;
@@ -39,6 +36,9 @@ public class LiveRadioService extends CommonService{
 
     @Autowired
     private BasePhotoService basePhotoService;
+
+    @Autowired
+    private BaseDynService baseDynService;
 
     public Page findPage(Integer pageNo,Integer storeid)throws Exception{
 
@@ -117,34 +117,22 @@ public class LiveRadioService extends CommonService{
                     boolean flag=IMApiUtil.destoryGroup(streamId.replace(LiveRadioConstant.BIZID+"_",""));
                     if(flag){
                         CacheUtil.delete("publicCache","livePv-"+streamId.replaceFirst("[0-9]+_",""));
+                        baseDynService.doEndTime(streamId,DynamicsRoleTypeEnum.RoleType1);
                         return new ResponseVO(1,"关闭直播成功",null);
                     }else{
                         return new ResponseVO(-2,"关闭直播失败",null);
                     }
                 }
             }else if(LiveEventTypeEnum.eventType1.getCode().equals(eventType)){
-                saveGoddessLiveDyn(streamId);
+                baseDynService.saveGoddessLiveDyn(streamId);
                 return this.updateLiveRadioStatus(streamId,LiveStatusEnum.liveStatus1);
             }
         }
         return new ResponseVO(-2,"更新直播状态失败",null);
     }
-    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public void saveGoddessLiveDyn(String streamId)throws Exception{
-        String[] str = streamId.split("_");
-        Integer userId = Integer.parseInt(str[2]);
-        Map liveMap=this.commonObjectBySingleParam("ddw_live_radio_space","streamid",streamId);
-        Map map=new HashMap();
-        map.put("createTime",new Date());
-        map.put("roleType", DynamicsRoleTypeEnum.RoleType1.getCode());
-        map.put("dynType",2);
-        map.put("userId",userId);
-        map.put("title","直播间-"+liveMap.get("spaceName"));
-        map.put("imgs",basePhotoService.getPhotograph(userId));
-        this.commonInsertMap("ddw_dynamics",map);
-//        List<Map> list=this.commonList("ddw_dynamics","createTime desc",pageNoDTO.getPageNo()==null?1:pageNoDTO.getPageNo(),10,searchMap);
 
-    }
+
+
     //更新缓存首页女神直播状态
     public void updateAppIndexCache(String streamId,Integer flag){
         if(LiveEventTypeEnum.eventType1.getCode().equals(flag)){

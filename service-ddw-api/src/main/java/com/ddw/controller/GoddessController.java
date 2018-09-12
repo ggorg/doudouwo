@@ -83,7 +83,7 @@ public class GoddessController {
     @PostMapping("/query/dynamics/{token}")
     public ResponseApiVO<DynamicsVO> queryDynamics(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)DynamicsDTO dto){
         try {
-            return this.reviewGoddessService.getDynamics(token, DynamicsRoleTypeEnum.RoleType1.getCode(),dto);
+            return this.reviewGoddessService.getDynamics(token, DynamicsRoleTypeEnum.RoleType1.getCode()+","+DynamicsRoleTypeEnum.RoleType3.getCode(),dto);
         }catch (Exception e){
             logger.error("GoddessController->queryDynamics",e);
             return new ResponseApiVO(-1,"女神动态",null);

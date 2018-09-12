@@ -19,6 +19,8 @@ public class DynamicsVO {
     private String Imgs;
     @ApiModelProperty(name="createTime",value="创建时间",example="创建时间")
     private String createTime;
+    @ApiModelProperty(name="useTime",value="用时",example="16分51秒")
+    private String useTime;
 
     public String getTitle() {
         return title;

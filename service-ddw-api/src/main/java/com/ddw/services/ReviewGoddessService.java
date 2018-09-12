@@ -15,13 +15,16 @@ import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
+import freemarker.template.utility.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -339,23 +342,52 @@ public class ReviewGoddessService extends CommonService {
         return new ResponseApiVO(1,"成功",vo);
 
     }
-    public ResponseApiVO getDynamics(String token,Integer dynRoleType,DynamicsDTO pageNoDTO)throws Exception{
-        if(StringUtils.isBlank(DynamicsRoleTypeEnum.getName(dynRoleType))){
-            return new ResponseApiVO(-2,"类型有误",null);
+    private String getSurplusTimeStr(Date currentDate,Date startTime){
+
+        long l=currentDate.getTime()-startTime.getTime();
+        BigDecimal v= BigDecimal.valueOf(l).divide(BigDecimal.valueOf(1000)).divide(BigDecimal.valueOf(60),2,BigDecimal.ROUND_DOWN);
+        long part=(long)v.doubleValue();
+        BigDecimal point=v.subtract(BigDecimal.valueOf(part)).multiply(BigDecimal.valueOf(60));
+        StringBuilder builder=new StringBuilder();
+        if(part>60){
+            BigDecimal hv= BigDecimal.valueOf(part).divide(BigDecimal.valueOf(60),2,BigDecimal.ROUND_DOWN);
+            long h=(long)hv.doubleValue();
+            builder.append(h).append("小时");
+            builder.append(hv.subtract(BigDecimal.valueOf(h)).multiply(BigDecimal.valueOf(60)).intValue()).append("分").append(point.intValue()).append("秒");
+
+        }else{
+            builder.append(part).append("分").append(point.intValue()).append("秒");
+
         }
+        return builder.toString();
+
+    }
+    public ResponseApiVO getDynamics(String token,String dynRoleType,DynamicsDTO pageNoDTO)throws Exception{
+
         if(pageNoDTO.getCode()==null || pageNoDTO.getCode()<1){
             return new ResponseApiVO(-2,"女神code有误",null);
         }
         Map searchMap=new HashMap();
         searchMap.put("userId",pageNoDTO.getCode());
-        searchMap.put("roleType",dynRoleType);
+        searchMap.put("roleType,in","("+dynRoleType+")");
         List<Map> list=this.commonList("ddw_dynamics","createTime desc",pageNoDTO.getPageNo()==null?1:pageNoDTO.getPageNo(),10,searchMap);
+       final Date currentDate=new Date();
         if(list!=null && list.size()>0){
             list.forEach(a->{
                 a.remove("id");
                 a.remove("roleType");
                 a.remove("userId");
+                if(!a.containsKey("endTime") || a.get("endTime")==null ){
+                    a.put("useTime",getSurplusTimeStr(currentDate,(Date)a.get("createTime")));
+                }else if(currentDate.before((Date)a.get("endTime"))){
+                    a.put("useTime",getSurplusTimeStr(currentDate,(Date)a.get("createTime")));
+                }else{
+                    a.put("useTime",getSurplusTimeStr((Date)a.get("endTime"),(Date)a.get("createTime")));
+                }
                 a.put("createTime",DateFormatUtils.format((Date)a.get("createTime"),"yyyy-MM-dd HH:mm"));
+                a.remove("busId");
+                a.remove("endTime");
+
             });
             return new ResponseApiVO(1,"成功",new ListVO<>(list));
         }
@@ -462,6 +494,10 @@ public class ReviewGoddessService extends CommonService {
         }
         return new ResponseApiVO(1,"成功",new ListVO<>(list));
 
+    }
+
+    public static void main(String[] args) throws Exception{
+        System.out.println(        new ReviewGoddessService().getSurplusTimeStr(new Date(), DateUtils.parseDate("2018-09-12 14:1:1","yyyy-MM-dd HH:mm:ss")));
     }
 
 }

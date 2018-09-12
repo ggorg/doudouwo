@@ -5,23 +5,22 @@ import com.gen.common.dict.Dictionary;
 /**
  * 动态角色类型
  */
-public enum DynamicsRoleTypeEnum implements Dictionary {
-    RoleType1("女神-直播",1),
-    RoleType3("女神-约玩",3),
-    RoleType2("代练",2);
+public enum DynamicsContextTypeEnum implements Dictionary {
+    DynamicsContextType1("文字",1),
+    DynamicsContextType2("图文",2);
 
 
     private String name;
     private Integer code;
 
-    private DynamicsRoleTypeEnum(String name, Integer code) {
+    private DynamicsContextTypeEnum(String name, Integer code) {
         this.name = name;
         this.code = code;
     }
 
     // 普通方法
     public static String getName(Integer code) {
-        for (DynamicsRoleTypeEnum c : DynamicsRoleTypeEnum.values()) {
+        for (DynamicsContextTypeEnum c : DynamicsContextTypeEnum.values()) {
             if (c.getCode() == code || c.getCode().equals(code)) {
                 return c.name;
             }

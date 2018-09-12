@@ -25,6 +25,9 @@ public class BaseBiddingService extends CommonService {
     @Autowired
     private BaseConsumeRankingListService  baseConsumeRankingListService;
 
+    @Autowired
+    private BaseDynService baseDynService;
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public int execute(String ub)throws Exception{
 
@@ -49,6 +52,7 @@ public class BaseBiddingService extends CommonService {
 
         //updateMap.put("times",(Integer) payMap.get("time"));
         this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",bidCode);
+        baseDynService.saveBideDyn(bidMap,(Date)updateMap.get("endTime"));
         Map map=(Map) CacheUtil.get("pay","bidding-pay-"+ub);
         Integer earnestPrice=(Integer) map.get("earnestPrice");
         this.incomeService.commonIncome(goddessUserId,earnestPrice, IncomeTypeEnum.IncomeType1, OrderTypeEnum.OrderType4,(String)map.get("earnestOrderNo"));

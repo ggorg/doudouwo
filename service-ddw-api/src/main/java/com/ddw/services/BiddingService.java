@@ -44,6 +44,9 @@ public class BiddingService extends CommonService {
     @Autowired
     private LiveRadioService liveRadioService;
 
+    @Autowired
+    private BaseDynService baseDynService;
+
    // @Autowired
    // private CacheService cacheService;
     @Autowired
@@ -313,7 +316,8 @@ public class BiddingService extends CommonService {
        updateMap.put("startTime",currentDate);
        //updateMap.put("times",(Integer) payMap.get("time"));
        this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",updateMap,"id",bidCode);
-       Map map=(Map) CacheUtil.get("pay","bidding-pay-"+ub);
+        baseDynService.saveBideDyn(bidMap,(Date)updateMap.get("endTime"));
+        Map map=(Map) CacheUtil.get("pay","bidding-pay-"+ub);
        Integer earnestPrice=(Integer) map.get("earnestPrice");
        this.incomeService.commonIncome(TokenUtil.getUserId(token),earnestPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType4,(String)map.get("earnestOrderNo"));
 
