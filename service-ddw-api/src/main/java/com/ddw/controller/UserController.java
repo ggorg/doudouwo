@@ -131,7 +131,7 @@ public class UserController {
     public ResponseApiVO realName( @PathVariable String token,
                                 @RequestParam(value = "realName") @ApiParam(name = "realName",value="真实姓名", required = true) String realName,
                                 @RequestParam(value = "phone") @ApiParam(name = "phone",value="手机号码", required = true) String phone,
-                                @RequestParam(value = "codde") @ApiParam(name = "code",value="验证码", required = true) String code,
+                                @RequestParam(value = "code") @ApiParam(name = "code",value="验证码", required = true) String code,
                                 @RequestParam(value = "idcard") @ApiParam(name = "idcard",value="身份证", required = true) String idcard,
                                 @RequestParam(value = "idcardFront") @ApiParam(name = "idcardFront",value="身份证正面", required = true) MultipartFile idcardFront,
                                 @RequestParam(value = "idcardOpposite") @ApiParam(name = "idcardOpposite",value="身份证反面", required = true) MultipartFile idcardOpposite){
@@ -194,7 +194,16 @@ public class UserController {
     @PostMapping("/sendVaildCode/{token}")
     public ResponseVO sendVaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneDTO userValidPhoneDTO){
         try {
-            String res=MsgUtil.sendVaildCode(userValidPhoneDTO.getTelphone());
+            String res= "";
+            //发送验证码类型,1实名验证,2找回支付密码
+            switch (userValidPhoneDTO.getType()){
+                case 1:
+                    res=MsgUtil.sendVaildCode(userValidPhoneDTO.getTelphone());
+                    break;
+                case 2:
+                    res=MsgUtil.sendPayPwdMsg(userValidPhoneDTO.getTelphone());
+                    break;
+            }
             if(res.equals("-1")){
                 return new ResponseVO(-2,"抱歉，操作过于频繁",null);
 

@@ -263,31 +263,6 @@ public class WalletService extends CommonService {
     }
 
     /**
-     * 忘记支付密码,忘记密码改为不发送支付密码,直接修改密码,故此方法暂时不用,用以下的忘记支付密码方法
-     * @param userId
-     * @return
-     * @throws Exception
-     */
-    public ResponseApiVO forgetPayPwd(Integer userId)throws Exception{
-        UserInfoPO userInfoPO = userInfoService.querySimple(userId);
-        //查询用户是否有手机号码,有则发送密码到手机上
-        if(!StringUtils.isBlank(userInfoPO.getPhone())){
-            WalletPO walletPO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userId, WalletPO.class);
-            String str=MsgUtil.sendPayPwdMsg(userInfoPO.getPhone(),walletPO.getPayPwd());
-            if(str.equals("-1")){
-                return new ResponseApiVO(-2,"抱歉，操作过于频繁",null);
-
-            }if(str.equals("-2")){
-                return new ResponseApiVO(-2,"抱歉，短信发送已超过一天5条上限",null);
-
-            }
-            return new ResponseApiVO(1,"成功",null);
-        }else {
-            return new ResponseApiVO(-1,"没绑定手机号码",null);
-        }
-    }
-
-    /**
      * 忘记支付密码
      * @param userId
      * @param walletForgetPayPwdDTO

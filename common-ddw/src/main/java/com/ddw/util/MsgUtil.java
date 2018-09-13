@@ -97,10 +97,9 @@ public class MsgUtil {
     /**
      *
      * @param telphone
-     * @param content
      * @throws Exception
      */
-    public static String  sendPayPwdMsg(String telphone,String content)throws Exception{
+    public static String  sendPayPwdMsg(String telphone)throws Exception{
         String string=(String)CacheUtil.get("validCodeCache","telphone-"+telphone);
         if(StringUtils.isNotBlank(string)){
             return "-1";
@@ -109,7 +108,8 @@ public class MsgUtil {
         if(string.equals("-2")){
             return string;
         }
-        commonModel(paypwd_id,telphone,content);
+        String random= RandomStringUtils.randomNumeric(6);
+        commonModel(paypwd_id,telphone,random);
         logger.info("忘记密码");
         CacheUtil.put("validCodeCache","telphone-"+telphone,"true");
         return string;
