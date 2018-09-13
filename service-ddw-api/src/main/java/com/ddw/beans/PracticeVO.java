@@ -28,6 +28,8 @@ public class PracticeVO {
     private boolean focus;
     @ApiModelProperty(name="practiceGameList",value="代练简历列表",example="")
     private List<ReviewPracticeVO> reviewPracticeList;
+    @ApiModelProperty(name="photograph",value="相册列表",example="1")
+    private List<PhotographPO> photograph;
 
     public int getUserId() {
         return userId;
@@ -107,5 +109,13 @@ public class PracticeVO {
 
     public void setReviewPracticeList(List<ReviewPracticeVO> reviewPracticeList) {
         this.reviewPracticeList = reviewPracticeList;
+    }
+
+    public List<PhotographPO> getPhotograph() {
+        return photograph;
+    }
+
+    public void setPhotograph(List<PhotographPO> photograph) {
+        this.photograph = photograph;
     }
 }

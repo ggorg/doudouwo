@@ -60,6 +60,7 @@ public class GoddessController {
                 userId = dto.getCode();
             }
             UserInfoVO user = userInfoService.query(userId);
+            user.setPhotograph(userInfoService.queryPhotograph(userId));
             return new ResponseVO(1,"成功",user);
         }catch (Exception e){
             logger.error("GoddessController->query",e);

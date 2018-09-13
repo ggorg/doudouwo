@@ -133,6 +133,7 @@ public class PracticeController {
             practiceVO.setOrders(reviewPracticeService.getOrderCount(practiceId));
             practiceVO.setFocus(focus);
             practiceVO.setReviewPracticeList(reviewPracticeService.getReviewPracticeList(practiceId,TokenUtil.getStoreId(token)));
+            practiceVO.setPhotograph(userInfoService.queryPhotograph(practiceId));
             return new ResponseApiVO(1,"成功",practiceVO);
         }catch (Exception e){
             logger.error("PracticeController->query",e);

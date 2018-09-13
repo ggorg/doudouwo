@@ -41,6 +41,12 @@ public class AppIndexPracticeVO implements Serializable {
     private Long fans;
     @ApiModelProperty(name = "star",value = "评价星",example = "2")
     private int star;
+    @ApiModelProperty(name = "appointment",value = "预约开关，1开启，2代练中，0关闭",example = "1")
+    private int appointment;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -152,5 +158,13 @@ public class AppIndexPracticeVO implements Serializable {
 
     public void setStar(int star) {
         this.star = star;
+    }
+
+    public int getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(int appointment) {
+        this.appointment = appointment;
     }
 }
