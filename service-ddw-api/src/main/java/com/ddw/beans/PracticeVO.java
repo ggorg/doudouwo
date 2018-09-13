@@ -20,6 +20,8 @@ public class PracticeVO {
     private String pgradeName;
     @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
     private String starSign;
+    @ApiModelProperty(name="interest",value="兴趣",example="王者荣耀")
+    private String interest;
     @ApiModelProperty(name="orders",value="接单数",example="3243")
     private long orders;
     @ApiModelProperty(name="star",value="评价星级，一颗星等于2，半颗为1，最低为2",example="10")
@@ -77,6 +79,14 @@ public class PracticeVO {
 
     public void setStarSign(String starSign) {
         this.starSign = starSign;
+    }
+
+    public String getInterest() {
+        return interest;
+    }
+
+    public void setInterest(String interest) {
+        this.interest = interest;
     }
 
     public long getOrders() {
