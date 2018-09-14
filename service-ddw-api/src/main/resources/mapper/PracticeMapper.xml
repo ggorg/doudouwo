@@ -107,7 +107,8 @@
 
     <select id="getPracticeDynamic" parameterType="int" resultType="java.util.HashMap">
         SELECT
-        t1.gameId,ct1.gameName,t1.rankId,ct2.rank,t1.realityRankId,ct3.rank as realityRank,IFNULL(ct4.star,0)star
+        t1.gameId,ct1.gameName,t1.rankId,ct2.rank,t1.realityRankId,ct3.rank as realityRank,IFNULL(ct4.star,0)star,
+        IFNULL(t1.money,0)money,IFNULL(t1.realityMoney,0)realityMoney,
         FROM
         ddw_practice_order t1
         INNER JOIN ddw_game ct1 ON ct1.id = t1.gameId
