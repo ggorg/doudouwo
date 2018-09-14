@@ -26,8 +26,8 @@ public class PracticeVO {
     private long orders;
     @ApiModelProperty(name="star",value="评价星级，一颗星等于2，半颗为1，最低为2",example="10")
     private int star;
-    @ApiModelProperty(name="focus",value="是否关注,关注true,未关注false",example="true")
-    private boolean focus;
+    @ApiModelProperty(name="isFocus",value="是否关注,关注true,未关注false",example="true")
+    private boolean isFocus;
     @ApiModelProperty(name="practiceGameList",value="代练简历列表",example="")
     private List<ReviewPracticeVO> reviewPracticeList;
     @ApiModelProperty(name="photograph",value="相册列表",example="1")
@@ -106,11 +106,11 @@ public class PracticeVO {
     }
 
     public boolean isFocus() {
-        return focus;
+        return isFocus;
     }
 
     public void setFocus(boolean focus) {
-        this.focus = focus;
+        isFocus = focus;
     }
 
     public List<ReviewPracticeVO> getReviewPracticeList() {
