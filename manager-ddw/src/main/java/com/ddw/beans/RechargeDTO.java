@@ -6,6 +6,15 @@ public class RechargeDTO {
     private Integer drCost;
     private Integer drDiscount;
     private Integer drSort;
+    private String drDesc;
+
+    public String getDrDesc() {
+        return drDesc;
+    }
+
+    public void setDrDesc(String drDesc) {
+        this.drDesc = drDesc;
+    }
 
     public Integer getId() {
         return id;
