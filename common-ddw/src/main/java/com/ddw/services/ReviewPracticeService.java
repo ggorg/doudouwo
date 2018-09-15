@@ -114,7 +114,7 @@ public class ReviewPracticeService extends CommonService {
             searchCondition3.put("drBusinessCode", rb.getBusinessCode());
             Map setParams3 = new HashMap<>();
             setParams3.put("status",1 );//审核状态，0未审核，1审核通过，2审核拒绝
-            setParams3.put("describe",reviewPO.getDrReviewDesc() );//审核说明
+            setParams3.put("`describe`",reviewPO.getDrReviewDesc() );//审核说明
             this.commonUpdateByParams("ddw_review_practice", setParams3, searchCondition3);
             return this.commonUpdateByParams("ddw_userinfo", setParams, searchCondition);
         }else{
@@ -122,7 +122,7 @@ public class ReviewPracticeService extends CommonService {
             searchCondition.put("drBusinessCode", rb.getBusinessCode());
             Map setParams = new HashMap<>();
             setParams.put("status",2 );//审核状态，0未审核，1审核通过，2审核拒绝
-            setParams.put("describe",reviewPO.getDrReviewDesc() );//审核说明
+            setParams.put("`describe`",reviewPO.getDrReviewDesc() );//审核说明
             this.commonUpdateByParams("ddw_review_practice", setParams, searchCondition);
         }
         return new ResponseVO(1,"成功",null);
