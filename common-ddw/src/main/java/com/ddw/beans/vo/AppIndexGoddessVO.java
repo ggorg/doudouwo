@@ -34,8 +34,8 @@ public class AppIndexGoddessVO implements Serializable{
     private String dsName;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
     private Integer fans;
-    @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
-    private boolean followed;
+    @ApiModelProperty(name="isFocus",value="已关注true,未关注false",example="true")
+    private boolean isFocus;
 
     @ApiModelProperty(name="viewingNum",value="观看人数",example="1")
     private Integer viewingNum=0;
@@ -136,12 +136,12 @@ public class AppIndexGoddessVO implements Serializable{
         this.fans = fans;
     }
 
-    public boolean isFollowed() {
-        return followed;
+    public boolean isFocus() {
+        return isFocus;
     }
 
-    public void setFollowed(boolean followed) {
-        this.followed = followed;
+    public void setFocus(boolean focus) {
+        isFocus = focus;
     }
 
     @Override
