@@ -194,6 +194,9 @@ public class UserController {
     @PostMapping("/sendVaildCode/{token}")
     public ResponseVO sendVaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneDTO userValidPhoneDTO){
         try {
+            if(userValidPhoneDTO.getType() == null){
+                return new ResponseVO(-3,"发送验证码类型不能为空",null);
+            }
             String res= "";
             //发送验证码类型,1实名验证,2找回支付密码
             switch (userValidPhoneDTO.getType()){
