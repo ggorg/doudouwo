@@ -38,7 +38,7 @@ public class AppIndexGoddessVO implements Serializable{
     private boolean followed;
 
     @ApiModelProperty(name="viewingNum",value="观看人数",example="1")
-    private Integer viewingNum;
+    private Integer viewingNum=0;
 
     public Integer getViewingNum() {
         return viewingNum;

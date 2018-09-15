@@ -149,7 +149,7 @@ public class LiveRadioService extends CommonService{
                 AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
                 if(appIndexGoddessVO.getId() == userId || appIndexGoddessVO.getId() .equals( userId)){
                     appIndexGoddessVO.setLiveRadioFlag(flag);
-                    appIndexGoddessVO.setViewingNum(null);
+                    appIndexGoddessVO.setViewingNum(0);
                     appIndexGoddessVO.setCode(null);
                 }
             }

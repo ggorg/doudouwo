@@ -1,9 +1,11 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,6 +16,7 @@ public class UserInfoVO {
     @ApiModelProperty(name="userName",value="账号（微信、QQ登录时，为空）",example="某某某")
     private String userName;
     @ApiModelProperty(name="userPwd",value="密码（微信、QQ登录时，为空）",example="123456")
+    @JsonIgnore
     private String userPwd;
     @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
     private String openid;
@@ -41,6 +44,13 @@ public class UserInfoVO {
     private String area;
     @ApiModelProperty(name="gradeId",value="会员等级编号，关联ddw_grade表",example="1")
     private Integer gradeId;
+
+    @ApiModelProperty(name="orderNum",value="下单数量",example="下单数量")
+    private Integer orderNum=0;
+
+
+    @ApiModelProperty(name="contributeNum",value="贡献值",example="贡献值")
+    private BigDecimal contributeNum=new BigDecimal(0);
     @ApiModelProperty(name="ugradeName",value="会员等级名称",example="青铜")
     private String ugradeName;
     @ApiModelProperty(name="ulevel",value="会员等级水平",example="VIP0")
@@ -93,6 +103,22 @@ public class UserInfoVO {
 
     @ApiModelProperty(name="userSign",value="IM签名",example="xxxx")
     private String userSign;
+
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public BigDecimal getContributeNum() {
+        return contributeNum;
+    }
+
+    public void setContributeNum(BigDecimal contributeNum) {
+        this.contributeNum = contributeNum;
+    }
 
     public Integer getId() {
         return id;

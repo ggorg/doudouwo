@@ -3,8 +3,10 @@ package com.ddw.services;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.dao.PhotographMapper;
+import com.ddw.enums.OrderTypeEnum;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewStatusEnum;
+import com.ddw.enums.ShipStatusEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.IMApiUtil;
 import com.ddw.util.RC4;
@@ -99,8 +101,13 @@ public class UserInfoService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",id);
         Map conditon=new HashMap();
-        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.*,ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel,ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",conditon),
-                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",conditon),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.*,sum(ct3.consumePrice) contributeNum,ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel,ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,
+                new CommonChildBean("ddw_grade","id","gradeId",conditon),
+                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",conditon),
+                new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon),
+                new CommonChildBean("ddw_consume_ranking_list","consumeUserId","id",conditon)
+        );
+        csb.setJointName("left");
         List list=this.getCommonMapper().selectObjects(csb);
         return this.setFlag(list);
     }
@@ -114,9 +121,13 @@ public class UserInfoService extends CommonService {
                 "t1.headImgUrl,t1.phone,t1.label,t1.interest,t1.job,t1.starSign,t1.signature,t1.province,t1.city,t1.area,t1.sex,t1.registerType,t1.idcard," +
                 "t1.idcardFrontUrl,t1.idcardOppositeUrl,t1.inviteCode,t1.goddessFlag,t1.practiceFlag,t1.gradeId,t1.goddessGradeId,t1.practiceGradeId,t1.createTime," +
                 "ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel," +
-                "ct2.gradeName pgradeName,ct2.level plevel ",0,1,searchCondition,new CommonChildBean("ddw_grade","id","gradeId",condition),
-                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",condition),new CommonChildBean("ddw_practice_grade","id","practiceGradeId",condition));
+                "ct2.gradeName pgradeName,ct2.level plevel,sum(ct3.consumePrice) contributeNum ",0,1,searchCondition,
+                new CommonChildBean("ddw_grade","id","gradeId",condition),
+                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",condition),
+                new CommonChildBean("ddw_practice_grade","id","practiceGradeId",condition),
+                new CommonChildBean("ddw_consume_ranking_list","consumeUserId","id",condition));
         List list=this.getCommonMapper().selectObjects(csb);
+
         return this.setFlag(list);
     }
 
@@ -128,6 +139,12 @@ public class UserInfoService extends CommonService {
         if(list!=null && list.size()>0){
             UserInfoVO userInfoVO=new UserInfoVO();
             PropertyUtils.copyProperties(userInfoVO,list.get(0));
+            Map orderSearch=new HashMap();
+            orderSearch.put("userId",userInfoVO.getId());
+            orderSearch.put("orderType,in","(5,10)");
+            orderSearch.put("shipStatus", ShipStatusEnum.ShipStatus5.getCode());
+            userInfoVO.setOrderNum((int)this.commonCountBySearchCondition("ddw_order_view",orderSearch));
+
             //实名认证状态
             if(StringUtils.isBlank(userInfoVO.getIdcard())){
                 //判断审核缓存是否存在
