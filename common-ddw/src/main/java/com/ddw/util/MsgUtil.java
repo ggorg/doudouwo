@@ -25,6 +25,8 @@ public class MsgUtil {
     //找回支付密码
     private final static Integer paypwd_id=189074;
 
+    private final static boolean isMsg=false;
+
     private static String sendMsgTimes(String telphone){
         Integer n=(Integer) CacheUtil.get("msgTimesTimeOut","telphone-"+telphone);
         if(n!=null && n>=5){
@@ -48,6 +50,11 @@ public class MsgUtil {
         String string=(String)CacheUtil.get("validCodeCache","telphone-"+telphone);
         if(StringUtils.isNotBlank(string)){
             return "-1";
+        }
+
+        if(!isMsg){
+            CacheUtil.put("validCodeCache","telphone-"+telphone,"123456");
+            return "123456";
         }
         string=sendMsgTimes(telphone);
         if(string.equals("-2")){
@@ -103,6 +110,10 @@ public class MsgUtil {
         String string=(String)CacheUtil.get("validCodeCache","telphone-"+telphone);
         if(StringUtils.isNotBlank(string)){
             return "-1";
+        }
+        if(!isMsg){
+            CacheUtil.put("validCodeCache","telphone-"+telphone,"123456");
+            return "123456";
         }
         string=sendMsgTimes(telphone);
         if(string.equals("-2")){

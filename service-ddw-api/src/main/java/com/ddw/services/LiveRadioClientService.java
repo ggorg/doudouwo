@@ -1,10 +1,12 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.enums.GoddessFlagEnum;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.Distance;
+import com.ddw.util.IMApiUtil;
 import com.ddw.util.LiveRadioApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -161,13 +163,8 @@ public class LiveRadioClientService  extends CommonService{
                 svo.setAttention(1);
             }
 
-            Integer pv=(Integer) CacheUtil.get("publicCache","livePv-"+(String)po.get("groupId"));
-            if(pv==null){
-                pv=1;
-            }else{
-                pv++;
-            }
-            CacheUtil.put("publicCache","livePv-"+(String)po.get("groupId"),pv);
+            handleLiveNum((String)po.get("groupId"));
+
             return new ResponseApiVO(1,"成功",svo);
         }
         return new ResponseApiVO(-2,"选择直播房间",null);
@@ -175,6 +172,28 @@ public class LiveRadioClientService  extends CommonService{
 
 
     }
+
+    public void handleLiveNum(String groupId)throws Exception{
+        Integer pv=(Integer) CacheUtil.get("publicCache","livePv-"+groupId);
+        if(pv==null){
+            pv=1;
+        }else{
+            pv++;
+        }
+        Map map= IMApiUtil.getMemberNum(Arrays.asList(groupId));
+        Integer userid=Integer.parseInt(groupId.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2"));
+        List<AppIndexGoddessVO> alist= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
+        alist.forEach(a->{
+            if(a.getId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
+                a.setViewingNum((Integer) map.get(groupId));
+
+            }
+        });
+        CacheUtil.put("publicCache", "appIndexGoddess",alist);
+        CacheUtil.put("publicCache","livePv-"+groupId,pv);
+
+    }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO closeRoom(String token)throws Exception{
         GoddessPO gpo= reviewGoddessService.getAppointment(TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
