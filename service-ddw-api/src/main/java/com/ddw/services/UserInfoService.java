@@ -109,9 +109,25 @@ public class UserInfoService extends CommonService {
         );
         csb.setJointName("left");
         List list=this.getCommonMapper().selectObjects(csb);
-        return this.setFlag(list);
+        return this.setFlag(list,true);
     }
+    public UserInfoVO loginByOpenid(String openid)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("openid",openid);
 
+        Map condition=new HashMap();
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.id,t1.openid,t1.userName,t1.userPwd,t1.realName,t1.nickName," +
+                "t1.headImgUrl,t1.phone,t1.label,t1.interest,t1.job,t1.starSign,t1.signature,t1.province,t1.city,t1.area,t1.sex,t1.registerType,t1.idcard," +
+                "t1.idcardFrontUrl,t1.idcardOppositeUrl,t1.inviteCode,t1.goddessFlag,t1.practiceFlag,t1.gradeId,t1.goddessGradeId,t1.practiceGradeId,t1.createTime," +
+                "ct0.gradeName ugradeName,ct0.level ulevel,ct1.gradeName ggradeName,ct1.level glevel," +
+                "ct2.gradeName pgradeName,ct2.level plevel",0,1,searchCondition,
+                new CommonChildBean("ddw_grade","id","gradeId",condition),
+                new CommonChildBean("ddw_goddess_grade","id","goddessGradeId",condition),
+                new CommonChildBean("ddw_practice_grade","id","practiceGradeId",condition));
+        List list=this.getCommonMapper().selectObjects(csb);
+
+        return this.setFlag(list,false);
+    }
     public UserInfoVO queryByOpenid(String openid)throws Exception{
         Map searchCondition = new HashMap<>();
         searchCondition.put("openid",openid);
@@ -128,22 +144,24 @@ public class UserInfoService extends CommonService {
                 new CommonChildBean("ddw_consume_ranking_list","consumeUserId","id",condition));
         List list=this.getCommonMapper().selectObjects(csb);
 
-        return this.setFlag(list);
+        return this.setFlag(list,true);
     }
 
     public UserInfoPO querySimple(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_userinfo","id",id, UserInfoPO.class);
     }
 
-    public UserInfoVO setFlag(List list) throws Exception{
+    public UserInfoVO setFlag(List list,boolean isAppendOrderNum) throws Exception{
         if(list!=null && list.size()>0){
             UserInfoVO userInfoVO=new UserInfoVO();
             PropertyUtils.copyProperties(userInfoVO,list.get(0));
-            Map orderSearch=new HashMap();
-            orderSearch.put("userId",userInfoVO.getId());
-            orderSearch.put("orderType,in","(5,10)");
-            orderSearch.put("shipStatus", ShipStatusEnum.ShipStatus5.getCode());
-            userInfoVO.setOrderNum((int)this.commonCountBySearchCondition("ddw_order_view",orderSearch));
+            if(isAppendOrderNum){
+                Map orderSearch=new HashMap();
+                orderSearch.put("userId",userInfoVO.getId());
+                orderSearch.put("orderType,in","(5,10)");
+                orderSearch.put("shipStatus", ShipStatusEnum.ShipStatus5.getCode());
+                userInfoVO.setOrderNum((int)this.commonCountBySearchCondition("ddw_order_view",orderSearch));
+            }
 
             //实名认证状态
             if(StringUtils.isBlank(userInfoVO.getIdcard())){

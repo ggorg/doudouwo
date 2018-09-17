@@ -53,11 +53,11 @@ public class UserController {
             }else if(userInfoDTO.getRegisterType() == null){
                 return new ResponseApiVO(-3,"registerType注册类型不能为空",null);
             }else{
-                UserInfoVO userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
+                UserInfoVO userVO = userInfoService.loginByOpenid(userInfoDTO.getOpenid());
                 String token = TokenUtil.createToken(userInfoDTO.getOpenid());
                 if (userVO == null) {
                     ResponseVO re = userInfoService.save(userInfoDTO);
-                    userVO = userInfoService.queryByOpenid(userInfoDTO.getOpenid());
+                    userVO = userInfoService.loginByOpenid(userInfoDTO.getOpenid());
                     userVO.setToken(token);
                     userVO.setIdentifier(userVO.getOpenid());
                     userVO.setInviteCode(userInfoService.createInviteCode(userVO.getId()));
