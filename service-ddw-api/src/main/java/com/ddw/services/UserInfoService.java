@@ -111,7 +111,7 @@ public class UserInfoService extends CommonService {
 //        csb.setJointName("left");
 //        List list=this.getCommonMapper().selectObjects(csb);
         UserInfoVO userInfoVO = userInfoMapper.getUserInfoById(id);
-        return this.setFlag(userInfoVO);
+        return this.setFlag(userInfoVO,true);
     }
 
     public UserInfoVO loginByOpenid(String openid)throws Exception{
@@ -129,7 +129,7 @@ public class UserInfoService extends CommonService {
 //                new CommonChildBean("ddw_practice_grade","id","practiceGradeId",condition));
 //        List list=this.getCommonMapper().selectObjects(csb);
         UserInfoVO userInfoVO = userInfoMapper.getUserInfo(openid);
-        return this.setFlag(userInfoVO);
+        return this.setFlag(userInfoVO,false);
     }
     public UserInfoVO queryByOpenid(String openid)throws Exception{
 //        Map searchCondition = new HashMap<>();
@@ -147,19 +147,21 @@ public class UserInfoService extends CommonService {
 //                new CommonChildBean("ddw_consume_ranking_list","consumeUserId","id",condition));
 //        List list=this.getCommonMapper().selectObjects(csb);
         UserInfoVO userInfoVO = userInfoMapper.getUserInfo(openid);
-        return this.setFlag(userInfoVO);
+        return this.setFlag(userInfoVO,true);
     }
 
     public UserInfoPO querySimple(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_userinfo","id",id, UserInfoPO.class);
     }
 
-    public UserInfoVO setFlag(UserInfoVO userInfoVO) throws Exception{
-        Map orderSearch=new HashMap();
-        orderSearch.put("userId",userInfoVO.getId());
-        orderSearch.put("orderType,in","(5,10)");
-        orderSearch.put("shipStatus", ShipStatusEnum.ShipStatus5.getCode());
-        userInfoVO.setOrderNum((int)this.commonCountBySearchCondition("ddw_order_view",orderSearch));
+    public UserInfoVO setFlag(UserInfoVO userInfoVO,boolean isAppendOrderNum) throws Exception{
+        if(isAppendOrderNum) {
+            Map orderSearch = new HashMap();
+            orderSearch.put("userId", userInfoVO.getId());
+            orderSearch.put("orderType,in", "(5,10)");
+            orderSearch.put("shipStatus", ShipStatusEnum.ShipStatus5.getCode());
+            userInfoVO.setOrderNum((int) this.commonCountBySearchCondition("ddw_order_view", orderSearch));
+        }
 
         //实名认证状态
         if(StringUtils.isBlank(userInfoVO.getIdcard())){
