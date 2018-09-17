@@ -93,9 +93,7 @@ public class PracticeController {
     @PostMapping("/practiceDynamic/{token}")
     public ResponseVO getPracticeDynamic(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticeDynamicDTO practiceDynamicDTO){
         try {
-            JSONObject json = new JSONObject();
-            json.put("list",reviewPracticeService.getPracticeDynamic(practiceDynamicDTO.getPracticeId()));
-            return new ResponseVO(1,"成功",json);
+            return reviewPracticeService.getPracticeDynamic(practiceDynamicDTO);
         }catch (Exception e){
             logger.error("PracticeController->getPracticeDynamic",e);
             return new ResponseVO(-1,"提交失败",null);

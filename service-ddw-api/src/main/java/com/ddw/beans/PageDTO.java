@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class PageDTO {
     @ApiModelProperty(name="pageNum",value="页码",example="1")
     private Integer pageNum;
-    @ApiModelProperty(name="pageNum",value="显示数量",example="10")
+    @ApiModelProperty(name="pageSize",value="显示数量",example="10")
     private Integer pageSize;
 
     public Integer getPageNum() {

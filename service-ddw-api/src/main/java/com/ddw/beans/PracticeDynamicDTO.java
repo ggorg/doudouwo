@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
  * Created by Jacky on 2018/7/7.
  */
 @ApiModel
-public class PracticeDynamicDTO {
+public class PracticeDynamicDTO extends PageDTO{
     @ApiModelProperty(name = "practiceId",value = "代练编号",example = "1")
     private int practiceId;
 

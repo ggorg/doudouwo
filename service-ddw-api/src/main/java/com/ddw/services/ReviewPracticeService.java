@@ -443,8 +443,17 @@ public class ReviewPracticeService extends CommonService {
         return super.commonInsert("ddw_practice_order",practiceOrderPO);
     }
 
-    public List getPracticeDynamic(Integer practiceId)throws Exception{
-        return practiceMapper.getPracticeDynamic(practiceId);
+    public ResponseVO getPracticeDynamic(PracticeDynamicDTO practiceDynamicDTO)throws Exception{
+        Integer pageNum = practiceDynamicDTO.getPageNum();
+        Integer pageSize = practiceDynamicDTO.getPageSize();
+        Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+        Integer end = pageSize;
+        JSONObject json = new JSONObject();
+        List practiceDynamicList = practiceMapper.getPracticeDynamic(practiceDynamicDTO.getPracticeId(),start,end);
+        int count = practiceMapper.getPracticeDynamicCount(practiceDynamicDTO.getPracticeId());
+        json.put("list",practiceDynamicList);
+        json.put("count",count);
+        return new ResponseVO(1,"成功",json);
     }
 
     /**
