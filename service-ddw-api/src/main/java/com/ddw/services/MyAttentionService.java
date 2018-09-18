@@ -88,7 +88,7 @@ public class MyAttentionService extends CommonService {
             myAttentionVO.setUserInfoList(userInfoList);
         }
         myAttentionVO.setUserId(userId);
-        myAttentionVO.setGoddessCount(count.intValue());
+        myAttentionVO.setPracticeCount(count.intValue());
         return new ResponseVO(1,"成功",myAttentionVO);
     }
 

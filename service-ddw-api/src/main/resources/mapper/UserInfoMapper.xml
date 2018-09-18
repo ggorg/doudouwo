@@ -15,6 +15,7 @@
         <result property="label" column="label"/>
         <result property="interest" column="interest"/>
         <result property="job" column="job"/>
+        <result property="age" column="age"/>
         <result property="starSign" column="starSign"/>
         <result property="province" column="province"/>
         <result property="city" column="city"/>
@@ -53,6 +54,7 @@
         t1.label,
         t1.interest,
         t1.job,
+        t1.age,
         t1.starSign,
         t1.signature,
         t1.province,
@@ -90,6 +92,7 @@
         t1.label,
         t1.interest,
         t1.job,
+        t1.age,
         t1.starSign,
         t1.signature,
         t1.province,

@@ -706,7 +706,7 @@ public class ReviewPracticeService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",practiceId);
         Map conditon=new HashMap();
-        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.nickName,t1.headImgUrl,t1.starSign,t1.interest,ct0.gradeName pgradeName ",null,null,searchCondition,
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.nickName,t1.headImgUrl,t1.starSign,t1.interest,t1.label,t1.age,t1.openid,ct0.gradeName pgradeName ",null,null,searchCondition,
                 new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
         List list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && list.size()>0){

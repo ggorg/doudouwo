@@ -36,17 +36,18 @@ public class AppIndexGoddessVO implements Serializable{
     private Integer fans;
     @ApiModelProperty(name="isFocus",value="已关注true,未关注false",example="true")
     private boolean isFocus;
-
+    @ApiModelProperty(name="age",value="年龄",example="22")
+    private int age;
+    @ApiModelProperty(name="job",value="职业",example="文化/广告/传媒")
+    private String job;
+    @ApiModelProperty(name="signature",value="个性签名",example="这个人很懒,什么都没有留下...")
+    private String signature;
+    @ApiModelProperty(name="interest",value="兴趣",example="LOL/美食/旅游")
+    private String interest;
+    @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
+    private String starSign;
     @ApiModelProperty(name="viewingNum",value="观看人数",example="1")
     private Integer viewingNum=0;
-
-    public Integer getViewingNum() {
-        return viewingNum;
-    }
-
-    public void setViewingNum(Integer viewingNum) {
-        this.viewingNum = viewingNum;
-    }
 
     public Integer getId() {
         return id;
@@ -142,6 +143,30 @@ public class AppIndexGoddessVO implements Serializable{
 
     public void setFocus(boolean focus) {
         isFocus = focus;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
+
+    public Integer getViewingNum() {
+        return viewingNum;
+    }
+
+    public void setViewingNum(Integer viewingNum) {
+        this.viewingNum = viewingNum;
     }
 
     @Override

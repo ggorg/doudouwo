@@ -14,11 +14,17 @@
         <result property="fans" column="fans"/>
         <result property="storeId" column="storeId"/>
         <result property="dsName" column="dsName"/>
+        <result property="job" column="job"/>
+        <result property="age" column="age"/>
+        <result property="signature" column="signature"/>
+        <result property="interest" column="interest"/>
+        <result property="starSign" column="starSign"/>
     </resultMap>
 
 
     <select id="getGoddessList" parameterType="int" resultMap="BaseResultMap">
-        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t4.gradeName ggradeName,count(1) AS fans
+        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t3.job,t3.age,t3.signature,t3.interest,t3.starSign,
+        t4.gradeName ggradeName,count(1) AS fans
         from ddw_goddess t1 left join ddw_my_attention t2 on t1.userId=t2.goddessId and t1.storeId = #{storeId}
         LEFT join ddw_userinfo t3 on t1.userId = t3.id
         left join ddw_goddess_grade t4 on t4.id=t3.goddessGradeId
@@ -28,7 +34,7 @@
     </select>
 
     <select id="getGoddessListByIds" resultMap="BaseResultMap">
-        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,
+        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t3.job,t3.age,t3.signature,t3.interest,t3.starSign,
         t4.gradeName ggradeName,count(1) AS fans,t5.id AS storeId,t5.dsName,1 AS liveRadioFlag
         from ddw_goddess t1 left join ddw_my_attention t2 on t1.userId=t2.goddessId
         LEFT join ddw_userinfo t3 on t1.userId = t3.id
@@ -45,7 +51,7 @@
     </select>
 
     <select id="getGoddessListByNotInIds" resultMap="BaseResultMap">
-        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,
+        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t3.job,t3.age,t3.signature,t3.interest,t3.starSign,
         t4.gradeName ggradeName,count(1) AS fans,t5.id AS storeId,t5.dsName,2 AS liveRadioFlag
         from ddw_goddess t1 left join ddw_my_attention t2 on t1.userId=t2.goddessId
         LEFT join ddw_userinfo t3 on t1.userId = t3.id

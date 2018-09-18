@@ -34,6 +34,8 @@ public class UserInfoVO {
     private String interest;
     @ApiModelProperty(name="job",value="职业",example="文化/广告/传媒")
     private String job;
+    @ApiModelProperty(name="age",value="年龄",example="22")
+    private int age;
     @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
     private String starSign;
     @ApiModelProperty(name="province",value="用户所在省份",example="广东省")
@@ -103,22 +105,6 @@ public class UserInfoVO {
 
     @ApiModelProperty(name="userSign",value="IM签名",example="xxxx")
     private String userSign;
-
-    public Integer getOrderNum() {
-        return orderNum;
-    }
-
-    public void setOrderNum(Integer orderNum) {
-        this.orderNum = orderNum;
-    }
-
-    public BigDecimal getContributeNum() {
-        return contributeNum;
-    }
-
-    public void setContributeNum(BigDecimal contributeNum) {
-        this.contributeNum = contributeNum;
-    }
 
     public Integer getId() {
         return id;
@@ -208,6 +194,14 @@ public class UserInfoVO {
         this.job = job;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public String getStarSign() {
         return starSign;
     }
@@ -246,6 +240,22 @@ public class UserInfoVO {
 
     public void setGradeId(Integer gradeId) {
         this.gradeId = gradeId;
+    }
+
+    public Integer getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(Integer orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public BigDecimal getContributeNum() {
+        return contributeNum;
+    }
+
+    public void setContributeNum(BigDecimal contributeNum) {
+        this.contributeNum = contributeNum;
     }
 
     public String getUgradeName() {
@@ -400,6 +410,22 @@ public class UserInfoVO {
         this.idcardOppositeUrl = idcardOppositeUrl;
     }
 
+    public long getFans() {
+        return fans;
+    }
+
+    public void setFans(long fans) {
+        this.fans = fans;
+    }
+
+    public long getFocus() {
+        return focus;
+    }
+
+    public void setFocus(long focus) {
+        this.focus = focus;
+    }
+
     public List<PhotographPO> getPhotograph() {
         return photograph;
     }
@@ -430,21 +456,5 @@ public class UserInfoVO {
 
     public void setUserSign(String userSign) {
         this.userSign = userSign;
-    }
-
-    public long getFans() {
-        return fans;
-    }
-
-    public void setFans(long fans) {
-        this.fans = fans;
-    }
-
-    public long getFocus() {
-        return focus;
-    }
-
-    public void setFocus(long focus) {
-        this.focus = focus;
     }
 }
