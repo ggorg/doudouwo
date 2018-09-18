@@ -39,25 +39,134 @@
         <result property="idcard" column="idcard"/>
         <result property="idcardFrontUrl" column="idcardFrontUrl"/>
         <result property="idcardOppositeUrl" column="idcardOppositeUrl"/>
+        <result property="contributeNum" column="contributeNum"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        t1.id,userName,openid,realName,nickName,headImgUrl,phone,label,interest,job,
-        starSign,province,city,area,gradeId,t2.gradeName ugradeName,t2.`level` ulevel,goddessGradeId,t3.gradeName ggradeName, t3.`level` glevel,
-        practiceGradeId,t4.gradeName pgradeName,t4.`level`,goddessFlag,practiceFlag,inviteCode,
-        signature,sex,registerType,idcard,idcardFrontUrl,idcardOppositeUrl
+        t1.id,
+        t1.openid,
+        t1.userName,
+        t1.realName,
+        t1.nickName,
+        t1.headImgUrl,
+        t1.phone,
+        t1.label,
+        t1.interest,
+        t1.job,
+        t1.starSign,
+        t1.signature,
+        t1.province,
+        t1.city,
+        t1.area,
+        t1.sex,
+        t1.registerType,
+        t1.idcard,
+        t1.idcardFrontUrl,
+        t1.idcardOppositeUrl,
+        t1.inviteCode,
+        t1.goddessFlag,
+        t1.practiceFlag,
+        t1.gradeId,
+        t1.goddessGradeId,
+        t1.practiceGradeId,
+        t1.createTime,
+        ct0.gradeName ugradeName,
+        ct0.LEVEL ulevel,
+        ct1.gradeName ggradeName,
+        ct1.LEVEL glevel,
+        ct2.gradeName pgradeName,
+        ct2.LEVEL plevel,
+        sum( ct3.consumePrice ) contributeNum
+    </sql>
+
+    <sql id="Base_Column_List2">
+        t1.id,
+        t1.openid,
+        t1.userName,
+        t1.realName,
+        t1.nickName,
+        t1.headImgUrl,
+        t1.phone,
+        t1.label,
+        t1.interest,
+        t1.job,
+        t1.starSign,
+        t1.signature,
+        t1.province,
+        t1.city,
+        t1.area,
+        t1.sex,
+        t1.registerType,
+        t1.idcard,
+        t1.idcardFrontUrl,
+        t1.idcardOppositeUrl,
+        t1.inviteCode,
+        t1.goddessFlag,
+        t1.practiceFlag,
+        t1.gradeId,
+        t1.goddessGradeId,
+        t1.practiceGradeId,
+        t1.createTime,
+        ct0.gradeName ugradeName,
+        ct0.LEVEL ulevel,
+        ct1.gradeName ggradeName,
+        ct1.LEVEL glevel,
+        ct2.gradeName pgradeName,
+        ct2.LEVEL plevel
     </sql>
 
     <select id="getUserInfoList" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM ddw_userinfo t1 left JOIN ddw_grade t2 on t2.id=t1.gradeId
-        left join ddw_goddess_grade t3 on t3.id=t1.goddessGradeId LEFT JOIN ddw_practice_grade t4 on t4.id=t1.practiceGradeId
+        FROM
+        ddw_userinfo t1
+        LEFT JOIN ddw_grade ct0 ON ct0.id = t1.gradeId
+        LEFT JOIN ddw_goddess_grade ct1 ON ct1.id = t1.goddessGradeId
+        LEFT JOIN ddw_practice_grade ct2 ON ct2.id = t1.practiceGradeId
+        LEFT JOIN ddw_consume_ranking_list ct3 ON ct3.consumeUserId = t1.id
         WHERE
         t1.id in
         <foreach collection="userId" item="value"  index="key" open="(" separator="," close=")">
             #{value}
         </foreach>
+    </select>
+
+    <select id="getUserInfo" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        ddw_userinfo t1
+        LEFT JOIN ddw_grade ct0 ON ct0.id = t1.gradeId
+        LEFT JOIN ddw_goddess_grade ct1 ON ct1.id = t1.goddessGradeId
+        LEFT JOIN ddw_practice_grade ct2 ON ct2.id = t1.practiceGradeId
+        LEFT JOIN ddw_consume_ranking_list ct3 ON ct3.consumeUserId = t1.id
+        WHERE
+        t1.openid = #{openid}
+    </select>
+
+    <select id="loginByOpenid" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List2"/>
+        FROM
+        ddw_userinfo t1
+        LEFT JOIN ddw_grade ct0 ON ct0.id = t1.gradeId
+        LEFT JOIN ddw_goddess_grade ct1 ON ct1.id = t1.goddessGradeId
+        LEFT JOIN ddw_practice_grade ct2 ON ct2.id = t1.practiceGradeId
+        WHERE
+        t1.openid = #{openid}
+    </select>
+
+    <select id="getUserInfoById" parameterType="int" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        ddw_userinfo t1
+        LEFT JOIN ddw_grade ct0 ON ct0.id = t1.gradeId
+        LEFT JOIN ddw_goddess_grade ct1 ON ct1.id = t1.goddessGradeId
+        LEFT JOIN ddw_practice_grade ct2 ON ct2.id = t1.practiceGradeId
+        LEFT JOIN ddw_consume_ranking_list ct3 ON ct3.consumeUserId = t1.id
+        WHERE
+        t1.id = #{id}
     </select>
 
 </mapper>
