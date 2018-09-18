@@ -29,6 +29,8 @@ public class UserInfoUpdateDTO {
     private String signature;
     @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
     private Integer sex;
+    @ApiModelProperty(name="age",value="年龄",example="22")
+    private Integer age;
 
     public String getUserName() {
         return userName;
@@ -124,5 +126,13 @@ public class UserInfoUpdateDTO {
 
     public void setSex(Integer sex) {
         this.sex = sex;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }
