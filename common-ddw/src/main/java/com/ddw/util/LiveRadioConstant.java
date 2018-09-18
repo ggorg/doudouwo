@@ -10,4 +10,7 @@ public interface LiveRadioConstant {
     public final static String BIZID="23115";
     public final static String PRIVATE_KEY_CLASS_PATH="tls_sig/keys/private_key";
 
+    public final static String  ACCOUNT_GUAN_FANG="ddwGuanFang";
+    public final static String  ACCOUNT_TONG_ZHI="ddwTongZhi";
+
 }

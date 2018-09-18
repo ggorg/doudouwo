@@ -6,6 +6,8 @@ import com.ddw.controller.AppOrderController;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.BiddingTimer;
+import com.ddw.util.IMApiUtil;
+import com.ddw.util.LiveRadioConstant;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
@@ -378,11 +380,15 @@ public class BiddingService extends CommonService {
         ResponseApiVO vo=null;
         ResponseApiVO refundVo=null;
         ResponseVO inVo=null;
+        Set<String> s=new HashSet();
         if(list!=null){
             BiddingVO bv=null;
             for(int i=list.size()-1;i>-1;i--){
                 bv=list.get(i);
                 if(bv.getOpenId().equals(openId)){
+                    if(vo!=null && refundVo!=null){
+                        continue;
+                    }
                     vo=biddingSuccess(groupId,bv);
                     if(vo.getReCode()!=1){
                         throw new GenException("选择失败");
@@ -391,9 +397,20 @@ public class BiddingService extends CommonService {
                     if(refundVo.getReCode()!=1){
                         throw new GenException("退款失败");
                     }
-                    return vo;
+                    //break;
+                }
+                s.add(bv.getOpenId());
+            }
+            if(vo!=null && refundVo!=null){
+                Date payCountDown=DateUtils.addMinutes(new Date(),this.payTimeMinute);
+
+                IMApiUtil.pushSimpleChat(LiveRadioConstant.ACCOUNT_TONG_ZHI,openId,"你竞价预约的主播已经选择了你，请您在30分钟内，在我的订单->预约女神订单查看并支付完成，并到店陪她一起玩耍吧！时间到计时："+this.getSurplusTimeStr(payCountDown));
+
+                for(String k:s){
+                    IMApiUtil.pushSimpleChat(LiveRadioConstant.ACCOUNT_TONG_ZHI,k,"由于主播没有选择你，你竞价主播的定金已经退回，请在退款订单查看");
                 }
             }
+
 
         }
         return new ResponseApiVO(-2,"选择失败",null);

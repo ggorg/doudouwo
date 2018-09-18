@@ -11,8 +11,11 @@ import com.ddw.controller.ClientOrderController;
 import com.ddw.dao.StoreProductFormulaMaterialMapper;
 import com.ddw.enums.*;
 import com.ddw.services.BaseOrderService;
+import com.ddw.services.LiveRadioService;
 import com.ddw.services.OrderViewService;
 import com.ddw.util.Constant;
+import com.ddw.util.IMApiUtil;
+import com.ddw.util.LiveRadioConstant;
 import com.ddw.util.Toolsddw;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonDeleteBean;
@@ -668,10 +671,12 @@ public class OrderService extends BaseOrderService {
     public ResponseVO updateClientOrderStatus(Integer payStatus,Integer shipStatus,Integer storeId,String orderNoEncypt)throws Exception{
         ResponseVO vo=this.updateOrderStatus(payStatus,shipStatus,storeId,orderNoEncypt);
         if(vo.getReCode()==1){
-             vo=this.orderViewService.updateOrderView(MyEncryptUtil.getRealValue(orderNoEncypt),shipStatus);
+            String orderStr=MyEncryptUtil.getRealValue(orderNoEncypt);
+             vo=this.orderViewService.updateOrderView(orderStr,shipStatus);
              if(vo.getReCode()!=1){
                  throw new GenException("更新订单状态失败");
              }
+
             return new ResponseVO(1,"操作成功",null);
         }
         return new ResponseVO(-2,"操作失败",null);
@@ -719,6 +724,21 @@ public class OrderService extends BaseOrderService {
         ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_order",params,"id",orderid);
         if(res.getReCode()!=1){
             return new ResponseVO(-2,"操作失败",null);
+        }
+        if(OrderTypeEnum.OrderType7.getCode().equals(OrderUtil.getOrderType(orderNo))){
+            Map search=new HashMap();
+            search.put("orderId",orderid);
+            //
+            CommonSearchBean csb=new CommonSearchBean("ddw_order_view",null,"ct0.openid openId,t1.name,ct1.dtActiveTime",null,null,search,
+                    new CommonChildBean("ddw_userinfo","id","userId",null),
+                    new CommonChildBean("ddw_ticket","id","busId",null)
+                    );
+            List<Map> list=this.getCommonMapper().selectObjects(csb);
+            if(list!=null && list.size()>0){
+                Map map=list.get(0);
+                String openId=(String)map.get("openId");
+                IMApiUtil.pushSimpleChat(LiveRadioConstant.ACCOUNT_TONG_ZHI,openId,"你购买的"+map.get("name")+"已经生效，有效时间为当天的："+map.get("dtActiveTime"));
+            }
         }
         return new ResponseVO(1,"操作成功",null);
 

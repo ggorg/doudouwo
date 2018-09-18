@@ -43,7 +43,6 @@ public class IMApiUtil {
      }
      ]
      }
-     * @param sign
      * @return
      */
     public static String createGroup(String userId,String groupId,String groupName)throws Exception{
@@ -71,6 +70,60 @@ public class IMApiUtil {
         sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
        return  HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(map));
 
+    }
+    public static String pushAll(String fromUser,String context)throws Exception{
+        initDDWGlobls();
+        Map param=commonChatParam(fromUser,context);
+        StringBuilder sb=new StringBuilder();
+        sb.append(baseUri);
+        sb.append("/openim/im_push");
+        sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
+        System.out.println(JSON.toJSONString(param));
+        String callBack=HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(param));
+        if(StringUtils.isBlank(callBack)){
+            throw new GenException("群发消息失败");
+        }
+        JSONObject jsonObject= JSON.parseObject(callBack);
+        String actionStatus=jsonObject.getString("ActionStatus");
+        if(!"OK".equals(actionStatus)){
+            throw new GenException("群发消息失败->"+callBack);
+        }
+        return "success";
+    }
+    public static Map commonChatParam(String fromUser,String context){
+        Map param=new HashMap();
+        param.put("From_Account",fromUser);
+        param.put("MsgRandom",Integer.parseInt(RandomStringUtils.randomNumeric(8)));
+        List as=new ArrayList();
+        Map data=new HashMap();
+        data.put("MsgType","TIMTextElem");
+        Map dataChid=new HashMap();
+        dataChid.put("Text",context);
+        data.put("MsgContent",dataChid);
+        as.add(data);
+        param.put("MsgBody",as);
+        return param;
+    }
+    public static String pushSimpleChat(String fromUser,String toUser,String context)throws Exception{
+        initDDWGlobls();
+        Map param=commonChatParam(fromUser,context);
+        param.put("SyncOtherMachine",1);
+        param.put("To_Account",toUser);
+        StringBuilder sb=new StringBuilder();
+        sb.append(baseUri);
+        sb.append("/openim/sendmsg");
+        sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
+
+        String callBack=HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(param));
+        if(StringUtils.isBlank(callBack)){
+            throw new GenException("发送消息失败");
+        }
+        JSONObject jsonObject= JSON.parseObject(callBack);
+        String actionStatus=jsonObject.getString("ActionStatus");
+        if(!"OK".equals(actionStatus)){
+            throw new GenException("发送消息失败->"+callBack);
+        }
+        return "success";
     }
     public static Map getMemberNum(List<String> groupIds)throws Exception{
         initDDWGlobls();
@@ -207,7 +260,8 @@ public class IMApiUtil {
         userInfoPO.setNickName("我是测试的");
         userInfoPO.setHeadImgUrl("http://wx.qlogo.cn/mmopen/Q3auHgzwzM70nZPOZLa6PTYzFKZp4xm9KRQITutLibgqjUAesTBciaFCpSzUicPwHT7mKeYDHhGYJX1FJlAPphe3UWKKvOOYC8dGNbSuibz9MOI/132");
         System.out.println(importUser(userInfoPO,null));*/
-
-       System.out.println(getMemberNum(Arrays.asList("1_8_180503191514","1_8_180504013649","1_59_180829224224","1_41_180829211729")));;
+        //System.out.println(IMApiUtil.pushAll("ddwGuanFang","下午茶到了"));
+        System.out.println(IMApiUtil.pushSimpleChat("ddwTongZhi","omc2C0i1D7OCAOnts7XEpfnxGo30","jacky妹你个扑街"));
+      // System.out.println(getMemberNum(Arrays.asList("1_8_180503191514","1_8_180504013649","1_59_180829224224","1_41_180829211729")));;
     }
 }
