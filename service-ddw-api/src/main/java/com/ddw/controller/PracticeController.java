@@ -247,6 +247,7 @@ public class PracticeController {
             if(responseVO.getReCode() == 1){
                 reviewPracticeService.insertPracticeEvaluation(practiceEvaluationDetailDTO,practiceOrderPO.getPracticeId());
             }
+            CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
             return responseVO;
         }catch (Exception e){
             logger.error("PracticeController->evaluation",e);
@@ -301,7 +302,8 @@ public class PracticeController {
             PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrderInProgress(TokenUtil.getUserId(token));
             //判断无接单,可取消发布
 //            if (practiceOrderPO == null) {
-                return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0);
+            CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
+            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0);
 //            }else {
 //                return new ResponseVO(-2,"有正在进行的订单,不可取消,请先结算",null);
 //            }

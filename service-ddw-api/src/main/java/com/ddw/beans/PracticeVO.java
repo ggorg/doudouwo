@@ -24,10 +24,16 @@ public class PracticeVO {
     private String interest;
     @ApiModelProperty(name="orders",value="接单数",example="3243")
     private long orders;
-    @ApiModelProperty(name="star",value="评价星级，一颗星等于2，半颗为1，最低为2",example="10")
+    @ApiModelProperty(name="star",value="评价星级，一颗星等于1,最低为1",example="1")
     private int star;
+    @ApiModelProperty(name="age",value="年龄",example="22")
+    private int age;
     @ApiModelProperty(name="isFocus",value="是否关注,关注true,未关注false",example="true")
     private boolean isFocus;
+    @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
+    private String label;
+    @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
+    private String openid;
     @ApiModelProperty(name="practiceGameList",value="代练简历列表",example="")
     private List<ReviewPracticeVO> reviewPracticeList;
     @ApiModelProperty(name="photograph",value="相册列表",example="1")
@@ -105,12 +111,36 @@ public class PracticeVO {
         this.star = star;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public boolean isFocus() {
         return isFocus;
     }
 
     public void setFocus(boolean focus) {
         isFocus = focus;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 
     public List<ReviewPracticeVO> getReviewPracticeList() {
