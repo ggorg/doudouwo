@@ -138,17 +138,20 @@ public class StoreService extends CommonService{
             storePO.setDsBannerUrl((String)voMap.get("dsBannerUrl"));
         }
         storePO.setUpdateTime(new Date());
+        ResponseVO vo=null;
         if(voMap!=null){
 
             Map updatePoMap= BeanToMapUtil.beanToMap(storePO);
 
-            return this.commonUpdateBySingleSearchParam("ddw_store",updatePoMap,"id",storeDTO.getId());
+            vo=this.commonUpdateBySingleSearchParam("ddw_store",updatePoMap,"id",storeDTO.getId());
 
         }else{
             storePO.setDsStatus(0);
             storePO.setCreateTime(new Date());
-            return this.commonInsert("ddw_store",storePO);
+            vo= this.commonInsert("ddw_store",storePO);
         }
+        CacheUtil.delete("stores","store");
+        return vo;
     }
     public List getRelateSysUsers(String idStr)throws Exception{
         String id= MyEncryptUtil.getRealValue(idStr);
