@@ -36,7 +36,7 @@ public class GoodsClientService extends CommonService {
 
    public ResponseApiVO appIndex(String token)throws Exception{
 
-       ResponseApiVO<ListVO> responseApiVO=goodsIndex(token,GoodsPlatePosEnum.GoodsPlatePos1);
+       ResponseApiVO<GoodsListVO> responseApiVO=goodsIndex(token,GoodsPlatePosEnum.GoodsPlatePos1);
        if(responseApiVO.getReCode()!=1){
            return responseApiVO;
        }
@@ -121,18 +121,20 @@ public class GoodsClientService extends CommonService {
             json.put("list",goodsList);
             json.remove("gids");
         }
-        List<Map> obj=appStoresService.getStoreList();
-        obj=obj.stream().filter(a->((Integer)a.get("id")).equals(storeId)).collect(Collectors.toList());
-        Map map=obj.get(0);
+        GoodsListVO vo=new GoodsListVO();
+        if(GoodsPlatePosEnum.GoodsPlatePos2.getCode().equals(platePosEnum.getCode())){
+            List<Map> obj=appStoresService.getStoreList();
+            obj=obj.stream().filter(a->((Integer)a.get("id")).equals(storeId)).collect(Collectors.toList());
+            Map map=obj.get(0);
+            vo.setHeadUrl((String)map.get("dsHeadUrl"));
+            vo.setBannerUrl((String)map.get("dsBannerUrl"));
+            vo.setName((String)map.get("dsName"));
+            vo.setAddress((String)map.get("dsAddress"));
+            vo.setDesc((String)map.get("dsDesc"));
+        }
+        vo.setList(ja);
 
-        Map storeInfo=new HashMap();
-        storeInfo.put("headUrl",map.get("dsHeadUrl"));
-        storeInfo.put("bannerUrl",map.get("dsBannerUrl"));
-        storeInfo.put("name",map.get("dsName"));
-        storeInfo.put("address",map.get("dsAddress"));
-        storeInfo.put("desc",map.get("dsDesc"));
-        storeInfo.put("list",ja);
-        return new ResponseApiVO(1,"成功",storeInfo);
+        return new ResponseApiVO(1,"成功",vo);
        /* Map search=new HashMap();
         search.put("storeId",storeId);
         search.put("dgStatus", GoodsStatusEnum.goodsStatus1.getCode());

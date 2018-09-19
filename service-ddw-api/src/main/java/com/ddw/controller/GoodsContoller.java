@@ -36,7 +36,7 @@ public class GoodsContoller {
     @Token
     @ApiOperation(value = "商品列表")
     @PostMapping("/list/{token}")
-    public ResponseApiVO<ListVO> toGoodsList(@PathVariable String token){
+    public ResponseApiVO<GoodsListVO> toGoodsList(@PathVariable String token){
         try {
             return this.goodsClientService.goodsIndex(token, GoodsPlatePosEnum.GoodsPlatePos2);
         }catch (Exception e){

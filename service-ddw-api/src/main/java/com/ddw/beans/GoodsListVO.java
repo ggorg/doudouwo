@@ -31,7 +31,9 @@ public class GoodsListVO<T> {
     public GoodsListVO(List<T> list) {
         this.list = list;
     }
+    public GoodsListVO() {
 
+    }
     public List<T> getList() {
         return list;
     }
