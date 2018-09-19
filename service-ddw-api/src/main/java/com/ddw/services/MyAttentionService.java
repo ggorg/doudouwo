@@ -167,4 +167,18 @@ public class MyAttentionService extends CommonService {
         searchCondition.put("practiceId",practiceId);
         return super.commonCountBySearchCondition("ddw_my_attention", searchCondition) > 0;
     }
+
+    /**
+     * 判断是否关注女神
+     * @param userId
+     * @param goddessId
+     * @return
+     * @throws Exception
+     */
+    public boolean isFocusGoddess(Integer userId,Integer goddessId)throws Exception{
+        Map<String,Object> searchCondition = new HashMap<>();
+        searchCondition.put("userId",userId);
+        searchCondition.put("goddessId",goddessId);
+        return super.commonCountBySearchCondition("ddw_my_attention", searchCondition) > 0;
+    }
 }

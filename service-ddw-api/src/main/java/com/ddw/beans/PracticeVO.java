@@ -28,8 +28,8 @@ public class PracticeVO {
     private int star;
     @ApiModelProperty(name="age",value="年龄",example="22")
     private int age;
-    @ApiModelProperty(name="isFocus",value="是否关注,关注true,未关注false",example="true")
-    private boolean isFocus;
+    @ApiModelProperty(name="focus",value="是否关注,关注true,未关注false",example="true")
+    private boolean focus;
     @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
     private String label;
     @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
@@ -120,11 +120,11 @@ public class PracticeVO {
     }
 
     public boolean isFocus() {
-        return isFocus;
+        return focus;
     }
 
     public void setFocus(boolean focus) {
-        isFocus = focus;
+        this.focus = focus;
     }
 
     public String getLabel() {

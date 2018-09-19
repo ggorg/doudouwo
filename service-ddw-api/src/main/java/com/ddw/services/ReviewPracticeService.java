@@ -133,14 +133,15 @@ public class ReviewPracticeService extends CommonService {
     }
 
     /**
-     * 先查询根据订单排序代练列表,列表不足由从未生成过订单的代练根据开启预约时间先后补上,列表不包含自己
+     * 首页调用
+     * 先查询根据订单排序代练列表,列表不足由从未生成过订单的代练根据开启预约时间先后补上
      * @param token
      * @param page
      * @param appointment 1的时候查询发布代练,null的时候所有
      * @return
      * @throws Exception
      */
-    public List<AppIndexPracticeVO> practiceList(String token,PageDTO page,Integer appointment)throws Exception{
+    public List<AppIndexPracticeVO> practiceList(String token,PageDTO page,Integer appointment,Integer weekList)throws Exception{
         Integer storeId = TokenUtil.getStoreId(token);
         Integer practiceId = TokenUtil.getUserId(token);
         Integer pageNum = page.getPageNum();
@@ -155,7 +156,7 @@ public class ReviewPracticeService extends CommonService {
         }
         if(page.getPageSize()-appIndexPractice1.size()>0){
             end = page.getPageSize()-appIndexPractice1.size();
-            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,appointment);
+            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,appointment,weekList);
             appIndexPractice1.addAll(appIndexPractice2);
         }
         if(page.getPageSize()-appIndexPractice1.size()>0){
@@ -182,7 +183,7 @@ public class ReviewPracticeService extends CommonService {
             if (myAttentionGoddessList != null) {
                 for(UserInfoVO userInfoVO:myAttentionGoddessList){
                     if(userInfoVO.getId() == appIndexPracticeVO.getUserId()){
-                        appIndexPracticeVO.setFollowed(true);
+                        appIndexPracticeVO.setFocus(true);
                         break;
                     }
                 }
@@ -196,10 +197,11 @@ public class ReviewPracticeService extends CommonService {
      * @param token
      * @param page
      * @param appointment 1的时候查询发布代练,null的时候所有
+     * @param weekList 1的时候查询订单本周榜单,null的时候所有
      * @return
      * @throws Exception
      */
-    public List<AppIndexPracticeVO> leaderboard(String token,PageDTO page,Integer appointment)throws Exception{
+    public List<AppIndexPracticeVO> leaderboard(String token,PageDTO page,Integer appointment,Integer weekList)throws Exception{
         Integer storeId = TokenUtil.getStoreId(token);
         Integer practiceId = TokenUtil.getUserId(token);
         Integer pageNum = page.getPageNum();
@@ -208,7 +210,7 @@ public class ReviewPracticeService extends CommonService {
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();
 
-        List<AppIndexPracticeVO> appIndexPractice1 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,appointment);
+        List<AppIndexPracticeVO> appIndexPractice1 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,appointment,weekList);
         for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
             userIdList.add(appIndexPracticeVO.getUserId());
         }
@@ -236,7 +238,7 @@ public class ReviewPracticeService extends CommonService {
             if (myAttentionGoddessList != null) {
                 for(UserInfoVO userInfoVO:myAttentionGoddessList){
                     if(userInfoVO.getId() == appIndexPracticeVO.getUserId()){
-                        appIndexPracticeVO.setFollowed(true);
+                        appIndexPracticeVO.setFocus(true);
                         break;
                     }
                 }
