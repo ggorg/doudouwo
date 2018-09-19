@@ -105,13 +105,37 @@ public class StoreService extends CommonService{
             String dmImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( storeDTO.getDsImgFile().getOriginalFilename());
             FileInfoVo fileInfoVo= UploadFileMoveUtil.move( storeDTO.getDsImgFile(),mainGlobals.getRsDir(), dmImgName);
 
-            storePO.setDsBusinessCodePath(fileInfoVo.getUrlPath());
+            storePO.setDsBusinessCodePath(mainGlobals.getServiceUrl()+fileInfoVo.getUrlPath());
             CommonBeanFiles f=this.fileService.createCommonBeanFiles(fileInfoVo);
             this.fileService.saveFile(f);
 
 
         }else if(storeDTO.getIsUpdateImg()!=null && storeDTO.getIsUpdateImg().contains("dsImgFile")){
             storePO.setDsBusinessCodePath((String)voMap.get("dsBusinessCodePath"));
+        }
+        if(!storeDTO.getDsHeadFile().isEmpty()){
+            String dmImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( storeDTO.getDsHeadFile().getOriginalFilename());
+            FileInfoVo fileInfoVo= UploadFileMoveUtil.move( storeDTO.getDsHeadFile(),mainGlobals.getRsDir(), dmImgName);
+
+            storePO.setDsHeadUrl(mainGlobals.getServiceUrl()+fileInfoVo.getUrlPath());
+            CommonBeanFiles f=this.fileService.createCommonBeanFiles(fileInfoVo);
+            this.fileService.saveFile(f);
+
+
+        }else if(storeDTO.getIsUpdateImg()!=null && storeDTO.getIsUpdateImg().contains("dsHeadUrl")){
+            storePO.setDsHeadUrl((String)voMap.get("dsHeadUrl"));
+        }
+        if(!storeDTO.getDsBannerFile().isEmpty()){
+            String dmImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( storeDTO.getDsBannerFile().getOriginalFilename());
+            FileInfoVo fileInfoVo= UploadFileMoveUtil.move( storeDTO.getDsBannerFile(),mainGlobals.getRsDir(), dmImgName);
+
+            storePO.setDsBannerUrl(mainGlobals.getServiceUrl()+fileInfoVo.getUrlPath());
+            CommonBeanFiles f=this.fileService.createCommonBeanFiles(fileInfoVo);
+            this.fileService.saveFile(f);
+
+
+        }else if(storeDTO.getIsUpdateImg()!=null && storeDTO.getIsUpdateImg().contains("dsBannerUrl")){
+            storePO.setDsBannerUrl((String)voMap.get("dsBannerUrl"));
         }
         storePO.setUpdateTime(new Date());
         if(voMap!=null){

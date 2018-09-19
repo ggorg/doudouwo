@@ -14,6 +14,7 @@
 <body style="padding:10px 10px 10px 10px">
 <form class="layui-form layui-form-pane" >
   <input th:if="${ds!=null and ds['id']!=null}" th:name="id" th:value="${ds['id']}" type="hidden"/>
+
   <div class="layui-form-item">
     <label class="layui-form-label">门店名称</label>
     <div class="layui-input-block">
@@ -60,13 +61,33 @@
       <input type="text" name="dsCity" required="required" title="城市"   th:value="${ds!=null? ds['dsCity']:''}" placeholder="请输入城市" autocomplete="off" class="layui-input" />
     </div>
   </div>
-
+  <div class="layui-form-item">
+    <label class="layui-form-label">头像</label>
+    <div class="layui-input-block">
+      <button type="button" class="layui-btn myupload2"  style="width: 143.52px;height: 93.83px;" >
+        <span  style="z-index: 1000;position: relative">上传图片</span>
+        <img th:if="${ds!=null and ds['dsHeadUrl']!=null}" th:src="${ds['dsHeadUrl']}" class="dmImg" />
+        <input th:if="${ds!=null and ds['id']!=null}" type="hidden" name="isUpdateImg" value="dsHeadUrl"/>
+      </button>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">横幅</label>
+    <div class="layui-input-block">
+      <button type="button" class="layui-btn myupload3"  style="width: 353px;height: 93.83px;" >
+        <span  style="z-index: 1000;position: relative">上传图片</span>
+        <img th:if="${ds!=null and ds['dsBannerUrl']!=null}" style="width: 353px;" th:src="${ds['dsBannerUrl']}" class="dmImge" />
+        <input th:if="${ds!=null and ds['id']!=null}" type="hidden" name="isUpdateImg" value="dsBannerUrl"/>
+      </button>
+    </div>
+  </div>
   <div class="layui-form-item">
     <label class="layui-form-label">地址</label>
     <div class="layui-input-block">
       <input type="text" name="dsAddress" title="地址"   th:value="${ds!=null? ds['dsAddress']:''}" placeholder="请输入地址" autocomplete="off" class="layui-input" />
     </div>
   </div>
+
   <div class="layui-form-item">
     <label class="layui-form-label">经纬度坐标</label>
     <div class="layui-input-block">
@@ -107,6 +128,8 @@
 
         //执行实例
         var uploadInst1 = upload.render(initUpload(".myupload1","dsImgFile","dmImg"));
+        var uploadInst1 = upload.render(initUpload(".myupload2","dsHeadFile","dmImg"));
+        var uploadInst1 = upload.render(initUpload(".myupload3","dsBannerFile","dmImge"));
 
 
     });

@@ -18,10 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,6 +30,9 @@ public class GoodsClientService extends CommonService {
 
     @Autowired
     private BannerService bannerService;
+
+    @Autowired
+    private AppStoresService appStoresService;
 
    public ResponseApiVO appIndex(String token)throws Exception{
 
@@ -120,7 +121,18 @@ public class GoodsClientService extends CommonService {
             json.put("list",goodsList);
             json.remove("gids");
         }
-        return new ResponseApiVO(1,"成功",new ListVO(ja));
+        List<Map> obj=appStoresService.getStoreList();
+        obj=obj.stream().filter(a->((Integer)a.get("id")).equals(storeId)).collect(Collectors.toList());
+        Map map=obj.get(0);
+
+        Map storeInfo=new HashMap();
+        storeInfo.put("headUrl",map.get("dsHeadUrl"));
+        storeInfo.put("bannerUrl",map.get("dsBannerUrl"));
+        storeInfo.put("name",map.get("dsName"));
+        storeInfo.put("address",map.get("dsAddress"));
+        storeInfo.put("desc",map.get("dsDesc"));
+        storeInfo.put("list",ja);
+        return new ResponseApiVO(1,"成功",storeInfo);
        /* Map search=new HashMap();
         search.put("storeId",storeId);
         search.put("dgStatus", GoodsStatusEnum.goodsStatus1.getCode());

@@ -15,10 +15,28 @@ public class StoreDTO {
     private String dsCity;
     private String dsCompanyName;
     private MultipartFile dsImgFile;
+    private MultipartFile dsHeadFile;
+    private MultipartFile dsBannerFile;
     private Integer dsSort;
     private String dsCode;
     private String dsBankCardCode;
     private ArrayList isUpdateImg;
+
+    public MultipartFile getDsHeadFile() {
+        return dsHeadFile;
+    }
+
+    public void setDsHeadFile(MultipartFile dsHeadFile) {
+        this.dsHeadFile = dsHeadFile;
+    }
+
+    public MultipartFile getDsBannerFile() {
+        return dsBannerFile;
+    }
+
+    public void setDsBannerFile(MultipartFile dsBannerFile) {
+        this.dsBannerFile = dsBannerFile;
+    }
 
     public Integer getId() {
         return id;

@@ -409,6 +409,7 @@ public class BiddingService extends CommonService {
                 for(String k:s){
                     IMApiUtil.pushSimpleChat(LiveRadioConstant.ACCOUNT_TONG_ZHI,k,"由于主播没有选择你，你竞价主播的定金已经退回，请在退款订单查看");
                 }
+                return vo;
             }
 
 

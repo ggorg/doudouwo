@@ -24,6 +24,15 @@ public class StorePO {
     private Date updateTime;
     private Integer dsStatus;
     private String dsHeadUrl;
+    private String dsBannerUrl;
+
+    public String getDsBannerUrl() {
+        return dsBannerUrl;
+    }
+
+    public void setDsBannerUrl(String dsBannerUrl) {
+        this.dsBannerUrl = dsBannerUrl;
+    }
 
     public String getDsHeadUrl() {
         return dsHeadUrl;
