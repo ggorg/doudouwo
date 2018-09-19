@@ -13,8 +13,8 @@ import java.util.List;
 public interface GoddessMapper {
     List<AppIndexGoddessVO> getGoddessList(@Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end);
     List<AppIndexGoddessVO> getGoddessListByIds(@Param("userIdList") List<Integer> userIdList, @Param("userId") Integer userId,
-                                                @Param("start") Integer start, @Param("end") Integer end);
+                                                @Param("start") Integer start, @Param("end") Integer end,@Param("weekList") Integer weekList);
     List<AppIndexGoddessVO> getGoddessListByNotInIds(@Param("userIdList") List<Integer> userIdList, @Param("userId") Integer userId,
-                                                     @Param("start") Integer start, @Param("end") Integer end);
+                                                     @Param("start") Integer start, @Param("end") Integer end,@Param("weekList") Integer weekList);
     Integer getGoddessListCount(@Param("storeId") Integer storeId);
 }

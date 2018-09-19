@@ -49,7 +49,7 @@ public class AppIndexService {
         page.setPageSize(4);
         if(obGoddess == null){
             //查询所有门店女神,直播优先,列表不包括当前查询会员id
-            appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),page));
+            appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),page,null));
             if(appIndexVO.getGoddessList().size()>0) {
                 CacheUtil.put("publicCache", "appIndexGoddess", appIndexVO.getGoddessList());
             }
@@ -58,7 +58,7 @@ public class AppIndexService {
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
-            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,page,1));
+            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,page,1,null));
             if(appIndexVO.getPracticeList().size()>0){
                 CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
             }

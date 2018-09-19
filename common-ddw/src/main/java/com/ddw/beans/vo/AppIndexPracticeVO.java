@@ -27,8 +27,8 @@ public class AppIndexPracticeVO implements Serializable {
     private String label;
     @ApiModelProperty(name="ordersCount",value="接单数",example="2313")
     private Integer ordersCount;
-    @ApiModelProperty(name="followed",value="已关注true,未关注false",example="true")
-    private boolean followed;
+    @ApiModelProperty(name="focus",value="已关注true,未关注false",example="true")
+    private boolean focus;
     @ApiModelProperty(name="gameId",value="1",example="1")
     private int gameId;
     @ApiModelProperty(name="gameName",value="游戏名称",example="王者荣耀")
@@ -43,10 +43,6 @@ public class AppIndexPracticeVO implements Serializable {
     private int star;
     @ApiModelProperty(name = "appointment",value = "预约开关，1开启，2代练中，0关闭",example = "1")
     private int appointment;
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
 
     public Integer getUserId() {
         return userId;
@@ -104,12 +100,12 @@ public class AppIndexPracticeVO implements Serializable {
         this.ordersCount = ordersCount;
     }
 
-    public boolean isFollowed() {
-        return followed;
+    public boolean isFocus() {
+        return focus;
     }
 
-    public void setFollowed(boolean followed) {
-        this.followed = followed;
+    public void setFocus(boolean focus) {
+        this.focus = focus;
     }
 
     public int getGameId() {

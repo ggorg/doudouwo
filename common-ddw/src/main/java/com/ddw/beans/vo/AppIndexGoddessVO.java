@@ -34,8 +34,8 @@ public class AppIndexGoddessVO implements Serializable{
     private String dsName;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
     private Integer fans;
-    @ApiModelProperty(name="isFocus",value="已关注true,未关注false",example="true")
-    private boolean isFocus;
+    @ApiModelProperty(name="focus",value="已关注true,未关注false",example="true")
+    private boolean focus;
     @ApiModelProperty(name="age",value="年龄",example="22")
     private int age;
     @ApiModelProperty(name="job",value="职业",example="文化/广告/传媒")
@@ -138,11 +138,11 @@ public class AppIndexGoddessVO implements Serializable{
     }
 
     public boolean isFocus() {
-        return isFocus;
+        return focus;
     }
 
     public void setFocus(boolean focus) {
-        isFocus = focus;
+        this.focus = focus;
     }
 
     public int getAge() {
@@ -159,6 +159,30 @@ public class AppIndexGoddessVO implements Serializable{
 
     public void setJob(String job) {
         this.job = job;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public String getInterest() {
+        return interest;
+    }
+
+    public void setInterest(String interest) {
+        this.interest = interest;
+    }
+
+    public String getStarSign() {
+        return starSign;
+    }
+
+    public void setStarSign(String starSign) {
+        this.starSign = starSign;
     }
 
     public Integer getViewingNum() {

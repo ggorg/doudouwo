@@ -15,8 +15,6 @@ import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
-import freemarker.template.utility.DateUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +46,8 @@ public class ReviewGoddessService extends CommonService {
     private GoddessMapper goddessMapper;
     @Autowired
     private ReviewService reviewService;
-
     @Autowired
     private UserInfoService userInfoService;
-
     @Autowired
     private BasePhotoService photoService;
     @Autowired
@@ -248,7 +244,7 @@ public class ReviewGoddessService extends CommonService {
      * @return
      * @throws Exception
      */
-    public List<AppIndexGoddessVO> goddessList(Integer userId,PageDTO page)throws Exception{
+    public List<AppIndexGoddessVO> goddessList(Integer userId,PageDTO page, Integer weekList)throws Exception{
         List<Map> list = liveRadioClientService.getLiveRadioList(userId, page);
         List<Integer> userIdList =null;
         Map<Integer,Integer> userIdMap = new HashMap<>();
@@ -268,10 +264,10 @@ public class ReviewGoddessService extends CommonService {
         Integer end = pageSize;
         List<AppIndexGoddessVO> appIndexGoddess = new ArrayList<AppIndexGoddessVO>();
         if(userIdList!=null && userIdList.size()>0){
-            appIndexGoddess = goddessMapper.getGoddessListByIds(userIdList,userId,start,end);
+            appIndexGoddess = goddessMapper.getGoddessListByIds(userIdList,userId,start,end,weekList);
             if(page.getPageSize()-appIndexGoddess.size()>0){
                 end = page.getPageSize()-appIndexGoddess.size();
-                List<AppIndexGoddessVO> appIndexGoddess2 = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
+                List<AppIndexGoddessVO> appIndexGoddess2 = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end,weekList);
                 appIndexGoddess.addAll(appIndexGoddess2);
             }
             appIndexGoddess.forEach(a->{
@@ -279,10 +275,17 @@ public class ReviewGoddessService extends CommonService {
                 a.setCode(userIdLiveCodeMap.get(a.getId()));
             });
         }else{
-            appIndexGoddess = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end);
+            appIndexGoddess = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end,weekList);
         }
         if(appIndexGoddess!=null){
-            appIndexGoddess.forEach(a->a.setHeadImgUrl(photoService.getPhotograph(a.getId())));
+            appIndexGoddess.forEach(a -> {
+                try {
+                    a.setHeadImgUrl(photoService.getPhotograph(a.getId()));
+                    a.setFocus(myAttentionService.isFocusGoddess(userId, a.getId()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
         return appIndexGoddess;
     }
