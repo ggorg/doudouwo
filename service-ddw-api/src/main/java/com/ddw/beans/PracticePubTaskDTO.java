@@ -8,7 +8,8 @@ import io.swagger.annotations.ApiModelProperty;
 public class PracticePubTaskDTO {
     @ApiModelProperty(name = "practiceId",value = "代练编号",example = "1")
     private Integer practiceId;
-    private PageDTO page;
+    @ApiModelProperty(name="pageNo",value="页码",example="1")
+    private Integer pageNo;
 
     public Integer getPracticeId() {
         return practiceId;
@@ -18,11 +19,11 @@ public class PracticePubTaskDTO {
         this.practiceId = practiceId;
     }
 
-    public PageDTO getPage() {
-        return page;
+    public Integer getPageNo() {
+        return pageNo;
     }
 
-    public void setPage(PageDTO page) {
-        this.page = page;
+    public void setPageNo(Integer pageNo) {
+        this.pageNo = pageNo;
     }
 }

@@ -3,7 +3,7 @@ package com.ddw.controller;
 
 import com.ddw.beans.MyAttentionDTO;
 import com.ddw.beans.MyAttentionPO;
-import com.ddw.beans.PageDTO;
+import com.ddw.beans.PageNoDTO;
 import com.ddw.services.MyAttentionService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
@@ -51,9 +51,9 @@ public class MyAttentionController {
     @Token
     @ApiOperation(value = "当前会员关注的女神列表")
     @PostMapping("/queryGoddess/{token}")
-    public ResponseVO queryGoddessByUserId(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,分页",required=true)PageDTO pageDTO){
+    public ResponseVO queryGoddessByUserId(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,分页",required=true)PageNoDTO pageNoDTO){
         try {
-            return myAttentionService.queryGoddessByUserId(TokenUtil.getUserId(token),pageDTO.getPageNum(),pageDTO.getPageSize());
+            return myAttentionService.queryGoddessByUserId(TokenUtil.getUserId(token),pageNoDTO.getPageNo(),10);
         }catch (Exception e){
             logger.error("MyAttentionController->queryGoddessByUserId",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -63,9 +63,9 @@ public class MyAttentionController {
     @Token
     @ApiOperation(value = "当前会员关注的代练列表")
     @PostMapping("/queryPractice/{token}")
-    public ResponseVO queryPracticeByUserId(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,分页",required=true)PageDTO pageDTO){
+    public ResponseVO queryPracticeByUserId(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,分页",required=true)PageNoDTO pageNoDTO){
         try {
-            return myAttentionService.queryPracticeByUserId(TokenUtil.getUserId(token),pageDTO.getPageNum(),pageDTO.getPageSize());
+            return myAttentionService.queryPracticeByUserId(TokenUtil.getUserId(token),pageNoDTO.getPageNo(),10);
         }catch (Exception e){
             logger.error("MyAttentionController->queryPracticeByUserId",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -75,9 +75,9 @@ public class MyAttentionController {
     @Token
     @ApiOperation(value = "女神查询自己粉丝")
     @PostMapping("/queryFansByGoddess/{token}")
-    public ResponseVO queryFansByGoddess(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,分页",required=true)PageDTO pageDTO){
+    public ResponseVO queryFansByGoddess(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,分页",required=true)PageNoDTO pageNoDTO){
         try {
-            return myAttentionService.queryGoddessFansByUserId(TokenUtil.getUserId(token),pageDTO.getPageNum(),pageDTO.getPageSize());
+            return myAttentionService.queryGoddessFansByUserId(TokenUtil.getUserId(token),pageNoDTO.getPageNo());
         }catch (Exception e){
             logger.error("MyAttentionController->queryFansByGoddess",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -87,9 +87,9 @@ public class MyAttentionController {
     @Token
     @ApiOperation(value = "代练查询自己粉丝")
     @PostMapping("/queryFansByPractice/{token}")
-    public ResponseVO queryFansByPractice(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,分页",required=true)PageDTO pageDTO){
+    public ResponseVO queryFansByPractice(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式,分页",required=true)PageNoDTO pageNoDTO){
         try {
-            return myAttentionService.queryPracticeFansByUserId(TokenUtil.getUserId(token),pageDTO.getPageNum(),pageDTO.getPageSize());
+            return myAttentionService.queryPracticeFansByUserId(TokenUtil.getUserId(token),pageNoDTO.getPageNo());
         }catch (Exception e){
             logger.error("MyAttentionController->queryPracticeFansByUserId",e);
             return new ResponseVO(-1,"提交失败",null);

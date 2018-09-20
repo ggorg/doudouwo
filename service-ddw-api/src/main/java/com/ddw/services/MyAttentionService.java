@@ -92,14 +92,15 @@ public class MyAttentionService extends CommonService {
         return new ResponseVO(1,"成功",myAttentionVO);
     }
 
-    public ResponseVO queryGoddessFansByUserId(int userId,Integer pageNum,Integer pageSize)throws Exception{
-        if(pageNum == null || pageSize == null){
-            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+    public ResponseVO queryGoddessFansByUserId(int userId,Integer pageNo)throws Exception{
+        Integer pageSize = 10;
+        if(pageNo == null || pageSize == null){
+            return new ResponseVO(-2,"提交失败,pageNo不能为空",null);
         }
         MyAttentionVO myAttentionVO = new MyAttentionVO();
         Map searchCondition = new HashMap<>();
         searchCondition.put("goddessId",userId);
-        List<Map> list = this.commonList("ddw_my_attention",null,pageNum,pageSize,searchCondition);
+        List<Map> list = this.commonList("ddw_my_attention",null,pageNo,pageSize,searchCondition);
         Long count = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
         List<String>userIdList = new ArrayList<String>();
         for(Map map:list){
@@ -114,14 +115,15 @@ public class MyAttentionService extends CommonService {
         return new ResponseVO(1,"成功",myAttentionVO);
     }
 
-    public ResponseVO queryPracticeFansByUserId(int userId,Integer pageNum,Integer pageSize)throws Exception{
-        if(pageNum == null || pageSize == null){
-            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
+    public ResponseVO queryPracticeFansByUserId(int userId,Integer pageNo)throws Exception{
+        Integer pageSize = 10;
+        if(pageNo == null || pageSize == null){
+            return new ResponseVO(-2,"提交失败,pageNo不能为空",null);
         }
         MyAttentionVO myAttentionVO = new MyAttentionVO();
         Map searchCondition = new HashMap<>();
         searchCondition.put("practiceId",userId);
-        List<Map> list = this.commonList("ddw_my_attention",null,pageNum,pageSize,searchCondition);
+        List<Map> list = this.commonList("ddw_my_attention",null,pageNo,pageSize,searchCondition);
         Long count = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
         List<String>userIdList = new ArrayList<String>();
         for(Map map:list){

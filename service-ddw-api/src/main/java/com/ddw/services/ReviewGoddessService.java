@@ -240,12 +240,12 @@ public class ReviewGoddessService extends CommonService {
     /**
      * 先查询直播女神列表,列表不足由未直播女神补上,根据粉丝数量降序,展示女神数据,列表不包含自己
      * @param userId 会员id
-     * @param page
+     * @param pageNo
      * @return
      * @throws Exception
      */
-    public List<AppIndexGoddessVO> goddessList(Integer userId,PageDTO page, Integer weekList)throws Exception{
-        List<Map> list = liveRadioClientService.getLiveRadioList(userId, page);
+    public List<AppIndexGoddessVO> goddessList(Integer userId,Integer pageNo, Integer weekList)throws Exception{
+        List<Map> list = liveRadioClientService.getLiveRadioList(userId, pageNo);
         List<Integer> userIdList =null;
         Map<Integer,Integer> userIdMap = new HashMap<>();
         Map<Integer,Integer> userIdLiveCodeMap = new HashMap<>();
@@ -258,15 +258,15 @@ public class ReviewGoddessService extends CommonService {
         if(userIdMap.size()>0){
             userIdList = new ArrayList<>(userIdMap.keySet());
         }
-        Integer pageNum = page.getPageNum();
-        Integer pageSize = page.getPageSize();
+        Integer pageNum = pageNo;
+        Integer pageSize = 10;
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer end = pageSize;
         List<AppIndexGoddessVO> appIndexGoddess = new ArrayList<AppIndexGoddessVO>();
         if(userIdList!=null && userIdList.size()>0){
             appIndexGoddess = goddessMapper.getGoddessListByIds(userIdList,userId,start,end,weekList);
-            if(page.getPageSize()-appIndexGoddess.size()>0){
-                end = page.getPageSize()-appIndexGoddess.size();
+            if(pageSize-appIndexGoddess.size()>0){
+                end =pageSize-appIndexGoddess.size();
                 List<AppIndexGoddessVO> appIndexGoddess2 = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end,weekList);
                 appIndexGoddess.addAll(appIndexGoddess2);
             }

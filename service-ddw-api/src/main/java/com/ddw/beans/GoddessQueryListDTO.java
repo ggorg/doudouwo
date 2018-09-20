@@ -8,7 +8,8 @@ import io.swagger.annotations.ApiModelProperty;
 public class GoddessQueryListDTO {
     @ApiModelProperty(name = "weekList",value = "查询周榜传1,总榜不传或非1",example = "1")
     private Integer weekList;
-    private PageDTO page;
+    @ApiModelProperty(name="pageNo",value="页码",example="1")
+    private Integer pageNo;
 
     public Integer getWeekList() {
         return weekList;
@@ -18,11 +19,11 @@ public class GoddessQueryListDTO {
         this.weekList = weekList;
     }
 
-    public PageDTO getPage() {
-        return page;
+    public Integer getPageNo() {
+        return pageNo;
     }
 
-    public void setPage(PageDTO page) {
-        this.page = page;
+    public void setPageNo(Integer pageNo) {
+        this.pageNo = pageNo;
     }
 }

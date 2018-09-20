@@ -181,9 +181,9 @@ public class UserController {
 
     @ApiOperation(value = "查询会员相册用例")
     @PostMapping("/getPhotograph/{token}")
-    public ResponseVO getPhotograph(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO pageDTO){
+    public ResponseVO getPhotograph(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO pageNoDTO){
         try {
-            return userInfoService.getPhotograph(TokenUtil.getUserId(token),pageDTO.getPageNum(),pageDTO.getPageSize());
+            return userInfoService.getPhotograph(TokenUtil.getUserId(token),pageNoDTO.getPageNo(),10);
         }catch (Exception e){
             logger.error("UserController->getPhotograph",e);
             return new ResponseVO(-1,"提交失败",null);
