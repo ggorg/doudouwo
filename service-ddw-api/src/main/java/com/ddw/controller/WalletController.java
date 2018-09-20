@@ -73,6 +73,22 @@ public class WalletController {
 
     }
     @Token
+    @ApiOperation(value = "查询钱包交易记录",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/dealrecord/{token}")
+    @ResponseBody
+    public ResponseApiVO<WalletDealRecordVO> getDealRecord(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletDealRecordDTO dto){
+        try {
+            ResponseApiVO vo=this.walletService.getDealRecord(token,dto);
+            if(vo.getReCode()==1){
+                return vo;
+            }
+        }catch (Exception e){
+            logger.error("WalletController-getDealRecord-》查询钱包交易记录-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"查询钱包交易记录失败",null);
+
+    }
+    @Token
     @ApiOperation(value = "查询钱包所剩逗币和贡献值",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/coin/{token}")
     @ResponseBody

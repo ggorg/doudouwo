@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ddw.dao.WalletDealMapper">
+
+
+    <select id="dealRecord" resultType="com.ddw.beans.WalletDealRecordVO">
+        SELECT
+        DATE_FORMAT(mt.createTime,'%Y-%m-%d %H:%i') createTime,
+            mt.type,
+            mt.cost,
+            mt.dealType
+        FROM
+            (
+        SELECT
+            t1.createTime,
+            t1.doType type,
+            t1.doCost cost,
+            t1.doPayStatus dealType
+        FROM
+            ddw_order t1
+        WHERE
+            t1.doPayType = 5
+            AND t1.doCustomerUserId = #{userId} UNION ALL
+        SELECT
+            t2.createTime,
+            t2.exitCost cost,
+            v.doPayStatus dealType,
+            v.doType type
+        FROM
+            ddw_order v
+            INNER JOIN ddw_exit_order t2 ON v.id = t2.orderId
+        WHERE
+            v.doPayType = 5
+            AND v.doCustomerUserId = #{userId} UNION ALL
+        SELECT
+            dt.type,
+            dt.createTime,
+            dt.cost,3 dealType
+        FROM
+            ddw_transfer dt
+        WHERE
+            dt.userId = #{userId}
+            ) mt
+        <if test="date!=null" >
+            where createTime like #{date}
+        </if>
+        ORDER BY
+            createTime DESC
+
+        <if test="null!=startNum and null!=endNum" >
+            limit #{startNum },#{endNum}
+        </if>
+    </select>
+
+</mapper>

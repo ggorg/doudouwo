@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.ddw.beans.*;
 import com.ddw.config.DDWGlobals;
+import com.ddw.dao.WalletDealMapper;
 import com.ddw.dao.WalletErrorLogMapper;
 import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.enums.OrderTypeEnum;
@@ -11,9 +12,12 @@ import com.ddw.util.MsgUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
+import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,6 +38,8 @@ public class WalletService extends CommonService {
     private WalletErrorLogMapper walletErrorLogMapper;
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private WalletDealMapper walletDealMapper;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO transferMoney(String token ,WalletTransferMoneyDTO dto)throws Exception{
@@ -83,6 +89,12 @@ public class WalletService extends CommonService {
             return new ResponseApiVO(-2,"转入钱包失败",null);
 
         }else{
+            Map map=new HashMap();
+            map.put("createTime",new Date());
+            map.put("userId",userId);
+            map.put("type",dto.getIncomeType());
+            map.put("cost",dto.getMoney());
+            this.commonInsertMap("ddw_transfer",map);
             return new ResponseApiVO(1,"成功",null);
 
         }
@@ -388,6 +400,30 @@ public class WalletService extends CommonService {
             codeNum+=(char)code[random.nextInt(3)];
         }
         return codeNum;
+    }
+    public ResponseApiVO getDealRecord(String token,WalletDealRecordDTO dto){
+        String date=dto.getDate();
+        if(StringUtils.isBlank(date)){
+            date= DateFormatUtils.format(new Date(),"yyyy-MM");
+        }else if(!date.matches("^[0-9]{4}-[0-9]{2}$")){
+            return new ResponseApiVO(-2,"日期格式错误",null);
+        }
+        Page p=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
+        Integer userId=TokenUtil.getUserId(token);
+        List<WalletDealRecordVO> list=this.walletDealMapper.dealRecord(userId,date+"%",p.getStartRow(),p.getEndRow());
+        if(list!=null && list.size()>0){
+            list.forEach(a->{
+                if(StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
+                    a.setTitle(OrderTypeEnum.getName(a.getType()));
+                }else{
+                    a.setTitle(IncomeTypeEnum.getName(a.getType()));
+
+                }
+            });
+            return new ResponseApiVO(1,"成功",new ListVO<>(list));
+        }
+        return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+
     }
 
 }
