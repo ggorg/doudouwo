@@ -136,17 +136,16 @@ public class ReviewPracticeService extends CommonService {
      * 首页调用
      * 先查询根据订单排序代练列表,列表不足由从未生成过订单的代练根据开启预约时间先后补上
      * @param token
-     * @param page
+     * @param pageNo
      * @param appointment 1的时候查询发布代练,null的时候所有
      * @return
      * @throws Exception
      */
-    public List<AppIndexPracticeVO> practiceList(String token,PageDTO page,Integer appointment,Integer weekList)throws Exception{
+    public List<AppIndexPracticeVO> practiceList(String token,Integer pageNo,Integer appointment,Integer weekList)throws Exception{
         Integer storeId = TokenUtil.getStoreId(token);
         Integer practiceId = TokenUtil.getUserId(token);
-        Integer pageNum = page.getPageNum();
-        Integer pageSize = page.getPageSize();
-        Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+        Integer pageSize = 10;
+        Integer start = pageNo > 0 ? (pageNo - 1) * pageSize : 0;
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();
         // 优先取发布的代练
@@ -154,13 +153,13 @@ public class ReviewPracticeService extends CommonService {
         for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
             userIdList.add(appIndexPracticeVO.getUserId());
         }
-        if(page.getPageSize()-appIndexPractice1.size()>0){
-            end = page.getPageSize()-appIndexPractice1.size();
+        if(pageSize-appIndexPractice1.size()>0){
+            end = pageSize-appIndexPractice1.size();
             List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,appointment,weekList);
             appIndexPractice1.addAll(appIndexPractice2);
         }
-        if(page.getPageSize()-appIndexPractice1.size()>0){
-            end = page.getPageSize()-appIndexPractice1.size();
+        if(pageSize-appIndexPractice1.size()>0){
+            end = pageSize-appIndexPractice1.size();
             userIdList.clear();
             for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
                 userIdList.add(appIndexPracticeVO.getUserId());
@@ -195,17 +194,17 @@ public class ReviewPracticeService extends CommonService {
     /**
      * 根据订单排序代练列表,列表不足由从未生成过订单的代练补上
      * @param token
-     * @param page
+     * @param pageNo
      * @param appointment 1的时候查询发布代练,null的时候所有
      * @param weekList 1的时候查询订单本周榜单,null的时候所有
      * @return
      * @throws Exception
      */
-    public List<AppIndexPracticeVO> leaderboard(String token,PageDTO page,Integer appointment,Integer weekList)throws Exception{
+    public List<AppIndexPracticeVO> leaderboard(String token,Integer pageNo,Integer appointment,Integer weekList)throws Exception{
         Integer storeId = TokenUtil.getStoreId(token);
         Integer practiceId = TokenUtil.getUserId(token);
-        Integer pageNum = page.getPageNum();
-        Integer pageSize = page.getPageSize();
+        Integer pageNum = pageNo;
+        Integer pageSize = 10;
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();
@@ -214,8 +213,8 @@ public class ReviewPracticeService extends CommonService {
         for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
             userIdList.add(appIndexPracticeVO.getUserId());
         }
-        if(page.getPageSize()-appIndexPractice1.size()>0){
-            end = page.getPageSize()-appIndexPractice1.size();
+        if(pageSize-appIndexPractice1.size()>0){
+            end = pageSize-appIndexPractice1.size();
             userIdList.clear();
             for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
                 userIdList.add(appIndexPracticeVO.getUserId());
@@ -320,13 +319,13 @@ public class ReviewPracticeService extends CommonService {
      * @return
      * @throws Exception
      */
-    public Page getPracticeEvaluationDetailList(PracticeEvaluationDetailListDTO practiceEvaluationDetailListDTO)throws Exception{
+    public List getPracticeEvaluationDetailList(PracticeEvaluationDetailListDTO practiceEvaluationDetailListDTO)throws Exception{
         Map condtion = new HashMap<>();
         condtion.put("practiceId",practiceEvaluationDetailListDTO.getPracticeId());
         condtion.put("gameId",practiceEvaluationDetailListDTO.getGameId());
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_evaluation_detail","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb);
-        return this.commonPage(practiceEvaluationDetailListDTO.getPage().getPageNum(),practiceEvaluationDetailListDTO.getPage().getPageSize(),csb);
+        return this.commonPage(practiceEvaluationDetailListDTO.getPageNo(),10,csb).getResult();
     }
 
     /**
@@ -446,15 +445,13 @@ public class ReviewPracticeService extends CommonService {
     }
 
     public ResponseVO getPracticeDynamic(PracticeDynamicDTO practiceDynamicDTO)throws Exception{
-        Integer pageNum = practiceDynamicDTO.getPageNum();
-        Integer pageSize = practiceDynamicDTO.getPageSize();
+        Integer pageNum = practiceDynamicDTO.getPageNo();
+        Integer pageSize = 10;
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer end = pageSize;
         JSONObject json = new JSONObject();
         List practiceDynamicList = practiceMapper.getPracticeDynamic(practiceDynamicDTO.getPracticeId(),start,end);
-        int count = practiceMapper.getPracticeDynamicCount(practiceDynamicDTO.getPracticeId());
         json.put("list",practiceDynamicList);
-        json.put("count",count);
         return new ResponseVO(1,"成功",json);
     }
 
@@ -465,7 +462,7 @@ public class ReviewPracticeService extends CommonService {
      * @return
      * @throws Exception
      */
-    public ResponseVO getOrderPracticeList(Integer practiceId,PageDTO page)throws Exception{
+    public ResponseVO getOrderPracticeList(Integer practiceId,PageNoDTO page)throws Exception{
         Map condtion = new HashMap<>();
         condtion.put("practiceId",practiceId);
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
@@ -475,9 +472,8 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb5=new CommonChildBean("ddw_store","id","storeId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct0.openid,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5);
         JSONObject json = new JSONObject();
-        Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
+        Page p = this.commonPage(page.getPageNo(),10,csb);
         json.put("list",p.getResult());
-        json.put("count",p.getTotal());
         return new ResponseVO(1,"成功",json);
     }
 
@@ -488,7 +484,7 @@ public class ReviewPracticeService extends CommonService {
      * @return
      * @throws Exception
      */
-    public ResponseVO getOrderUserList(Integer userId,PageDTO page)throws Exception{
+    public ResponseVO getOrderUserList(Integer userId,PageNoDTO page)throws Exception{
         Map condtion = new HashMap<>();
         condtion.put("userId",userId);
         condtion.put("status,in","(1,2,3)");
@@ -499,9 +495,8 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb5=new CommonChildBean("ddw_store","id","storeId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct0.openid,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5);
         JSONObject json = new JSONObject();
-        Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
+        Page p = this.commonPage(page.getPageNo(),10,csb);
         json.put("list",p.getResult());
-        json.put("count",p.getTotal());
         return new ResponseVO(1,"成功",json);
     }
 
@@ -538,7 +533,7 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank",null,null,condtion,cb1,cb2,cb3);
         JSONObject json = new JSONObject();
-        Page p = this.commonPage(practicePubTaskDTO.getPage().getPageNum(),practicePubTaskDTO.getPage().getPageSize(),csb);
+        Page p = this.commonPage(practicePubTaskDTO.getPageNo(),10,csb);
         ListIterator<Map> listIterator = p.getResult().listIterator();
         while (listIterator.hasNext()){
             Map map = listIterator.next();
@@ -547,7 +542,6 @@ public class ReviewPracticeService extends CommonService {
             map.put("star",star);
         }
         json.put("list",p.getResult());
-        json.put("count",p.getTotal());
         return new ResponseVO(1,"成功",json);
     }
 

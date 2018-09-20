@@ -80,7 +80,7 @@ public class PracticeController {
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticeQueryListDTO practiceQueryListDTO){
         try {
             JSONObject json = new JSONObject();
-            json.put("list",reviewPracticeService.leaderboard(token,practiceQueryListDTO.getPage(),null,practiceQueryListDTO.getWeekList()));
+            json.put("list",reviewPracticeService.leaderboard(token,practiceQueryListDTO.getPageNo(),null,practiceQueryListDTO.getWeekList()));
             return new ResponseVO(1,"成功",json);
         }catch (Exception e){
             logger.error("PracticeController->queryList",e);
@@ -199,7 +199,7 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "提交结算申请,只有用户可提交结算")
+    @ApiOperation(value = "提交结算申请",notes="客户违约（用户先提出结束），按总金额 -实际代练段位算的钱-违约金（总金额*30%），代练未完成要线下双倍赔付，退全款，返回需要线下双倍退款金额")
     @PostMapping("/settlement/{token}")
     public ResponseApiVO<PracticeSettlementVO> settlement(@PathVariable String token,
                                                @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeSettlementDTO practiceSettlementDTO){
@@ -260,7 +260,9 @@ public class PracticeController {
     @PostMapping("/evaluationDetailList/{token}")
     public ResponseVO getPracticeEvaluationDetailList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticeEvaluationDetailListDTO practiceEvaluationDetailListDTO){
         try {
-            return new ResponseVO(1,"成功",reviewPracticeService.getPracticeEvaluationDetailList(practiceEvaluationDetailListDTO));
+            JSONObject json = new JSONObject();
+            json.put("list",reviewPracticeService.getPracticeEvaluationDetailList(practiceEvaluationDetailListDTO));
+            return new ResponseVO(1,"成功",json);
         }catch (Exception e){
             logger.error("PracticeController->getPracticeEvaluationDetailList",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -316,7 +318,7 @@ public class PracticeController {
     @Token
     @ApiOperation(value = "代练订单列表,倒序")
     @PostMapping("/orderPracticeList/{token}")
-    public ResponseVO getOrderPracticeList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO page){
+    public ResponseVO getOrderPracticeList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO page){
         try {
             return reviewPracticeService.getOrderPracticeList(TokenUtil.getUserId(token),page);
         }catch (Exception e){
@@ -328,7 +330,7 @@ public class PracticeController {
     @Token
     @ApiOperation(value = "会员代练订单列表,倒序")
     @PostMapping("/orderUserList/{token}")
-    public ResponseVO getOrderUserList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageDTO page){
+    public ResponseVO getOrderUserList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO page){
         try {
             return reviewPracticeService.getOrderUserList(TokenUtil.getUserId(token),page);
         }catch (Exception e){
@@ -349,7 +351,7 @@ public class PracticeController {
     }
 
     @Token
-    @ApiOperation(value = "代练任务发布列表,不传practiceId,查询所有代练任务,传practiceId,只查询practiceId的代练任务")
+    @ApiOperation(value = "代练任务发布列表",notes="不传practiceId,查询所有代练任务,传practiceId,只查询practiceId的代练任务")
     @PostMapping("/pubTaskList/{token}")
     public ResponseVO getPubTaskList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=false)PracticePubTaskDTO practicePubTaskDTO){
         try {
@@ -361,7 +363,7 @@ public class PracticeController {
     }
 
     @Token
-    @ApiOperation(value = "退款申请,订单24小时内可申请,退款通过后台审核发放退款,退款金额=约代练支付金额-结算金额")
+    @ApiOperation(value = "退款申请",notes = "订单24小时内可申请,退款通过后台审核发放退款,退款金额=约代练支付金额-结算金额")
     @PostMapping("/refund/{token}")
     public ResponseVO refund(@PathVariable String token,
                              @RequestParam(value = "orderId") @ApiParam(name = "orderId",value="订单编号", required = true) Integer orderId,

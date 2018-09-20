@@ -127,14 +127,14 @@ public class LiveRadioClientService  extends CommonService{
         return new ResponseApiVO(1,"成功",list);
     }
 
-    public List<Map> getLiveRadioList(Integer userId,PageDTO page)throws Exception{
+    public List<Map> getLiveRadioList(Integer userId,Integer pageNo)throws Exception{
         Map condition=new HashMap();
         condition.put("liveStatus",LiveStatusEnum.liveStatus1.getCode());
         condition.put("endDate,>=",new Date());
         condition.put("userid,!=",userId);
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label,ct0.id userId",null,null,condition,cb);
-        Page p = this.commonPage(page.getPageNum(),page.getPageSize(),csb);
+        Page p = this.commonPage(pageNo,10,csb);
         return p.getResult();
     }
 

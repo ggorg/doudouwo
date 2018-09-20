@@ -1,7 +1,6 @@
 package com.ddw.services;
 
 import com.ddw.beans.AppIndexVO;
-import com.ddw.beans.PageDTO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.vo.AppIndexBannerVO;
 import com.ddw.beans.vo.AppIndexButtonVO;
@@ -44,12 +43,9 @@ public class AppIndexService {
         }
         AppIndexVO appIndexVO = new AppIndexVO();
         Object obGoddess = CacheUtil.get("publicCache","appIndexGoddess");
-        PageDTO page = new PageDTO();
-        page.setPageNum(1);
-        page.setPageSize(4);
         if(obGoddess == null){
             //查询所有门店女神,直播优先,列表不包括当前查询会员id
-            appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),page,null));
+            appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),1,null));
             if(appIndexVO.getGoddessList().size()>0) {
                 CacheUtil.put("publicCache", "appIndexGoddess", appIndexVO.getGoddessList());
             }
@@ -58,7 +54,7 @@ public class AppIndexService {
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
-            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,page,1,null));
+            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,1,1,null));
             if(appIndexVO.getPracticeList().size()>0){
                 CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
             }

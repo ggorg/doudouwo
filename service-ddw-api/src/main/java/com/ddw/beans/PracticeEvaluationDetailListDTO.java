@@ -12,8 +12,8 @@ public class PracticeEvaluationDetailListDTO {
     private int gameId;
     @ApiModelProperty(name = "practiceId",value = "代练编号",example = "1")
     private int practiceId;
-    @ApiModelProperty(name = "page",value = "分页",example = "")
-    private PageDTO page;
+    @ApiModelProperty(name="pageNo",value="页码",example="1")
+    private Integer pageNo;
 
     public int getGameId() {
         return gameId;
@@ -31,11 +31,11 @@ public class PracticeEvaluationDetailListDTO {
         this.practiceId = practiceId;
     }
 
-    public PageDTO getPage() {
-        return page;
+    public Integer getPageNo() {
+        return pageNo;
     }
 
-    public void setPage(PageDTO page) {
-        this.page = page;
+    public void setPageNo(Integer pageNo) {
+        this.pageNo = pageNo;
     }
 }

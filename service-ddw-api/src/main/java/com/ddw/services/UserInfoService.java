@@ -311,7 +311,6 @@ public class UserInfoService extends CommonService {
         searchCondition.put("userId",id);
         Page page = this.commonPage("ddw_photograph","id desc",pageNum,pageSize,searchCondition);
         json.put("list",page.getResult());
-        json.put("count",page.getTotal());
         return new ResponseVO(1,"成功",json);
     }
 
