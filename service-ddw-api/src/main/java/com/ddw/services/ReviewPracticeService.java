@@ -315,17 +315,16 @@ public class ReviewPracticeService extends CommonService {
 
     /**
      * 查看代练详细评价
-     * @param practiceEvaluationDetailListDTO
+     * @param practicePubTaskDTO
      * @return
      * @throws Exception
      */
-    public List getPracticeEvaluationDetailList(PracticeEvaluationDetailListDTO practiceEvaluationDetailListDTO)throws Exception{
+    public List getPracticeEvaluationDetailList(PracticePubTaskDTO practicePubTaskDTO)throws Exception{
         Map condtion = new HashMap<>();
-        condtion.put("practiceId",practiceEvaluationDetailListDTO.getPracticeId());
-        condtion.put("gameId",practiceEvaluationDetailListDTO.getGameId());
+        condtion.put("practiceId",practicePubTaskDTO.getPracticeId());
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_evaluation_detail","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb);
-        return this.commonPage(practiceEvaluationDetailListDTO.getPageNo(),10,csb).getResult();
+        return this.commonPage(practicePubTaskDTO.getPageNo(),10,csb).getResult();
     }
 
     /**

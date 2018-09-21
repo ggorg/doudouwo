@@ -258,10 +258,10 @@ public class PracticeController {
     @Token
     @ApiOperation(value = "代练评价详情")
     @PostMapping("/evaluationDetailList/{token}")
-    public ResponseVO getPracticeEvaluationDetailList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticeEvaluationDetailListDTO practiceEvaluationDetailListDTO){
+    public ResponseVO getPracticeEvaluationDetailList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticePubTaskDTO practicePubTaskDTO){
         try {
             JSONObject json = new JSONObject();
-            json.put("list",reviewPracticeService.getPracticeEvaluationDetailList(practiceEvaluationDetailListDTO));
+            json.put("list",reviewPracticeService.getPracticeEvaluationDetailList(practicePubTaskDTO));
             return new ResponseVO(1,"成功",json);
         }catch (Exception e){
             logger.error("PracticeController->getPracticeEvaluationDetailList",e);
