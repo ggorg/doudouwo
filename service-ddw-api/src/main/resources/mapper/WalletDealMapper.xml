@@ -25,9 +25,11 @@
             AND t1.doCustomerUserId = #{userId} UNION ALL
         SELECT
             t2.createTime,
+            v.doType type,
             t2.exitCost cost,
-            v.doPayStatus dealType,
-            v.doType type
+            v.doPayStatus dealType
+
+
         FROM
             ddw_order v
             INNER JOIN ddw_exit_order t2 ON v.id = t2.orderId
@@ -35,11 +37,13 @@
             v.doPayType = 5
             AND v.doCustomerUserId = #{userId} UNION ALL
         SELECT
-            dt.type,
             dt.createTime,
-            dt.cost,3 dealType
+            dt.diType type,
+
+            dt.diMoney cost,
+        3 dealType
         FROM
-            ddw_transfer dt
+        ddw_income_record dt
         WHERE
             dt.userId = #{userId}
             ) mt

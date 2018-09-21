@@ -7,6 +7,7 @@ import com.ddw.dao.WalletErrorLogMapper;
 import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.enums.OrderTypeEnum;
 import com.ddw.enums.PayStatusEnum;
+import com.ddw.enums.WalletDealCountTypeEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.MsgUtil;
 import com.gen.common.beans.CommonChildBean;
@@ -401,16 +402,61 @@ public class WalletService extends CommonService {
         }
         return codeNum;
     }
-    public ResponseApiVO getDealRecord(String token,WalletDealRecordDTO dto){
-        String date=dto.getDate();
-        if(StringUtils.isBlank(date)){
-            date= DateFormatUtils.format(new Date(),"yyyy-MM");
-        }else if(!date.matches("^[0-9]{4}-[0-9]{2}$")){
+    public ResponseApiVO getDealCount(String token,WalletDealCountDTO wdto){
+        if(StringUtils.isBlank(WalletDealCountTypeEnum.getName(wdto.getType()))){
+            return new ResponseApiVO(-2,"统计类型错误",null);
+        }
+        String date=null;
+        if(StringUtils.isNotBlank(wdto.getDate()) &&!wdto.getDate().matches("^[0-9]{4}-[0-9]{2}$")){
             return new ResponseApiVO(-2,"日期格式错误",null);
+        }else if(StringUtils.isNotBlank(wdto.getDate())){
+            date=wdto.getDate().substring(0,4)+"%";
+        }else{
+            date=DateFormatUtils.format(new Date(),"yyyy")+"%";
+        }
+        Integer userId=TokenUtil.getUserId(token);
+        List<WalletDealRecordVO> l=this.walletDealMapper.dealRecord(userId,date,null,null);
+        int income=0;
+        int pay=0;
+        int paycount=0;
+        int incount=0;
+
+        for(WalletDealRecordVO a:l){
+            if(WalletDealCountTypeEnum.WalletDealCountType1.equals(wdto.getType()) && StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
+                if(StringUtils.isNotBlank(wdto.getDate()) && a.getCreateTime().startsWith(wdto.getDate())){
+
+                    paycount=paycount+a.getCost();
+                }else if(StringUtils.isBlank(wdto.getDate())){
+                    paycount=paycount+a.getCost();
+                }
+            }else{
+                if(StringUtils.isNotBlank(wdto.getDate()) && a.getCreateTime().startsWith(wdto.getDate())){
+
+                    incount=incount+a.getCost();
+                }else if(StringUtils.isBlank(wdto.getDate())){
+                    incount=incount+a.getCost();
+                }
+            }
+
+
+
+        }
+        return null;
+
+    }
+    public ResponseApiVO getDealRecord(String token,WalletDealRecordDTO dto){
+        if(StringUtils.isNotBlank(dto.getDate()) &&!dto.getDate().matches("^[0-9]{4}-[0-9]{2}$")){
+            return new ResponseApiVO(-2,"日期格式错误",null);
+        }else if(StringUtils.isNotBlank(dto.getDate())){
+            dto.setDate(dto.getDate()+"%");
+        }else{
+            dto.setDate(null);
         }
         Page p=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
         Integer userId=TokenUtil.getUserId(token);
-        List<WalletDealRecordVO> list=this.walletDealMapper.dealRecord(userId,date+"%",p.getStartRow(),p.getEndRow());
+        List<WalletDealRecordVO> list=this.walletDealMapper.dealRecord(userId,dto.getDate(),p.getStartRow(),p.getEndRow());
+        WalletDealVO vo=new WalletDealVO();
+
         if(list!=null && list.size()>0){
             list.forEach(a->{
                 if(StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
@@ -420,9 +466,24 @@ public class WalletService extends CommonService {
 
                 }
             });
-            return new ResponseApiVO(1,"成功",new ListVO<>(list));
+            vo.setList(list);
+
+            List<WalletDealRecordVO> l=this.walletDealMapper.dealRecord(userId,dto.getDate(),null,null);
+            int income=0;
+            int pay=0;
+            for(WalletDealRecordVO a:l){
+                if(StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
+                    pay=pay+a.getCost();
+                }else{
+                    income=income+a.getCost();
+                }
+            }
+            vo.setPay(pay);
+            vo.setIncome(income);
+        }else{
+            vo.setList(new ArrayList<>());
         }
-        return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+        return new ResponseApiVO(1,"成功",vo);
 
     }
 

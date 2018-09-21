@@ -76,7 +76,7 @@ public class WalletController {
     @ApiOperation(value = "查询钱包交易记录",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/dealrecord/{token}")
     @ResponseBody
-    public ResponseApiVO<WalletDealRecordVO> getDealRecord(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletDealRecordDTO dto){
+    public ResponseApiVO<WalletDealVO<WalletDealRecordVO>> getDealRecord(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletDealRecordDTO dto){
         try {
             ResponseApiVO vo=this.walletService.getDealRecord(token,dto);
             if(vo.getReCode()==1){

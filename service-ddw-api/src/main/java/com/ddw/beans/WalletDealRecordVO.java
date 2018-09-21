@@ -18,7 +18,7 @@ public class WalletDealRecordVO {
     private String title;
     @ApiModelProperty(name="cost",value="金额",example="金额")
     private Integer cost;
-    @ApiModelProperty(name="dealType",value="支付：1，退款：2，收益转入钱包：3",example="支付：1，退款：2，收益转入钱包：3")
+    @ApiModelProperty(name="dealType",value="支付：1，退款：2，收益：3",example="支付：1，退款：2，收益：3")
     private Integer dealType;
 
     public String getCreateTime() {
