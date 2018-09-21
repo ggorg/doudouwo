@@ -10,8 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class WalletDealCountDTO {
     @ApiModelProperty(name="date",value="日期",example="2018-09")
     private String date;
-    @ApiModelProperty(name="pageNo",value="页码",example="页码")
-    private Integer pageNo;
+
     @ApiModelProperty(name="type",value="统计类型，支出：1，收入：2",example="统计类型，支出：1，收入：2")
     private Integer type;
 
@@ -31,11 +30,5 @@ public class WalletDealCountDTO {
         this.date = date;
     }
 
-    public Integer getPageNo() {
-        return pageNo;
-    }
 
-    public void setPageNo(Integer pageNo) {
-        this.pageNo = pageNo;
-    }
 }

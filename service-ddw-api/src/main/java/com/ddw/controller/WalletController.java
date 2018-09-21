@@ -89,6 +89,22 @@ public class WalletController {
 
     }
     @Token
+    @ApiOperation(value = "钱包交易统计",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/dealcount/{token}")
+    @ResponseBody
+    public ResponseApiVO<WalletDealCountVO> getDealCount(@PathVariable String token , @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WalletDealCountDTO dto){
+        try {
+            ResponseApiVO vo=this.walletService.getDealCount(token,dto);
+            if(vo.getReCode()==1){
+                return vo;
+            }
+        }catch (Exception e){
+            logger.error("WalletController-getDealCount-》钱包交易统计-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"钱包交易统计失败",null);
+
+    }
+    @Token
     @ApiOperation(value = "查询钱包所剩逗币和贡献值",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/coin/{token}")
     @ResponseBody

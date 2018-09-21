@@ -402,6 +402,24 @@ public class WalletService extends CommonService {
         }
         return codeNum;
     }
+    private String monthName(int i){
+        switch (i){
+            case 1:return "1月";
+            case 2:return "2月";
+            case 3:return "3月";
+            case 4:return "4月";
+            case 5:return "5月";
+            case 6:return "6月";
+            case 7:return "7月";
+            case 8:return "8月";
+            case 9:return "9月";
+            case 10:return "10月";
+            case 11:return "11月";
+            case 12:return "12月";
+        }
+        return null;
+
+    }
     public ResponseApiVO getDealCount(String token,WalletDealCountDTO wdto){
         if(StringUtils.isBlank(WalletDealCountTypeEnum.getName(wdto.getType()))){
             return new ResponseApiVO(-2,"统计类型错误",null);
@@ -416,32 +434,60 @@ public class WalletService extends CommonService {
         }
         Integer userId=TokenUtil.getUserId(token);
         List<WalletDealRecordVO> l=this.walletDealMapper.dealRecord(userId,date,null,null);
-        int income=0;
-        int pay=0;
-        int paycount=0;
-        int incount=0;
 
+        int costCount=0;
+        int dealCount=0;
+        List monthList=new ArrayList();
+        Map<String,Map> monthMap=new HashMap();
+        Map<String,Object> everyMonthCount=null;
+        for(int i=1;i<=12;i++){
+            everyMonthCount=new HashMap();
+            everyMonthCount.put("monthName",monthName(i));
+            monthList.add(everyMonthCount);
+            monthMap.put(monthName(i),everyMonthCount);
+        }
+
+
+
+        String monthName=null;
         for(WalletDealRecordVO a:l){
-            if(WalletDealCountTypeEnum.WalletDealCountType1.equals(wdto.getType()) && StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
+
+            monthName=monthName(Integer.parseInt(a.getCreateTime().replaceAll("^[0-9]{4}-([0-9]{2}).*$","$1")));
+            if(WalletDealCountTypeEnum.WalletDealCountType1.getCode().equals(wdto.getType()) && StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
                 if(StringUtils.isNotBlank(wdto.getDate()) && a.getCreateTime().startsWith(wdto.getDate())){
 
-                    paycount=paycount+a.getCost();
-                }else if(StringUtils.isBlank(wdto.getDate())){
-                    paycount=paycount+a.getCost();
+                    costCount=costCount+a.getCost();
+                    dealCount=dealCount+1;
                 }
-            }else{
+               Map m= monthMap.get(monthName);
+                if(!m.containsKey("count")){
+                    m.put("count",a.getCost());
+                }else{
+                    m.replace("count",(Integer)m.get("count")+a.getCost());
+                }
+
+            }else if(WalletDealCountTypeEnum.WalletDealCountType2.getCode().equals(wdto.getType())){
                 if(StringUtils.isNotBlank(wdto.getDate()) && a.getCreateTime().startsWith(wdto.getDate())){
 
-                    incount=incount+a.getCost();
-                }else if(StringUtils.isBlank(wdto.getDate())){
-                    incount=incount+a.getCost();
+                    costCount=costCount+a.getCost();
+                    dealCount=dealCount+1;
+                }
+                Map m= monthMap.get(monthName);
+                if(!m.containsKey("count")){
+                    m.put("count",a.getCost());
+                }else{
+                    m.replace("count",(Integer)m.get("count")+a.getCost());
                 }
             }
 
 
 
         }
-        return null;
+        Map data=new HashMap();
+        data.put("list",monthList);
+        data.put("costCount",costCount);
+        data.put("dealCount",dealCount);
+        return new ResponseApiVO(1,"成功",data);
 
     }
     public ResponseApiVO getDealRecord(String token,WalletDealRecordDTO dto){
