@@ -1,15 +1,14 @@
 package com.ddw.beans;
 
-import java.util.Date;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by Jacky on 2018/5/14.
  */
-public class GamePO {
+public class GameDTO {
     private int id;
     private String gameName;
-    private String picUrl;
-    private Date createTime;
+    private MultipartFile fileImgShow;
 
     public int getId() {
         return id;
@@ -27,19 +26,12 @@ public class GamePO {
         this.gameName = gameName;
     }
 
-    public String getPicUrl() {
-        return picUrl;
+    public MultipartFile getFileImgShow() {
+        return fileImgShow;
     }
 
-    public void setPicUrl(String picUrl) {
-        this.picUrl = picUrl;
+    public void setFileImgShow(MultipartFile fileImgShow) {
+        this.fileImgShow = fileImgShow;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 }

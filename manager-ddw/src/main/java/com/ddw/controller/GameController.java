@@ -1,5 +1,6 @@
 package com.ddw.controller;
 
+import com.ddw.beans.GameDTO;
 import com.ddw.beans.GamePO;
 import com.ddw.beans.RankPO;
 import com.ddw.servies.GameManagerService;
@@ -54,11 +55,11 @@ public class GameController {
 
     @PostMapping("do-edit")
     @ResponseBody
-    public ResponseVO doEdit(GamePO gamePO){
+    public ResponseVO doEdit(GameDTO gameDTO){
         try {
             //删除游戏缓存
             CacheUtil.delete("publicCache","gameList");
-            return this.gameManagerService.saveOrUpdate(gamePO);
+            return this.gameManagerService.saveOrUpdate(gameDTO);
         }catch (Exception e){
             logger.error("GameController->doEdit",e);
             return new ResponseVO(-1,"提交失败",null);

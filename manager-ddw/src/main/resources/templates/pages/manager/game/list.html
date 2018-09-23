@@ -44,7 +44,7 @@
                 </div>
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('400px','200px','新增游戏','to-edit')" title="table2">新增游戏</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('400px','400px','新增游戏','to-edit')" title="table2">新增游戏</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -57,19 +57,21 @@
                     <thead>
 
                     <tr>
-                        <th class="head0">名称</th>
-                        <th class="head1">创建时间</th>
-                        <th class="head0">操作</th>
+                        <th class="head0">游戏图示</th>
+                        <th class="head1">名称</th>
+                        <th class="head0">创建时间</th>
+                        <th class="head1">操作</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <tr th:each="obj:${gamePage?.result}">
+                        <td ><img th:src="${obj['picUrl']}" style="width:70px;height:60px" /></td>
                         <td th:text="${obj['gameName']}">Trident</td>
                         <td th:text="${obj['createTime']!=null ? #dates.format(obj['createTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'400px\',\'200px\',\'修改游戏\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'400px\',\'400px\',\'修改游戏\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
                             <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
                             </div>
                         </td>
