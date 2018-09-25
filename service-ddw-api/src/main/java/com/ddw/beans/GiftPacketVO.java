@@ -17,6 +17,17 @@ public class GiftPacketVO {
     @ApiModelProperty(name="imgUrl",value="图片",example="yyyy-MM-dd HH:mm:ss")
     private String imgUrl;
 
+    @ApiModelProperty(name="num",value="数量",example="数量")
+    private Integer num;
+
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
     public String getGiftCode() {
         return giftCode;
     }

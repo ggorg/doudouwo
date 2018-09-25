@@ -183,12 +183,15 @@ public class LiveRadioClientService  extends CommonService{
         Map map= IMApiUtil.getMemberNum(Arrays.asList(groupId));
         Integer userid=Integer.parseInt(groupId.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2"));
         List<AppIndexGoddessVO> alist= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
-        alist.forEach(a->{
-            if(a.getId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
-                a.setViewingNum((Integer) map.get(groupId));
+        if(alist!=null){
+            alist.forEach(a->{
+                if(a.getId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
+                    a.setViewingNum((Integer) map.get(groupId));
 
-            }
-        });
+                }
+            });
+        }
+
         CacheUtil.put("publicCache", "appIndexGoddess",alist);
         CacheUtil.put("publicCache","livePv-"+groupId,pv);
 
