@@ -129,6 +129,7 @@ public class PracticeController {
             }
             //接单数
             practiceVO.setOrders(reviewPracticeService.getOrderCount(practiceId));
+            practiceVO.setFans(myAttentionService.getFans(practiceId));
             practiceVO.setFocus(focus);
             practiceVO.setReviewPracticeList(reviewPracticeService.getReviewPracticeList(practiceId,TokenUtil.getStoreId(token)));
             practiceVO.setPhotograph(userInfoService.queryPhotograph(practiceId));

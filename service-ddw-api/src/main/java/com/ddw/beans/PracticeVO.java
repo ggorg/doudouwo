@@ -30,6 +30,8 @@ public class PracticeVO {
     private int age;
     @ApiModelProperty(name="focus",value="是否关注,关注true,未关注false",example="true")
     private boolean focus;
+    @ApiModelProperty(name="fans",value="粉丝数",example="16253")
+    private long fans;
     @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
     private String label;
     @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
@@ -137,6 +139,14 @@ public class PracticeVO {
 
     public String getOpenid() {
         return openid;
+    }
+
+    public long getFans() {
+        return fans;
+    }
+
+    public void setFans(long fans) {
+        this.fans = fans;
     }
 
     public void setOpenid(String openid) {

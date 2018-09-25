@@ -8,6 +8,7 @@ import com.ddw.dao.UserInfoMapper;
 import com.gen.common.services.CommonService;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -182,5 +183,16 @@ public class MyAttentionService extends CommonService {
         searchCondition.put("userId",userId);
         searchCondition.put("goddessId",goddessId);
         return super.commonCountBySearchCondition("ddw_my_attention", searchCondition) > 0;
+    }
+
+    /**
+     * 查询粉丝数
+     * @param userId 用户编号
+     * @return
+     */
+    public Long getFans(Integer userId){
+        Map<String,Object> searchCondition = new HashedMap();
+        searchCondition.put("(goddessId="+userId+" or practiceId="+userId+")",null);
+        return this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
     }
 }

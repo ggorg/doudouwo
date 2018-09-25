@@ -93,8 +93,10 @@ public class UserInfoVO {
     private String idcardOppositeUrl;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
     private long fans;
-    @ApiModelProperty(name="focus",value="关注数",example="232")
-    private long focus;
+    @ApiModelProperty(name="focus",value="是否关注",example="true")
+    private boolean focus;
+    @ApiModelProperty(name="attentionNum",value="关注数量",example="123")
+    private Integer attentionNum;
     @ApiModelProperty(name="photograph",value="相册列表",example="1")
     private List<PhotographPO> photograph;
     @ApiModelProperty(name="token",value="令牌",example="MjY5MTIxMjQ0MzIwMTgwNDMwOTUzOTM2MTUxNjE0NTU=")
@@ -418,14 +420,6 @@ public class UserInfoVO {
         this.fans = fans;
     }
 
-    public long getFocus() {
-        return focus;
-    }
-
-    public void setFocus(long focus) {
-        this.focus = focus;
-    }
-
     public List<PhotographPO> getPhotograph() {
         return photograph;
     }
@@ -456,5 +450,21 @@ public class UserInfoVO {
 
     public void setUserSign(String userSign) {
         this.userSign = userSign;
+    }
+
+    public boolean isFocus() {
+        return focus;
+    }
+
+    public void setFocus(boolean focus) {
+        this.focus = focus;
+    }
+
+    public Integer getAttentionNum() {
+        return attentionNum;
+    }
+
+    public void setAttentionNum(Integer attentionNum) {
+        this.attentionNum = attentionNum;
     }
 }

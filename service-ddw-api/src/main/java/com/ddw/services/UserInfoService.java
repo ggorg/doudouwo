@@ -271,7 +271,8 @@ public class UserInfoService extends CommonService {
     public void setFansAndFocus(UserInfoVO userInfoVO){
         Map<String,Object> searchCondition = new HashedMap();
         searchCondition.put("userId",userInfoVO.getId());
-        userInfoVO.setFocus(this.commonCountBySearchCondition("ddw_my_attention",searchCondition));
+        Long attentionNum = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
+        userInfoVO.setAttentionNum(attentionNum.intValue());
         Map<String,Object> searchCondition2 = new HashedMap();
         searchCondition2.put("(goddessId="+userInfoVO.getId()+" or practiceId="+userInfoVO.getId()+")",null);
         userInfoVO.setFans(this.commonCountBySearchCondition("ddw_my_attention",searchCondition2));

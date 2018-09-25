@@ -4,6 +4,7 @@ package com.ddw.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.enums.DynamicsRoleTypeEnum;
+import com.ddw.services.MyAttentionService;
 import com.ddw.services.ReviewGoddessService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
@@ -29,6 +30,8 @@ public class GoddessController {
     private ReviewGoddessService reviewGoddessService;
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private MyAttentionService myAttentionService;
 
     @Token
     @ApiOperation(value = "申请成为女神")
@@ -53,13 +56,16 @@ public class GoddessController {
     @Token
     @ApiOperation(value = "女神信息查询,不传参数默认查询自己")
     @PostMapping("/query/{token}")
-    public ResponseVO query(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=false)CodeDTO dto){
+    public ResponseVO query(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=false)GoddessCodeDTO dto){
         try {
             int userId = TokenUtil.getUserId(token);
-            if(dto != null && dto.getCode() !=null){
-                userId = dto.getCode();
+            boolean isFocusGoddess = false;
+            if(dto != null && dto.getGoddessCode() !=null){
+                userId = dto.getGoddessCode();
+                isFocusGoddess = myAttentionService.isFocusGoddess(userId,dto.getGoddessCode());
             }
             UserInfoVO user = userInfoService.query(userId);
+            user.setFocus(isFocusGoddess);
             user.setPhotograph(userInfoService.queryPhotograph(userId));
             return new ResponseVO(1,"成功",user);
         }catch (Exception e){
