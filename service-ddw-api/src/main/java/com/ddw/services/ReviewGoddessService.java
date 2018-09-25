@@ -488,12 +488,11 @@ public class ReviewGoddessService extends CommonService {
         Map condtion = new HashMap<>();
         condtion.put("goddessId",dto.getGoddessId());
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_evaluation_detail","t1.createTime desc","DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') time,t1.star,t1.describe,ct0.nickName,ct0.headImgUrl",null,null,condtion,cb);
         Page p=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_evaluation_detail","t1.createTime desc","DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') time,t1.star,t1.describe,ct0.nickName,ct0.headImgUrl",p.getStartRow(),p.getEndRow(),condtion,cb);
         List list=this.getCommonMapper().selectObjects(csb);
         if(list==null || list.size()==0){
             return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
-
         }
         return new ResponseApiVO(1,"成功",new ListVO<>(list));
 
