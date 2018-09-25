@@ -27,23 +27,23 @@ public class UserInfoVO {
     @ApiModelProperty(name="headImgUrl",value="头像URL",example="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522752012429&di=b26668f45e547cb644bb85d054242abe&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fbba1cd11728b4710655829d1c9cec3fdfc0323bc.jpg")
     private String headImgUrl;
     @ApiModelProperty(name="phone",value="手机号码",example="18500000000")
-    private String phone;
+    private String phone = "";
     @ApiModelProperty(name="label",value="标签",example="1,2,3,4")
-    private String label;
+    private String label = "";
     @ApiModelProperty(name="interest",value="兴趣",example="LOL/美食/旅游")
     private String interest;
     @ApiModelProperty(name="job",value="职业",example="文化/广告/传媒")
-    private String job;
+    private String job = "";
     @ApiModelProperty(name="age",value="年龄",example="22")
-    private int age;
+    private int age = 0;
     @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
-    private String starSign;
+    private String starSign = "";
     @ApiModelProperty(name="province",value="用户所在省份",example="广东省")
-    private String province;
+    private String province = "";
     @ApiModelProperty(name="city",value="用户所在城市",example="广州市")
-    private String city;
+    private String city = "";
     @ApiModelProperty(name="area",value="用户所在地区",example="天河区")
-    private String area;
+    private String area = "";
     @ApiModelProperty(name="gradeId",value="会员等级编号，关联ddw_grade表",example="1")
     private Integer gradeId;
 
@@ -80,9 +80,9 @@ public class UserInfoVO {
     @ApiModelProperty(name="inviteCode",value="邀请码",example="aabbccddee")
     private String inviteCode;
     @ApiModelProperty(name="signature",value="个性签名",example="这个人很懒,什么都没有留下...")
-    private String signature;
+    private String signature = "";
     @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
-    private Integer sex;
+    private Integer sex = 0;
     @ApiModelProperty(name="registerType",value="注册类型1 微信注册,2 QQ注册",example="1")
     private Integer registerType;
     @ApiModelProperty(name="idcard",value="身份证号码",example="4402911182736736261")
@@ -94,7 +94,7 @@ public class UserInfoVO {
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
     private long fans;
     @ApiModelProperty(name="focus",value="是否关注",example="true")
-    private boolean focus;
+    private boolean focus = false;
     @ApiModelProperty(name="attentionNum",value="关注数量",example="123")
     private Integer attentionNum;
     @ApiModelProperty(name="photograph",value="相册列表",example="1")

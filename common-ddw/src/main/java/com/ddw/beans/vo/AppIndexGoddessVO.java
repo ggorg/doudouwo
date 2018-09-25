@@ -33,19 +33,19 @@ public class AppIndexGoddessVO implements Serializable{
     @ApiModelProperty(name="dsName",value="门店名称",example="成都店")
     private String dsName;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
-    private Integer fans;
+    private Integer fans = 0;
     @ApiModelProperty(name="focus",value="已关注true,未关注false",example="true")
     private boolean focus;
     @ApiModelProperty(name="age",value="年龄",example="22")
-    private int age;
+    private int age = 0;
     @ApiModelProperty(name="job",value="职业",example="文化/广告/传媒")
-    private String job;
+    private String job = "";
     @ApiModelProperty(name="signature",value="个性签名",example="这个人很懒,什么都没有留下...")
-    private String signature;
+    private String signature = "";
     @ApiModelProperty(name="interest",value="兴趣",example="LOL/美食/旅游")
-    private String interest;
+    private String interest = "";
     @ApiModelProperty(name="starSign",value="星座",example="水瓶座")
-    private String starSign;
+    private String starSign = "";
     @ApiModelProperty(name="viewingNum",value="观看人数",example="1")
     private Integer viewingNum=0;
 
