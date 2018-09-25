@@ -166,6 +166,20 @@ public class WalletController {
 
     }
     @Token
+    @ApiOperation(value = "使用背包礼物",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/use/gift/{token}")
+    @ResponseBody
+    public ResponseApiVO<ListVO<GiftPacketVO>> useGift(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GiftUseDTO dto ){
+        try {
+            ResponseApiVO vo=this.walletService.useGiftOfPacket(token,dto);
+            return vo;
+        }catch (Exception e){
+            logger.error("WalletController-useGift-》使用背包礼物-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"使用背包礼物失败",null);
+
+    }
+    @Token
     @ApiOperation(value = "查询女神收益",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/goddessIn/{token}")
     @ResponseBody

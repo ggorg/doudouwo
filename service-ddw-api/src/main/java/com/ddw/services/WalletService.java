@@ -42,6 +42,13 @@ public class WalletService extends CommonService {
     @Autowired
     private WalletDealMapper walletDealMapper;
 
+    @Autowired
+    protected IncomeService incomeService;
+
+
+    @Autowired
+    protected BaseConsumeRankingListService baseConsumeRankingListService;
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO transferMoney(String token ,WalletTransferMoneyDTO dto)throws Exception{
         if(StringUtils.isBlank(IncomeTypeEnum.getName(dto.getIncomeType()))){
@@ -189,11 +196,74 @@ public class WalletService extends CommonService {
         CommonSearchBean csb=new CommonSearchBean("ddw_order_gift",null,"ct1.id giftCode,ct1.dgName name,ct1.dgImgPath imgUrl",null,null,search,
                 new CommonChildBean("ddw_order","id","orderId",csearch),
                 new CommonChildBean("ddw_gift","id","giftId",null));
-        List giftPacketlist=this.getCommonMapper().selectObjects(csb);
+        List<Map> giftPacketlist=this.getCommonMapper().selectObjects(csb);
         if(giftPacketlist==null){
             return new ResponseApiVO(2,"空背包",new ListVO(new ArrayList()));
         }
-        return new ResponseApiVO(1,"成功",new ListVO(giftPacketlist));
+        List list=new ArrayList();
+        Map<Integer,Map> m=new HashMap();
+        for(Map gm:giftPacketlist){
+            Integer gc=(Integer)gm.get("giftCode");
+            if(m.containsKey(gc)){
+                m.get(gc).replace("num",(Integer)m.get(gc).get("num")+1);
+            }else{
+                gm.put("num",1);
+                m.put(gc,gm);
+                list.add(gm);
+            }
+        }
+        return new ResponseApiVO(1,"成功",new ListVO(list));
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO useGiftOfPacket(String token,GiftUseDTO dto)throws Exception{
+        if(dto.getCode()==null || dto.getCode()<0){
+            return new ResponseApiVO(-2,"参数礼物编号异常",null);
+        }
+        if(dto.getNum()==null || dto.getNum()<0){
+            return new ResponseApiVO(-2,"参数数量异常",null);
+        }
+        String groupId=TokenUtil.getGroupId(token);
+        if(StringUtils.isBlank(groupId)){
+            return new ResponseApiVO(-2,"请进房间再使用",null);
+
+        }
+        Integer appectUserId=Integer.parseInt(groupId.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2"));
+        Integer userId=TokenUtil.getUserId(token);
+        Map search=new HashMap();
+        search.put("userId",userId);
+        search.put("used",0);
+        search.put("giftId",dto.getCode());
+
+        List<Map> giftList=this.commonObjectsBySearchCondition("ddw_order_gift",search);
+        if(giftList==null || giftList.size()==0){
+            return new ResponseApiVO(-2,"背包没购买此礼物",null);
+
+        }
+        if(dto.getNum()>giftList.size()){
+            return new ResponseApiVO(-2,"抱歉，背包礼物不足",null);
+
+        }
+        List<Integer> gid=new ArrayList();
+        int n=1;
+        for(Map m:giftList){
+            if(n>dto.getNum()){
+                break;
+            }
+            this.incomeService.commonIncome(appectUserId,(Integer) m.get("giftPrice")*10,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,(String)m.get("orderNo"));
+            this.baseConsumeRankingListService.save(userId,appectUserId,(Integer) m.get("giftPrice")*10,IncomeTypeEnum.IncomeType1);
+           gid.add((Integer) m.get("id"));
+           n++;
+        }
+        Map updatePara=new HashMap();
+        updatePara.put("used",1);
+        updatePara.put("updateTime", new Date());
+        Map s=new HashMap();
+
+        s.put("id,in",gid.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+        this.commonUpdateByParams("ddw_order_gift",updatePara,s);
+        return new ResponseApiVO(1,"成功",null);
+
+
     }
     public ResponseApiVO getCouponList(Integer userid){
         Map csearch=new HashMap();
