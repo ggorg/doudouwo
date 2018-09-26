@@ -27,6 +27,12 @@
     </div>
   </div>
   <div class="layui-form-item">
+    <label class="layui-form-label">折扣</label>
+    <div class="layui-input-block">
+      <input type="text" name="discount" title="折扣"  th:value="${gradePO!=null? gradePO['discount']:''}" placeholder="请输入折扣" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+  <div class="layui-form-item">
     <label class="layui-form-label">序号</label>
     <div class="layui-input-block">
       <input type="text" name="sort" required="required" title="序号"  lay-verify="required" th:value="${gradePO!=null? gradePO['sort']:''}" placeholder="请输入序号" autocomplete="off" class="layui-input" />

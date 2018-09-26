@@ -24,10 +24,23 @@ public class GoodsInfoProductVO<T> {
     @JsonProperty("actPrice")
     private Integer dghActivityPrice;
 
+
+    @ApiModelProperty(name="vipPrice",value="会员折扣价",example="会员折扣价")
+    private Integer vipPrice;
+
+
+
     @ApiModelProperty(name="salesNum",value="销量",example="0")
     @JsonProperty("salesNum")
     private Integer dghSaleNumber;
 
+    public Integer getVipPrice() {
+        return vipPrice;
+    }
+
+    public void setVipPrice(Integer vipPrice) {
+        this.vipPrice = vipPrice;
+    }
 
     public Integer getId() {
         return id;

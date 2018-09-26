@@ -1,5 +1,6 @@
 package com.ddw.token;
 
+import com.ddw.beans.UserInfoVO;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CacheUtil;
 import net.sf.ehcache.Cache;
@@ -140,6 +141,19 @@ public class TokenUtil {
         CacheUtil.put("idemp",base64Token,idemp);
 
     }
+    public static void putUserInfo(String base64Token, UserInfoVO vo){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("userId",vo.getId());
+            map.put("name",vo.getNickName());
+            if(vo.getGradeId()!=null && vo.getGradeId()>0){
+                map.put("gradeId",vo.getGradeId());
+            }
+
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
     public static void putUseridAndName(String base64Token,Integer userId,String name){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){
@@ -148,6 +162,22 @@ public class TokenUtil {
             map.put("name",name);
             CacheUtil.put("tokenCache",base64Token,map);
         }
+    }
+    public static void putUserGrade(String base64Token,Integer gradeId){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            map.put("gradeId",gradeId);
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
+    public static Integer getUseGrade(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (Integer) map.get("gradeId");
+        }
+        return null;
     }
     public static String getUserName(String base64Token){
         Object obj=CacheUtil.get("tokenCache",base64Token);

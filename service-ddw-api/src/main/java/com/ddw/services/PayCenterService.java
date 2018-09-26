@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -50,6 +51,9 @@ public class PayCenterService extends BaseOrderService {
     private DoubiClientService doubiClientService;
     @Autowired
     private ReviewPracticeService reviewPracticeService;
+
+    @Autowired
+    private UserGradeService userGradeService;
 
 
     @Autowired
@@ -178,6 +182,7 @@ public class PayCenterService extends BaseOrderService {
         }
 
         Integer userId=TokenUtil.getUserId(token);
+        Integer gradeId=TokenUtil.getUseGrade(token);
 
         OrderPO orderPO=new OrderPO();
         orderPO.setCreateTime(new Date());
@@ -302,6 +307,10 @@ public class PayCenterService extends BaseOrderService {
             Map dataMap=null;
             Integer countPrice=0;
             Map mVo=null;
+            BigDecimal dicount=null;
+            if(gradeId!=null){
+                this.userGradeService.getDiscount(gradeId);
+            }
             for(Integer code:codesList){
                 if(!handleMap.containsKey(code)){
                     return new ResponseApiVO(-2,handleMap.get(code).get("dghDesc")+"可能已下架",null);
@@ -328,6 +337,9 @@ public class PayCenterService extends BaseOrderService {
                     buyInProMap.put(code,dataMap);
                 }
 
+            }
+            if(dicount!=null) {
+                countPrice=dicount.multiply(BigDecimal.valueOf(countPrice)).intValue();
             }
            orderPO.setDoCost(countPrice);
             if(countPrice==null || countPrice<=0){

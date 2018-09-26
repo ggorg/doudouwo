@@ -51,18 +51,21 @@
                     <colgroup>
                         <!--<col class="con0" style="width: 4%" />-->
                         <col class="con0" />
-                        <col class="con1" />
                         <col class="con0" />
-                        <col class="con1" />
                         <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+
                     </colgroup>
                     <thead>
 
                     <tr>
                         <th class="head0">名称</th>
-                        <th class="head1">等级</th>
+                        <th class="head0">等级</th>
+                        <th class="head0">折扣</th>
                         <th class="head0">序号</th>
-                        <th class="head1">描述</th>
+                        <th class="head0">描述</th>
                         <th class="head0">操作</th>
                     </tr>
                     </thead>
@@ -71,6 +74,7 @@
                     <tr th:each="obj:${gradeList?.result}">
                         <td th:text="${obj['gradeName']}">Trident</td>
                         <td th:text="${obj['level']}">Trident</td>
+                        <td th:text="${obj['discount']}">Trident</td>
                         <td th:text="${obj['sort']}"></td>
                         <td th:text="${obj['describe']}">Trident</td>
                         <td class="center">
