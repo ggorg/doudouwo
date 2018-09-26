@@ -120,7 +120,9 @@ public class GoodsClientService extends CommonService {
                             if(gid.equals((Integer)p.get("dghGoodsId"))){
                                 productVO=new GoodsInfoProductVO();
                                 PropertyUtils.copyProperties(productVO,p);
-                                productVO.setVipPrice(dicount.multiply(BigDecimal.valueOf(productVO.getDghActivityPrice()!=null?productVO.getDghActivityPrice():productVO.getDghSalesPrice())).intValue());
+                                if(dicount!=null){
+                                    productVO.setVipPrice(dicount.multiply(BigDecimal.valueOf(productVO.getDghActivityPrice()!=null?productVO.getDghActivityPrice():productVO.getDghSalesPrice())).intValue());
+                                }
                                 itemVO.getProducts().add(productVO);
                             }
                         }
