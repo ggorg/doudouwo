@@ -15,17 +15,6 @@ public class PayCenterAliPayVO implements Serializable {
     @ApiModelProperty(name="orderNo",value="订单号",example="1111111111111111111")
     private String orderNo;
 
-    @ApiModelProperty(name="discountCost",value="折扣价",example="折扣价")
-    private Integer discountCost;
-
-    public Integer getDiscountCost() {
-        return discountCost;
-    }
-
-    public void setDiscountCost(Integer discountCost) {
-        this.discountCost = discountCost;
-    }
-
     public String getOrderString() {
         return orderString;
     }
