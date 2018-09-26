@@ -2,10 +2,13 @@ package com.ddw.beans;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class StorePO {
+public class StorePO implements Serializable {
+
+    private static final long serialVersionUID = 551106772313766589L;
     private Integer id;
     private String dsName;
     private String dsLeaderName;

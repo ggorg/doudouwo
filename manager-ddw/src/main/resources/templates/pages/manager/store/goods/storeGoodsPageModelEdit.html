@@ -36,10 +36,10 @@
 
   <div class="layui-tab layui-tab-card" lay-filter="demo" lay-allowclose="true">
     <ul class="layui-tab-title">
-      <th:block th:if="${!#lists.isEmpty(pm['goodsObjs'])}">
+      <th:block th:if="${!#maps.isEmpty(pm) and !#lists.isEmpty(pm['goodsObjs'])}">
         <li th:each="p,pState:${pm['goodsObjs']}" th:text="${p['name']}" th:class="${pState.count==1?'layui-this':''}" th:attr="lay-id=${pState.count}"><</li>
       </th:block>
-      <th:block th:if="${#lists.isEmpty(pm['goodsObjs'])}">
+      <th:block th:if="${#maps.isEmpty(pm) or #lists.isEmpty(pm['goodsObjs'])}">
         <li class="layui-this" id="first-title" lay-id="one">未命名</li>
       </th:block>
       <li lay-id="-1" id="add" style="text-align: left">
@@ -50,7 +50,7 @@
       </li>
     </ul>
     <div class="layui-tab-content">
-      <th:block th:if="${!#lists.isEmpty(pm['goodsObjs'])}">
+      <th:block th:if="${!#maps.isEmpty(pm) and !#lists.isEmpty(pm['goodsObjs'])}">
         <div th:each="p,pState:${pm['goodsObjs']}"  th:class="${pState.count==1?'layui-tab-item layui-show':'layui-tab-item '}" th:attr="item-id=${pState.count}">
           <div class="layui-form-item" >
             <label class="layui-form-label" >板块名称</label>
@@ -137,7 +137,7 @@
           </div>
         </div>
       </th:block>
-      <th:block th:if="${#lists.isEmpty(pm['goodsObjs'])}">
+      <th:block th:if="${#maps.isEmpty(pm) or #lists.isEmpty(pm['goodsObjs'])}">
         <div class="layui-tab-item layui-show " id="first-item" item-id="one">
           <div class="layui-form-item" >
             <label class="layui-form-label">板块名称</label>

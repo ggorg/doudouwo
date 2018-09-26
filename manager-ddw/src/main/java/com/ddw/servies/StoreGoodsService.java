@@ -101,8 +101,8 @@ public class StoreGoodsService extends CommonService {
         goodsMap.put("dgType",dto.getDgType());
         goodsMap.put("updateTime",new Date());
         goodsMap.put("storeId",storeId);
-        goodsMap.put("goodsPlateId",dto.getGoodsPlateId());
-        goodsMap.put("indexPlateId",dto.getIndexPlateId());
+        //goodsMap.put("goodsPlateId",dto.getGoodsPlateId());
+        //goodsMap.put("indexPlateId",dto.getIndexPlateId());
 
         if(StringUtils.isNotBlank(GoodsRecommendEnum.getName(dto.getDgRecommend()))){
             goodsMap.put("dgRecommend",dto.getDgRecommend());

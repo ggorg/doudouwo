@@ -173,19 +173,24 @@ public class StoreService extends CommonService{
         }
         return userList;
     }
-    @Cacheable(value="commonCache",key = "'StoreBySysUserid-'+#id")
-    public StorePO getStoreBySysUserid(Integer id)throws Exception{
-        Map conditon=new HashMap();
-        conditon.put("sysUserId",id);
 
-        CommonSearchBean csb=new CommonSearchBean("ddw_store",null,new CommonChildBean("ddw_store_sysuser","storeId","id",conditon));
-        List list=this.getCommonMapper().selectObjects(csb);
-        if(list!=null && list.size()>0){
-            StorePO spo=new StorePO();
-            PropertyUtils.copyProperties(spo,list.get(0));
-            return spo;
+    public StorePO getStoreBySysUserid(Integer id)throws Exception{
+        //@Cacheable(value="commonCache",key = "'StoreBySysUserid-'+#id")
+        StorePO storePO=(StorePO) CacheUtil.get("commonCache","StoreBySysUserid-"+id);
+        if(storePO==null){
+            Map conditon=new HashMap();
+            conditon.put("sysUserId",id);
+
+            CommonSearchBean csb=new CommonSearchBean("ddw_store",null,new CommonChildBean("ddw_store_sysuser","storeId","id",conditon));
+            List list=this.getCommonMapper().selectObjects(csb);
+            if(list!=null && list.size()>0){
+                StorePO spo=new StorePO();
+                PropertyUtils.copyProperties(spo,list.get(0));
+                CacheUtil.put("commonCache","StoreBySysUserid-"+id,spo);
+                return spo;
+            }
         }
-        return null;
+        return storePO;
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO saveRelateSysUsers(String idStr,Integer[] sysusers)throws Exception{
