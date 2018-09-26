@@ -486,7 +486,7 @@ public class ReviewPracticeService extends CommonService {
     public ResponseVO getOrderUserList(Integer userId,PageNoDTO page)throws Exception{
         Map condtion = new HashMap<>();
         condtion.put("userId",userId);
-        condtion.put("status,in","(1,2,3)");
+//        condtion.put("status,in","(1,2,3)");
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","practiceId",null);
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
