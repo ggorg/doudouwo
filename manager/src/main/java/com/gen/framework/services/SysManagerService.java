@@ -124,7 +124,7 @@ public class SysManagerService extends CommonService {
             vo.setReMsg("密码为空");
             return vo;
         }
-        Map params= BeanToMapUtil.beanToMap(sysUserBean);
+        Map params= BeanToMapUtil.beanToMap(sysUserBean,true);
         params.put("updateTime",new Date());
         Map map= this.commonObjectBySingleParam("base_user","uName",sysUserBean.getuName());
         if(sysUserBean.getId()!=null && sysUserBean.getId()>0){
@@ -168,7 +168,7 @@ public class SysManagerService extends CommonService {
             vo.setReMsg("角色名已经重复，请重新换一个");
             return vo;
         }
-        Map roleMap= BeanToMapUtil.beanToMap(sysRoleBean);
+        Map roleMap= BeanToMapUtil.beanToMap(sysRoleBean,true);
         roleMap.put("updateTime",new Date());
         if(sysRoleBean.getId()!=null && sysRoleBean.getId()>0){
 
