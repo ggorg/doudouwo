@@ -111,6 +111,9 @@ public class UserInfoService extends CommonService {
 //        csb.setJointName("left");
 //        List list=this.getCommonMapper().selectObjects(csb);
         UserInfoVO userInfoVO = userInfoMapper.getUserInfoById(id);
+        if(userInfoVO == null){
+            return userInfoVO;
+        }
         return this.setFlag(userInfoVO,true);
     }
 

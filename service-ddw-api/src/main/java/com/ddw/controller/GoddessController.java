@@ -62,7 +62,7 @@ public class GoddessController {
             boolean isFocusGoddess = false;
             if(dto != null && dto.getGoddessCode() !=null){
                 userId = dto.getGoddessCode();
-                isFocusGoddess = myAttentionService.isFocusGoddess(userId,dto.getGoddessCode());
+                isFocusGoddess = myAttentionService.isFocusGoddess(TokenUtil.getUserId(token),dto.getGoddessCode());
             }
             UserInfoVO user = userInfoService.query(userId);
             user.setFocus(isFocusGoddess);
