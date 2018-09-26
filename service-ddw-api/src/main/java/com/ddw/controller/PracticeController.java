@@ -50,9 +50,6 @@ public class PracticeController {
                                @RequestParam(value = "photograph2") @ApiParam(name = "photograph2",value="游戏截图", required = true) MultipartFile photograph2,
                                @RequestParam(value = "photograph3") @ApiParam(name = "photograph3",value="游戏截图", required = true) MultipartFile photograph3){
         try {
-            String openid = TokenUtil.getUserObject(token).toString();
-
-            UserInfoVO user = userInfoService.queryByOpenid(openid);
             return reviewPracticeService.apply(TokenUtil.getUserId(token),TokenUtil.getStoreId(token),TokenUtil.getUserName(token),gameId,rankId,photograph1,photograph2,photograph3);
         }catch (Exception e){
             logger.error("PracticeController->apply",e);
