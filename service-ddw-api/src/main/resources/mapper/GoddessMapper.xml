@@ -48,7 +48,7 @@
             #{value}
         </foreach>
         and t1.userId != #{userId}
-        group  by t1.userId,t1.bidPrice,t5.id
+        group  by t1.userId,t1.bidPrice,t2.userId,t5.id
         order by count(1) desc
         limit #{start},#{end}
     </select>
@@ -70,7 +70,7 @@
                 #{value}
             </foreach>
         </if>
-        group  by t1.userId,t1.bidPrice,t5.id
+        group  by t1.userId,t1.bidPrice,t2.userId,t5.id
         order by count(1) desc
         limit #{start},#{end}
     </select>
