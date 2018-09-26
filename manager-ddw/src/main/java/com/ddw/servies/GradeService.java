@@ -4,6 +4,7 @@ import com.ddw.beans.GradeDTO;
 import com.ddw.beans.GradePO;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
+import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -43,12 +44,15 @@ public class GradeService extends CommonService{
     public ResponseVO saveOrUpdate(GradeDTO gradeDTO)throws Exception{
         GradePO gradePO = new GradePO();
         PropertyUtils.copyProperties(gradePO,gradeDTO);
+        ResponseVO vo=null;
         if(gradeDTO.getId() > 0 ){
             Map updatePoMap= BeanToMapUtil.beanToMap(gradePO);
-            return super.commonUpdateBySingleSearchParam("ddw_grade",updatePoMap,"id",gradeDTO.getId());
+            vo=super.commonUpdateBySingleSearchParam("ddw_grade",updatePoMap,"id",gradeDTO.getId());
         }else{
-            return super.commonInsert("ddw_grade",gradePO);
+            vo=super.commonInsert("ddw_grade",gradePO);
         }
+        CacheUtil.delete("publicCache","grade");
+        return vo;
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

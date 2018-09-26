@@ -63,7 +63,7 @@ public class UserController {
                     userVO.setInviteCode(userInfoService.createInviteCode(userVO.getId()));
                     userVO.setLiveRadioFlag(0);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                    TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
+                    TokenUtil.putUserInfo(token, userVO);
                     userInfoService.update(userVO);//更新邀请码
                     return new ResponseApiVO(1, "注册成功", userVO);
                 } else {
@@ -73,7 +73,7 @@ public class UserController {
                     userVO.setIdentifier(userVO.getOpenid());
                     userInfoService.setLiveRadioFlag(userVO,token);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
-                    TokenUtil.putUseridAndName(token, userVO.getId(), userVO.getNickName());
+                    TokenUtil.putUserInfo(token, userVO);
                     return new ResponseApiVO(2, "账号已存在", userVO);
                 }
             }

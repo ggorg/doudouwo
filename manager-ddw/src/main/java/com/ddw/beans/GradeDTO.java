@@ -1,5 +1,7 @@
 package com.ddw.beans;
 
+import java.math.BigDecimal;
+
 /**
  * Created by Jacky on 2018/4/19.
  */
@@ -8,7 +10,16 @@ public class GradeDTO {
     private String gradeName;
     private String level;
     private int sort;
+    private BigDecimal discount;
     private String describe;
+
+    public BigDecimal getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
 
     public String getDescribe() {
         return describe;
