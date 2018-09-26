@@ -20,7 +20,8 @@ public class UserGradeService  extends CommonService {
             CacheUtil.put("publicCache","grade",list);
         }
         for(Map m:list){
-            if(((Integer)m.get("id")).equals(gradeId)){
+            if(((Integer)m.get("id")).equals(gradeId) && m.containsKey("discount") && m.get("discount")!=null){
+
                return  ((BigDecimal) m.get("discount")).divide(BigDecimal.valueOf(10));
             }
         }

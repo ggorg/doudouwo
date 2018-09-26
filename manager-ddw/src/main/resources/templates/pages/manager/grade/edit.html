@@ -13,29 +13,29 @@
 </head>
 <body style="padding:10px 10px 10px 10px">
 <form class="layui-form layui-form-pane" >
-  <input th:if="${gradePO!=null and gradePO['id']!=null}" th:name="id" th:value="${gradePO['id']}" type="hidden"/>
+  <input th:if="${gradePO!=null and gradePO?.id!=null}" th:name="id" th:value="${gradePO?.id}" type="hidden"/>
   <div class="layui-form-item">
     <label class="layui-form-label">名称</label>
     <div class="layui-input-block">
-      <input type="text" name="gradeName" required="required" title="名称"  lay-verify="required|max20" th:value="${gradePO!=null? gradePO['gradeName']:''}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
+      <input type="text" name="gradeName" required="required" title="名称"  lay-verify="required|max20" th:value="${gradePO!=null? gradePO?.gradeName:''}" placeholder="请输入名称" autocomplete="off" class="layui-input" />
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">等级</label>
     <div class="layui-input-block">
-      <input type="text" name="level" required="required" title="等级"  lay-verify="required" th:value="${gradePO!=null? gradePO['level']:''}" placeholder="请输入等级" autocomplete="off" class="layui-input" />
+      <input type="text" name="level" required="required" title="等级"  lay-verify="required" th:value="${gradePO!=null? gradePO?.level:''}" placeholder="请输入等级" autocomplete="off" class="layui-input" />
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">折扣</label>
     <div class="layui-input-block">
-      <input type="text" name="discount" title="折扣"  th:value="${gradePO!=null? gradePO['discount']:''}" placeholder="请输入折扣" autocomplete="off" class="layui-input" />
+      <input type="text" name="discount" title="折扣"  th:value="${gradePO!=null? gradePO?.discount:''}" placeholder="请输入折扣" autocomplete="off" class="layui-input" />
     </div>
   </div>
   <div class="layui-form-item">
     <label class="layui-form-label">序号</label>
     <div class="layui-input-block">
-      <input type="text" name="sort" required="required" title="序号"  lay-verify="required" th:value="${gradePO!=null? gradePO['sort']:''}" placeholder="请输入序号" autocomplete="off" class="layui-input" />
+      <input type="text" name="sort" required="required" title="序号"  lay-verify="required" th:value="${gradePO!=null? gradePO?.sort:''}" placeholder="请输入序号" autocomplete="off" class="layui-input" />
     </div>
   </div>
 
@@ -43,7 +43,7 @@
     <label class="layui-form-label">描述</label>
     <div class="layui-input-block">
 
-      <textarea name="describe" th:text="${gradePO!=null?gradePO['describe']:''}"  class="layui-textarea"></textarea>
+      <textarea name="describe" th:text="${gradePO!=null?gradePO?.describe:''}"  class="layui-textarea"></textarea>
     </div>
   </div>
 
