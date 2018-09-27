@@ -4,7 +4,7 @@
         <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
         <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
         <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${smpage!=null?smpage.total:0}]]*/ );
+           initPage(/*[[${gPage!=null?gPage.total:0}]]*/ );
         </script>
 	</head>
     <body class="withvernav">
