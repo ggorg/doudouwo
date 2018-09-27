@@ -67,7 +67,12 @@ public class ReviewPracticeRefundService extends CommonService {
             if(practiceOrderPO != null){
                 // 审批成功后调用退款接口进行退款,成功后修改退款申请表状态
                 Map<Integer,Integer> map = new HashMap<>();
-                map.put(practiceOrderPO.getOrderId(),practiceOrderPO.getMoney()-practiceOrderPO.getRealityMoney());
+                //3代练结算未完成目标（退全款,线下双倍退差价），4用户提前结算1小时内扣违约金（总金额的30%），5用户提前结算超过1小时不扣违约金
+                if(practiceOrderPO.getStatus()==3){
+                    map.put(practiceOrderPO.getOrderId(),practiceOrderPO.getMoney());
+                }else{
+                    map.put(practiceOrderPO.getOrderId(),practiceOrderPO.getRefund());
+                }
                 ResponseVO rv = baseOrderService.baseExitOrderByMap(map);
                 if(rv.getReCode()>0){
                     Map setParams = new HashMap<>();

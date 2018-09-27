@@ -546,32 +546,63 @@ public class ReviewPracticeService extends CommonService {
 
     /**
      * 订单结算
+     * 客户违约（用户先提出结束），按照下单时间来定，客户一小时内要走，就扣罚违约金（总金额*30%），
+     * 代练掉星也不用赔偿，超过一小时，则客户提前走就不用罚违约金了，按照实际代练结果结算。
+     * 代练未完成要线下双倍赔付，退全款，返回需要线下双倍退款金额。
+     * @param userId
      * @param practiceSettlementDTO
      * @return
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO<PracticeSettlementVO> settlement(PracticeSettlementDTO practiceSettlementDTO)throws Exception{
-        // 查询订单信息,查询段位信息,根据段位和星计算金额,段位信息放缓存
+    public ResponseApiVO<PracticeSettlementVO> settlement(Integer userId,PracticeSettlementDTO practiceSettlementDTO)throws Exception{
+        // 查询订单信息,查询段位信息,根据段位和星计算金额
         PracticeOrderPO practiceOrderPO = this.getOrder(practiceSettlementDTO.getOrderId());
+
         int payMoney = 0;//支付金额,单位分
         int gameId = practiceOrderPO.getGameId();
         int rankId = practiceOrderPO.getRankId();//原段位
         int star = practiceOrderPO.getStar();//原星
         int realityRankId = practiceSettlementDTO.getRealityRankId();//实际段位
         int realityStar = practiceSettlementDTO.getRealityStar();//实际星数
+        //计算实际需要支付金额
         payMoney = this.payMoney(gameId,rankId,star,realityRankId,realityStar);
         PropertyUtils.copyProperties(practiceOrderPO,practiceSettlementDTO);
-        //订单状态，1开始接单，2完成,3未完成并结单
-        practiceOrderPO.setStatus(payMoney>=practiceOrderPO.getMoney()?2:3);
+        //代练结算
+        if(userId.equals(practiceOrderPO.getPracticeId())){
+            if(payMoney < practiceOrderPO.getMoney()){//实际金额比预支付低,未达到代练目标,双倍退款
+                //订单状态，1开始接单，2完成,3代练结算未完成目标（双倍退差价），4用户提前结算1小时内扣违约金（总金额的30%），
+                // 5用户提前结算超过1小时不扣违约金，6退款申请，7退款成功，8退款拒绝
+                practiceOrderPO.setStatus(3);
+                practiceOrderPO.setRefund(payMoney*2);
+            }else {
+                practiceOrderPO.setRefund(practiceOrderPO.getMoney()-payMoney);
+                practiceOrderPO.setRealityMoney(payMoney);
+            }
+        }else{//用户结算
+            int minutes = (int)(practiceOrderPO.getCreateTime().getTime()-new Date().getTime())/(1000 * 60);
+            if(minutes < 60 && payMoney != practiceOrderPO.getMoney()){//代练低于60分钟客户结束,收取违约金
+                practiceOrderPO.setStatus(4);
+                practiceOrderPO.setRefund(practiceOrderPO.getMoney()-practiceOrderPO.getMoney()*3/10);
+                practiceOrderPO.setRealityMoney(practiceOrderPO.getMoney()*3/10);
+            }else {
+                practiceOrderPO.setStatus(5);
+                practiceOrderPO.setRefund(practiceOrderPO.getMoney()-payMoney);
+                practiceOrderPO.setRealityMoney(payMoney);
+            }
+        }
+        if(payMoney == practiceOrderPO.getMoney()){
+            practiceOrderPO.setStatus(2);
+        }
         practiceOrderPO.setUpdateTime(new Date());
-        practiceOrderPO.setRealityMoney(payMoney);
         if(practiceOrderPO.getPayState() != 1){
             practiceOrderPO.setPayState(2);
         }
-        //计算收益
-        this.incomeService.commonIncome(practiceOrderPO.getPracticeId(),payMoney, IncomeTypeEnum.IncomeType2, OrderTypeEnum.OrderType10,practiceOrderPO.getOrderNo());
-        this.baseConsumeRankingListService.save(practiceOrderPO.getUserId(),practiceOrderPO.getPracticeId(),payMoney,IncomeTypeEnum.IncomeType2);
+        if(practiceOrderPO.getRealityMoney()!=0){
+            //计算收益
+            this.incomeService.commonIncome(practiceOrderPO.getPracticeId(),practiceOrderPO.getRealityMoney(), IncomeTypeEnum.IncomeType2, OrderTypeEnum.OrderType10,practiceOrderPO.getOrderNo());
+            this.baseConsumeRankingListService.save(practiceOrderPO.getUserId(),practiceOrderPO.getPracticeId(),payMoney,IncomeTypeEnum.IncomeType2);
+        }
         //更新状态为已计算收益
         practiceOrderPO.setIncomeState(1);
         Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
@@ -584,7 +615,9 @@ public class ReviewPracticeService extends CommonService {
         searchCondition.put("gameId",gameId);
         ResponseVO responseVO2 = super.commonUpdateByParams("ddw_practice_game",setParams,searchCondition);
         PracticeSettlementVO practiceSettlementVO = new PracticeSettlementVO();
-        practiceSettlementVO.setPayMoney(payMoney);
+        practiceSettlementVO.setMoney(practiceOrderPO.getMoney());
+        practiceSettlementVO.setRealityMoney(practiceOrderPO.getRealityMoney());
+        practiceSettlementVO.setRefund(practiceOrderPO.getRefund());
         if(responseVO.getReCode()>0 && responseVO2.getReCode()>0){
             return new ResponseApiVO(1,"成功",practiceSettlementVO);
         }else{
