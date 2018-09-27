@@ -51,7 +51,7 @@
                 </div><!--tableoptions-->
                 <div class="tableoptions">
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('750px','530px','发布新页面','to-edit')" title="table2">发布新页面</button> &nbsp;
+                    <button class="radius3" id="createBtn" onclick="openDialog('950px','530px','发布新页面','to-edit')" title="table2">发布新页面</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -90,7 +90,7 @@
                         <td class="center">
                             <div class="layui-btn-group">
                                 <button th:if="${obj['status']!=2}" class="layui-btn layui-btn-sm " th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['status']==1?0:1}+',\''+${obj['status']==1?'是否撤回发布':'是否发布'}+'\')'" th:text="${obj['status']==1?'撤回发布':'发 布'}">发布</button>
-                                <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'750px\',\'530px\',\'修改\',\'to-edit?idStr='+${#toolsddw.encrypt(obj['id'])}+'\')'"  >修改</button>
+                                <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'950px\',\'530px\',\'修改\',\'to-edit?idStr='+${#toolsddw.encrypt(obj['id'])}+'\')'"  >修改</button>
                             </div>
                         </td>
                     </tr>

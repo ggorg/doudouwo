@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.ExitOrderPO;
 import com.ddw.beans.OrderPO;
 import com.ddw.beans.OrderViewPO;
+import com.ddw.dao.OrderSalesMapper;
 import com.ddw.enums.*;
 import com.ddw.util.BiddingTimer;
 import com.ddw.util.IMApiUtil;
@@ -44,6 +45,9 @@ public class BaseOrderService extends CommonService {
 
     @Autowired
     private BaseBiddingService baseBiddingService;
+
+    @Autowired
+    private OrderSalesMapper orderSalesMapper;
 
     @Value("${bidding.makeSureEndTime.minute:30}")
     private Integer makeSureEndTime;
@@ -292,6 +296,8 @@ public class BaseOrderService extends CommonService {
                 Map search=null;
                 Map setMap=null;
                 OrderViewPO po=null;
+
+                Map<Integer,Map> goods=new HashMap();
                 for(Map m:list){
                     setMap=new HashMap();
                     setMap.put("dghSaleNumber",m.get("productBuyNumber"));
@@ -303,6 +309,17 @@ public class BaseOrderService extends CommonService {
                         CacheUtil.put("pay","order-"+orderNo,"fail");
 
                         throw new GenException("更新货品销量失败");
+                    }
+                    //计算商品销量
+                    if(goods.containsKey((Integer)m.get("gid"))){
+                        Map gm=goods.get((Integer)m.get("gid"));
+                        gm.replace("num",(Integer)gm.get("num")+(Integer) m.get("productBuyNumber"));
+                    }else{
+                        Map g=new HashMap();
+                        g.put("num",m.get("productBuyNumber"));
+                        g.put("time",m.get("currentUpdateTime"));
+                        goods.put((Integer)m.get("gid"),g);
+
                     }
                     po=new OrderViewPO();
                     po.setBusId((Integer) m.get("productId"));
@@ -322,12 +339,36 @@ public class BaseOrderService extends CommonService {
                     this.orderViewService.saveOrderView(po);
 
                 }
+                Set<Integer> keys=goods.keySet();
+                String month=DateFormatUtils.format(new Date(),"MM");
+                Map param=null;
+                String[] calculatesName=null;
+                Map s=null;
+                for(Integer gid:keys){
+
+                    String time=DateFormatUtils.format((Date)goods.get(gid).get("time"),"MM");
+                    Integer num=(Integer) goods.get(gid).get("num");
+                    param=new HashMap();
+                    param.put("updateTime",new Date());
+                    param.put("dgSalesNumber",num);
+                    param.put("dgMohthSales",num);
+                    s=new HashMap();
+                    s.put("id",gid);
+                    if(month.equals(time)){
+                        calculatesName=new String[]{"dgSalesNumber","dgMohthSales"};
+                    }else{
+                        calculatesName=new String[]{"dgSalesNumber"};
+                    }
+                    this.commonCalculateOptimisticLockUpdateByParam("ddw_goods",param,s,"version",calculatesName);
+                }
                 CacheUtil.delete("pay","goodsPru-order-"+orderNo);
 
             }else if(OrderTypeEnum.OrderType7.getCode().equals(doType)){
                 List<Map> ticketList =(List) CacheUtil.get("pay","pre-pay-"+orderNo);
                 OrderViewPO po=null;
+                Map<Integer,Map> tickets=new HashMap();
                 for(Map ticketMap:ticketList){
+
                     po=new OrderViewPO();
                     po.setBusId((Integer) ticketMap.get("ticketId"));
                     po.setCreateTime(new Date());
@@ -344,6 +385,38 @@ public class BaseOrderService extends CommonService {
                     po.setShipStatus(cacheOrder.getDoShipStatus());
                     po.setStoreId(cacheOrder.getDoSellerId());
                     this.orderViewService.saveOrderView(po);
+                    //计算商品销量
+                    if(tickets.containsKey(po.getBusId())){
+                        Map gm=tickets.get(po.getBusId());
+                        gm.replace("num",(Integer)gm.get("num")+1);
+                    }else{
+                        Map g=new HashMap();
+                        g.put("num",1);
+                        g.put("time",(Date)ticketMap.get("currentUpdateTime"));
+                        tickets.put(po.getBusId(),g);
+                    }
+                }
+                Set<Integer> keys=tickets.keySet();
+                String month=DateFormatUtils.format(new Date(),"MM");
+                Map param=null;
+                String[] calculatesName=null;
+                Map s=null;
+                for(Integer gid:keys){
+
+                    String time=DateFormatUtils.format((Date)tickets.get(gid).get("time"),"MM");
+                    Integer num=(Integer) tickets.get(gid).get("num");
+                    param=new HashMap();
+                    param.put("updateTime",new Date());
+                    param.put("allSales",num);
+                    param.put("monthSales",num);
+                    s=new HashMap();
+                    s.put("id",gid);
+                    if(month.equals(time)){
+                        calculatesName=new String[]{"allSales","monthSales"};
+                    }else{
+                        calculatesName=new String[]{"allSales"};
+                    }
+                    this.commonCalculateOptimisticLockUpdateByParam("ddw_ticket",param,s,"version",calculatesName);
                 }
             }else if(OrderTypeEnum.OrderType10.getCode().equals(doType)){
                 Integer price =(Integer) CacheUtil.get("pay","pre-pay-"+orderNo);

@@ -25,6 +25,12 @@ public class TicketVO implements Serializable {
     @JsonProperty("actPrice")
     private Integer dtActPrice;
 
+
+    @ApiModelProperty(name="monthSales",value="月销量",example="月销量")
+    @JsonProperty("monthSales")
+    private Integer monthSales;
+
+
     @ApiModelProperty(name="desc",value="描述",example="xxxx")
     @JsonProperty("desc")
     private String dtDesc;
@@ -41,6 +47,15 @@ public class TicketVO implements Serializable {
     @ApiModelProperty(name="activeTime",value="有效时间",example="9:00:00-12:00:00")
     @JsonProperty("activeTime")
     private String dtActiveTime;
+
+    public Integer getMonthSales() {
+        return monthSales;
+    }
+
+    public void setMonthSales(Integer monthSales) {
+        this.monthSales = monthSales;
+    }
+
     public Integer getId() {
         return id;
     }

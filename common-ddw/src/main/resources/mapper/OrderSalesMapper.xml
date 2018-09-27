@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ddw.dao.OrderSalesMapper">
+
+
+    <select id="sales" resultType="com.ddw.beans.SalesVO">
+        SELECT
+            t1.busId,
+            sum( t1.num ) allSales,
+            t2.monthSales
+        FROM
+            ddw_order_view t1
+            LEFT JOIN (
+        SELECT
+            t2.busId bid,
+            sum( t2.num ) monthSales,
+            t2.NAME
+        FROM
+            ddw_order_view t2
+        WHERE
+            t2.orderType = #{orderType}
+            AND t2.busId IN ( ${busIds} )
+            AND t2.createTime LIKE #{date}
+        GROUP BY
+            busId
+            ) t2 ON t1.busId = t2.bid
+            AND t1.busId IN ( ${busIds} )
+        WHERE
+            t1.orderType = #{orderType}
+        GROUP BY
+            busId
+    </select>
+
+</mapper>

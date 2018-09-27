@@ -99,7 +99,7 @@
                         <td class="center">
                             <div class="layui-btn-group">
                             <button class="layui-btn layui-btn-sm"  th:onclick="'viewDialog(\'650px\',\'580px\',\'订单详情\',\'to-ticket-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >查 看</button>
-                            <button class="layui-btn layui-btn-sm " th:onclick="'toMakeSure(\''+${#TdTool.encrypt(orderNo)}+'\')'"  >确认门票</button>
+                            <button class="layui-btn layui-btn-sm " th:if="${obj['doShipStatus']!=5}" th:onclick="'toMakeSure(\''+${#TdTool.encrypt(orderNo)}+'\')'"  >确认门票</button>
 
                             </div>
                         </td>

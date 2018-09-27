@@ -295,7 +295,7 @@ public class PayCenterService extends BaseOrderService {
             search.put("storeId",TokenUtil.getStoreId(token));
             search.put("dghStatus",GoodsStatusEnum.goodsStatus1.getCode());
             search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
-            CommonSearchBean csb=new CommonSearchBean("ddw_goods_product",null,"t1.dghActivityPrice,t1.dghSalesPrice,t1.dghFormulaId,t1.dghDesc,t1.id,ct0.fileImgIcoPath headImg",null,null,search,new CommonChildBean("ddw_goods","id","dghGoodsId",null));
+            CommonSearchBean csb=new CommonSearchBean("ddw_goods_product",null,"t1.dghActivityPrice,t1.dghSalesPrice,t1.dghFormulaId,t1.dghDesc,t1.id,ct0.fileImgIcoPath headImg,t1.dghGoodsId gId,ct0.updateTime",null,null,search,new CommonChildBean("ddw_goods","id","dghGoodsId",null));
             List<Map> goodsPruductList=this.getCommonMapper().selectObjects(csb);
            // List<Map> goodsPruductList= this.commonObjectsBySearchCondition("ddw_goods_product",search);
             if(goodsPruductList==null || goodsPruductList.isEmpty()){
@@ -334,6 +334,8 @@ public class PayCenterService extends BaseOrderService {
                     dataMap.put("createTime",new Date());
                     dataMap.put("productName",mVo.get("dghDesc"));
                     dataMap.put("headImg",mVo.get("headImg"));
+                    dataMap.put("gid",mVo.get("gId"));
+                    dataMap.put("currentUpdateTime",(Date)mVo.get("updateTime"));
                     buyInProMap.put(code,dataMap);
                 }
 
@@ -442,6 +444,7 @@ public class PayCenterService extends BaseOrderService {
                 orderTicket.put("storeId",TokenUtil.getStoreId(token));
                 orderTicket.put("ticketName",ticketMap.get("dtName"));
                 orderTicket.put("ticketPrice",price);
+                orderTicket.put("currentUpdateTime",ticketMap.get("updateTime"));
                 insertList.add(orderTicket);
             }
             orderPO.setDoCost(sumPrice);
@@ -586,18 +589,26 @@ public class PayCenterService extends BaseOrderService {
                 Iterator<Map> iterator=collection.iterator();
                 Map insertM=null;
                 String headImg=null;
+                Integer gid=null;
+                Date currentUpdateTime=null;
                 while(iterator.hasNext()){
                     insertM=iterator.next();
                     insertM.put("orderNo",orderNo);
                     insertM.put("orderId",insertResponseVO.getData());
                     headImg=(String)insertM.get("headImg");
+                    gid=(Integer) insertM.get("gid");
+                    currentUpdateTime=(Date) insertM.get("currentUpdateTime");
                     insertM.remove("headImg");
+                    insertM.remove("gid");
+                    insertM.remove("currentUpdateTime");
                     resVo=this.commonInsertMap("ddw_order_product",insertM);
                     if(resVo.getReCode()!=1){
                         throw new GenException("商品支付失败");
 
                     }
                     insertM.put("headImg",headImg);
+                    insertM.put("gid",gid);
+                    insertM.put("currentUpdateTime",currentUpdateTime);
                 }
                 CacheUtil.put("pay","goodsPru-order-"+orderNo,new ArrayList(collection));
             }else if(OrderTypeEnum.OrderType6.getCode().equals(orderType)){
@@ -679,12 +690,16 @@ public class PayCenterService extends BaseOrderService {
                 }
                 return new ResponseApiVO(1,"成功",null);
             }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
+                Date currentUpdateTime=null;
                 for(Map im:insertList){
                     im.put("orderId",insertResponseVO.getData());
                     im.put("orderNo",orderNo);
                     im.put("createTime",new Date());
                     im.put("updateTime",new Date());
+                    currentUpdateTime=(Date)im.get("currentUpdateTime");
+                    im.remove("currentUpdateTime");
                     resVo=this.commonInsertMap("ddw_order_ticket",im);
+                    im.put("currentUpdateTime",currentUpdateTime);
                     if(resVo.getReCode()!=1){
                         throw new GenException("门票支付失败");
                     }

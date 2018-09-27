@@ -3,6 +3,7 @@ package com.ddw;
 import com.ApiApplication;
 import com.ddw.beans.OrderPO;
 import com.ddw.beans.ResponseApiVO;
+import com.ddw.dao.OrderSalesMapper;
 import com.ddw.services.PayCenterService;
 import com.ddw.token.TokenUtil;
 import org.junit.Test;
@@ -18,6 +19,9 @@ public class PayCenterServiceTest {
     @Autowired
     private PayCenterService payCenterService;
 
+    @Autowired
+    private OrderSalesMapper orderSalesMapper;
+
     @Test
     public void executeCouponTest()throws Exception{
         String token= TokenUtil.createToken("openid");
@@ -30,6 +34,10 @@ public class PayCenterServiceTest {
         ResponseApiVO vo=this.payCenterService.executeCoupon(po,1,token);
         System.out.println(vo+","+po.getDoCost());
 
+    }
+    @Test
+    public void executeSales()throws Exception{
+        System.out.println(this.orderSalesMapper.sales(1,"6,7","2018-06%"));
     }
 
     public static void main(String[] args) {

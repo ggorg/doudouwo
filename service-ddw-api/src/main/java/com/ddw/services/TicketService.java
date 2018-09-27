@@ -38,7 +38,7 @@ public class TicketService extends CommonService{
         if(cacheList!=null){
             return cacheList;
         }
-        CommonSearchBean csb=new CommonSearchBean("ddw_ticket","updateTime desc","t1.id code,t1.dtName name,t1.dtPrice price,t1.dtActPrice actPrice,t1.dtDesc 'desc',t1.dtType type,t1.dtActiveTime activeTime",null,null,searchMap);
+        CommonSearchBean csb=new CommonSearchBean("ddw_ticket","updateTime desc","t1.id code,t1.dtName name,t1.dtPrice price,t1.dtActPrice actPrice,t1.dtDesc 'desc',t1.dtType type,t1.dtActiveTime activeTime,t1.monthSales",null,null,searchMap);
         List<Map> list=this.getCommonMapper().selectObjects(csb);
         List<AppIndexTicketVO> appIndexTicketList = new ArrayList<AppIndexTicketVO>();
         if(list!=null && !list.isEmpty()){

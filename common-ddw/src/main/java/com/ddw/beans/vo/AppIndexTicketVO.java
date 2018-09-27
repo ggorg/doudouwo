@@ -14,6 +14,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AppIndexTicketVO implements Serializable {
 
+
     private static final long serialVersionUID = 4112194326008721273L;
     @JsonProperty("name")
     @ApiModelProperty(name="name",value="门票名称",example="门票")
@@ -47,6 +48,18 @@ public class AppIndexTicketVO implements Serializable {
     @JsonProperty("desc")
     @ApiModelProperty(name="desc",value="描述",example="烂票")
     private String desc;
+
+    @ApiModelProperty(name="monthSales",value="月销量",example="月销量")
+    @JsonProperty("monthSales")
+    private Integer monthSales;
+
+    public Integer getMonthSales() {
+        return monthSales;
+    }
+
+    public void setMonthSales(Integer monthSales) {
+        this.monthSales = monthSales;
+    }
 
     public String getName() {
         return name;

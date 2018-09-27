@@ -114,8 +114,10 @@ public class GoodsClientService extends CommonService {
                 for(Map gMap:gList){
                     if(gid.equals((Integer) gMap.get("id"))){
                         itemVO=new  GoodsItemVO();
+
                         itemVO.setProducts(new ArrayList());
                         PropertyUtils.copyProperties(itemVO,gMap);
+                        itemVO.setMonthSales(gMap.get("dgMohthSales")==null?0:(Integer) gMap.get("dgMohthSales"));
                         for(Map p:pList){
                             if(gid.equals((Integer)p.get("dghGoodsId"))){
                                 productVO=new GoodsInfoProductVO();
@@ -264,6 +266,7 @@ public class GoodsClientService extends CommonService {
         Map map= this.commonObjectBySearchCondition("ddw_goods",search);
         GoodsInfoVO gvo=new GoodsInfoVO();
         PropertyUtils.copyProperties(gvo,map);
+        gvo.setMonthNum((Integer) map.get("dgMohthSales"));
         search=new HashMap();
         search.put("storeId",storeId);
         search.put("dghGoodsId",dto.getCode());
