@@ -119,7 +119,37 @@ public class HttpUtil {
         }
         return result;
     }
+    public static String doJsonPost(String url,String jsonStr){
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        String httpStr = null;
+        HttpPost httpPost = new HttpPost(url);
 
+        CloseableHttpResponse response = null;
+
+        try {
+            httpPost.setConfig(requestConfig);
+
+            httpPost.addHeader("Content-type","application/json; charset=utf-8");
+
+            httpPost.setEntity(new StringEntity(jsonStr, Charset.forName("UTF-8")));
+
+            response = httpClient.execute(httpPost);
+
+            HttpEntity entity = response.getEntity();
+            httpStr = EntityUtils.toString(entity, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null) {
+                try {
+                    EntityUtils.consume(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return httpStr;
+    }
     /**
      * 发送 POST 请求（HTTP），不带输入数据
      * @param apiUrl
@@ -139,6 +169,7 @@ public class HttpUtil {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String httpStr = null;
         HttpPost httpPost = new HttpPost(apiUrl);
+
         CloseableHttpResponse response = null;
 
         try {
@@ -149,6 +180,7 @@ public class HttpUtil {
                         .getValue().toString());
                 pairList.add(pair);
             }
+           // httpPost.s
             httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charset.forName("UTF-8")));
             response = httpClient.execute(httpPost);
             System.out.println(response.toString());
