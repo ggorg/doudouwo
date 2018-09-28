@@ -45,7 +45,7 @@ public class AppIndexService {
         Object obGoddess = CacheUtil.get("publicCache","appIndexGoddess");
         if(obGoddess == null){
             //查询所有门店女神,直播优先,列表不包括当前查询会员id
-            appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),1,null));
+            appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),1,4,null));
             if(appIndexVO.getGoddessList().size()>0) {
                 CacheUtil.put("publicCache", "appIndexGoddess", appIndexVO.getGoddessList());
             }
@@ -54,7 +54,7 @@ public class AppIndexService {
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
-            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,1,1,null));
+            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,1,4,1,null));
             if(appIndexVO.getPracticeList().size()>0){
                 CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
             }

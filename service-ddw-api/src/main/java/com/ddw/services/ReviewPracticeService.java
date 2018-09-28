@@ -137,14 +137,15 @@ public class ReviewPracticeService extends CommonService {
      * 先查询根据订单排序代练列表,列表不足由从未生成过订单的代练根据开启预约时间先后补上
      * @param token
      * @param pageNo
+     * @param pageSize
      * @param appointment 1的时候查询发布代练,null的时候所有
      * @return
      * @throws Exception
      */
-    public List<AppIndexPracticeVO> practiceList(String token,Integer pageNo,Integer appointment,Integer weekList)throws Exception{
+    public List<AppIndexPracticeVO> practiceList(String token,Integer pageNo,Integer pageSize,Integer appointment,Integer weekList)throws Exception{
         Integer storeId = TokenUtil.getStoreId(token);
         Integer practiceId = TokenUtil.getUserId(token);
-        Integer pageSize = 10;
+        pageSize = pageSize==null?10:pageSize;
         Integer start = pageNo > 0 ? (pageNo - 1) * pageSize : 0;
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();

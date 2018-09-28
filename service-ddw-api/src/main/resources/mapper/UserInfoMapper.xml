@@ -118,15 +118,14 @@
         ct2.LEVEL plevel
     </sql>
 
-    <select id="getUserInfoList" resultMap="BaseResultMap">
+    <select id="getUserInfoList" parameterType="java.util.List" resultMap="BaseResultMap">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List2"/>
         FROM
         ddw_userinfo t1
         LEFT JOIN ddw_grade ct0 ON ct0.id = t1.gradeId
         LEFT JOIN ddw_goddess_grade ct1 ON ct1.id = t1.goddessGradeId
         LEFT JOIN ddw_practice_grade ct2 ON ct2.id = t1.practiceGradeId
-        LEFT JOIN ddw_consume_ranking_list ct3 ON ct3.consumeUserId = t1.id
         WHERE
         t1.id in
         <foreach collection="userId" item="value"  index="key" open="(" separator="," close=")">
