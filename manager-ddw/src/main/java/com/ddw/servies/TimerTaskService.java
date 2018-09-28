@@ -296,16 +296,16 @@ public class TimerTaskService extends CommonService {
             for(Map map:list){
                 logger.info("计算超过24小时代练已支付订单："+map.get("id"));
                 logger.info("收益代练->practiceId："+map.get("practiceId")+"->realityMoney->"+map.get("realityMoney"));
-                int money = (Integer)map.get("realityMoney");
+                int realityMoney = (Integer)map.get("realityMoney");
+                int refund = (Integer)map.get("refund");
                 //用户未结算,到期订单按照已完成处理
                 if(map.get("realityMoney").toString().equals("0") && !map.get("money").toString().equals("0")){
-                    money = (Integer)map.get("money");
                     setParams.put("status",2);//订单状态完成
-                    logger.info("用户未结算,到期订单按照已完成处理->money->"+money);
+                    logger.info("用户未结算,到期订单按照已完成处理->realityMoney->"+realityMoney);
                 }
-                if(money > 0){//实际金额需大于0才计算收益
-                    this.incomeService.commonIncome((Integer) map.get("practiceId"),money, IncomeTypeEnum.IncomeType2, OrderTypeEnum.OrderType10,map.get("orderNo").toString());
-                    this.baseConsumeRankingListService.save((Integer) map.get("userId"),(Integer) map.get("practiceId"),money,IncomeTypeEnum.IncomeType2);
+                if(realityMoney > 0){//实际金额需大于0才计算收益
+                    this.incomeService.commonIncome((Integer) map.get("practiceId"),realityMoney, IncomeTypeEnum.IncomeType2, OrderTypeEnum.OrderType10,map.get("orderNo").toString());
+                    this.baseConsumeRankingListService.save((Integer) map.get("userId"),(Integer) map.get("practiceId"),realityMoney,IncomeTypeEnum.IncomeType2);
                 }
                 //更新状态为已计算收益
                 this.commonUpdateBySingleSearchParam("ddw_practice_order",setParams,"id",map.get("id"));

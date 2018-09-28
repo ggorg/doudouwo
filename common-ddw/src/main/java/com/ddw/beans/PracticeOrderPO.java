@@ -20,10 +20,10 @@ public class PracticeOrderPO implements Serializable{
     private int targetStar;
     private int realityRankId;
     private int realityStar;
-    /** 订单状态，1开始接单，2完成,3未完成并结单*/
     private int status;
     private int money;
     private int realityMoney;
+    private int refund;
     private int storeId;
     private int incomeState;
     private String picUrl;
@@ -150,6 +150,14 @@ public class PracticeOrderPO implements Serializable{
 
     public void setRealityMoney(int realityMoney) {
         this.realityMoney = realityMoney;
+    }
+
+    public int getRefund() {
+        return refund;
+    }
+
+    public void setRefund(int refund) {
+        this.refund = refund;
     }
 
     public int getStoreId() {

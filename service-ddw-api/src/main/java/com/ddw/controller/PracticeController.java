@@ -197,13 +197,13 @@ public class PracticeController {
         }
     }
 
-    @ApiOperation(value = "提交结算申请",notes="客户违约（用户先提出结束），按总金额 -实际代练段位算的钱-违约金（总金额*30%），代练未完成要线下双倍赔付，退全款，返回需要线下双倍退款金额")
+    @ApiOperation(value = "提交结算申请",notes="客户违约（用户先提出结束），按照下单时间来定，客户一小时内要走，就扣罚违约金（总金额*30%），代练掉星也不用赔偿，超过一小时，则客户提前走就不用罚违约金了，按照实际代练结果结算。代练未完成要线下双倍赔付，退全款，返回需要线下双倍退款金额。")
     @PostMapping("/settlement/{token}")
     public ResponseApiVO<PracticeSettlementVO> settlement(@PathVariable String token,
                                                @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeSettlementDTO practiceSettlementDTO){
         try {
             // 原段位包含几星(不可修改),目前段位包含几星,代练编号,返回需要支付金额,如果段位星级比原段位星级低,则走赔付流程
-            return reviewPracticeService.settlement(practiceSettlementDTO);
+            return reviewPracticeService.settlement(TokenUtil.getUserId(token),practiceSettlementDTO);
         }catch (Exception e){
             logger.error("PracticeController->settlement",e);
             return new ResponseApiVO(-1,"提交失败",null);

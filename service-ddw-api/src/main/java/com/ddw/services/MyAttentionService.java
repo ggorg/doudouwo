@@ -57,12 +57,16 @@ public class MyAttentionService extends CommonService {
         searchCondition.put("practiceId",0);
         List<Map> list = this.commonList("ddw_my_attention",null,pageNum,pageSize,searchCondition);
         Long count = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
-        List<String>userIdList = new ArrayList<String>();
+        List<Integer>userIdList = new ArrayList<Integer>();
         for(Map map:list){
-            userIdList.add(map.get("goddessId").toString());
+            userIdList.add((Integer)map.get("goddessId"));
         }
         if(!list.isEmpty()){
             List<UserInfoVO> userInfoList = userInfoMapper.getUserInfoList(userIdList);
+            ListIterator<UserInfoVO> userInfoListIterator = userInfoList.listIterator();
+            while (userInfoListIterator.hasNext()){
+                userInfoListIterator.next().setFocus(true);
+            }
             myAttentionVO.setUserInfoList(userInfoList);
         }
         myAttentionVO.setUserId(userId);
@@ -80,12 +84,16 @@ public class MyAttentionService extends CommonService {
         searchCondition.put("goddessId",0);
         List<Map> list = this.commonList("ddw_my_attention",null,pageNum,pageSize,searchCondition);
         Long count = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
-        List<String>userIdList = new ArrayList<String>();
+        List<Integer>userIdList = new ArrayList<Integer>();
         for(Map map:list){
-            userIdList.add(map.get("practiceId").toString());
+            userIdList.add((Integer) map.get("practiceId"));
         }
         if(!list.isEmpty()){
             List<UserInfoVO> userInfoList = userInfoMapper.getUserInfoList(userIdList);
+            ListIterator<UserInfoVO> userInfoListIterator = userInfoList.listIterator();
+            while (userInfoListIterator.hasNext()){
+                userInfoListIterator.next().setFocus(true);
+            }
             myAttentionVO.setUserInfoList(userInfoList);
         }
         myAttentionVO.setUserId(userId);
@@ -103,12 +111,16 @@ public class MyAttentionService extends CommonService {
         searchCondition.put("goddessId",userId);
         List<Map> list = this.commonList("ddw_my_attention",null,pageNo,pageSize,searchCondition);
         Long count = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
-        List<String>userIdList = new ArrayList<String>();
+        List<Integer>userIdList = new ArrayList<Integer>();
         for(Map map:list){
-            userIdList.add(map.get("userId").toString());
+            userIdList.add((Integer)map.get("userId"));
         }
         if(!list.isEmpty()){
             List<UserInfoVO> userInfoList = userInfoMapper.getUserInfoList(userIdList);
+            ListIterator<UserInfoVO> userInfoListIterator = userInfoList.listIterator();
+            while (userInfoListIterator.hasNext()){
+                userInfoListIterator.next().setFocus(true);
+            }
             myAttentionVO.setUserInfoList(userInfoList);
         }
         myAttentionVO.setUserId(userId);
@@ -126,12 +138,16 @@ public class MyAttentionService extends CommonService {
         searchCondition.put("practiceId",userId);
         List<Map> list = this.commonList("ddw_my_attention",null,pageNo,pageSize,searchCondition);
         Long count = this.commonCountBySearchCondition("ddw_my_attention",searchCondition);
-        List<String>userIdList = new ArrayList<String>();
+        List<Integer>userIdList = new ArrayList<Integer>();
         for(Map map:list){
-            userIdList.add(map.get("userId").toString());
+            userIdList.add((Integer)map.get("userId"));
         }
         if(!list.isEmpty()){
             List<UserInfoVO> userInfoList = userInfoMapper.getUserInfoList(userIdList);
+            ListIterator<UserInfoVO> userInfoListIterator = userInfoList.listIterator();
+            while (userInfoListIterator.hasNext()){
+                userInfoListIterator.next().setFocus(true);
+            }
             myAttentionVO.setUserInfoList(userInfoList);
         }
         myAttentionVO.setUserId(userId);

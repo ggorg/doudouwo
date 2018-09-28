@@ -244,7 +244,7 @@ public class ReviewGoddessService extends CommonService {
      * @return
      * @throws Exception
      */
-    public List<AppIndexGoddessVO> goddessList(Integer userId,Integer pageNo, Integer weekList)throws Exception{
+    public List<AppIndexGoddessVO> goddessList(Integer userId,Integer pageNo,Integer pageSize, Integer weekList)throws Exception{
         List<Map> list = liveRadioClientService.getLiveRadioList(userId, pageNo);
         List<Integer> userIdList =null;
         Map<Integer,Integer> userIdMap = new HashMap<>();
@@ -259,7 +259,7 @@ public class ReviewGoddessService extends CommonService {
             userIdList = new ArrayList<>(userIdMap.keySet());
         }
         Integer pageNum = pageNo;
-        Integer pageSize = 10;
+        pageSize = pageSize==null?10:pageSize;
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
         Integer end = pageSize;
         List<AppIndexGoddessVO> appIndexGoddess = new ArrayList<AppIndexGoddessVO>();

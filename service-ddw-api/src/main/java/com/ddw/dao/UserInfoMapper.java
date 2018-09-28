@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Mapper
 public interface UserInfoMapper {
-    List<UserInfoVO> getUserInfoList(@Param("userId") List<String> userId);
+    List<UserInfoVO> getUserInfoList(@Param("userId") List<Integer> userId);
 
     UserInfoVO getUserInfo(@Param("openid") String openid);
     UserInfoVO loginByOpenid(@Param("openid") String openid);
