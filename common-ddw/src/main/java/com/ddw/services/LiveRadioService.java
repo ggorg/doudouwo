@@ -88,7 +88,7 @@ public class LiveRadioService extends CommonService{
         condtion.put("endDate,>=", new Date());
         condtion.put("storeid", storeId);
 
-        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.userid,t1.pullUrl,t1.groupId,ct0.nickName,ct0.headImgUrl",null,null,condtion,
+        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space",null,"t1.userid,t1.pullUrl,t1.groupId,ct0.nickName,ct0.headImgUrl,ct0.openid openId",null,null,condtion,
         new CommonChildBean("ddw_userinfo","id","userid",null)
         );
         List<Map> list=this.getCommonMapper().selectObjects(csb);

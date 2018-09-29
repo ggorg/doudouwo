@@ -41,6 +41,18 @@ public class LiveRadioListVO {
     @ApiModelProperty(name="viewingNum",value="观看人数",example="1")
     private Integer viewingNum;
 
+    @ApiModelProperty(name="liveRadioFlag",value="直播标记，等待直播：0，直播中：1，离开：2",example="1")
+    private Integer liveRadioFlag;
+
+
+    public Integer getLiveRadioFlag() {
+        return liveRadioFlag;
+    }
+
+    public void setLiveRadioFlag(Integer liveRadioFlag) {
+        this.liveRadioFlag = liveRadioFlag;
+    }
+
     public Integer getViewingNum() {
         return viewingNum;
     }

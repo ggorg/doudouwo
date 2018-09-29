@@ -25,6 +25,17 @@ public class SelectLiveRadioVO {
     @ApiModelProperty(name="goddessCode",value="女神id",example="0")
     private Integer goddessCode;
 
+    @ApiModelProperty(name="openId",value="openId",example="openId")
+    private Integer openId;
+
+    public Integer getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(Integer openId) {
+        this.openId = openId;
+    }
+
     public Integer getGoddessCode() {
         return goddessCode;
     }
