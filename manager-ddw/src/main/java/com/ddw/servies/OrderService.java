@@ -749,11 +749,11 @@ public class OrderService extends BaseOrderService {
         if(StringUtils.isBlank(date)){
             date=DateFormatUtils.format(new Date(),"yyyy");
         }
-        Map<String,Map<String,AllTypeSalesVO>> dataMap=new HashMap();
+        Map<String,Map<String,AllTypeSalesVO>> dataMap=new LinkedHashMap();
         Map  monthDataMap=null;
 
         for(OrderTypeEnum type:OrderTypeEnum.values()){
-            monthDataMap=new HashMap();
+            monthDataMap=new LinkedHashMap();
             for(int i=1;i<=12;i++){
 
                 monthDataMap.put(date+"-"+(i<10?"0"+i:i),null);
