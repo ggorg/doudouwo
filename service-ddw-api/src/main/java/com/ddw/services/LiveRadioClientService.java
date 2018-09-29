@@ -105,7 +105,7 @@ public class LiveRadioClientService  extends CommonService{
         Map condition=new HashMap();
         condition.put("storeid",storeId);
         condition.put("liveStatus,>=",LiveStatusEnum.liveStatus1.getCode());
-        condition.put("endDate,>=",new Date());
+       // condition.put("endDate,>=",new Date());
         condition.put("userid,!=",TokenUtil.getUserId(token));
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space","t1.liveStatus asc","t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label,ct0.id userId,t1.maxGroupNum,t1.liveStatus liveRadioFlag",page.getStartRow(),page.getEndRow(),condition,cb);
