@@ -32,5 +32,27 @@
         GROUP BY
             busId
     </select>
+    
+    <select id="allTypeSales"  resultType="com.ddw.beans.AllTypeSalesVO">
+        SELECT
+            sum( CASE WHEN t.doType = 6 THEN t.doCost * 10 ELSE t.doCost END ) s,
+            count( t.id ) c,
+            t.doType t,
+        DATE_FORMAT(t.createTime,'%Y-%m')  m
+        FROM
+            ddw_order t
+        WHERE
+            createTime LIKE #{date}
+            and
+            doPayStatus=1
+           <if test="sellerId!=null">
+            AND
+               doSellerId=#{sellerId}
+           </if>
+        GROUP BY
+            t.doType,
+        DATE_FORMAT(t.createTime,'%Y-%m')
+
+    </select>
 
 </mapper>

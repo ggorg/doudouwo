@@ -126,6 +126,17 @@ public class ClientOrderController {
         commonOrderInfo(orderNo,model,OrderTypeEnum.OrderType7);
         return "pages/manager/ticket/ticketOrderInfo";
     }
+    @GetMapping("to-all-order-sales")
+    public String toAllOrderSales(String date,Model model){
+        try{
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            model.addAttribute("data",this.orderService.allTypeSales(spo==null?null:spo.getId(),date));
+
+        }catch (Exception e){
+            logger.error("ClientOrderController->toAllOrderSales",e);
+        }
+        return "pages/manager/salesCount/allTypeSales";
+    }
     private void commonOrderInfo(String orderNo,Model model,OrderTypeEnum orderType){
         try {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());

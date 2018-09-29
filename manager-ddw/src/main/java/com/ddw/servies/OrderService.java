@@ -3,11 +3,9 @@ package com.ddw.servies;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ddw.beans.MaterialPO;
-import com.ddw.beans.OrderMaterialPO;
-import com.ddw.beans.OrderPO;
-import com.ddw.beans.StoreProductFormulaMaterialPO;
+import com.ddw.beans.*;
 import com.ddw.controller.ClientOrderController;
+import com.ddw.dao.OrderSalesMapper;
 import com.ddw.dao.StoreProductFormulaMaterialMapper;
 import com.ddw.enums.*;
 import com.ddw.services.BaseOrderService;
@@ -65,6 +63,8 @@ public class OrderService extends BaseOrderService {
 
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private OrderSalesMapper orderSalesMapper;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO checkWeight(String orderNoEncypt,Integer storeId){
@@ -744,6 +744,36 @@ public class OrderService extends BaseOrderService {
 
     }
 
+    public Map allTypeSales(Integer storeId,String date){
+       // List data=new ArrayList();
+        if(StringUtils.isBlank(date)){
+            date=DateFormatUtils.format(new Date(),"yyyy");
+        }
+        Map<String,Map<String,AllTypeSalesVO>> dataMap=new HashMap();
+        Map  monthDataMap=null;
 
+        for(OrderTypeEnum type:OrderTypeEnum.values()){
+            monthDataMap=new HashMap();
+            for(int i=1;i<=12;i++){
+
+                monthDataMap.put(date+"-"+(i<10?"0"+i:i),null);
+
+            }
+            dataMap.put(type.getName(),monthDataMap);
+        }
+
+
+        List<AllTypeSalesVO>  aList=orderSalesMapper.allTypeSales(storeId,date+"%");
+        if(aList!=null){
+            for(AllTypeSalesVO v:aList){
+                dataMap.get(OrderTypeEnum.getName(v.getT())).replace(v.getM(),v);
+            }
+        }
+
+        return dataMap;
+
+
+
+    }
 
 }

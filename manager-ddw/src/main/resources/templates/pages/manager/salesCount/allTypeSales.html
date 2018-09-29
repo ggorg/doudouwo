@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <style type="text/css">
+            .vStyle{
+                border-bottom:#cccccc 1px dashed;
+            }
+            
+        </style>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>统计列表</h3>
+
+                </div><!--contenttitle-->
+
+                <div class="tableoptions">
+
+                    <form class="layui-form" >
+                        <div class="layui-form-item2 layui-form-item">
+                        <div class="float-left-div" >
+
+                            <label class="layui-form-label" >年份</label>
+                            <div class="layui-input-inline" >
+                                <input class="layui-input" name="date" th:value="${#httpServletRequest.getParameter('date')}"/>
+                            </div>
+                        </div>
+                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
+
+                    </div>
+                    </form>
+                    <!-- <select class="radius3">
+                         <option value="">Show All</option>
+                         <option value="">Rendering Engine</option>
+                         <option value="">Platform</option>
+                     </select> &nbsp;
+                     <button class="radius3">Apply Filter</button>
+                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+                </div><!--tableoptions-->
+
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                    </colgroup>
+                    <thead>
+
+                    <tr>
+                        <th class="head1" ></th>
+                        <th class="head1"  style="text-align: right" >1月</th>
+                        <th class="head1"  style="text-align: right" >2月</th>
+                        <th class="head1"  style="text-align: right" >3月</th>
+                        <th class="head1"  style="text-align: right" >4月</th>
+                        <th class="head1"  style="text-align: right" >5月</th>
+                        <th class="head1"  style="text-align: right" >6月</th>
+                        <th class="head1"  style="text-align: right" >7月</th>
+                        <th class="head1"  style="text-align: right" >8月</th>
+                        <th class="head1"  style="text-align: right" >9月</th>
+                        <th class="head1"  style="text-align: right" >10月</th>
+                        <th class="head1"  style="text-align: right" >11月</th>
+                        <th class="head1"  style="text-align: right" >12月</th>
+                        <th class="head1" style="text-align: right" >合计</th>
+                    </tr>
+  
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${data}">
+                        <td th:text="${obj.key}"></td>
+                        <td th:each="vo:${obj.value}" align="right" th:attr="v=${vo.value?.s},c=${vo.value?.c}">
+                            <div class="vStyle"th:text="${vo.value==null?'&nbsp;':'￥'+#toolsddw.divided(vo.value?.s,100)+'元'}" >
+
+                            </div>
+                            <div th:text="${vo.value==null?'&nbsp;':vo.value?.c+'单'}" > </div>
+                        </td>
+                  
+
+                        <td align="right"></td>
+                    </tr>
+                    <tr>
+                        <td>合计</td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+                        <td align="right"></td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+
+        layui.use('form', function(){
+            var form = layui.form;
+
+        })
+        window.onload=function(){
+            var tb=document.getElementById("table2");
+            var celN=[];
+            var celd=[];
+            for(var i=0;i<tb.rows.length;i++){
+                var r=tb.rows[i];
+                var c=r.cells;
+                var rowN=0;
+                var rowd=0;
+                for(var j=1;j<c.length;j++){
+
+                    if(c[j].hasAttribute("v")){
+                        var vVal=Number(c[j].getAttribute("v"));
+                        var dVal=Number(c[j].getAttribute("c"));
+                        rowN=rowN+vVal;
+                        rowd=rowd+dVal;
+                        if(celN[j]==null){
+                            celN[j]=vVal;
+                            celd[j]=dVal;
+                        }else{
+                            celN[j]=celN[j]+vVal;
+                            celd[j]=celd[j]+dVal;
+                        }
+                    }
+                    if(c.length-j==1){
+                        if(rowN!=0){
+                            c[j].innerHTML="<div class='vStyle'>￥"+(rowN/100)+"元</div><div>"+rowd+"单</div>"
+
+                        }
+                    }
+                }
+                if(tb.rows.length-i==1){
+                    var allN=0;
+                    var alld=0;
+                    for(var key in celN){
+                        allN=allN+celN[key];
+                        alld=alld+celd[key];
+                        r.cells[key].innerHTML="<div class='vStyle'>￥"+(celN[key]/100)+"元</div><div>"+celd[key]+"单</div>";
+                    }
+                    r.cells[r.cells.length-1].innerHTML="<div class='vStyle'>￥"+(allN/100)+"元</div><div>"+alld+"单</div>";
+                }
+
+            }
+        }
+
+    </script>
+	</body>
+
+</html>
