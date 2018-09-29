@@ -132,6 +132,9 @@ public class UserInfoService extends CommonService {
 //                new CommonChildBean("ddw_practice_grade","id","practiceGradeId",condition));
 //        List list=this.getCommonMapper().selectObjects(csb);
         UserInfoVO userInfoVO = userInfoMapper.getUserInfo(openid);
+        if(userInfoVO == null){
+            return userInfoVO;
+        }
         return this.setFlag(userInfoVO,false);
     }
     public UserInfoVO queryByOpenid(String openid)throws Exception{
@@ -150,6 +153,9 @@ public class UserInfoService extends CommonService {
 //                new CommonChildBean("ddw_consume_ranking_list","consumeUserId","id",condition));
 //        List list=this.getCommonMapper().selectObjects(csb);
         UserInfoVO userInfoVO = userInfoMapper.getUserInfo(openid);
+        if(userInfoVO == null){
+            return userInfoVO;
+        }
         return this.setFlag(userInfoVO,true);
     }
 
