@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -43,7 +44,16 @@ public class LiveRadioListVO {
 
     @ApiModelProperty(name="liveRadioFlag",value="直播标记，等待直播：0，直播中：1，离开：2",example="1")
     private Integer liveRadioFlag;
+    @JsonIgnore
+    private Integer userId;
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
     public Integer getLiveRadioFlag() {
         return liveRadioFlag;

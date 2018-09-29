@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.ddw.beans.*;
 import com.ddw.beans.vo.AppIndexGoddessVO;
+import com.ddw.dao.GoddessMapper;
 import com.ddw.enums.GoddessFlagEnum;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
@@ -39,6 +40,9 @@ public class LiveRadioClientService  extends CommonService{
 
     @Autowired
     private BasePhotoService basePhotoService;
+
+    @Autowired
+    private GoddessMapper goddessMapper;
 
 
     public ResponseApiVO toLiveRadio(String token)throws Exception{
@@ -102,28 +106,18 @@ public class LiveRadioClientService  extends CommonService{
         double latitude=Double.parseDouble((String)store.get("dsLatitude"));
         String city=(String)store.get("dsCity");
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
-        Map condition=new HashMap();
-        condition.put("storeid",storeId);
-        condition.put("liveStatus,>=",LiveStatusEnum.liveStatus1.getCode());
-       // condition.put("endDate,>=",new Date());
-        condition.put("userid,!=",TokenUtil.getUserId(token));
-        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id","userid",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_live_radio_space","t1.liveStatus asc","t1.id ,ct0.userName,ct0.nickName,ct0.headImgUrl,ct0.label,ct0.id userId,t1.maxGroupNum,t1.liveStatus liveRadioFlag",page.getStartRow(),page.getEndRow(),condition,cb);
-        List<Map> lists=this.getCommonMapper().selectObjects(csb);
-        LiveRadioListVO vo=null;
-        List newList=new ArrayList();
-        for(Map o:lists){
-            vo=new LiveRadioListVO();
-            PropertyUtils.copyProperties(vo,o);
-            vo.setCity(city);
-            vo.setAge("20岁");
-            vo.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
-            vo.setBackImgUrl(basePhotoService.getPhotograph((Integer) o.get("userId")));
-            vo.setViewingNum((Integer)o.get("maxGroupNum"));
-            newList.add(vo);
+
+
+        List<LiveRadioListVO> lists=this.goddessMapper.liveGoddess(page.getStartRow(),page.getEndRow(),storeId);
+        for(LiveRadioListVO o:lists){
+
+            o.setCity(city);
+            o.setAge("20岁");
+            o.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
+            o.setBackImgUrl(basePhotoService.getPhotograph(o.getUserId()));
+
         }
-        lists.clear();
-        ListVO list=new ListVO(newList);
+        ListVO list=new ListVO(lists);
         return new ResponseApiVO(1,"成功",list);
     }
 

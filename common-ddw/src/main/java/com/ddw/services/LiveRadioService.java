@@ -223,8 +223,11 @@ public class LiveRadioService extends CommonService{
         liveRadioPO.setVersion(1);
         liveRadioPO.setBusinessCode(liveRadioBusinessCode);
         liveRadioPO.setUserName(StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName());
-        ResponseVO res=this.commonInsertMap("ddw_live_radio_space",BeanToMapUtil.beanToMap(liveRadioPO));
+        ResponseVO<Integer> res=this.commonInsertMap("ddw_live_radio_space",BeanToMapUtil.beanToMap(liveRadioPO));
         if(res.getReCode()==1){
+            Map update=new HashMap();
+            update.put("liveId",res.getData());
+            this.commonUpdateBySingleSearchParam("ddw_goddess",update,"userId",liveRadioPO.getUserid());
             res.setReMsg("创建直播成功");
         }else{
             res.setReMsg("创建直播失败");
