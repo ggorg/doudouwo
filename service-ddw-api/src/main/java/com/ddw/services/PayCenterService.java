@@ -413,6 +413,7 @@ public class PayCenterService extends BaseOrderService {
                 return new ResponseApiVO(-2,"逗币不足，请充值",null);
             }
             orderPO.setDoCost(coutCost);
+            orderPO.setDoPayStatus(PayStatusEnum.PayStatus1.getCode());
             //buyInProMap=buyInGoiftMap;
         }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus0.getCode());
