@@ -791,17 +791,15 @@ public class ReviewPracticeService extends CommonService {
             return new ResponseVO(-1,"订单号不能为空",null);
         }else{
             Map conditionMap = new HashMap<>();
-            conditionMap.put("drProposer",userId);
-            conditionMap.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType9.getCode());
-            //查询状态审核未通过
-            conditionMap.put("drReviewStatus,!=",ReviewStatusEnum.ReviewStatus2.getCode());
-            ReviewPO rePO = this.commonObjectBySearchCondition("ddw_review",conditionMap,new ReviewPO().getClass());
+            conditionMap.put("id",orderId);
+            conditionMap.put("status",PracticeOrderStatusEnum.orderStatus6.getCode());
+            PracticeOrderPO rePO = this.commonObjectBySearchCondition("ddw_practice_order",conditionMap,new PracticeOrderPO().getClass());
             if(rePO != null){
                 return new ResponseVO(-2,"不允许重复提交申请",null);
             }
             //更新代练订单表状态
             Map setParams2 = new HashMap<>();
-            setParams2.put("status", PracticeOrderStatusEnum.orderStatus4.getCode());
+            setParams2.put("status", PracticeOrderStatusEnum.orderStatus6.getCode());
             Map searchCondition2 = new HashMap<>();
             searchCondition2.put("id",orderId);
             this.commonUpdateByParams("ddw_practice_order",setParams2,searchCondition2);

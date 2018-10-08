@@ -82,7 +82,7 @@ public class ReviewPracticeRefundService extends CommonService {
                     searchCondition.put("drBusinessCode",rb.getBusinessCode());
 
                     Map setParams2 = new HashMap<>();
-                    setParams2.put("status", PracticeOrderStatusEnum.orderStatus5.getCode());
+                    setParams2.put("status", PracticeOrderStatusEnum.orderStatus7.getCode());
                     Map searchCondition2 = new HashMap<>();
                     searchCondition2.put("id",practiceRefundPO.getOrderId());
                     this.commonUpdateByParams("ddw_practice_order",setParams2,searchCondition2);
@@ -101,7 +101,7 @@ public class ReviewPracticeRefundService extends CommonService {
             searchCondition.put("drBusinessCode",rb.getBusinessCode());
 
             Map setParams2 = new HashMap<>();
-            setParams2.put("status", PracticeOrderStatusEnum.orderStatus6.getCode());
+            setParams2.put("status", PracticeOrderStatusEnum.orderStatus8.getCode());
             Map searchCondition2 = new HashMap<>();
             searchCondition2.put("id",practiceRefundPO.getOrderId());
             this.commonUpdateByParams("ddw_practice_order",setParams2,searchCondition2);
