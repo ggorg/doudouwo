@@ -106,13 +106,13 @@ public class LiveRadioClientService  extends CommonService{
         double latitude=Double.parseDouble((String)store.get("dsLatitude"));
         String city=(String)store.get("dsCity");
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
+        Integer userId=TokenUtil.getUserId(token);
 
-
-        List<LiveRadioListVO> lists=this.goddessMapper.liveGoddess(page.getStartRow(),page.getEndRow(),storeId);
+        List<LiveRadioListVO> lists=this.goddessMapper.liveGoddess(page.getStartRow(),page.getEndRow(),storeId,userId);
         for(LiveRadioListVO o:lists){
 
             o.setCity(city);
-            o.setAge("20岁");
+           // o.setAge("20岁");
             o.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
             o.setBackImgUrl(basePhotoService.getPhotograph(o.getUserId()));
 

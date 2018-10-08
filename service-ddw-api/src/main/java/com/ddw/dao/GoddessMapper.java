@@ -17,5 +17,5 @@ public interface GoddessMapper {
                                                 @Param("start") Integer start, @Param("end") Integer end,@Param("weekList") Integer weekList);
     List<AppIndexGoddessVO> getGoddessListByNotInIds(@Param("userIdList") List<Integer> userIdList, @Param("userId") Integer userId,
                                                      @Param("start") Integer start, @Param("end") Integer end,@Param("weekList") Integer weekList);
-    List<LiveRadioListVO> liveGoddess(@Param("startNum") Integer startNum, @Param("endNum") Integer endNum,@Param("storeId") Integer storeId);
+    List<LiveRadioListVO> liveGoddess(@Param("startNum") Integer startNum, @Param("endNum") Integer endNum,@Param("storeId") Integer storeId,@Param("userId") Integer userId);
 }
