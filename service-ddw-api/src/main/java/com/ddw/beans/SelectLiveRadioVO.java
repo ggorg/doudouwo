@@ -26,13 +26,13 @@ public class SelectLiveRadioVO {
     private Integer goddessCode;
 
     @ApiModelProperty(name="openId",value="openId",example="openId")
-    private Integer openId;
+    private String openId;
 
-    public Integer getOpenId() {
+    public String getOpenId() {
         return openId;
     }
 
-    public void setOpenId(Integer openId) {
+    public void setOpenId(String openId) {
         this.openId = openId;
     }
 

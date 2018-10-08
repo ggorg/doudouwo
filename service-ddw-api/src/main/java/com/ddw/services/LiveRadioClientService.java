@@ -161,7 +161,7 @@ public class LiveRadioClientService  extends CommonService{
 
             return new ResponseApiVO(1,"成功",svo);
         }
-        return new ResponseApiVO(-2,"选择直播房间",null);
+        return new ResponseApiVO(-2,"主播在赶来的路上",null);
 
 
 
