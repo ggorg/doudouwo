@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.ddw.beans.*;
 import com.ddw.beans.vo.AppIndexGoddessVO;
+import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.dao.GoddessMapper;
 import com.ddw.enums.GoddessFlagEnum;
 import com.ddw.enums.LiveStatusEnum;
@@ -176,10 +177,10 @@ public class LiveRadioClientService  extends CommonService{
         }
         Map map= IMApiUtil.getMemberNum(Arrays.asList(groupId));
         Integer userid=Integer.parseInt(groupId.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2"));
-        List<AppIndexGoddessVO> alist= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
+        List<LiveRadioListVO> alist= (List<LiveRadioListVO>)CacheUtil.get("publicCache","appIndexGoddess");
         if(alist!=null){
             alist.forEach(a->{
-                if(a.getId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
+                if(a.getUserId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
                     a.setViewingNum((Integer) map.get(groupId));
 
                 }

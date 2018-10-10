@@ -74,7 +74,7 @@
         order by count(1) desc
         limit #{start},#{end}
     </select>
-    <select id="liveGoddess" resultType="com.ddw.beans.LiveRadioListVO">
+    <select id="liveGoddess" resultType="com.ddw.beans.vo.LiveRadioListVO">
         SELECT
             t1.nickName,
             t1.userName,
@@ -93,8 +93,10 @@
             LEFT JOIN ddw_my_attention ct0 ON ct0.goddessId = t1.id
             LEFT JOIN ddw_goddess ct1 ON t1.id = ct1.userId
             LEFT JOIN ddw_live_radio_space ct2 ON ct2.id = ct1.liveId
-        where ct2.storeid=#{storeId}  and t1.id!=#{userId}
-
+        where t1.id!=#{userId}
+        <if test="null!=storeId" >
+            and ct2.storeid=#{storeId}
+        </if>
         GROUP BY
             t1.id
         ORDER BY

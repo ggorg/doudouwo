@@ -2,6 +2,7 @@ package com.ddw.servies;
 
 import com.ddw.beans.PracticeGamePO;
 import com.ddw.beans.vo.AppIndexGoddessVO;
+import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.*;
 import com.ddw.services.*;
@@ -114,7 +115,7 @@ public class TimerTaskService extends CommonService {
         Map param=null;
         Integer pv=null;
         Map search=null;
-        List<AppIndexGoddessVO> alist= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
+        List<LiveRadioListVO> alist= (List<LiveRadioListVO>)CacheUtil.get("publicCache","appIndexGoddess");
 
         for(String k:keys){
             param=new HashMap();
@@ -126,7 +127,7 @@ public class TimerTaskService extends CommonService {
             }
             alist.forEach(a->{
                 Integer userid=Integer.parseInt(k.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2"));
-                if(a.getId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
+                if(a.getUserId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
                     a.setViewingNum((Integer) map.get(k));
                 }
             });

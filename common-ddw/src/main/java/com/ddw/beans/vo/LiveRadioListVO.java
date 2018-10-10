@@ -1,4 +1,4 @@
-package com.ddw.beans;
+package com.ddw.beans.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -6,11 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
+
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LiveRadioListVO {
+public class LiveRadioListVO  implements Serializable {
 
-    @ApiModelProperty(name="code",value="直播ID",example="1")
+
+    private static final long serialVersionUID = 3273866795499774187L;
+    @ApiModelProperty(name="code",value="直播ID",example="直播ID")
     @JsonProperty("code")
     private Integer id;
 
@@ -44,7 +48,8 @@ public class LiveRadioListVO {
 
     @ApiModelProperty(name="liveRadioFlag",value="直播标记，等待直播：0，直播中：1，离开：2",example="1")
     private Integer liveRadioFlag;
-    @JsonIgnore
+    @ApiModelProperty(name="id",value="女神ID",example="女神ID")
+    @JsonProperty("id")
     private Integer userId;
 
     public Integer getUserId() {

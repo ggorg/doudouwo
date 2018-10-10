@@ -1,10 +1,6 @@
 package com.ddw.beans;
 
-import com.ddw.beans.vo.AppIndexBannerVO;
-import com.ddw.beans.vo.AppIndexButtonVO;
-import com.ddw.beans.vo.AppIndexPracticeVO;
-import com.ddw.beans.vo.AppIndexGoddessVO;
-import com.ddw.beans.vo.AppIndexTicketVO;
+import com.ddw.beans.vo.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -26,7 +22,7 @@ public class AppIndexVO implements Serializable {
     public List<AppIndexTicketVO> ticketList;
 
     @ApiModelProperty(name="goddessList",value="女神",example="")
-    public List<AppIndexGoddessVO> goddessList;
+    public List<LiveRadioListVO> goddessList;
 
     @ApiModelProperty(name="goodFriendPlayList",value="好友约玩儿",example="")
     public List<AppIndexGoodFriendPlayVO> goodFriendPlayList;
@@ -61,11 +57,11 @@ public class AppIndexVO implements Serializable {
         this.ticketList = ticketList;
     }
 
-    public List<AppIndexGoddessVO> getGoddessList() {
+    public List<LiveRadioListVO> getGoddessList() {
         return goddessList;
     }
 
-    public void setGoddessList(List<AppIndexGoddessVO> goddessList) {
+    public void setGoddessList(List<LiveRadioListVO> goddessList) {
         this.goddessList = goddessList;
     }
 

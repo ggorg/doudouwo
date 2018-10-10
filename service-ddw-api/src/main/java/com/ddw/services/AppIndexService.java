@@ -2,12 +2,12 @@ package com.ddw.services;
 
 import com.ddw.beans.AppIndexVO;
 import com.ddw.beans.ResponseApiVO;
-import com.ddw.beans.vo.AppIndexBannerVO;
-import com.ddw.beans.vo.AppIndexButtonVO;
-import com.ddw.beans.vo.AppIndexGoddessVO;
-import com.ddw.beans.vo.AppIndexPracticeVO;
+import com.ddw.beans.vo.*;
+import com.ddw.dao.GoddessMapper;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.Distance;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.Page;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +31,12 @@ public class AppIndexService {
     @Autowired
     private ButtonService buttonService;
 
+    @Autowired
+    private GoddessMapper goddessMapper;
+
+    @Autowired
+    private BasePhotoService basePhotoService;
+
 
     public ResponseApiVO toIndex(String token)throws Exception{
         List<Map> obj=(List)CacheUtil.get("stores","store");
@@ -45,12 +51,22 @@ public class AppIndexService {
         Object obGoddess = CacheUtil.get("publicCache","appIndexGoddess");
         if(obGoddess == null){
             //查询所有门店女神,直播优先,列表不包括当前查询会员id
-            appIndexVO.setGoddessList(reviewGoddessService.goddessList(TokenUtil.getUserId(token),1,4,null));
+            Page page=new Page<>(1,4);
+            Integer userId=TokenUtil.getUserId(token);
+            List<LiveRadioListVO> lists=this.goddessMapper.liveGoddess(page.getStartRow(),page.getEndRow(),null,userId);
+            for(LiveRadioListVO o:lists){
+
+
+                // o.setAge("20岁");
+                o.setBackImgUrl(basePhotoService.getPhotograph(o.getUserId()));
+                o.setHeadImgUrl(o.getBackImgUrl());
+            }
+            appIndexVO.setGoddessList(lists);
             if(appIndexVO.getGoddessList().size()>0) {
                 CacheUtil.put("publicCache", "appIndexGoddess", appIndexVO.getGoddessList());
             }
         }else{
-            appIndexVO.setGoddessList((List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess"));
+            appIndexVO.setGoddessList((List<LiveRadioListVO>)CacheUtil.get("publicCache","appIndexGoddess"));
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
