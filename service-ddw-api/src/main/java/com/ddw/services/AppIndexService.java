@@ -4,8 +4,10 @@ import com.ddw.beans.AppIndexVO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.vo.*;
 import com.ddw.dao.GoddessMapper;
+import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.Distance;
+import com.ddw.util.IMApiUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import org.apache.log4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,10 +57,20 @@ public class AppIndexService {
             Page page=new Page<>(1,4);
             Integer userId=TokenUtil.getUserId(token);
             List<LiveRadioListVO> lists=this.goddessMapper.liveGoddess(page.getStartRow(),page.getEndRow(),null,userId);
+            final List groupIds=new ArrayList();
+            lists.forEach(a->{
+                if(LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
+                    groupIds.add(a.getGroupId());
+                }
+            });
+            Map map= IMApiUtil.getMemberNum(groupIds);
             for(LiveRadioListVO o:lists){
-
-
                 // o.setAge("20岁");
+                if(LiveStatusEnum.liveStatus1.getCode().equals(o.getLiveRadioFlag())){
+                    o.setViewingNum((Integer) map.get(o.getGroupId()));
+                }else{
+                    o.setViewingNum(0);
+                }
                 o.setBackImgUrl(basePhotoService.getPhotograph(o.getUserId()));
                 o.setHeadImgUrl(o.getBackImgUrl());
             }

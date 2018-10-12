@@ -85,7 +85,7 @@
             t1.id userId,
             count( ct0.id ) a,
             ct2.id,
-
+            ct2.groupId,
             (case  when ct2.maxGroupNum is null then 0 else ct2.maxGroupNum end) as viewingNum,
             (case  when ct2.liveStatus is null then 2 else ct2.liveStatus end) as liveRadioFlag
         FROM

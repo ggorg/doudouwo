@@ -110,8 +110,19 @@ public class LiveRadioClientService  extends CommonService{
         Integer userId=TokenUtil.getUserId(token);
 
         List<LiveRadioListVO> lists=this.goddessMapper.liveGoddess(page.getStartRow(),page.getEndRow(),storeId,userId);
+        final List groupIds=new ArrayList();
+        lists.forEach(a->{
+            if(LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
+                groupIds.add(a.getGroupId());
+            }
+        });
+        Map map= IMApiUtil.getMemberNum(groupIds);
         for(LiveRadioListVO o:lists){
-
+            if(LiveStatusEnum.liveStatus1.getCode().equals(o.getLiveRadioFlag())){
+                o.setViewingNum((Integer) map.get(o.getGroupId()));
+            }else{
+                o.setViewingNum(0);
+            }
             o.setCity(city);
            // o.setAge("20岁");
             o.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");

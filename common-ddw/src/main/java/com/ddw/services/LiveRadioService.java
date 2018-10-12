@@ -135,7 +135,8 @@ public class LiveRadioService extends CommonService{
 
 
     //更新缓存首页女神直播状态
-    public void updateAppIndexCache(String streamId,Integer flag){
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void updateAppIndexCache(String streamId,Integer flag)throws Exception{
         if(LiveEventTypeEnum.eventType1.getCode().equals(flag)){
             CacheUtil.delete("publicCache","appIndexGoddess");
             return ;
@@ -145,15 +146,28 @@ public class LiveRadioService extends CommonService{
         Integer userId = Integer.parseInt(str[2]);
         List<LiveRadioListVO> appIndexGoddessList= (List<LiveRadioListVO>)CacheUtil.get("publicCache","appIndexGoddess");
         if(appIndexGoddessList != null){
+
             ListIterator<LiveRadioListVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
             while (appIndexGoddessIterator.hasNext()){
                 LiveRadioListVO appIndexGoddessVO = appIndexGoddessIterator.next();
-                if(appIndexGoddessVO.getId() == userId || appIndexGoddessVO.getId() .equals( userId)){
-                    appIndexGoddessVO.setLiveRadioFlag(flag);
-                    appIndexGoddessVO.setViewingNum(0);
-                    appIndexGoddessVO.setId(null);
+                if(appIndexGoddessVO.getId() == userId || userId.equals(appIndexGoddessVO.getId())){
+                    String groupId=streamId.replaceFirst("[0-9]+_","");
+                    List groupIds=Arrays.asList(groupId);
+                    Integer pv=(Integer) CacheUtil.get("publicCache","livePv-"+groupId);
+                    Map map=IMApiUtil.getMemberNum(groupIds);
+                    Map search=new HashMap();
+                    search.put("groupId",groupId);
+                    Map param=new HashMap();
+                    param.put("pv",pv==null?0:pv);
+                    if(map.containsKey(groupId)){
+                        param.put("maxGroupNum",map.get(groupId));
+                    }
+                    this.commonOptimisticLockUpdateByParam("ddw_live_radio_space",param,search,"version");
+                    CacheUtil.delete("publicCache","appIndexGoddess");
+
                 }
             }
+
            // appIndexGoddessList.
             //Collections.sort(appIndexGoddessList,new IndexGoddessComparator());
             CacheUtil.put("publicCache","appIndexGoddess",appIndexGoddessList);

@@ -52,6 +52,17 @@ public class LiveRadioListVO  implements Serializable {
     @JsonProperty("id")
     private Integer userId;
 
+    @JsonIgnore
+    private String groupId;
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
     public Integer getUserId() {
         return userId;
     }
