@@ -116,9 +116,13 @@ public class LiveRadioClientService  extends CommonService{
                 groupIds.add(a.getGroupId());
             }
         });
-        Map map= IMApiUtil.getMemberNum(groupIds);
+        Map map=null;
+        if(groupIds.size()>0){
+            map= IMApiUtil.getMemberNum(groupIds);
+        }
+
         for(LiveRadioListVO o:lists){
-            if(LiveStatusEnum.liveStatus1.getCode().equals(o.getLiveRadioFlag())){
+            if(map!=null && LiveStatusEnum.liveStatus1.getCode().equals(o.getLiveRadioFlag())){
                 o.setViewingNum((Integer) map.get(o.getGroupId()));
             }else{
                 o.setViewingNum(0);

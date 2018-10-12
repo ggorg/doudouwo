@@ -93,10 +93,16 @@
             LEFT JOIN ddw_my_attention ct0 ON ct0.goddessId = t1.id
             LEFT JOIN ddw_goddess ct1 ON t1.id = ct1.userId
             LEFT JOIN ddw_live_radio_space ct2 ON ct2.id = ct1.liveId
-        where t1.id!=#{userId}
-        <if test="null!=storeId" >
-            and ct2.storeid=#{storeId}
-        </if>
+        <where>
+            <if test="null!=userId">
+                and t1.id!=#{userId}
+            </if>
+
+            <if test="null!=storeId" >
+                and ct2.storeid=#{storeId}
+            </if>
+        </where>
+
         GROUP BY
             t1.id
         ORDER BY

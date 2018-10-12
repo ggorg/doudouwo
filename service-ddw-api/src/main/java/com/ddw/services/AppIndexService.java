@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,21 +53,26 @@ public class AppIndexService {
         }
         AppIndexVO appIndexVO = new AppIndexVO();
         Object obGoddess = CacheUtil.get("publicCache","appIndexGoddess");
+        List<LiveRadioListVO> lists=null;
+        Integer userId=TokenUtil.getUserId(token);
         if(obGoddess == null){
             //查询所有门店女神,直播优先,列表不包括当前查询会员id
             Page page=new Page<>(1,4);
-            Integer userId=TokenUtil.getUserId(token);
-            List<LiveRadioListVO> lists=this.goddessMapper.liveGoddess(page.getStartRow(),page.getEndRow(),null,userId);
+
+            lists=this.goddessMapper.liveGoddess(null,null,null,null);
             final List groupIds=new ArrayList();
             lists.forEach(a->{
                 if(LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
                     groupIds.add(a.getGroupId());
                 }
             });
-            Map map= IMApiUtil.getMemberNum(groupIds);
+            Map map=null;
+            if(groupIds.size()>0){
+                map= IMApiUtil.getMemberNum(groupIds);
+            }
             for(LiveRadioListVO o:lists){
                 // o.setAge("20岁");
-                if(LiveStatusEnum.liveStatus1.getCode().equals(o.getLiveRadioFlag())){
+                if(map!=null && LiveStatusEnum.liveStatus1.getCode().equals(o.getLiveRadioFlag())){
                     o.setViewingNum((Integer) map.get(o.getGroupId()));
                 }else{
                     o.setViewingNum(0);
@@ -74,12 +80,18 @@ public class AppIndexService {
                 o.setBackImgUrl(basePhotoService.getPhotograph(o.getUserId()));
                 o.setHeadImgUrl(o.getBackImgUrl());
             }
-            appIndexVO.setGoddessList(lists);
-            if(appIndexVO.getGoddessList().size()>0) {
-                CacheUtil.put("publicCache", "appIndexGoddess", appIndexVO.getGoddessList());
+            if(lists.size()>0) {
+                CacheUtil.put("publicCache", "appIndexGoddess", lists);
             }
         }else{
-            appIndexVO.setGoddessList((List<LiveRadioListVO>)CacheUtil.get("publicCache","appIndexGoddess"));
+            lists=(List<LiveRadioListVO>)CacheUtil.get("publicCache","appIndexGoddess");
+
+        }
+        if(lists!=null){
+            appIndexVO.setGoddessList(lists.stream().filter(a->!userId.equals(a.getUserId())).collect(Collectors.toList()).subList(0,4));
+
+        }else{
+            appIndexVO.setGoddessList(new ArrayList<>());
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
