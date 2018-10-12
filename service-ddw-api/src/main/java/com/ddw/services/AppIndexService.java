@@ -90,7 +90,7 @@ public class AppIndexService {
         if(lists!=null){
             List newList=lists.stream().filter(a->!userId.equals(a.getUserId())).collect(Collectors.toList());
             if(newList.size()>4){
-                newList.subList(0,4);
+                appIndexVO.setGoddessList( newList.subList(0,4));
             }else{
                 appIndexVO.setGoddessList(newList);
             }
