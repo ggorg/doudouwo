@@ -150,7 +150,7 @@ public class LiveRadioService extends CommonService{
             ListIterator<LiveRadioListVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
             while (appIndexGoddessIterator.hasNext()){
                 LiveRadioListVO appIndexGoddessVO = appIndexGoddessIterator.next();
-                if(appIndexGoddessVO.getId() == userId || userId.equals(appIndexGoddessVO.getId())){
+                if(appIndexGoddessVO.getUserId() == userId || userId.equals(appIndexGoddessVO.getUserId())){
                     String groupId=streamId.replaceFirst("[0-9]+_","");
                     List groupIds=Arrays.asList(groupId);
                     Integer pv=(Integer) CacheUtil.get("publicCache","livePv-"+groupId);
