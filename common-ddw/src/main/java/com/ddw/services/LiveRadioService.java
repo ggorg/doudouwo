@@ -170,7 +170,7 @@ public class LiveRadioService extends CommonService{
 
            // appIndexGoddessList.
             //Collections.sort(appIndexGoddessList,new IndexGoddessComparator());
-            CacheUtil.put("publicCache","appIndexGoddess",appIndexGoddessList);
+
         }
     }
     /*public ResponseVO addPersonNum(String groupId){
