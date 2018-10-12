@@ -15,6 +15,7 @@ public class UserInfoPO {
     private String label;
     private String interest;
     private String job;
+    private Integer age;
     private String starSign;
     private String signature;
     private String province;
@@ -127,6 +128,14 @@ public class UserInfoPO {
 
     public void setJob(String job) {
         this.job = job;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getStarSign() {
