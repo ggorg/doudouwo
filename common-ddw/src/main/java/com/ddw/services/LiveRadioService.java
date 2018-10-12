@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.beans.vo.AppIndexGoddessVO;
+import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.*;
 import com.ddw.util.IMApiUtil;
@@ -142,19 +143,19 @@ public class LiveRadioService extends CommonService{
         String[] str = streamId.split("_");
         String storeId = str[1];
         Integer userId = Integer.parseInt(str[2]);
-        List<AppIndexGoddessVO> appIndexGoddessList= (List<AppIndexGoddessVO>)CacheUtil.get("publicCache","appIndexGoddess");
+        List<LiveRadioListVO> appIndexGoddessList= (List<LiveRadioListVO>)CacheUtil.get("publicCache","appIndexGoddess");
         if(appIndexGoddessList != null){
-            ListIterator<AppIndexGoddessVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
+            ListIterator<LiveRadioListVO> appIndexGoddessIterator = appIndexGoddessList.listIterator();
             while (appIndexGoddessIterator.hasNext()){
-                AppIndexGoddessVO appIndexGoddessVO = appIndexGoddessIterator.next();
+                LiveRadioListVO appIndexGoddessVO = appIndexGoddessIterator.next();
                 if(appIndexGoddessVO.getId() == userId || appIndexGoddessVO.getId() .equals( userId)){
                     appIndexGoddessVO.setLiveRadioFlag(flag);
                     appIndexGoddessVO.setViewingNum(0);
-                    appIndexGoddessVO.setCode(null);
+                    appIndexGoddessVO.setId(null);
                 }
             }
            // appIndexGoddessList.
-            Collections.sort(appIndexGoddessList,new IndexGoddessComparator());
+            //Collections.sort(appIndexGoddessList,new IndexGoddessComparator());
             CacheUtil.put("publicCache","appIndexGoddess",appIndexGoddessList);
         }
     }

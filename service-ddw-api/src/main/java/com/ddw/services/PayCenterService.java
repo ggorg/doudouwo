@@ -75,7 +75,7 @@ public class PayCenterService extends BaseOrderService {
         }
         if(paystatus==null){
             Map map=new HashMap();
-            if(CacheUtil.get("pay","weixin-pay-"+dto.getOrderNo()) ==null && CacheUtil.get("pay","alipay-pay-"+dto.getOrderNo())==null){
+            if(CacheUtil.get("pay","pre-pay-"+dto.getOrderNo()) ==null){
                 return new ResponseApiVO(-2,"抱歉，没有支付记录",null);
 
             }
