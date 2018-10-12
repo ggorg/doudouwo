@@ -64,7 +64,7 @@ public class PayCenterService extends BaseOrderService {
 
         }
         String paystatus=null;
-        for(int i=1;i<=4;i++){
+        for(int i=1;i<=3;i++){
             paystatus=(String)CacheUtil.get("pay","order-"+dto.getOrderNo());
             if(paystatus==null){
                 Thread.sleep(i*200);
