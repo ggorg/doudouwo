@@ -1,29 +1,22 @@
 package com.ddw.servies;
 
 import com.ddw.beans.CouponDTO;
-import com.ddw.beans.TicketDTO;
+import com.ddw.beans.CouponPO;
 import com.ddw.beans.TicketPO;
-import com.ddw.config.DDWGlobals;
 import com.ddw.enums.CouponTypeEnum;
-import com.ddw.enums.DisabledEnum;
-import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
-import com.gen.common.services.FileService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
-import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -40,8 +33,8 @@ public class CouponService extends CommonService {
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_coupon","id",id);
     }
-    public TicketPO getBeanById(Integer id)throws Exception{
-        return this.commonObjectBySingleParam("ddw_coupon","id",id,TicketPO.class);
+    public CouponPO getBeanById(Integer id)throws Exception{
+        return this.commonObjectBySingleParam("ddw_coupon","id",id,CouponPO.class);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

@@ -49,6 +49,15 @@
 
     </div>
   </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">图片</label>
+    <div class="layui-input-block">
+      <button type="button" class="layui-btn myupload1"  style="width: 143.52px;height: 93.83px;" >
+        <span  style="z-index: 1000;position: relative">上传图片</span>
+        <img th:if="${ds!=null and ds['dtImgPath']!=null}" th:src="${ds['dtImgPath']}" class="dmImg" />
+      </button>
+    </div>
+  </div>
 
 
   <div class="layui-form-item">
@@ -70,7 +79,8 @@
     //initForm("do-edit-user",".layui-form")
 
 
-    layui.use(['laydate','form','layer'], function(){
+    layui.use(['laydate','form','layer','upload'], function(){
+        var upload = layui.upload;
         layer=layui.layer;
         var laydate=layui.laydate;
         laydate.render({
@@ -80,7 +90,7 @@
             format:'HH:mm'
         });
         initProForm(layui);
-
+        var uploadInst1 = upload.render(initUpload(".myupload1","dtImgFile","dmImg"));
         //执行实例
        // var uploadInst1 = upload.render(initUpload(".myupload1","dgImg","dmImg"));
 
@@ -111,9 +121,35 @@
         })
         $(".layui-form").submit(function(){
 
-            return  commonSubmit("do-edit",$(".layui-form"));
+            $.ajax( commonAjaxFunction("do-edit",new FormData($('form')[0]),true));
 
+
+            //return  commonSubmit(url,formObject);
+            return false;
         })
+    }
+    function initUpload(classname,filename,imgcn){
+        return {
+            elem: classname, //绑定元素
+            url: '/upload/', //上传接口
+            accept:'images',
+            auto:false,
+            field:filename,
+            choose:function(obj){
+
+                obj.preview(function(index, file, result){
+                    $(classname).find("."+imgcn).remove()
+                    $(classname).find("[name='isUpdateImg']").remove();
+                    $(classname).append("<img src=\""+result+"\" class=\""+imgcn+"\"/>")
+                });
+            },
+            done: function(res){
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        }
     }
 </script>
 </body>

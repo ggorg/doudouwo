@@ -1,7 +1,5 @@
 package com.ddw.servies;
 
-import com.ddw.beans.GiftDTO;
-import com.ddw.beans.GiftPO;
 import com.ddw.beans.TicketDTO;
 import com.ddw.beans.TicketPO;
 import com.ddw.config.DDWGlobals;
@@ -13,7 +11,6 @@ import com.gen.common.services.FileService;
 import com.gen.common.util.*;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -30,6 +27,13 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class TicketService extends CommonService {
 
+    @Autowired
+    private MainGlobals mainGlobals;
+
+    @Autowired
+    private DDWGlobals ddwGlobals;
+    @Autowired
+    private FileService fileService;
 
 
     public Page findPage(Integer pageNo)throws Exception{
@@ -90,7 +94,20 @@ public class TicketService extends CommonService {
 
         }
         Map map=BeanToMapUtil.beanToMap(dto,true);
+
+        if(!dto.getDtImgFile().isEmpty()){
+            String dmImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( dto.getDtImgFile().getOriginalFilename());
+            FileInfoVo fileInfoVo= UploadFileMoveUtil.move(dto.getDtImgFile(),mainGlobals.getRsDir(), dmImgName);
+            map.put("dtImgPath",ddwGlobals.getCallBackHost()+fileInfoVo.getUrlPath());
+
+            CommonBeanFiles f=this.fileService.createCommonBeanFiles(fileInfoVo);
+            this.fileService.saveFile(f);
+
+        }
+
         map.put("updateTime",new Date());
+        map.remove("dtImgFile");
+        map.remove("isUpdateImg");
         if(dto.getId()==null){
             map.put("createTime",new Date());
             map.put("dtDisabled",DisabledEnum.disabled0.getCode());

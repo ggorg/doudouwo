@@ -42,7 +42,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label">描述</label>
     <div class="layui-input-block">
-      <textarea placeholder="请输入描述" name="drDesc" th:text="${ds!=null? ds['drDesc']:''}" class="layui-textarea"></textarea>
+      <textarea placeholder="请输入描述" required="required"  lay-verify="required" placeholder="请输入描述"   name="drDesc" th:text="${ds!=null? ds['drDesc']:''}" class="layui-textarea"></textarea>
     </div>
   </div>
 

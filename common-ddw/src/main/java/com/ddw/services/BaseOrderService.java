@@ -373,7 +373,7 @@ public class BaseOrderService extends CommonService {
                     po.setBusId((Integer) ticketMap.get("ticketId"));
                     po.setCreateTime(new Date());
                     po.setName((String)ticketMap.get("ticketName"));
-                    po.setHeadImg(null);
+                    po.setHeadImg((String)ticketMap.get("ticketImgUrl"));
                     po.setNum(1);
                     po.setOrderId(OrderUtil.getOrderId(orderNo));
                     po.setOrderNo(orderNo);

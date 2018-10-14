@@ -443,8 +443,9 @@ public class PayCenterService extends BaseOrderService {
                 sumPrice=sumPrice+price;
                 orderTicket.put("ticketId",id);
                 orderTicket.put("storeId",TokenUtil.getStoreId(token));
-                orderTicket.put("ticketName",ticketMap.get("dtName"));
+                orderTicket.put("ticketName",ticketMap.get("dtName")+"【"+ticketMap.get("dtActiveTime")+"】");
                 orderTicket.put("ticketPrice",price);
+                orderTicket.put("ticketImgUrl",ticketMap.get("dtImgPath"));
                 orderTicket.put("currentUpdateTime",ticketMap.get("updateTime"));
                 insertList.add(orderTicket);
             }

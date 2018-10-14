@@ -43,10 +43,21 @@ public class TicketVO implements Serializable {
     private String typeName;
 
 
+    @ApiModelProperty(name="imgUrl",value="图片地址",example="图片地址")
+    @JsonProperty("imgUrl")
+    private String dtImgPath;
 
     @ApiModelProperty(name="activeTime",value="有效时间",example="9:00:00-12:00:00")
     @JsonProperty("activeTime")
     private String dtActiveTime;
+
+    public String getDtImgPath() {
+        return dtImgPath;
+    }
+
+    public void setDtImgPath(String dtImgPath) {
+        this.dtImgPath = dtImgPath;
+    }
 
     public Integer getMonthSales() {
         return monthSales;

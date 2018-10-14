@@ -2,8 +2,6 @@ package com.ddw.servies;
 
 
 import com.ddw.beans.RechargeDTO;
-import com.ddw.beans.TicketDTO;
-import com.ddw.beans.TicketPO;
 import com.ddw.enums.DisabledEnum;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
@@ -34,9 +32,7 @@ public class RechargeManagerService extends CouponService{
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_recharge","id",id);
     }
-    public TicketPO getBeanById(Integer id)throws Exception{
-        return this.commonObjectBySingleParam("ddw_recharge","id",id,TicketPO.class);
-    }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO update(String idStr, Integer status){
         String ids= MyEncryptUtil.getRealValue(idStr);

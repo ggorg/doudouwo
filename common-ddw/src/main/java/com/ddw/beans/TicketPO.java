@@ -9,11 +9,20 @@ public class TicketPO {
     private Integer dtActPrice;
     private Integer dtType;
     private String dtActiveTime;
+    private String dtImgPath;
 
     private Date updateTime;
     private Date createTime;
     private String dtDesc;
     private Integer dtDisabled;
+
+    public String getDtImgPath() {
+        return dtImgPath;
+    }
+
+    public void setDtImgPath(String dtImgPath) {
+        this.dtImgPath = dtImgPath;
+    }
 
     public Integer getDtDisabled() {
         return dtDisabled;

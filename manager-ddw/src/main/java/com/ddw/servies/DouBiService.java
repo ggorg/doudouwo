@@ -2,7 +2,6 @@ package com.ddw.servies;
 
 
 import com.ddw.beans.DoubiDTO;
-import com.ddw.beans.RechargeDTO;
 import com.ddw.beans.TicketPO;
 import com.ddw.enums.DisabledEnum;
 import com.gen.common.util.BeanToMapUtil;
@@ -35,9 +34,7 @@ public class DouBiService extends CouponService{
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_doubi","id",id);
     }
-    public TicketPO getBeanById(Integer id)throws Exception{
-        return this.commonObjectBySingleParam("ddw_doubi","id",id,TicketPO.class);
-    }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO update(String idStr, Integer status){
         String ids= MyEncryptUtil.getRealValue(idStr);

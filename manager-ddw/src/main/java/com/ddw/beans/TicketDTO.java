@@ -1,5 +1,8 @@
 package com.ddw.beans;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class TicketDTO {
@@ -10,6 +13,17 @@ public class TicketDTO {
     private Integer dtType;
     private String dtActiveTime;
     private String dtDesc;
+    private MultipartFile dtImgFile;
+
+
+    public MultipartFile getDtImgFile() {
+        return dtImgFile;
+    }
+
+    public void setDtImgFile(MultipartFile dtImgFile) {
+        this.dtImgFile = dtImgFile;
+    }
+
 
     public String getDtDesc() {
         return dtDesc;
