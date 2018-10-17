@@ -57,7 +57,7 @@ public class GoodFriendPlayController {
     @Token
     @ApiOperation(value = "创建预约房间")
     @PostMapping("/room/create/{token}")
-    public ResponseApiVO createRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayCreateRoomDTO args){
+    public ResponseApiVO createRoom(@PathVariable String token,GoodFriendPlayCreateRoomDTO args){
         try {
 
             return new ResponseApiVO(1,"成功",null);
