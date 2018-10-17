@@ -1,9 +1,6 @@
 package com.ddw.services;
 
-import com.ddw.beans.MyAttentionDTO;
-import com.ddw.beans.MyAttentionPO;
-import com.ddw.beans.MyAttentionVO;
-import com.ddw.beans.UserInfoVO;
+import com.ddw.beans.*;
 import com.ddw.dao.UserInfoMapper;
 import com.gen.common.services.CommonService;
 import com.gen.common.vo.ResponseVO;
@@ -62,11 +59,7 @@ public class MyAttentionService extends CommonService {
             userIdList.add((Integer)map.get("goddessId"));
         }
         if(!list.isEmpty()){
-            List<UserInfoVO> userInfoList = userInfoMapper.getUserInfoList(userIdList);
-            ListIterator<UserInfoVO> userInfoListIterator = userInfoList.listIterator();
-            while (userInfoListIterator.hasNext()){
-                userInfoListIterator.next().setFocus(true);
-            }
+            List<MyAttentionInfoVO> userInfoList = userInfoMapper.getMyAttentionGoddessInfoList(userIdList);
             myAttentionVO.setUserInfoList(userInfoList);
         }
         myAttentionVO.setUserId(userId);
@@ -89,11 +82,7 @@ public class MyAttentionService extends CommonService {
             userIdList.add((Integer) map.get("practiceId"));
         }
         if(!list.isEmpty()){
-            List<UserInfoVO> userInfoList = userInfoMapper.getUserInfoList(userIdList);
-            ListIterator<UserInfoVO> userInfoListIterator = userInfoList.listIterator();
-            while (userInfoListIterator.hasNext()){
-                userInfoListIterator.next().setFocus(true);
-            }
+            List<MyAttentionInfoVO> userInfoList = userInfoMapper.getMyAttentionPracticeInfoList(userIdList);
             myAttentionVO.setUserInfoList(userInfoList);
         }
         myAttentionVO.setUserId(userId);
@@ -106,7 +95,7 @@ public class MyAttentionService extends CommonService {
         if(pageNo == null || pageSize == null){
             return new ResponseVO(-2,"提交失败,pageNo不能为空",null);
         }
-        MyAttentionVO myAttentionVO = new MyAttentionVO();
+        MyAttentionUserVO myAttentionVO = new MyAttentionUserVO();
         Map searchCondition = new HashMap<>();
         searchCondition.put("goddessId",userId);
         List<Map> list = this.commonList("ddw_my_attention",null,pageNo,pageSize,searchCondition);
@@ -133,7 +122,7 @@ public class MyAttentionService extends CommonService {
         if(pageNo == null || pageSize == null){
             return new ResponseVO(-2,"提交失败,pageNo不能为空",null);
         }
-        MyAttentionVO myAttentionVO = new MyAttentionVO();
+        MyAttentionUserVO myAttentionVO = new MyAttentionUserVO();
         Map searchCondition = new HashMap<>();
         searchCondition.put("practiceId",userId);
         List<Map> list = this.commonList("ddw_my_attention",null,pageNo,pageSize,searchCondition);

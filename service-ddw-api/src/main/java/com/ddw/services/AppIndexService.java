@@ -2,11 +2,13 @@ package com.ddw.services;
 
 import com.ddw.beans.AppIndexVO;
 import com.ddw.beans.ResponseApiVO;
-import com.ddw.beans.vo.*;
+import com.ddw.beans.vo.AppIndexBannerVO;
+import com.ddw.beans.vo.AppIndexButtonVO;
+import com.ddw.beans.vo.AppIndexPracticeVO;
+import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.dao.GoddessMapper;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
-import com.ddw.util.Distance;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
@@ -94,15 +96,12 @@ public class AppIndexService {
             }else{
                 appIndexVO.setGoddessList(newList);
             }
-
-
-
         }else{
             appIndexVO.setGoddessList(new ArrayList<>());
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
-            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,1,4,1,null));
+            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,1,4,null));
             if(appIndexVO.getPracticeList().size()>0){
                 CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
             }
