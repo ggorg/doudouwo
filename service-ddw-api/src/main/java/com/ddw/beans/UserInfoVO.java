@@ -20,6 +20,8 @@ public class UserInfoVO {
     private String userPwd;
     @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
     private String openid;
+    @ApiModelProperty(name="unionID",value="UnionID",example="xxxxxxxxxxxx")
+    private String unionID;
     @ApiModelProperty(name="realName",value="真是姓名",example="金三胖")
     private String realName;
     @ApiModelProperty(name="nickName",value="昵称",example="某某某")
@@ -138,6 +140,14 @@ public class UserInfoVO {
 
     public void setOpenid(String openid) {
         this.openid = openid;
+    }
+
+    public String getUnionID() {
+        return unionID;
+    }
+
+    public void setUnionID(String unionID) {
+        this.unionID = unionID;
     }
 
     public String getRealName() {

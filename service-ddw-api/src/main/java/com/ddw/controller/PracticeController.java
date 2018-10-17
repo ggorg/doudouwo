@@ -77,7 +77,7 @@ public class PracticeController {
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)PracticeQueryListDTO practiceQueryListDTO){
         try {
             JSONObject json = new JSONObject();
-            json.put("list",reviewPracticeService.leaderboard(token,practiceQueryListDTO.getPageNo(),null,practiceQueryListDTO.getWeekList()));
+            json.put("list",reviewPracticeService.practiceList(token,practiceQueryListDTO.getPageNo(),null,practiceQueryListDTO.getWeekList()));
             return new ResponseVO(1,"成功",json);
         }catch (Exception e){
             logger.error("PracticeController->queryList",e);

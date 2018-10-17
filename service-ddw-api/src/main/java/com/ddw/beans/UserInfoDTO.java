@@ -10,8 +10,12 @@ public class UserInfoDTO implements Serializable {
     private static final long serialVersionUID = 2842627053033321462L;
     @ApiModelProperty(name="userName",value="账号（微信、QQ登录时，为空）",example="某某某")
     private String userName;
-    @ApiModelProperty(name="openid",value="用户openid",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
+    @ApiModelProperty(name="openid",value="用户的标识,实际为UnionID",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
     private String openid;
+    @ApiModelProperty(name="realOpenid",value="真正的openid，中期开发的时候将openid字段换成UnionID，故增加此字段存放",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
+    private String realOpenid;
+    @ApiModelProperty(name="unionID",value="unionID",example="oNSHajg7OZ-K3yqzERRHOzudEm26102")
+    private String unionID;
     @ApiModelProperty(name="nickName",value="昵称",example="某某某")
     private String nickName;
     @ApiModelProperty(name="headImgUrl",value="头像URL",example="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1522752012429&di=b26668f45e547cb644bb85d054242abe&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2Fbba1cd11728b4710655829d1c9cec3fdfc0323bc.jpg")
@@ -47,6 +51,26 @@ public class UserInfoDTO implements Serializable {
 
     public void setOpenid(String openid) {
         this.openid = openid;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getRealOpenid() {
+        return realOpenid;
+    }
+
+    public void setRealOpenid(String realOpenid) {
+        this.realOpenid = realOpenid;
+    }
+
+    public String getUnionID() {
+        return unionID;
+    }
+
+    public void setUnionID(String unionID) {
+        this.unionID = unionID;
     }
 
     public String getPhone() {

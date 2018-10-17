@@ -7,6 +7,8 @@ public class UserInfoPO {
     private String userName;
     private String userPwd;
     private String openid;
+    private String realOpenid;
+    private String unionID;
     private String realName;
     private String nickName;
     private String headImgUrl;
@@ -63,6 +65,22 @@ public class UserInfoPO {
 
     public void setOpenid(String openid) {
         this.openid = openid;
+    }
+
+    public String getRealOpenid() {
+        return realOpenid;
+    }
+
+    public void setRealOpenid(String realOpenid) {
+        this.realOpenid = realOpenid;
+    }
+
+    public String getUnionID() {
+        return unionID;
+    }
+
+    public void setUnionID(String unionID) {
+        this.unionID = unionID;
     }
 
     public String getRealName() {

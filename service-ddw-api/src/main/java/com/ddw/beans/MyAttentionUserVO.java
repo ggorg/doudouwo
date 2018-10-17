@@ -5,11 +5,11 @@ import java.util.List;
 /**
  * Created by Jacky on 2018/6/3.
  */
-public class MyAttentionVO {
+public class MyAttentionUserVO {
     private int userId;
     private int goddessCount;
     private int practiceCount;
-    private List<MyAttentionInfoVO> userInfoList;
+    private List<UserInfoVO> userInfoList;
 
     public int getUserId() {
         return userId;
@@ -35,11 +35,11 @@ public class MyAttentionVO {
         this.practiceCount = practiceCount;
     }
 
-    public List<MyAttentionInfoVO> getUserInfoList() {
+    public List<UserInfoVO> getUserInfoList() {
         return userInfoList;
     }
 
-    public void setUserInfoList(List<MyAttentionInfoVO> userInfoList) {
+    public void setUserInfoList(List<UserInfoVO> userInfoList) {
         this.userInfoList = userInfoList;
     }
 }
