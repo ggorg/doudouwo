@@ -49,6 +49,7 @@
         <result property="userName" column="userName"/>
         <result property="headImgUrl" column="headImgUrl"/>
         <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
         <result property="storeId" column="storeId"/>
         <result property="storeName" column="dsName"/>
     </resultMap>
@@ -150,6 +151,7 @@
         t1.userName,
         t1.headImgUrl,
         t1.sex,
+        t1.age,
         ct0.storeId,
         ct1.dsName
         FROM
@@ -170,6 +172,7 @@
         t1.userName,
         t1.headImgUrl,
         t1.sex,
+        t1.age,
         ct0.storeId,
         ct1.dsName
         FROM

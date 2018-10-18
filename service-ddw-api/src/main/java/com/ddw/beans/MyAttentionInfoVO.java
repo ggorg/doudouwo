@@ -19,6 +19,8 @@ public class MyAttentionInfoVO {
     private String headImgUrl;
     @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
     private Integer sex = 0;
+    @ApiModelProperty(name="age",value="年龄",example="22")
+    private int age = 0;
     @ApiModelProperty(name="storeId",value="门店id",example="1")
     private Integer storeId;
     @ApiModelProperty(name="storeName",value="门店名称",example="成都门店")
@@ -72,6 +74,14 @@ public class MyAttentionInfoVO {
 
     public void setSex(Integer sex) {
         this.sex = sex;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public Integer getStoreId() {
