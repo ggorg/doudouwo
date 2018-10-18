@@ -103,7 +103,7 @@ public class GoddessController {
     public ResponseVO queryList(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoddessQueryListDTO goddessQueryListDTO){
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("list",reviewGoddessService.goddessList(TokenUtil.getUserId(token),goddessQueryListDTO.getPageNo(),goddessQueryListDTO.getPageSize(),goddessQueryListDTO.getWeekList()));
+            jsonObject.put("list",reviewGoddessService.goddessList(TokenUtil.getUserId(token),goddessQueryListDTO.getPageNo(),goddessQueryListDTO.getWeekList()));
             return new ResponseVO(1,"成功",jsonObject);
         }catch (Exception e){
             logger.error("GoddessController->queryList",e);

@@ -11,17 +11,6 @@ public class GoddessQueryListDTO {
     @ApiModelProperty(name="pageNo",value="页码",example="1")
     private Integer pageNo;
 
-    @ApiModelProperty(name="pageSize",value="每页记录数",example="1")
-    private Integer pageSize;
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public Integer getWeekList() {
         return weekList;
     }
