@@ -21,7 +21,7 @@ public class GoodFriendPlayRoomVO<T> {
 
     @ApiModelProperty(name = "tableNumber", value = "桌号", example = "桌号")
     private String tableNumber;
-    @ApiModelProperty(name = "status", value = "未预约线下开桌：0，已成功预约线下开桌：1，预约线下开桌失败：3", example = "未预约线下开桌：0，已成功预约线下开桌：1，预约线下开桌失败：3")
+    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1", example = "预约中：0，约战中：1")
     private Integer status;
 
     public Integer getStatus() {

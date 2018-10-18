@@ -215,7 +215,7 @@ public class LiveRadioService extends CommonService{
         }else{
             spaceName= StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName()+"直播间";
         }
-        String callBack=IMApiUtil.createGroup(reviewPO.getDrProposer().toString(),streamIdExt,spaceName);
+        String callBack=IMApiUtil.createGroup(upo.getOpenid(),streamIdExt,spaceName);
         JSONObject jsonObject=JSON.parseObject(callBack);
         Integer errorCode=jsonObject.getInteger("ErrorCode");
         String groupId=null;

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ddw.dao.GoodFriendPlayMapper">
+
+
+    <select id="getRoomList" resultType="com.ddw.beans.GoodFriendPlayRoomListVO">
+        SELECT
+        t1.id CODE,
+        t1.roomImgIcon,
+        t1.NAME,
+        t1.tableNumber,
+        t1.STATUS,
+        t1.peopleMaxNum,
+        count( ct0.id ) peopleNum
+        FROM
+        ddw_goodfriendplay_room t1
+        LEFT JOIN ddw_goodfriendplay_room_member ct0 ON ct0.roomId = t1.id
+
+        <where>
+            <if test="null!=centerId">
+                and t1.centerId!=#{centerId}
+            </if>
+            <if test="null!=disabled">
+                and t1.disabled!=#{disabled}
+            </if>
+            <if test="null!=status">
+                and t1.status!=#{status}
+            </if>
+            <if test="null!=type">
+                and t1.type!=#{type}
+            </if>
+
+        </where>
+        GROUP BY
+        t1.id
+        ORDER BY
+        t1.updateTime Desc,peopleNum Desc
+        <if test="null!=startNum and null!=endNum" >
+            limit #{startNum },#{endNum}
+        </if>
+    </select>
+</mapper>

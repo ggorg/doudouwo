@@ -13,8 +13,6 @@ public class GoodFriendPlayTableVO<T> {
     private Integer code;
 
 
-    @ApiModelProperty(name = "tableName", value = "背景图", example = "背景图")
-    private String tableName;
 
     @ApiModelProperty(name = "tableNumber", value = "桌号", example = "桌号")
     private String tableNumber;
@@ -32,13 +30,7 @@ public class GoodFriendPlayTableVO<T> {
         this.code = code;
     }
 
-    public String getTableName() {
-        return tableName;
-    }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
 
     public String getTableNumber() {
         return tableNumber;

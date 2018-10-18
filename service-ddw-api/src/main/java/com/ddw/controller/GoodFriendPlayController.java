@@ -1,11 +1,14 @@
 package com.ddw.controller;
 
 import com.ddw.beans.*;
+import com.ddw.beans.vo.GoodFriendPlayChatCenterVO;
+import com.ddw.services.GoodFriendPlayService;
 import com.ddw.token.Token;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/ddwapp/goodfriendplay")
 public class GoodFriendPlayController {
     private final Logger logger = Logger.getLogger(GoodFriendPlayController.class);
-
+    @Autowired
+    private GoodFriendPlayService goodFriendPlayService;
 
     @Token
     @ApiOperation(value = "进入大聊天室")
@@ -24,7 +28,7 @@ public class GoodFriendPlayController {
     public ResponseApiVO<GoodFriendPlayChatCenterVO<GoodFriendPlayRoomListVO>> toChatCenter(@PathVariable String token){
         try {
 
-            return new ResponseApiVO(1,"成功",null);
+            return this.goodFriendPlayService.getChatCenter(token);
         }catch (Exception e){
             logger.error("GoodFriendPlayController->toChatCenter",e);
             return new ResponseApiVO(-1,"进入大聊天室失败",null);
@@ -33,10 +37,10 @@ public class GoodFriendPlayController {
     @Token
     @ApiOperation(value = "小房间列表")
     @PostMapping("/room/list/{token}")
-    public ResponseApiVO<ListVO<GoodFriendPlayRoomListVO>> toRoomList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+    public ResponseApiVO<ListVO<GoodFriendPlayRoomListVO>> toRoomList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayRoomListDTO args){
         try {
 
-            return new ResponseApiVO(1,"成功",null);
+            return this.goodFriendPlayService.getRoomList(token,args);
         }catch (Exception e){
             logger.error("GoodFriendPlayController->toRoomList",e);
             return new ResponseApiVO(-1,"加载小房间列表失败",null);
@@ -60,19 +64,19 @@ public class GoodFriendPlayController {
     public ResponseApiVO createRoom(@PathVariable String token,GoodFriendPlayCreateRoomDTO args){
         try {
 
-            return new ResponseApiVO(1,"成功",null);
+            return this.goodFriendPlayService.createRoom(token,args);
         }catch (Exception e){
             logger.error("GoodFriendPlayController->createRoom",e);
             return new ResponseApiVO(-1,"创建预约房间失败",null);
         }
     }
     @Token
-    @ApiOperation(value = "查询空闲桌号")
+    @ApiOperation(value = "查询桌号列表")
     @PostMapping("/tables/query/{token}")
     public ResponseApiVO<ListVO<GoodFriendPlayTableVO>> searchTables(@PathVariable String token){
         try {
 
-            return new ResponseApiVO(1,"成功",null);
+            return this.goodFriendPlayService.getTables(token);
         }catch (Exception e){
             logger.error("GoodFriendPlayController->searchTables",e);
             return new ResponseApiVO(-1,"查询空闲桌号失败",null);

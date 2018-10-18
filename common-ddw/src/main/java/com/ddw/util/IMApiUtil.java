@@ -45,7 +45,7 @@ public class IMApiUtil {
      }
      * @return
      */
-    public static String createGroup(String userId,String groupId,String groupName)throws Exception{
+    public static String createGroup(String openId,String groupId,String groupName)throws Exception{
         //{"ActionStatus":"OK","ErrorCode":0,"GroupId":"ddw3"}
         initDDWGlobls();
         Map map=new HashMap();
@@ -56,7 +56,7 @@ public class IMApiUtil {
         map.put("ApplyJoinOption","FreeAccess");
         List MemberList=new ArrayList();
         Map mem=new HashMap();
-       mem.put("Member_Account",userId);
+       mem.put("Member_Account",openId);
         mem.put("Role","Admin");
         MemberList.add(mem);
         map.put("MemberList",MemberList);

@@ -15,19 +15,53 @@ public class GoodFriendPlayRoomListVO<T> {
     private Integer code;
 
 
-    @ApiModelProperty(name = "bgImg", value = "背景图", example = "背景图")
-    private String bgImg;
+    @ApiModelProperty(name = "roomImgIcon", value = "主题图", example = "主题图")
+    private String roomImgIcon;
 
     @ApiModelProperty(name = "name", value = "主题名称", example = "主题名称")
     private String name;
 
     @ApiModelProperty(name = "tableNumber", value = "桌号", example = "桌号")
     private String tableNumber;
-    @ApiModelProperty(name = "memberNum", value = "人数", example = "人数")
-    private Integer memberNum;
+    @ApiModelProperty(name = "peopleNum", value = "人数", example = "人数")
+    private Integer peopleNum;
+    @ApiModelProperty(name = "peopleMaxNum", value = "人数上限", example = "人数上限")
+    private Integer peopleMaxNum;
 
     @ApiModelProperty(name = "status", value = "预约中：0，约战中：1", example = "预约中：0，约战中：1")
     private Integer status;
+
+    public Integer getPeopleNum() {
+        return peopleNum;
+    }
+
+    public void setPeopleNum(Integer peopleNum) {
+        this.peopleNum = peopleNum;
+    }
+
+    public Integer getPeopleMaxNum() {
+        return peopleMaxNum;
+    }
+
+    public void setPeopleMaxNum(Integer peopleMaxNum) {
+        this.peopleMaxNum = peopleMaxNum;
+    }
+
+    public String getRoomImgIcon() {
+        return roomImgIcon;
+    }
+
+    public void setRoomImgIcon(String roomImgIcon) {
+        this.roomImgIcon = roomImgIcon;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public Integer getCode() {
         return code;
@@ -37,13 +71,6 @@ public class GoodFriendPlayRoomListVO<T> {
         this.code = code;
     }
 
-    public String getBgImg() {
-        return bgImg;
-    }
-
-    public void setBgImg(String bgImg) {
-        this.bgImg = bgImg;
-    }
 
     public String getName() {
         return name;
@@ -61,12 +88,5 @@ public class GoodFriendPlayRoomListVO<T> {
         this.tableNumber = tableNumber;
     }
 
-    public Integer getMemberNum() {
-        return memberNum;
-    }
-
-    public void setMemberNum(Integer memberNum) {
-        this.memberNum = memberNum;
-    }
 }
 

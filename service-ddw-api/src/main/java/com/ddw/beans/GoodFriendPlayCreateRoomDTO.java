@@ -13,8 +13,8 @@ public class GoodFriendPlayCreateRoomDTO<T> {
 
 
 
-    @ApiModelProperty(name = "bgImg", value = "主题图", example = "主题图")
-    private  MultipartFile bgImg;
+    @ApiModelProperty(name = "roomImg", value = "主题图", example = "主题图")
+    private  MultipartFile roomImg;
 
     @ApiModelProperty(name = "name", value = "主题名称", example = "主题名称")
     private String name;
@@ -29,12 +29,12 @@ public class GoodFriendPlayCreateRoomDTO<T> {
     private Date endTime;
 
 
-    public MultipartFile getBgImg() {
-        return bgImg;
+    public MultipartFile getRoomImg() {
+        return roomImg;
     }
 
-    public void setBgImg(MultipartFile bgImg) {
-        this.bgImg = bgImg;
+    public void setRoomImg(MultipartFile roomImg) {
+        this.roomImg = roomImg;
     }
 
     public String getName() {
