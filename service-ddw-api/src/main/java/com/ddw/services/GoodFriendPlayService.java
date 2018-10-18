@@ -9,6 +9,8 @@ import com.ddw.enums.GoodFriendPlayRoomStatusEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
@@ -48,13 +50,17 @@ public class GoodFriendPlayService extends CommonService {
         Page page=new Page(1,10);
         Integer storeId= TokenUtil.getStoreId(token);
         GoodFriendPlayChatCenterVO gfp=this.getChatCenterBean(storeId);
-
+        if(gfp==null){
+            return new ResponseApiVO(-2,"大聊天房还没建",null);
+        }
 
         Map search=new HashMap();
         search.put("centerId",gfp.getId());
         search.put("disabled", DisabledEnum.disabled0.getCode());
         search.put("status",GoodFriendPlayRoomStatusEnum.status0.getCode());
-        List onlist=this.commonList("ddw_goodfriendplay_room","updateTime desc","t1.id code,t1.roomImgIcon,t1.name,t1.tableNumber,t1.status,t1.peopleMaxNum",page.getStartRow(),page.getEndRow(),search);
+        CommonChildBean ccb=new CommonChildBean("ddw_goodfriendplay_tables","id","tableCode",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room","t1.updateTime desc","t1.id code,t1.roomImgIcon,t1.name,ct0.tableNumber,t1.status,t1.peopleMaxNum",page.getStartRow(),page.getEndRow(),search,ccb);
+        List onlist=this.getCommonMapper().selectObjects(csb);
         if(onlist==null || onlist.isEmpty()){
             gfp.setOnLineList(new ArrayList());
         }else{

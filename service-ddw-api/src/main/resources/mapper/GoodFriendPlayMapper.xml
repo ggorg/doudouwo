@@ -10,13 +10,15 @@
         t1.id CODE,
         t1.roomImgIcon,
         t1.NAME,
-        t1.tableNumber,
+        ct1.tableNumber,
         t1.STATUS,
         t1.peopleMaxNum,
         count( ct0.id ) peopleNum
         FROM
         ddw_goodfriendplay_room t1
+        LEFT JOIN ddw_goodfriendplay_tables ct1 ON ct1.id = t1.tableCode
         LEFT JOIN ddw_goodfriendplay_room_member ct0 ON ct0.roomId = t1.id
+
 
         <where>
             <if test="null!=centerId">
