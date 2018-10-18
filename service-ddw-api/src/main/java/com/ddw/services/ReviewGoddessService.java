@@ -238,45 +238,17 @@ public class ReviewGoddessService extends CommonService {
 //    }
 
     /**
-     * 先查询直播女神列表,列表不足由未直播女神补上,根据粉丝数量降序,展示女神数据,列表不包含自己
+     * 根据粉丝数量降序,展示女神数据,列表不包含自己
      * @param userId 会员id
      * @param pageNo
      * @return
      * @throws Exception
      */
-    public List<AppIndexGoddessVO> goddessList(Integer userId,Integer pageNo,Integer pageSize, Integer weekList)throws Exception{
-        List<Map> list = liveRadioClientService.getLiveRadioList(userId, pageNo);
-        List<Integer> userIdList =null;
-        Map<Integer,Integer> userIdMap = new HashMap<>();
-        Map<Integer,Integer> userIdLiveCodeMap = new HashMap<>();
-        for(Map map : list){
-            userIdMap.put((Integer) map.get("userId"),map.get("maxGroupNum")==null?1:(Integer) map.get("maxGroupNum"));
-            userIdLiveCodeMap.put((Integer) map.get("userId"),(Integer) map.get("id"));
-
-            //userIdList.add((Integer) map.get("userId"));
-        }
-        if(userIdMap.size()>0){
-            userIdList = new ArrayList<>(userIdMap.keySet());
-        }
+    public List<AppIndexGoddessVO> goddessList(Integer userId,Integer pageNo, Integer weekList)throws Exception{
         Integer pageNum = pageNo;
-        pageSize = pageSize==null?10:pageSize;
+        Integer pageSize = 10;
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
-        Integer end = pageSize;
-        List<AppIndexGoddessVO> appIndexGoddess = new ArrayList<AppIndexGoddessVO>();
-        if(userIdList!=null && userIdList.size()>0){
-            appIndexGoddess = goddessMapper.getGoddessListByIds(userIdList,userId,start,end,weekList);
-            if(pageSize-appIndexGoddess.size()>0){
-                end =pageSize-appIndexGoddess.size();
-                List<AppIndexGoddessVO> appIndexGoddess2 = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end,weekList);
-                appIndexGoddess.addAll(appIndexGoddess2);
-            }
-            appIndexGoddess.forEach(a->{
-                a.setViewingNum(userIdMap.get(a.getId()));
-                a.setCode(userIdLiveCodeMap.get(a.getId()));
-            });
-        }else{
-            appIndexGoddess = goddessMapper.getGoddessListByNotInIds(userIdList,userId,start,end,weekList);
-        }
+        List<AppIndexGoddessVO> appIndexGoddess = goddessMapper.getGoddessListByNotInIds(null,userId,start,pageSize,weekList);
         if(appIndexGoddess!=null){
             appIndexGoddess.forEach(a -> {
                 try {
