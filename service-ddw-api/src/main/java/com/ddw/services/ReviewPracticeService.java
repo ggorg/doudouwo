@@ -530,7 +530,7 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb1=new CommonChildBean("ddw_userinfo","id","userId",null);
         CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
         CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","createTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank",null,null,condtion,cb1,cb2,cb3);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_game","appointment asc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank",null,null,condtion,cb1,cb2,cb3);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(practicePubTaskDTO.getPageNo(),10,csb);
         ListIterator<Map> listIterator = p.getResult().listIterator();
