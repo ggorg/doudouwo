@@ -83,6 +83,25 @@ public class GoodFriendPlayService extends CommonService {
         }
         return gfp;
     }
+    public ResponseApiVO getRoom(String token,CodeDTO dto)throws Exception{
+        if(dto.getCode()==null || dto.getCode()<=0){
+            return new ResponseApiVO<>(-2,"请选择聊天房间",null);
+        }
+        Map search=new HashMap();
+        search.put("id",dto.getCode());
+        search.put("disabled",DisabledEnum.disabled0.getCode());
+        Map chid1=new HashMap();
+        chid1.put("disabled",DisabledEnum.disabled0.getCode());
+        chid1.put("roomId",dto.getCode());
+        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room",null,"t1.groupId,t1.id code,t1.roomImg,t1.name,t1.status,ct0.tableNumber,t1.peopleMaxNum,count(ct1.id) peopleNum",null,null,search,
+                new CommonChildBean("ddw_goodfriendplay_tables","id","tableCode",null),
+                new CommonChildBean("ddw_goodfriendplay_room_member","roomId","id",chid1));
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
+        if(list==null || list.isEmpty() || !list.get(0).containsKey("code")){
+            return new ResponseApiVO<>(-2,"房间不存在或者已过期",null);
+        }
+        return new ResponseApiVO(1,"成功",list.get(0));
+    }
     public ResponseApiVO getRoomList(String token ,GoodFriendPlayRoomListDTO dto)throws Exception{
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
         Integer storeId= TokenUtil.getStoreId(token);
@@ -147,6 +166,7 @@ public class GoodFriendPlayService extends CommonService {
         mapret.put("groupId",map.get("groupId"));
         return new ResponseApiVO(1,"成功",mapret);
     }
+
     public Map getTableById(String token,Integer tableCode )throws  Exception{
         Integer storeId= TokenUtil.getStoreId(token);
         Map search=new HashMap();

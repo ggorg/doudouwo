@@ -261,7 +261,8 @@ public class IMApiUtil {
         userInfoPO.setHeadImgUrl("http://wx.qlogo.cn/mmopen/Q3auHgzwzM70nZPOZLa6PTYzFKZp4xm9KRQITutLibgqjUAesTBciaFCpSzUicPwHT7mKeYDHhGYJX1FJlAPphe3UWKKvOOYC8dGNbSuibz9MOI/132");
         System.out.println(importUser(userInfoPO,null));*/
         //System.out.println(IMApiUtil.pushAll("ddwGuanFang","下午茶到了"));
-        System.out.println(IMApiUtil.pushSimpleChat("ddwTongZhi","omc2C0i1D7OCAOnts7XEpfnxGo30","jacky妹你个扑街"));
+        IMApiUtil.createGroup("ddwGuanFang","1_gf_0000000000","逗逗窝聊天室");
+       // System.out.println(IMApiUtil.pushSimpleChat("ddwTongZhi","omc2C0i1D7OCAOnts7XEpfnxGo30","jacky妹你个扑街"));
       // System.out.println(getMemberNum(Arrays.asList("1_8_180503191514","1_8_180504013649","1_59_180829224224","1_41_180829211729")));;
     }
 }

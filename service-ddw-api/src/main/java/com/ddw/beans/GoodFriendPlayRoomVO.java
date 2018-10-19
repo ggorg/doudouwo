@@ -13,8 +13,8 @@ public class GoodFriendPlayRoomVO<T> {
     private Integer code;
 
 
-    @ApiModelProperty(name = "bgImg", value = "背景图", example = "背景图")
-    private String bgImg;
+    @ApiModelProperty(name = "roomImg", value = "背景图", example = "背景图")
+    private String roomImg;
 
     @ApiModelProperty(name = "name", value = "主题名称", example = "主题名称")
     private String name;
@@ -23,6 +23,39 @@ public class GoodFriendPlayRoomVO<T> {
     private String tableNumber;
     @ApiModelProperty(name = "status", value = "预约中：0，约战中：1", example = "预约中：0，约战中：1")
     private Integer status;
+
+
+    @ApiModelProperty(name = "peopleMaxNum", value = "人数上限", example = "人数上限")
+    private Integer peopleMaxNum;
+
+    @ApiModelProperty(name = "peopleNum", value = "人数", example = "人数")
+    private Integer peopleNum;
+    @ApiModelProperty(name = "groupId", value = "群ID" , example = "群ID")
+    private String groupId;
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public Integer getPeopleMaxNum() {
+        return peopleMaxNum;
+    }
+
+    public void setPeopleMaxNum(Integer peopleMaxNum) {
+        this.peopleMaxNum = peopleMaxNum;
+    }
+
+    public Integer getPeopleNum() {
+        return peopleNum;
+    }
+
+    public void setPeopleNum(Integer peopleNum) {
+        this.peopleNum = peopleNum;
+    }
 
     public Integer getStatus() {
         return status;
@@ -40,12 +73,12 @@ public class GoodFriendPlayRoomVO<T> {
         this.code = code;
     }
 
-    public String getBgImg() {
-        return bgImg;
+    public String getRoomImg() {
+        return roomImg;
     }
 
-    public void setBgImg(String bgImg) {
-        this.bgImg = bgImg;
+    public void setRoomImg(String roomImg) {
+        this.roomImg = roomImg;
     }
 
     public String getName() {

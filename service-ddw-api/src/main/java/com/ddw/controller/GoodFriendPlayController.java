@@ -52,14 +52,14 @@ public class GoodFriendPlayController {
     public ResponseApiVO<GoodFriendPlayRoomVO> toRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
         try {
 
-            return new ResponseApiVO(1,"成功",null);
+            return this.goodFriendPlayService.getRoom(token,args);
         }catch (Exception e){
             logger.error("GoodFriendPlayController->toRoom",e);
             return new ResponseApiVO(-1,"进入小房间失败",null);
         }
     }
     @Token
-    @ApiOperation(value = "创建预约房间")
+    @ApiOperation(value = "创建房间")
     @PostMapping("/room/create/{token}")
     public ResponseApiVO createRoom(@PathVariable String token,GoodFriendPlayCreateRoomDTO args){
         try {
