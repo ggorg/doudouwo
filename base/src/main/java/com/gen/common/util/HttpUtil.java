@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -180,6 +181,7 @@ public class HttpUtil {
                         .getValue().toString());
                 pairList.add(pair);
             }
+           // MultipartEntityBuilder
            // httpPost.s
             httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charset.forName("UTF-8")));
             response = httpClient.execute(httpPost);

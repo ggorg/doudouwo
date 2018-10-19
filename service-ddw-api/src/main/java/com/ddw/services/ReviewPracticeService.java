@@ -606,6 +606,7 @@ public class ReviewPracticeService extends CommonService {
         //更新状态为已计算收益
         practiceOrderPO.setIncomeState(1);
         Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
+        if(updatePoMap.containsKey("orderId"))updatePoMap.remove("orderId");
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",practiceSettlementDTO.getOrderId());
         //结算后,修改代练状态为关闭
         Map setParams = new HashMap<>();
@@ -637,6 +638,7 @@ public class ReviewPracticeService extends CommonService {
         this.fileService.saveFile(f1);
 
         Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO);
+        if(updatePoMap.containsKey("orderId"))updatePoMap.remove("orderId");
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",orderId);
         //结算后,修改代练状态为关闭
         Map setParams = new HashMap<>();
