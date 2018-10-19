@@ -567,6 +567,7 @@ public class BaseOrderService extends CommonService {
 
             }else if(PayTypeEnum.PayType2.getCode().equals(o.get("doPayType"))){
                 ResponseVO resvo=PayApiUtil.requestAliExitOrder(exitOrderPO.getOrderNo(),exitOrderPO.getExitCost());
+                logger.info("reqeustAliExitOrder->response->"+resvo);
                 if(resvo.getReCode()!=1){
                     throw new GenException("阿里申请退款失败");
 
@@ -578,6 +579,7 @@ public class BaseOrderService extends CommonService {
                 setMap.put("money",exitOrderPO.getExitCost());
                 setMap.put("updateTime",new Date());
                 ResponseVO resvo= this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setMap,walletSearchMap,"version",new String[]{"money"});
+                logger.info("reqeustWalletOrder->response->"+resvo);
                 if(resvo.getReCode()!=1){
                     throw new GenException("钱包退款失败");
 
