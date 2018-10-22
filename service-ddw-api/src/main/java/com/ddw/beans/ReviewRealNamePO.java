@@ -12,6 +12,7 @@ public class ReviewRealNamePO {
     private String realName;
     private String phone;
     private String idcard;
+    private String selfieUrl;
     private String idcardFrontUrl;
     private String idcardOppositeUrl;
     private Integer status;
@@ -64,6 +65,14 @@ public class ReviewRealNamePO {
 
     public void setIdcard(String idcard) {
         this.idcard = idcard;
+    }
+
+    public String getSelfieUrl() {
+        return selfieUrl;
+    }
+
+    public void setSelfieUrl(String selfieUrl) {
+        this.selfieUrl = selfieUrl;
     }
 
     public String getIdcardFrontUrl() {

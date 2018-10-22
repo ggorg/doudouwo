@@ -5,7 +5,6 @@ import com.ddw.beans.*;
 import com.ddw.services.ConsumeRankingListService;
 import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.UserInfoService;
-import com.ddw.services.WalletService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.MsgUtil;
@@ -34,9 +33,6 @@ public class UserController {
     private UserInfoService userInfoService;
     @Autowired
     private ReviewRealNameService reviewRealNameService;
-    @Autowired
-    private WalletService walletService;
-
     @Autowired
     private tls_sigcheck ts;
 
@@ -133,11 +129,12 @@ public class UserController {
                                 @RequestParam(value = "phone") @ApiParam(name = "phone",value="手机号码", required = true) String phone,
                                 @RequestParam(value = "code") @ApiParam(name = "code",value="验证码", required = true) String code,
                                 @RequestParam(value = "idcard") @ApiParam(name = "idcard",value="身份证", required = true) String idcard,
+                                @RequestParam(value = "selfie") @ApiParam(name = "selfie",value="自拍", required = true) MultipartFile selfie,
                                 @RequestParam(value = "idcardFront") @ApiParam(name = "idcardFront",value="身份证正面", required = true) MultipartFile idcardFront,
                                 @RequestParam(value = "idcardOpposite") @ApiParam(name = "idcardOpposite",value="身份证反面", required = true) MultipartFile idcardOpposite){
         try {
             if(MsgUtil.verifyCode(phone,code)){
-                return reviewRealNameService.realName(TokenUtil.getUserId(token),realName,phone,idcard,idcardFront,idcardOpposite);
+                return reviewRealNameService.realName(TokenUtil.getUserId(token),realName,phone,idcard,selfie,idcardFront,idcardOpposite);
             }else {
                 return new ResponseApiVO(-2,"失败,验证码不对",null);
             }
