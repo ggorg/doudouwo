@@ -25,7 +25,9 @@ public class GoodFriendPlayChatCenterVO<T> implements Serializable {
     @ApiModelProperty(name = "群ID", value = "群ID", example = "群ID")
     private String groupId;
 
-    @ApiModelProperty(name = "offLinelist", value = "约战中列表", example = "约战中列表")
+    @ApiModelProperty(name = "roomList", value = "小房间列表", example = "小房间列表")
+    private List<T> roomList;
+    /*@ApiModelProperty(name = "offLinelist", value = "约战中列表", example = "约战中列表")
     private List<T> offLinelist;
     @ApiModelProperty(name = "onLineList", value = "预约中列表", example = "预约中列表")
     private List<T> onLineList;
@@ -44,6 +46,14 @@ public class GoodFriendPlayChatCenterVO<T> implements Serializable {
 
     public void setOnLineList(List<T> onLineList) {
         this.onLineList = onLineList;
+    }*/
+
+    public List<T> getRoomList() {
+        return roomList;
+    }
+
+    public void setRoomList(List<T> roomList) {
+        this.roomList = roomList;
     }
 
     public Integer getId() {

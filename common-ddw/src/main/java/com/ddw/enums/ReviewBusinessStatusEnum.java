@@ -15,7 +15,9 @@ public enum ReviewBusinessStatusEnum implements Dictionary {
     banner7("banner申请",7),
     practiceFlag5("申请代练",5),
     withdrawAppl8("提现申请",8),
-    practiceRefund9("代练订单退款",9);
+    practiceRefund9("代练订单退款",9),
+    goodFriendPlay20("约玩可就坐",20);
+
     private String name;
     private Integer code;
 

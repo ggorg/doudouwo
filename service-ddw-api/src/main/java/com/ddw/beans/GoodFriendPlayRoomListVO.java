@@ -30,6 +30,16 @@ public class GoodFriendPlayRoomListVO<T> {
 
     @ApiModelProperty(name = "status", value = "预约中：0，约战中：1", example = "预约中：0，约战中：1")
     private Integer status;
+    @ApiModelProperty(name = "type", value = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100", example = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100")
+    private Integer type;
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
 
     public Integer getPeopleNum() {
         return peopleNum;

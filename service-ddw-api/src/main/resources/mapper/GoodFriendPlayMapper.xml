@@ -13,6 +13,7 @@
         ct1.tableNumber,
         t1.STATUS,
         t1.peopleMaxNum,
+        t1.type,
         count( ct0.id ) peopleNum
         FROM
         ddw_goodfriendplay_room t1
@@ -22,23 +23,23 @@
 
         <where>
             <if test="null!=centerId">
-                and t1.centerId!=#{centerId}
+                and t1.centerId=#{centerId}
             </if>
             <if test="null!=disabled">
-                and t1.disabled!=#{disabled}
+                and t1.disabled=#{disabled}
             </if>
             <if test="null!=status">
-                and t1.status!=#{status}
+                and t1.status=#{status}
             </if>
             <if test="null!=type">
-                and t1.type!=#{type}
+                and t1.type=#{type}
             </if>
 
         </where>
         GROUP BY
         t1.id
         ORDER BY
-        t1.updateTime Desc,peopleNum Desc
+        t1.status Desc,t1.updateTime Desc,peopleNum Desc
         <if test="null!=startNum and null!=endNum" >
             limit #{startNum },#{endNum}
         </if>

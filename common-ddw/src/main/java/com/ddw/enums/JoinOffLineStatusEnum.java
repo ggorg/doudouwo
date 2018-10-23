@@ -3,26 +3,23 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 状态
+ * 用户约玩开桌状态,是否参与
  */
-public enum GoodFriendPlayRoomStatusEnum implements Dictionary {
-    status0("预约中",0),
-    status1("约战中",1),
-    status20("可就坐",20),
-    status21("已拒绝",21);
+public enum JoinOffLineStatusEnum implements Dictionary {
+    Status0("否",0),
+   Status1("是",1);
 
+            private String name;
+            private Integer code;
 
-    private String name;
-    private Integer code;
-
-    private GoodFriendPlayRoomStatusEnum(String name, Integer code) {
+    private JoinOffLineStatusEnum(String name, Integer code) {
                 this.name = name;
                 this.code = code;
             }
 
             // 普通方法
-    public static String getName(Integer code) {
-            for (GoodFriendPlayRoomStatusEnum c : GoodFriendPlayRoomStatusEnum.values()) {
+        public static String getName(Integer code) {
+            for (JoinOffLineStatusEnum c : JoinOffLineStatusEnum.values()) {
                 if (c.getCode() == code || c.getCode().equals(code)) {
                     return c.name;
                 }

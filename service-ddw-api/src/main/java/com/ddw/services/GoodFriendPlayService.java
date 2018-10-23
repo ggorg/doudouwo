@@ -4,8 +4,7 @@ import com.ddw.beans.*;
 import com.ddw.beans.vo.GoodFriendPlayChatCenterVO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.dao.GoodFriendPlayMapper;
-import com.ddw.enums.DisabledEnum;
-import com.ddw.enums.GoodFriendPlayRoomStatusEnum;
+import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
@@ -46,6 +45,9 @@ public class GoodFriendPlayService extends CommonService {
     private DDWGlobals ddwGlobals;
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private CommonReviewService commonReviewService;
     public ResponseApiVO getChatCenter(String token)throws Exception{
         Page page=new Page(1,10);
         Integer storeId= TokenUtil.getStoreId(token);
@@ -54,7 +56,7 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"大聊天房还没建",null);
         }
 
-        Map search=new HashMap();
+       /* Map search=new HashMap();
         search.put("centerId",gfp.getId());
         search.put("disabled", DisabledEnum.disabled0.getCode());
         search.put("status",GoodFriendPlayRoomStatusEnum.status0.getCode());
@@ -65,13 +67,13 @@ public class GoodFriendPlayService extends CommonService {
             gfp.setOnLineList(new ArrayList());
         }else{
             gfp.setOnLineList(onlist);
-        }
-        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,GoodFriendPlayRoomStatusEnum.status1.getCode(),page.getStartRow(),page.getEndRow());
+        }*/
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,null,page.getStartRow(),page.getEndRow());
         if(offlist==null || offlist.isEmpty()){
-            gfp.setOffLinelist(new ArrayList());
+            gfp.setRoomList(new ArrayList());
         }else{
 
-            gfp.setOffLinelist(offlist);
+            gfp.setRoomList(offlist);
         }
         return new ResponseApiVO(1,"成功",gfp);
     }
@@ -100,7 +102,19 @@ public class GoodFriendPlayService extends CommonService {
         if(list==null || list.isEmpty() || !list.get(0).containsKey("code")){
             return new ResponseApiVO<>(-2,"房间不存在或者已过期",null);
         }
-        return new ResponseApiVO(1,"成功",list.get(0));
+        Map dataMap=list.get(0);
+        Integer roomId=(Integer) dataMap.get("code");
+        this.commonObjectsBySingleParam("ddw_goodfriendplay_room_member","roomId",roomId);
+        Map searchMap=new HashMap();
+        searchMap.put("roomId",roomId);
+        searchMap.put("joinOffLine", JoinOffLineStatusEnum.Status1.getCode());
+        List<Map> openIdList=this.commonList("ddw_goodfriendplay_room_member",null,"t1.openId",null,null,searchMap);
+        List dataList=new ArrayList();
+        if(openIdList!=null && !openIdList.isEmpty()){
+            openIdList.forEach(a->dataList.add(a.get("openId")));
+        }
+        dataMap.put("memberList",dataList);
+        return new ResponseApiVO(1,"成功",dataMap);
     }
     public ResponseApiVO getRoomList(String token ,GoodFriendPlayRoomListDTO dto)throws Exception{
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
@@ -129,7 +143,7 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"请选择桌号",null);
 
         }
-        if(dto.getEndTime()==null){
+        if(StringUtils.isBlank(dto.getEndTime())){
             return new ResponseApiVO(-2,"请填写房间结束时间",null);
 
         }
@@ -141,6 +155,10 @@ public class GoodFriendPlayService extends CommonService {
         if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(tableMap.get("status"))){
             return new ResponseApiVO(-2,"当前桌号已被使用",null);
 
+        }
+        Map res=this.checkRoom(token);
+        if(res!=null){
+            return new ResponseApiVO(-2,"抱歉，不能创建多个房间",null);
         }
         Map map= BeanToMapUtil.beanToMap(dto,true);
         map.put("createTime",new Date());
@@ -159,14 +177,164 @@ public class GoodFriendPlayService extends CommonService {
         map.put("centerId",gfp.getId());
         map.put("status",GoodFriendPlayRoomStatusEnum.status0.getCode());
         map.put("roomOwner",TokenUtil.getUserId(token));
-        map.put("groupId",IMApiUtil.createGroup((String)TokenUtil.getUserObject(token),storeId+"_"+TokenUtil.getUserId(token)+"_"+ RandomStringUtils.randomNumeric(10),dto.getName()));
+        String groupId=storeId+"_"+TokenUtil.getUserId(token)+"_"+ RandomStringUtils.randomNumeric(10);
+        map.put("groupId",groupId);
+        IMApiUtil.createGroup((String)TokenUtil.getUserObject(token),groupId,dto.getName());
         ResponseVO vo=this.commonInsertMap("ddw_goodfriendplay_room",map);
         Map mapret=new HashMap();
         mapret.put("roomCode",vo.getData());
-        mapret.put("groupId",map.get("groupId"));
+        mapret.put("groupId",groupId);
         return new ResponseApiVO(1,"成功",mapret);
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO createOffLinePlay(String token)throws Exception{
+        Map callMap=checkRoom(token);
+        if(callMap==null){
+            return new ResponseApiVO(-2,"小房不存在",null);
+        }
+        Integer status=(Integer) callMap.get("status");
+        if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(status)){
+            return new ResponseApiVO(-2,"已经约玩开桌中",null);
+        }else if(GoodFriendPlayRoomStatusEnum.status20.getCode().equals(status)){
+            return new ResponseApiVO(-2,"审核中",null);
+        }
+        ReviewPO reviewPO=new ReviewPO();
+        reviewPO.setDrProposerName(TokenUtil.getUserName(token));
+        reviewPO.setDrProposer(TokenUtil.getUserId(token));
+        reviewPO.setDrBelongToStoreId(TokenUtil.getStoreId(token));
+        reviewPO.setDrBusinessCode(callMap.get("id").toString());
+        reviewPO.setDrBusinessType(ReviewBusinessTypeEnum.ReviewBusinessType10.getCode());
+        reviewPO.setDrReviewStatus(ReviewStatusEnum.ReviewStatus0.getCode());
+        reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
+        reviewPO.setDrReviewerType(ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
+        reviewPO.setDrApplyDesc("申请约玩开桌");
+        reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.goodFriendPlay20.getCode());
+        reviewPO.setDrExtend("主题名-"+callMap.get("name"));
+        this.commonReviewService.submitAppl(reviewPO);
+        Map updateMap=new HashMap();
+        updateMap.put("updateTime",new Date());
+        updateMap.put("status",GoodFriendPlayRoomStatusEnum.status20.getCode());
+        this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",updateMap,"id",(Integer)callMap.get("id"));
+        Map paramMap=new HashMap();
+        paramMap.put("userId",TokenUtil.getUserId(token));
+        paramMap.put("roomId",(Integer)callMap.get("id"));
+        paramMap.put("disabled",DisabledEnum.disabled0.getCode());
+        paramMap.put("createTime",new Date());
+        paramMap.put("updateTime",new Date());
+        paramMap.put("roomOwner",TokenUtil.getUserId(token));
+        paramMap.put("joinOffLine",JoinOffLineStatusEnum.Status1.getCode());
+        paramMap.put("openId",TokenUtil.getUserObject(token));
+        this.commonInsertMap("ddw_goodfriendplay_room_member",paramMap);
+        return new ResponseApiVO(1,"成功",null);
+    }
+    private ResponseApiVO commonHandleUser(Integer userId,GoodFriendPlayOutUserDTO dto){
+        if(dto==null || dto.getCode()==null || dto.getCode()<=0){
+            return new ResponseApiVO(-2,"房间code异常",null);
+        }
+        if(StringUtils.isBlank(dto.getOpenId())){
+            return new ResponseApiVO(-2,"请选择一个用户",null);
+        }
 
+        Map searchMap=new HashMap();
+        searchMap.put("id",dto.getCode());
+        searchMap.put("roomOwner",userId);
+        Map map=this.commonObjectBySearchCondition("ddw_goodfriendplay_room",searchMap);
+        if(map==null || map.isEmpty()){
+            return new ResponseApiVO(-2,"房间还没建",null);
+        }
+        if(DisabledEnum.disabled1.getCode( ).equals(map.get("disabled"))){
+            return new ResponseApiVO(-2,"房间已停用",null);
+        }
+        return new ResponseApiVO(1,"成功",null);
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO disabledUserJoin(String token,GoodFriendPlayOutUserDTO dto)throws Exception{
+        Integer userId=TokenUtil.getUserId(token);
+        ResponseApiVO r=commonHandleUser(userId,dto);
+        if(r.getReCode()!=1){
+            return r;
+        }
+        Map search=new HashMap();
+        search.put("roomOwner",userId);
+        search.put("roomId",dto.getCode());
+        search.put("openId",dto.getOpenId());
+        Map update=new HashMap();
+        update.put("disabled",DisabledEnum.disabled1.getCode());
+        ResponseVO res=this.commonUpdateByParams("ddw_goodfriendplay_room_member",update,search);
+        if(res.getReCode()==1){
+            return new ResponseApiVO(1,"成功",null);
+        }
+        return new ResponseApiVO(-2,"失败",null);
+
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO outUser(String token,GoodFriendPlayOutUserDTO dto)throws Exception{
+        Integer userId=TokenUtil.getUserId(token);
+        ResponseApiVO r=commonHandleUser(userId,dto);
+        if(r.getReCode()!=1){
+            return r;
+        }
+        Map deleteMap=new HashMap();
+        deleteMap.put("roomOwner",userId);
+        deleteMap.put("roomId",dto.getCode());
+        deleteMap.put("openId",dto.getOpenId());
+        ResponseVO res=this.commonDeleteByParams("ddw_goodfriendplay_room_member",deleteMap);
+        if(res.getReCode()==1){
+           return new ResponseApiVO(1,"成功",null);
+        }
+        return new ResponseApiVO(-2,"失败",null);
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO join(String token,CodeDTO dto)throws Exception{
+        if(dto==null || dto.getCode()==null || dto.getCode()<=0){
+            return new ResponseApiVO(-2,"参数异常",null);
+        }
+        Map map=this.commonObjectBySingleParam("ddw_goodfriendplay_room","id",dto.getCode());
+        if(map==null ||  map.isEmpty()){
+            return new ResponseApiVO(-2,"小房间不存在",null);
+        }
+        Integer status=(Integer) map.get("status");
+
+        if(GoodFriendPlayRoomStatusEnum.status20.getCode().equals(status)){
+            Map paramMap=new HashMap();
+            paramMap.put("userId",TokenUtil.getUserId(token));
+            paramMap.put("roomId",dto.getCode());
+            Map dataMap=this.commonObjectBySearchCondition("ddw_goodfriendplay_room_member",paramMap);
+            if(dataMap==null || dataMap.isEmpty()){
+                paramMap.put("disabled",DisabledEnum.disabled0.getCode());
+                paramMap.put("createTime",new Date());
+                paramMap.put("updateTime",new Date());
+                paramMap.put("roomOwner",map.get("roomOwner"));
+                paramMap.put("joinOffLine",JoinOffLineStatusEnum.Status1.getCode());
+                paramMap.put("openId",TokenUtil.getUserObject(token));
+                this.commonInsertMap("ddw_goodfriendplay_room_member",paramMap);
+                return new ResponseApiVO(1,"成功",null);
+            }else{
+                Integer disabled=(Integer) dataMap.get("disabled");
+                if(DisabledEnum.disabled1.getCode().equals(disabled)){
+                    return new ResponseApiVO(-2,"抱歉，你被禁止加入开桌",null);
+                }
+                return new ResponseApiVO(-2,"你已经加入开桌了，无需再加入",null);
+
+            }
+        }
+        return new ResponseApiVO(-2,"房主还没申请开桌",null);
+    }
+    private Map checkRoom(String token)throws Exception{
+        Integer userId=TokenUtil.getUserId(token);
+        Map search=new HashMap();
+        search.put("roomOwner",userId);
+        search.put("status,<=",GoodFriendPlayRoomStatusEnum.status20.getCode());
+        search.put("disabled",DisabledEnum.disabled0.getCode());
+        List dataList=this.commonObjectsBySearchCondition("ddw_goodfriendplay_room",search);
+        if(dataList!=null && dataList.size()>0){
+            return (Map)dataList.get(0);
+        }
+        return null;
+
+    }
     public Map getTableById(String token,Integer tableCode )throws  Exception{
         Integer storeId= TokenUtil.getStoreId(token);
         Map search=new HashMap();

@@ -1,5 +1,6 @@
 package com.gen.common.util;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.ssl.KeyMaterial;
 import org.apache.commons.ssl.SSLClient;
@@ -16,13 +17,16 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
@@ -181,9 +185,55 @@ public class HttpUtil {
                         .getValue().toString());
                 pairList.add(pair);
             }
-           // MultipartEntityBuilder
+
            // httpPost.s
             httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charset.forName("UTF-8")));
+            response = httpClient.execute(httpPost);
+            System.out.println(response.toString());
+            HttpEntity entity = response.getEntity();
+            httpStr = EntityUtils.toString(entity, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null) {
+                try {
+                    EntityUtils.consume(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return httpStr;
+    }
+    public static String doPostWithFile(String apiUrl, Map<String, Object> params) {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        String httpStr = null;
+        HttpPost httpPost = new HttpPost(apiUrl);
+
+        CloseableHttpResponse response = null;
+
+        try {
+            httpPost.setConfig(requestConfig);
+            //List<NameValuePair> pairList = new ArrayList<NameValuePair>(params.size());
+            ContentType contentType = ContentType.create("text/plain",Charset.forName("UTF-8"));
+            MultipartEntityBuilder mu=MultipartEntityBuilder.create();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                if(entry.getValue() instanceof String || entry.getValue() instanceof Integer){
+                    mu.addTextBody(entry.getKey(),entry.getValue().toString(),contentType);
+
+                }else{
+                    File f=(File) entry.getValue();
+                    mu.addBinaryBody(entry.getKey(),f,ContentType.create("image/"+ FilenameUtils.getExtension(f.getName())),f.getName());
+                    //m
+                }
+
+               // pairList.add(pair);
+            }
+
+           // httpPost.s
+           // httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charset.forName("UTF-8")));
+           // httpPost.
+            httpPost.setEntity(mu.build());
             response = httpClient.execute(httpPost);
             System.out.println(response.toString());
             HttpEntity entity = response.getEntity();

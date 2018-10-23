@@ -12,13 +12,12 @@ import java.util.Date;
 public class GoodFriendPlayCreateRoomDTO<T> {
 
 
-
     @ApiModelProperty(name = "roomImg", value = "主题图", example = "主题图")
     private  MultipartFile roomImg;
 
     @ApiModelProperty(name = "name", value = "主题名称", example = "主题名称")
     private String name;
-    @ApiModelProperty(name = "type", value = "主题类型", example = "主题类型")
+    @ApiModelProperty(name = "type", value = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100", example = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100")
     private Integer type;
     @ApiModelProperty(name = "tableCode", value = "桌号code", example = "桌号code")
     private Integer tableCode;
@@ -26,7 +25,7 @@ public class GoodFriendPlayCreateRoomDTO<T> {
     @ApiModelProperty(name = "peopleMaxNum", value = "人数上限", example = "人数上限")
     private Integer peopleMaxNum;
     @ApiModelProperty(name = "endTime", value = "结束时间", example = "结束时间")
-    private Date endTime;
+    private String endTime;
 
 
     public MultipartFile getRoomImg() {
@@ -69,11 +68,11 @@ public class GoodFriendPlayCreateRoomDTO<T> {
         this.peopleMaxNum = peopleMaxNum;
     }
 
-    public Date getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 }

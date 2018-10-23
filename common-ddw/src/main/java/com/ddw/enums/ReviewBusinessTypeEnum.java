@@ -15,7 +15,8 @@ public enum ReviewBusinessTypeEnum implements Dictionary {
     ReviewBusinessType6("代练",6),
     ReviewBusinessType7("banner申请",7),
     ReviewBusinessType8("提现",8),
-    ReviewBusinessType9("代练订单退款",9);
+    ReviewBusinessType9("代练订单退款",9),
+    ReviewBusinessType10("约玩开桌",10);
 
 
     private String name;

@@ -59,6 +59,54 @@ public class GoodFriendPlayController {
         }
     }
     @Token
+    @ApiOperation(value = "约玩开桌")
+    @PostMapping("/offlineplay/create/{token}")
+    public ResponseApiVO<GoodFriendPlayRoomVO> createOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
+        try {
+
+            return this.goodFriendPlayService.createOffLinePlay(token);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->createOffLinePlay",e);
+            return new ResponseApiVO(-1,"约玩开桌失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "加入约玩")
+    @PostMapping("/offlineplay/join/{token}")
+    public ResponseApiVO<GoodFriendPlayRoomVO> joinOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
+        try {
+
+            return this.goodFriendPlayService.join(token,args);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->joinOffLinePlay",e);
+            return new ResponseApiVO(-1,"加入约玩失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "踢除开桌里的用户")
+    @PostMapping("/offlineplay/out/{token}")
+    public ResponseApiVO outUserOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayOutUserDTO args){
+        try {
+
+            return this.goodFriendPlayService.outUser(token,args);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->outUserOffLinePlay",e);
+            return new ResponseApiVO(-1,"约玩踢人失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "禁止某用户加入开桌")
+    @PostMapping("/offlineplay/out/{token}")
+    public ResponseApiVO<GoodFriendPlayRoomVO> disabledUserOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayOutUserDTO args){
+        try {
+
+            return this.goodFriendPlayService.disabledUserJoin(token,args);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->disabledUserOffLinePlay",e);
+            return new ResponseApiVO(-1,"约玩踢人失败",null);
+        }
+    }
+    @Token
     @ApiOperation(value = "创建房间")
     @PostMapping("/room/create/{token}")
     public ResponseApiVO createRoom(@PathVariable String token,GoodFriendPlayCreateRoomDTO args){

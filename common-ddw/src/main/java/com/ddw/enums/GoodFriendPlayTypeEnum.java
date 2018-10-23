@@ -3,26 +3,27 @@ package com.ddw.enums;
 import com.gen.common.dict.Dictionary;
 
 /**
- * 状态
+ * 类型
  */
-public enum GoodFriendPlayRoomStatusEnum implements Dictionary {
-    status0("预约中",0),
-    status1("约战中",1),
-    status20("可就坐",20),
-    status21("已拒绝",21);
+public enum GoodFriendPlayTypeEnum implements Dictionary {
+    type1("王者荣耀",1),
+    type2("刺激战场",2),
+    type3("全军出击",3),
+    type4("炉石传说",4),
+    type5("狼人杀",5),
+    type100("其它",100);
 
+            private String name;
+            private Integer code;
 
-    private String name;
-    private Integer code;
-
-    private GoodFriendPlayRoomStatusEnum(String name, Integer code) {
+    private GoodFriendPlayTypeEnum(String name, Integer code) {
                 this.name = name;
                 this.code = code;
             }
 
             // 普通方法
-    public static String getName(Integer code) {
-            for (GoodFriendPlayRoomStatusEnum c : GoodFriendPlayRoomStatusEnum.values()) {
+        public static String getName(Integer code) {
+            for (GoodFriendPlayTypeEnum c : GoodFriendPlayTypeEnum.values()) {
                 if (c.getCode() == code || c.getCode().equals(code)) {
                     return c.name;
                 }

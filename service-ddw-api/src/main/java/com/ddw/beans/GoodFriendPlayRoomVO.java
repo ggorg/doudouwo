@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GoodFriendPlayRoomVO<T> {
@@ -21,7 +23,7 @@ public class GoodFriendPlayRoomVO<T> {
 
     @ApiModelProperty(name = "tableNumber", value = "桌号", example = "桌号")
     private String tableNumber;
-    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1", example = "预约中：0，约战中：1")
+    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1", example = "预约中：0，约战中：1,约玩审核中(可就坐)：20，已拒绝：21")
     private Integer status;
 
 
@@ -32,6 +34,17 @@ public class GoodFriendPlayRoomVO<T> {
     private Integer peopleNum;
     @ApiModelProperty(name = "groupId", value = "群ID" , example = "群ID")
     private String groupId;
+
+    @ApiModelProperty(name = "开桌成员列表", value = "开桌成员列表" , example = "开桌成员列表")
+    private List memberList;
+
+    public List getMemberList() {
+        return memberList;
+    }
+
+    public void setMemberList(List memberList) {
+        this.memberList = memberList;
+    }
 
     public String getGroupId() {
         return groupId;
