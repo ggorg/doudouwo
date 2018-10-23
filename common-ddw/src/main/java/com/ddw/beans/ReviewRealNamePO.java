@@ -59,7 +59,7 @@ public class ReviewRealNamePO {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }u
+    }
 
     public String getSelfieUrl() {
         return selfieUrl;
