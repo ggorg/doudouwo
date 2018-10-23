@@ -96,7 +96,7 @@ public class GoodFriendPlayController {
     }
     @Token
     @ApiOperation(value = "禁止某用户加入开桌")
-    @PostMapping("/offlineplay/out/{token}")
+    @PostMapping("/offlineplay/disabledjoin/{token}")
     public ResponseApiVO<GoodFriendPlayRoomVO> disabledUserOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayOutUserDTO args){
         try {
 
