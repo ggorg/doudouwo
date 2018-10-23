@@ -41,7 +41,7 @@ public class ReviewRealNameService extends CommonService {
     private CommonReviewService commonReviewService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO realName(Integer userId, String realName,String phone, String idcard, MultipartFile idcardFront, MultipartFile idcardOpposite)throws Exception{
+    public ResponseApiVO realName(Integer userId, String realName,String phone, String idcard,MultipartFile selfie, MultipartFile idcardFront, MultipartFile idcardOpposite)throws Exception{
         if(userId == null || StringUtils.isBlank(realName) || idcardFront.isEmpty() || idcardOpposite.isEmpty()){
             return new ResponseApiVO(-1,"参数不正确",null);
         }else{
@@ -90,6 +90,13 @@ public class ReviewRealNameService extends CommonService {
                 reviewRealNamePO.setIdcardOppositeUrl(mainGlobals.getServiceUrl()+fileInfoVo2.getUrlPath());
                 CommonBeanFiles f2=this.fileService.createCommonBeanFiles(fileInfoVo2);
                 this.fileService.saveFile(f2);
+
+                String selfieImgName= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( idcardOpposite.getOriginalFilename());
+                FileInfoVo fileInfoVo3= UploadFileMoveUtil.move( idcardOpposite,mainGlobals.getRsDir(), selfieImgName);
+                reviewRealNamePO.setSelfieUrl(mainGlobals.getServiceUrl()+fileInfoVo3.getUrlPath());
+                CommonBeanFiles f3=this.fileService.createCommonBeanFiles(fileInfoVo3);
+                this.fileService.saveFile(f3);
+
                 Map updatePoMap= BeanToMapUtil.beanToMap(reviewRealNamePO);
                 ResponseVO rv =this.commonInsertMap("ddw_review_realname",updatePoMap);
                 if (rv.getReCode() > 0) {
