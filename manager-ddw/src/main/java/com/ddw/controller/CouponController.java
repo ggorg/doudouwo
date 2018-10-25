@@ -55,10 +55,10 @@ public class CouponController {
     public ResponseVO doEditPage(CouponDTO dto){
         try {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
-            if(spo!=null){
-                return this.couponService.save(dto,spo.getId());
 
-            }
+            return this.couponService.save(dto,spo==null?-1:spo.getId());
+
+
 
         }catch (Exception e){
             logger.error("couponController->doEditPage",e);

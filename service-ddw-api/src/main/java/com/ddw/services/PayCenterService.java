@@ -219,10 +219,7 @@ public class PayCenterService extends BaseOrderService {
             String strs[]=str.split("-");
             Integer earnest=Integer.parseInt(strs[0]);
             orderPO.setDoCost(earnest);
-            ResponseApiVO couponVo=this.executeCoupon(orderPO,couponCode,token);
-            if(couponVo.getReCode()!=1){
-                return couponVo;
-            }
+
        // 竞价金额
         }else if(OrderTypeEnum.OrderType5.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
@@ -325,7 +322,9 @@ public class PayCenterService extends BaseOrderService {
                     mVo=handleMap.get(code);
                     dataMap=new HashMap();
                     dataMap.put("productId",code);
+
                     Integer sale=mVo.get("dghActivityPrice")==null?(Integer)mVo.get("dghSalesPrice"):(Integer)mVo.get("dghActivityPrice");
+                    sale=dicount!=null?dicount.multiply(BigDecimal.valueOf(sale)).intValue():sale;
                     countPrice=countPrice+sale;
                     dataMap.put("productCountPrice",sale);
                     dataMap.put("productUnitPrice",sale);
@@ -340,10 +339,12 @@ public class PayCenterService extends BaseOrderService {
                 }
 
             }
-            if(dicount!=null) {
-                countPrice=dicount.multiply(BigDecimal.valueOf(countPrice)).intValue();
-            }
+
            orderPO.setDoCost(countPrice);
+            ResponseApiVO couponVo=this.executeCoupon(orderPO,couponCode,token);
+            if(couponVo.getReCode()!=1){
+                return couponVo;
+            }
             if(countPrice==null || countPrice<=0){
                 return new ResponseApiVO(-2,"支付失败",null);
             }
