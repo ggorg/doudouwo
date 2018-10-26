@@ -25,8 +25,8 @@ public class GoodsInfoProductVO<T> {
     private Integer dghActivityPrice;
 
 
-    @ApiModelProperty(name="vipPrice",value="会员折扣价",example="会员折扣价")
-    private Integer vipPrice;
+   /* @ApiModelProperty(name="vipPrice",value="会员折扣价",example="会员折扣价")
+    private Integer vipPrice;*/
 
 
 
@@ -34,13 +34,13 @@ public class GoodsInfoProductVO<T> {
     @JsonProperty("salesNum")
     private Integer dghSaleNumber;
 
-    public Integer getVipPrice() {
+    /*public Integer getVipPrice() {
         return vipPrice;
     }
 
     public void setVipPrice(Integer vipPrice) {
         this.vipPrice = vipPrice;
-    }
+    }*/
 
     public Integer getId() {
         return id;

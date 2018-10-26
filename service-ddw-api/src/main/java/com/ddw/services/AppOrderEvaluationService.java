@@ -23,39 +23,75 @@ public class AppOrderEvaluationService extends CommonService {
         if(StringUtils.isBlank(EvaluateScoreEnum.getName(dto.getScore()))){
             return new ResponseApiVO(-2,"分数异常",null);
         }
-        if(dto.getCode()==null || dto.getCode()<=0){
+        if(dto.getCode()==null ){
             return new ResponseApiVO(-2,"编号异常",null);
         }
-        OrderViewPO orderViewPO=this.commonObjectBySingleParam("ddw_order_view","id",dto.getCode(),OrderViewPO.class);
+        OrderViewPO orderViewPO=null;
 
-        if(orderViewPO==null){
-            return new ResponseApiVO(-2,"记录不存在",null);
-        }
-        if(orderViewPO.getIsEvaluate()!=null && orderViewPO.getIsEvaluate()==1){
-            return new ResponseApiVO(-2,"抱歉，已评价过",null);
+        Map saveMap=new HashMap();
+        if(dto.getCode()>0){
+            orderViewPO=this.commonObjectBySingleParam("ddw_order_view","id",dto.getCode(),OrderViewPO.class);
+
+            if(orderViewPO==null){
+                return new ResponseApiVO(-2,"记录不存在",null);
+            }
+            if(orderViewPO.getIsEvaluate()!=null && orderViewPO.getIsEvaluate()==1){
+                return new ResponseApiVO(-2,"抱歉，已评价过",null);
+
+            }
+            saveMap.put("orderId",orderViewPO.getOrderId());
+            saveMap.put("orderNo",orderViewPO.getOrderNo());
+            saveMap.put("busType",orderViewPO.getOrderType());
+            saveMap.put("busCode",orderViewPO.getBusId());
+            saveMap.put("storeId",orderViewPO.getStoreId());
+            saveMap.put("orderViewId",dto.getCode());
+            saveMap.put("img",orderViewPO.getHeadImg());
+        }else{
+            List<Map> listOrderView=this.commonObjectsBySingleParam("ddw_order_view","orderId",Math.abs(dto.getCode()));
+            if(listOrderView==null || listOrderView.isEmpty()){
+                return new ResponseApiVO(-2,"记录不存在",null);
+            }
+            Map map=listOrderView.get(0);
+            if(map.containsKey("isEvaluate") && (Integer)map.get("isEvaluate")==1){
+                return new ResponseApiVO(-2,"抱歉，已评价过",null);
+            }
+
+            saveMap.put("orderId",map.get("orderId"));
+            saveMap.put("orderNo",map.get("orderNo"));
+            saveMap.put("busType",map.get("orderType"));
+            saveMap.put("busCode",-1);
+            saveMap.put("storeId",map.get("storeId"));
+            saveMap.put("orderViewId",-1);
+
+            // List list=new ArrayList();
+           // listOrderView.forEach(a->list.add(a.get("id")));
+           // saveMap.put("orderViewId",list.toString().replaceFirst("(\\[)(.+)(\\])","$2"));
 
         }
+
         Integer userId= TokenUtil.getUserId(token);
         UserInfoPO po= this.commonObjectBySingleParam("ddw_userinfo","id",userId, UserInfoPO.class);
 
-        Map saveMap=new HashMap();
-        saveMap.put("orderId",orderViewPO.getOrderId());
-        saveMap.put("orderNo",orderViewPO.getOrderNo());
         saveMap.put("comment",dto.getComment());
         saveMap.put("score",dto.getScore());
-        saveMap.put("busType",orderViewPO.getOrderType());
-        saveMap.put("busCode",orderViewPO.getBusId());
+
         saveMap.put("createTime",new Date());
         saveMap.put("disabled", DisabledEnum.disabled0.getCode());
         saveMap.put("userId",userId);
-        saveMap.put("orderViewId",dto.getCode());
-        saveMap.put("storeId",orderViewPO.getStoreId());
+
+
         saveMap.put("userName",po.getNickName());
         saveMap.put("userHeadImg",po.getHeadImgUrl());
         this.commonInsertMap("ddw_order_evaluation",saveMap);
         Map param=new HashMap();
         param.put("isEvaluate",1);
-       this.commonUpdateBySingleSearchParam("ddw_order_view",param,"id",orderViewPO.getId());
+        if(dto.getCode()>0){
+            this.commonUpdateBySingleSearchParam("ddw_order_view",param,"id",orderViewPO.getId());
+
+        }else{
+            this.commonUpdateBySingleSearchParam("ddw_order_view",param,"orderId",Math.abs(dto.getCode()));
+
+        }
         return new ResponseApiVO(1,"成功",null);
     }
     public ResponseApiVO evaluateList(String token,OrderViewEvaluateListDTO dto){
@@ -79,12 +115,15 @@ public class AppOrderEvaluationService extends CommonService {
         search.put("storeId",dto.getStoreId());
         search.put("disabled",DisabledEnum.disabled0.getCode());
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
-        CommonSearchBean csb=new CommonSearchBean("ddw_order_evaluation","t1.createTime desc","t1.comment,t1.userName,t1.userHeadImg,DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') time,t1.score,ct0.headImg img",page.getStartRow(),page.getEndRow(),search,
-                new CommonChildBean("ddw_order_view","id","orderViewId",null));
+        CommonSearchBean csb=new CommonSearchBean("ddw_order_evaluation","t1.createTime desc","t1.comment,t1.userName,t1.userHeadImg,DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') time,t1.score,t1.img",page.getStartRow(),page.getEndRow(),search);
        List list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && list.size()>0){
             return new ResponseApiVO(1,"成功",new ListVO<>(list));
         }
         return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Math.abs(-107456));
     }
 }

@@ -39,9 +39,29 @@ public class OrderViewVO {
     private String shipStatusName;
     @ApiModelProperty(name="isEvaluate",value="是否已评价",example="是否已评价,未评价：0，已评价：1")
     private Integer isEvaluate;
+    @ApiModelProperty(name="描述",value="描述",example="描述")
+    private String desc;
+    @ApiModelProperty(name="type",value="是否聚合订单，否：0，是：1",example="是否聚合订单，否：0，是：1")
+    private Integer type=0;
     @ApiModelProperty(name="code",value="编号",example="编号")
     @JsonProperty("code")
     private Integer id;
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
     public Integer getId() {
         return id;

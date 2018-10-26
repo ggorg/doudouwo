@@ -39,36 +39,63 @@ public class AppOrderService extends CommonService {
             return new ResponseApiVO(-2,"订单类型错误",null);
         }
         Map map=new HashMap();
-        map.put("userId", TokenUtil.getUserId(token));
-        map.put("payStatus,>=", PayStatusEnum.PayStatus1.getCode());
-        map.put("orderType,in",AppOrderTypeEnum.OrderType3.getName());
+        map.put("doCustomerUserId", TokenUtil.getUserId(token));
+        map.put("doPayStatus,>=", PayStatusEnum.PayStatus1.getCode());
+        map.put("doType,in",AppOrderTypeEnum.OrderType3.getName());
         if(dto.getShipStatus()!=null && StringUtils.isNotBlank(ShipStatusEnum.getName(dto.getShipStatus()))){
-            map.put("shipStatus", dto.getShipStatus());
+            map.put("doShipStatus", dto.getShipStatus());
         }
-        List<Map> orderList=this.commonList("ddw_order_view","createTime desc",dto.getPageNo()==null?1:dto.getPageNo(),10,map);
+
+        List<Map> omainrderList=this.commonList("ddw_order","createTime desc",dto.getPageNo()==null?1:dto.getPageNo(),10,map);
+
+        if(omainrderList==null && omainrderList.isEmpty()){
+            return new ResponseApiVO(2,"没有订单数据",new ListVO(new ArrayList()));
+        }
+        final Map<Integer,Integer> orderIdMap=new HashMap();
+        omainrderList.forEach(a->orderIdMap.put((Integer)a.get("id"),(Integer)a.get("doCost")));
+        map=new HashMap();
+        map.put("orderId,in",orderIdMap.keySet().toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+        List<Map> orderList=this.commonList("ddw_order_view","createTime desc",null,null,map);
         OrderViewVO orderViewVO=null;
         List dataList=new ArrayList();
+        Map<Integer,OrderViewVO> handleMap=new HashMap();
+        Integer orderId=null;
         for(Map m:orderList){
-            orderViewVO=new OrderViewVO();
-            PropertyUtils.copyProperties(orderViewVO,m);
-            if(OrderTypeEnum.OrderType7.getCode().equals(orderViewVO.getOrderType())){
-                if(ClientShipStatusEnum.ShipStatus0.getCode().equals(orderViewVO.getShipStatus())){
-                    orderViewVO.setShipStatusName("未使用");
-                }else{
-                    orderViewVO.setShipStatusName("已使用");
-                }
+            orderId=(Integer)m.get("orderId");
+            if(handleMap.containsKey(orderId)){
+                OrderViewVO ov=handleMap.get(orderId);
+                ov.setName(ov.getName()+" "+m.get("name"));
+                ov.setDesc(ov.getDesc()+" "+m.get("name")+" *"+m.get("num"));
+                ov.setPrice(orderIdMap.get(orderId));
+                ov.setType(1);
+                ov.setId(-orderId);
             }else{
-                orderViewVO.setShipStatusName(ClientShipStatusEnum.getName(orderViewVO.getShipStatus()));
-            }
-            orderViewVO.setOrderTypeName(OrderTypeEnum.getName(orderViewVO.getOrderType()));
+                orderViewVO=new OrderViewVO();
+                PropertyUtils.copyProperties(orderViewVO,m);
+                if(OrderTypeEnum.OrderType7.getCode().equals(orderViewVO.getOrderType())){
+                    if(ClientShipStatusEnum.ShipStatus0.getCode().equals(orderViewVO.getShipStatus())){
+                        orderViewVO.setShipStatusName("未使用");
+                    }else{
+                        orderViewVO.setShipStatusName("已使用");
+                    }
+                }else{
+                    orderViewVO.setShipStatusName(ClientShipStatusEnum.getName(orderViewVO.getShipStatus()));
+                }
+                orderViewVO.setOrderTypeName(OrderTypeEnum.getName(orderViewVO.getOrderType()));
 
-            orderViewVO.setOrderNo(orderViewVO.getOrderNo().substring(16));
-            dataList.add(orderViewVO);
+                orderViewVO.setOrderNo(orderViewVO.getOrderNo().substring(16));
+                orderViewVO.setDesc(orderViewVO.getName()+" *"+orderViewVO.getNum());
+                handleMap.put(orderId,orderViewVO);
+                dataList.add(orderViewVO);
+            }
+
 
         }
         if(orderList==null && orderList.isEmpty()){
             return new ResponseApiVO(2,"没有订单数据",new ListVO(new ArrayList()));
         }else{
+            orderIdMap.clear();
+           // handleMap.clear();handleMap=null;
             return new ResponseApiVO(1,"成功",new ListVO(dataList));
         }
     }

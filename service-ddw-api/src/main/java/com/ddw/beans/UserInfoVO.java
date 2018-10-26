@@ -109,6 +109,16 @@ public class UserInfoVO {
 
     @ApiModelProperty(name="userSign",value="IM签名",example="xxxx")
     private String userSign;
+    @ApiModelProperty(name="discount",value="会员等折扣",example="会员等折扣")
+    private String discount;
+
+    public String getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(String discount) {
+        this.discount = discount;
+    }
 
     public Integer getId() {
         return id;

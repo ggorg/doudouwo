@@ -96,13 +96,13 @@ public class GoodsClientService extends CommonService {
         Integer gid=null;
         List goodsList=null;
         //Map goodsMap=null;
-        Integer gradeId=TokenUtil.getUseGrade(token);
+        /*Integer gradeId=TokenUtil.getUseGrade(token);
         BigDecimal dicount=null;
 
         if(gradeId!=null){
             dicount= userGradeService.getDiscount(gradeId);
                 //countPrice=dicount.divide(BigDecimal.valueOf(countPrice)).intValue()
-        }
+        }*/
         GoodsItemVO itemVO=null;
         GoodsInfoProductVO productVO=null;
         for(int i=0;i<ja.size();i++){
@@ -122,9 +122,9 @@ public class GoodsClientService extends CommonService {
                             if(gid.equals((Integer)p.get("dghGoodsId"))){
                                 productVO=new GoodsInfoProductVO();
                                 PropertyUtils.copyProperties(productVO,p);
-                                if(dicount!=null){
+                                /*if(dicount!=null){
                                     productVO.setVipPrice(dicount.multiply(BigDecimal.valueOf(productVO.getDghActivityPrice()!=null?productVO.getDghActivityPrice():productVO.getDghSalesPrice())).intValue());
-                                }
+                                }*/
                                 itemVO.getProducts().add(productVO);
                             }
                         }
