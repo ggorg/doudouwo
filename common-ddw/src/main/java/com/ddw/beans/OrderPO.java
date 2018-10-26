@@ -1,6 +1,7 @@
 package com.ddw.beans;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -93,8 +94,20 @@ public class OrderPO implements Serializable {
      * 买家退还给卖家的快递公司名称
      */
     private String doExitExpressName;
+    /**
+     * 折扣
+     */
+    private BigDecimal doDicount;
 
     private String doExtendStr;
+
+    public BigDecimal getDoDicount() {
+        return doDicount;
+    }
+
+    public void setDoDicount(BigDecimal doDicount) {
+        this.doDicount = doDicount;
+    }
 
     public String getDoExtendStr() {
         return doExtendStr;

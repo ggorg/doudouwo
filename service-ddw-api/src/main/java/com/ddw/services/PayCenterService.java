@@ -304,7 +304,11 @@ public class PayCenterService extends BaseOrderService {
             Map dataMap=null;
             Integer countPrice=0;
             Map mVo=null;
-
+            BigDecimal dicount=null;
+            if(gradeId!=null){
+                dicount=this.userGradeService.getDiscount(gradeId);
+                orderPO.setDoDicount(dicount);
+            }
             for(Integer code:codesList){
                 if(!handleMap.containsKey(code)){
                     return new ResponseApiVO(-2,handleMap.get(code).get("dghDesc")+"可能已下架",null);
@@ -339,16 +343,20 @@ public class PayCenterService extends BaseOrderService {
             if(countPrice==null || countPrice<=0){
                 return new ResponseApiVO(-2,"支付失败",null);
             }
-           orderPO.setDoCost(countPrice);
+            orderPO.setDoCost(countPrice);
+            if(couponCode==null && dicount!=null){
+                orderPO.setDoCost(dicount.multiply(BigDecimal.valueOf(countPrice)).intValue());
+            }
+
             ResponseApiVO couponVo=this.executeCoupon(orderPO,couponCode,token);
             if(couponVo.getReCode()!=1){
                 return couponVo;
             }
-            orderPO.setDoCost(countPrice);
 
-            if(gradeId!=null){
-                BigDecimal dicount=this.userGradeService.getDiscount(gradeId);
+
+            if(StringUtils.isNotBlank(orderPO.getDoCouponNo()) && dicount!=null){
                 orderPO.setDoCost(dicount!=null?dicount.multiply(BigDecimal.valueOf(orderPO.getDoCost())).intValue():orderPO.getDoCost());
+
             }
 
 
