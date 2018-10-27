@@ -86,6 +86,7 @@ public class AppStoresService extends CommonService {
                 vo.setDsName((String)m.get("dsName"));
                 vo.setId((Integer) m.get("id"));
                 vo.setImgUrl((String) m.get("dsHeadUrl"));
+                vo.setDsAddress((String) m.get("dsAddress"));
                 objData.add(vo);
             }
 

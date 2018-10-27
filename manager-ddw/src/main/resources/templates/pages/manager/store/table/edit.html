@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form layui-form-pane" >
+  <input th:if="${ds!=null and ds['id']!=null}" th:name="id" th:value="${ds['id']}" type="hidden"/>
+  <div class="layui-form-item">
+    <label class="layui-form-label">桌号</label>
+    <div class="layui-input-block">
+      <input type="text" name="tableNumber" required="required" title="桌号"  lay-verify="required|max20" th:value="${ds!=null? ds['tableNumber']:''}" placeholder="请输入桌号" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">座位数</label>
+    <div class="layui-input-block">
+      <input type="number" name="peopleMaxNum" required="required" title="座位数"  lay-verify="required" th:value="${ds!=null? ds['peopleMaxNum']:''}" placeholder="请输入座位数" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">状态</label>
+    <div class="layui-input-block">
+      <select name="status">
+        <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.TableStatusEnum',#maps.isEmpty(ds)?'':ds['status'])}"></th:block>
+      </select>
+    </div>
+  </div>
+
+
+  <div class="layui-form-item" style="display: none">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+<script type="text/javascript">
+    initForm("do-edit",".layui-form")
+
+
+</script>
+</body>
+</html>

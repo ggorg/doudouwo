@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+           initPage(/*[[${sPage!=null?sPage.total:0}]]*/ );
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
+                    <h3>桌子列表</h3>
+
+                </div><!--contenttitle-->
+
+                <div class="tableoptions">
+
+                    <form class="layui-form" >
+                        <div class="layui-form-item2 layui-form-item">
+                        <div class="float-left-div" >
+
+                            <label class="layui-form-label" >桌号</label>
+                            <div class="layui-input-inline" >
+                                <input class="layui-input" name="tableNumber" th:value="${#httpServletRequest.getParameter('tableNumber')}"/>
+                            </div>
+                        </div>
+                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
+
+                    </div>
+                    </form>
+                    <!-- <select class="radius3">
+                         <option value="">Show All</option>
+                         <option value="">Rendering Engine</option>
+                         <option value="">Platform</option>
+                     </select> &nbsp;
+                     <button class="radius3">Apply Filter</button>
+                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+                </div><!--tableoptions-->
+                <div class="tableoptions">
+
+                    <button class="radius3" id="createBtn" onclick="openDialog('350px','330px','新增桌子','to-edit')" title="table2">新增门票</button> &nbsp;
+
+                </div>
+                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+                    <colgroup>
+                        <!--<col class="con0" style="width: 4%" />-->
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+                        <col class="con0" />
+
+                        <col class="con0" />
+                    </colgroup>
+                    <thead>
+
+                    <tr>
+                        <th class="head1">桌号</th>
+                        <th class="head1">座位数</th>
+
+
+                        <th class="head1">状态</th>
+                        <th class="head1">创建时间</th>
+
+                        <th class="head1">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:each="obj:${sPage?.result}">
+                        <td th:text="${obj['tableNumber']}">Trident</td>
+                        <td th:text="${obj['peopleMaxNum']}">Trident</td>
+                        <td th:text="${#TdEnum.text('com.ddw.enums.TableStatusEnum',obj['status'])}">Trident</td>
+
+
+                        <td th:text="${obj['createTime']}">Win 95+</td>
+
+                        <td class="center">
+                            <div class="layui-btn-group">
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'350px\',\'330px\',\'修改\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+
+                                <button  class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'confirmDelete(\''+${obj['id']}+'\')'" >删除</button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+
+        function confirmDelete(id){
+            layer.confirm("是否删除？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-delete",null,{id:id});
+
+                }
+                //layer.close(index);
+            });
+        }
+        layui.use('form', function(){
+            var form = layui.form;
+
+        })
+
+    </script>
+	</body>
+
+</html>
