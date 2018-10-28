@@ -175,6 +175,7 @@ public class GoodFriendPlayService extends CommonService {
 
         GoodFriendPlayChatCenterVO gfp=this.getChatCenterBean(storeId);
         map.put("centerId",gfp.getId());
+        map.put("storeId",storeId);
         map.put("status",GoodFriendPlayRoomStatusEnum.status0.getCode());
         map.put("roomOwner",TokenUtil.getUserId(token));
         String groupId=storeId+"_"+TokenUtil.getUserId(token)+"_"+ RandomStringUtils.randomNumeric(10);
@@ -210,6 +211,7 @@ public class GoodFriendPlayService extends CommonService {
         reviewPO.setDrApplyDesc("申请约玩开桌");
         reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.goodFriendPlay20.getCode());
         reviewPO.setDrExtend("主题名-"+callMap.get("name"));
+        reviewPO.setCreateTime(new Date());
         this.commonReviewService.submitAppl(reviewPO);
         Map updateMap=new HashMap();
         updateMap.put("updateTime",new Date());

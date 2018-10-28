@@ -44,19 +44,21 @@ public class CommonReviewService extends CommonService {
             conditoin.put("id",reviewId);
             ReviewPO rpo=this.commonObjectBySingleParam("ddw_review","id",reviewId,ReviewPO.class);
 
-            CacheUtil.delete("reviewInfo",businessCode);
+            CacheUtil.delete("reviewInfo",rpo.getDrBusinessCode());
             ResponseVO resInsert=insertReviewRecord(BeanToMapUtil.beanToMap(rpo,false));
             if(resInsert.getReCode()!=1){
                 throw new GenException("插入审批记录表失败");
             }
             ReviewCallBackBean rb=new ReviewCallBackBean();
-            rb.setBusinessCode(businessCode);
+            rb.setBusinessCode(rpo.getDrBusinessCode());
             rb.setStoreId(rpo.getDrBelongToStoreId());
             rb.setReviewPO(rpo);
             //回调处理
             if(StringUtils.isNotBlank(ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()))){
                 ResponseVO callBackRes=(ResponseVO) CallBackInvokeUtil.reviewInvoke(reviewCallBackService, ReviewCallBackEnum.getName(rpo.getDrBusinessStatus()), rb);
-
+                if(callBackRes.getReCode()!=1){
+                    throw new GenException("审批失败,"+callBackRes.getReMsg());
+                }
             }
 
         }else {

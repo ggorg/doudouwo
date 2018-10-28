@@ -15,7 +15,8 @@ public enum ReviewCallBackEnum implements Dictionary {
     bannerCallBack7("executeBanner",7),//banner申请
     practiceFlag5("executePractice",5),//申请代练
     withdraw8("executeWithdraw",8),
-    practiceRefund9("executePracticeRefund",9);//代练订单退款
+    practiceRefund9("executePracticeRefund",9),//代练订单退款
+    goodFriendPlay20("executeGoodFriendPlay",20);//约玩开桌
     private String name;
     private Integer code;
 

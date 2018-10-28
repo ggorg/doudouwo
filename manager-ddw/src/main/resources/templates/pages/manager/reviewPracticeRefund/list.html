@@ -93,7 +93,7 @@
                         <td class="center">
                             <div class="layui-btn-group">
                                 <button class="layui-btn layui-btn-sm" th:onclick="'viewDialog(\'500px\',\'580px\',\'查看\',\'/manager/reviewPracticeRefund/to-review-info-by-id-html?id='+${obj['id']}+'\')'"  >查 看</button>
-                                <th:block th:utext="${#toolsddw.commonReviewBtn(obj['drBusinessCode'],obj['drReviewStatus'])}"></th:block>
+                                <th:block th:utext="${#toolsddw.commonReviewBtn(obj['id'],obj['drBusinessCode'],obj['drReviewStatus'])}"></th:block>
 
                             </div>
                        </td>

@@ -1,6 +1,7 @@
 package com.gen.common.util;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -346,6 +347,9 @@ public class Tools {
 	}
 	public static String encrypt(String input){
 		return MyEncryptUtil.encry(input);
+	}
+	public static String encryptRandom(){
+		return MyEncryptUtil.encry(RandomStringUtils.randomNumeric(10));
 	}
 
 	public static boolean checked(String tagidList,String id){

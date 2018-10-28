@@ -9,6 +9,7 @@ import com.ddw.servies.ReviewService;
 import com.ddw.servies.RoleService;
 import com.ddw.servies.StoreService;
 import com.ddw.util.Toolsddw;
+import com.gen.common.exception.GenException;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
@@ -69,23 +70,7 @@ public class ReviewController {
 
     }
 
-    /**
-     * 门店-女神申请直播
-     * @return
-     */
-    @GetMapping("/to-live-radio-review-page")
-    public String toLiveRadioReviewPage(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
-        try {
-            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
-            if(spo!=null){
-                model.addAttribute("rPage",this.reviewService.findLiveRadioPageByStore(pageNo,spo.getId()));
-            }
-        }catch (Exception e){
-            logger.error("ReviewController->toReviewPage",e);
-        }
-        return "pages/manager/review/list";
 
-    }
     /**
      * 门店-跟据ID审批情况
      * @return
@@ -133,14 +118,14 @@ public class ReviewController {
      * @return
      */
     @GetMapping("/to-review-info-html")
-    public String  toReviewInfoHtml(String businessCode,Model model){
+    public String  toReviewInfoHtml(Integer id,Model model){
         try {
-            String on= MyEncryptUtil.getRealValue(businessCode);
-            if(StringUtils.isBlank(on)){
+
+            ReviewPO po=this.reviewService.getReviewById(id);
+            if(po==null){
                 return "redirect:/404";
             }
-
-            model.addAttribute("review",this.reviewService.getReviewByBusinessCode(on));
+            model.addAttribute("review",this.reviewService.getReviewById(id));
             return "pages/manager/review/reviewInfo";
 
 
@@ -193,15 +178,14 @@ public class ReviewController {
      * @return
      */
     @GetMapping("to-review-by-hq-html")
-    public String toReviewByHqHtml(String businessCode, Model model){
+    public String toReviewByHqHtml(Integer id, Model model){
        try {
            List roleList=this.roleService.getRoleByUserId(Toolsddw.getCurrentUserId(), RoleTypeEnum.RoleType1_0.getCode());
            if(roleList!=null && roleList.size()>0){
-               String on=MyEncryptUtil.getRealValue(businessCode);
-               if(StringUtils.isNotBlank(on)){
 
-                   model.addAttribute("review",this.reviewService.getReviewByBusinessCode(on));
-               }
+
+               model.addAttribute("review",this.reviewService.getReviewById(id));
+
 
                 return "pages/manager/review/reviewByHq";
            }
@@ -237,7 +221,11 @@ public class ReviewController {
                }
            }
        }catch (Exception e){
-           logger.error("ReviewController->toReviewExitBackHtml",e);
+           logger.error("ReviewController->doReviewByHq",e);
+           if(e instanceof GenException){
+               return new ResponseVO(-1,e.getMessage(),null);
+           }
+
 
        }
         return new ResponseVO(-1,"提交审批失败",null);
@@ -245,22 +233,57 @@ public class ReviewController {
     }
 
     /**************************门店审批的***************************************/
+
+    /**
+     * 门店-女神申请直播
+     * @return
+     */
+    @GetMapping("/to-live-radio-review-page")
+    public String toLiveRadioReviewPage(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                model.addAttribute("rPage",this.reviewService.findLiveRadioPageByStore(pageNo,spo.getId()));
+            }
+        }catch (Exception e){
+            logger.error("ReviewController->toLiveRadioReviewPage",e);
+        }
+        return "pages/manager/review/list";
+
+    }
+
+    /**
+     * 门店-约玩申请
+     * @return
+     */
+    @GetMapping("/to-goodFriendPlay-page")
+    public String toGoodFriendPlayPage(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                model.addAttribute("rPage",this.reviewService.findGoodFriendPlayPageByStore(pageNo,spo.getId()));
+            }
+        }catch (Exception e){
+            logger.error("ReviewController->toGoodFriendPlayPage",e);
+        }
+        return "pages/manager/review/list";
+
+    }
+
     /**
      * 门店-前往审批页面
-     * @param businessCode
      * @param model
      * @return
      */
     @GetMapping("to-review-by-store-html")
-    public String toReviewByStoreHtml(String businessCode, Model model){
+    public String toReviewByStoreHtml(Integer id, Model model){
         try {
             StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
             if(spo!=null){
-                String on=MyEncryptUtil.getRealValue(businessCode);
-                if(StringUtils.isNotBlank(on)){
 
-                    model.addAttribute("review",this.reviewService.getReviewByBusinessCode(on));
-                }
+
+                model.addAttribute("review",this.reviewService.getReviewById(id));
+
 
                 return "pages/manager/review/reviewByStore";
             }

@@ -63,6 +63,14 @@ public class ReviewService extends CommonService {
         condtion.put("drBelongToStoreId",storeId);
         return this.findPage(pageNo,condtion);
     }
+
+    public Page findGoodFriendPlayPageByStore(Integer pageNo,Integer storeId)throws Exception{
+        Map condtion=new HashMap();
+        condtion.put("drReviewerType",ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
+        condtion.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType10.getCode());
+        condtion.put("drBelongToStoreId",storeId);
+        return this.findPage(pageNo,condtion);
+    }
     /**
      * 判断门店是否有申请审核
      * @param businessCode 业务流水号

@@ -45,11 +45,24 @@ public class GoodFriendPlayTableService extends CommonService {
         // condtion.put("dmStatus",dmStatus);
         return this.commonPage("ddw_goodfriendplay_tables","updateTime desc",pageNo,10,null);
     }
+    public boolean checkRoomStatus(Integer tableId,Integer storeId){
+        Map search=new HashMap();
+        search.put("storeId",storeId);
+        search.put("tableCode",tableId);
+        search.put("status",GoodFriendPlayRoomStatusEnum.status1.getCode());
+        long n=this.commonCountBySearchCondition("ddw_goodfriendplay_room",search);
+        if(n>0)return true;
+        return false;
+
+    }
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_goodfriendplay_tables","id",id);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO deleteByID(Integer id,Integer storeId)throws Exception{
+        if(checkRoomStatus(id,storeId)){
+            return new ResponseVO(-2,"当前桌号被使用中，没法删除",null);
+        }
         Map searchMap=new HashMap();
         searchMap.put("storeId",storeId);
         searchMap.put("id",id);
@@ -114,6 +127,9 @@ public class GoodFriendPlayTableService extends CommonService {
                 return new ResponseVO(1,"提交成功",null);
             }
         }else{
+            if(checkRoomStatus(dto.getId(),storeId)){
+                return new ResponseVO(-2,"当前桌号被使用中，没法修改",null);
+            }
             ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_tables",map,"id",dto.getId());
             if(res.getReCode()==1){
                // CacheUtil.delete("publicCache","allTicket");

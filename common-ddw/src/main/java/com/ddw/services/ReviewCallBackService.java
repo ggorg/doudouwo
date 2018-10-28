@@ -1,10 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.ReviewCallBackBean;
-import com.ddw.enums.IncomeTypeEnum;
-import com.ddw.enums.ReviewStatusEnum;
-import com.ddw.enums.WithdrawStatusEnum;
-import com.ddw.enums.WithdrawTypeEnum;
+import com.ddw.enums.*;
 import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +43,41 @@ public class ReviewCallBackService extends CommonService {
         return liveRadioService.createLiveRadioRoom(rb.getBusinessCode(),rb.getStoreId(),rb.getReviewPO());
 
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO executeGoodFriendPlay(ReviewCallBackBean rb)throws Exception{
+        if(ReviewStatusEnum.ReviewStatus1.getCode().equals(rb.getReviewPO().getDrReviewStatus())){
+            Integer roomId=Integer.parseInt(rb.getBusinessCode());
+            Map search=new HashMap();
+            search.put("id",roomId);
+            CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room",null,"ct0.id,ct0.tableNumber,ct0.status",null,null,new HashMap(),new CommonChildBean("ddw_goodfriendplay_tables","id","tableCode",null));
+            List<Map> data=this.getCommonMapper().selectObjects(csb);
+            if(data==null || data.isEmpty()){
+                return new ResponseVO(-2,"业务参数异常",null);
+            }
+            Map map=data.get(0);
+            if(TableStatusEnum.status1.getCode().equals((Integer) map.get("status"))){
+                return new ResponseVO(-2,map.get("tableNumber").toString()+"已被使用",null);
+            }
+            Map roomUpdate=new HashMap();
+            roomUpdate.put("status",GoodFriendPlayRoomStatusEnum.status1.getCode());
+            roomUpdate.put("updateTime",new Date());
+            this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",roomUpdate,"id",roomId);
+            Map ts=new HashMap();
+            ts.put("id",map.get("id"));
+            this.commonOptimisticLockUpdateByParam("ddw_goodfriendplay_tables",roomUpdate,ts,"version");
+            return new ResponseVO(1,"成功",null);
+        }else{
+            Map roomUpdate=new HashMap();
+            roomUpdate.put("status",GoodFriendPlayRoomStatusEnum.status21.getCode());
+            roomUpdate.put("updateTime",new Date());
+            this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",roomUpdate,"id",Integer.parseInt(rb.getBusinessCode()));
+            return new ResponseVO(1,"成功",null);
+
+        }
+
+
+    }
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO executeWithdraw(ReviewCallBackBean rb)throws Exception{
         if(ReviewStatusEnum.ReviewStatus1.getCode().equals(rb.getReviewPO().getDrReviewStatus())){
