@@ -173,12 +173,14 @@ public class WalletService extends CommonService {
     public CouponPO getCoupon(Integer couponId,Integer userId,Integer storeId)throws Exception{
         Map search=new HashMap();
         search.put("id",couponId);
-        Map csearch=new HashMap();
-        csearch.put("userId",userId);
-        csearch.put("used",0);
-        csearch.put("storeId",storeId);
-        CommonSearchBean csb=new CommonSearchBean("ddw_coupon",null,"t1.*",0,1,search,
-                new CommonChildBean("ddw_userinfo_coupon","couponId","id",csearch));
+        search.put("userId",userId);
+        search.put("used",0);
+        search.put("storeId",storeId);
+
+
+
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo_coupond",null,"ct0.*",null,null,search,
+                new CommonChildBean("dw_coupon","id","couponId",null));
         List couponlist=this.getCommonMapper().selectObjects(csb);
         if(couponlist!=null && !couponlist.isEmpty()){
             CouponPO po=new CouponPO();
@@ -269,7 +271,7 @@ public class WalletService extends CommonService {
         Map csearch=new HashMap();
         csearch.put("userId",userid);
         csearch.put("used",0);
-        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo_coupon",null,"ct0.id couponCode,ct0.dcName name,ct0.dcType type,ct0.dcMoney mop,ct0.dcStartTime startTime,ct0.dcEndTime endTime,ct0.dcDesc 'desc',ct1.dsName storeName,ct0.dcMinPrice minPrice,t1.used",null,null,csearch,
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo_coupon",null,"t1.id couponCode,ct0.dcName name,ct0.dcType type,ct0.dcMoney mop,ct0.dcStartTime startTime,ct0.dcEndTime endTime,ct0.dcDesc 'desc',ct1.dsName storeName,ct0.dcMinPrice minPrice,t1.used",null,null,csearch,
                 new CommonChildBean("ddw_coupon","id","couponId",null),
                 new CommonChildBean("ddw_store","id","storeId",null));
         List couponlist=this.getCommonMapper().selectObjects(csb);
