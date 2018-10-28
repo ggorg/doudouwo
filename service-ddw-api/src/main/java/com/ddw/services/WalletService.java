@@ -269,8 +269,8 @@ public class WalletService extends CommonService {
         Map csearch=new HashMap();
         csearch.put("userId",userid);
         csearch.put("used",0);
-        CommonSearchBean csb=new CommonSearchBean("ddw_coupon",null,"t1.id couponCode,t1.dcName name,t1.dcType type,t1.dcMoney mop,t1.dcStartTime startTime,t1.dcEndTime endTime,t1.dcDesc 'desc',ct1.dsName storeName,t1.dcMinPrice minPrice,ct0.used",1,1,null,
-                new CommonChildBean("ddw_userinfo_coupon","couponId","id",csearch),
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo_coupon",null,"ct0.id couponCode,ct0.dcName name,ct0.dcType type,ct0.dcMoney mop,ct0.dcStartTime startTime,ct0.dcEndTime endTime,ct0.dcDesc 'desc',ct1.dsName storeName,ct0.dcMinPrice minPrice,t1.used",1,1,csearch,
+                new CommonChildBean("ddw_coupon","id","couponId",null),
                 new CommonChildBean("ddw_store","id","storeId",null));
         List couponlist=this.getCommonMapper().selectObjects(csb);
         List list=new ArrayList();
