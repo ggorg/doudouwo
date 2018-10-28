@@ -180,7 +180,7 @@ public class WalletService extends CommonService {
 
 
         CommonSearchBean csb=new CommonSearchBean("ddw_userinfo_coupon",null,"ct0.*",null,null,search,
-                new CommonChildBean("dw_coupon","id","couponId",null));
+                new CommonChildBean("ddw_coupon","id","couponId",null));
         List couponlist=this.getCommonMapper().selectObjects(csb);
         if(couponlist!=null && !couponlist.isEmpty()){
             CouponPO po=new CouponPO();
