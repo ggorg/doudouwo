@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @ApiModel
 public class PayDTO {
@@ -27,6 +29,17 @@ public class PayDTO {
 
     @ApiModelProperty(name="tableNo",value="桌号",example="")
     private String tableNo;
+
+    @JsonIgnore
+    private Map douBiDtos;
+
+    public Map getDouBiDtos() {
+        return douBiDtos;
+    }
+
+    public void setDouBiDtos(Map douBiDtos) {
+        this.douBiDtos = douBiDtos;
+    }
 
     public String getTableNo() {
         return tableNo;

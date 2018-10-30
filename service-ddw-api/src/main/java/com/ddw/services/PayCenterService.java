@@ -135,6 +135,26 @@ public class PayCenterService extends BaseOrderService {
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO doubiPayOnMarket(String token,DoubiPayMarketDTO dto )throws Exception{
+        if(dto==null || dto.getItems()==null|| dto.getItems().isEmpty()){
+            return new ResponseApiVO(-2,"参数异常",null);
+        }else{
+            PayDTO payDTO=new PayDTO();
+            Map m=new HashMap();
+            List<DoubiPayMarketItemDTO> ds=dto.getItems();
+            for(DoubiPayMarketItemDTO d:ds){
+                if(d.getCode()==null || d.getCode()<=0){
+                    return new ResponseApiVO(-2,"参数异常",null);
+                }
+                m.put(d.getCode(),d.getNum()==null || d.getNum()<=0?1:d.getNum());
+
+            }
+            payDTO.setOrderType(OrderTypeEnum.OrderType6.getCode());
+            payDTO.setDouBiDtos(m);
+            return prePay(token,PayTypeEnum.PayType4.getCode(),payDTO);
+        }
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO doubiPay(String token,DoubiPayDTO dto)throws Exception{
         PayDTO payDTO=new PayDTO();
         if(dto.getCode()==null || dto.getCode()<=0){
@@ -376,7 +396,14 @@ public class PayCenterService extends BaseOrderService {
                 return new ResponseApiVO(-2,"逗币不足，请充值",null);
 
             }
-            List<Integer> codesList=Arrays.asList(dto.getCodes());
+            Collection<Integer> codesList=null;
+            Map<Integer,Integer> douBiMap=null;
+            if(dto.getDouBiDtos()==null || dto.getCodes()!=null){
+               codesList=Arrays.asList(dto.getCodes());
+            }else{
+                douBiMap=dto.getDouBiDtos();
+                codesList=douBiMap.keySet();
+            }
             Map search=new HashMap();
             search.put("id,in",codesList.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
             //  search.put("id",codes[0]);
@@ -393,6 +420,7 @@ public class PayCenterService extends BaseOrderService {
             Integer price=null;
             Map insertM=null;
             Integer giftPrice=0;
+            Integer num=null;
             for(Integer code:codesList){
                 if(!buyInGoiftMap.containsKey(code)){
                     return new ResponseApiVO(-2,buyInGoiftMap.get(code).get("dgName")+"可能已下架",null);
@@ -404,19 +432,20 @@ public class PayCenterService extends BaseOrderService {
                 if(buyInProMap.containsKey(code)){
                     insertM=buyInProMap.get(code);
                     Integer currentPrice=(Integer) insertM.get("giftPrice");
-                    Integer num=(Integer) insertM.get("num");
+                    num=(Integer) insertM.get("num");
                     insertM.replace("giftPrice",currentPrice+giftPrice);
                     insertM.replace("num",num+1);
                 }else{
+                    num=douBiMap!=null?douBiMap.get(code):1;
                     insertM=new HashMap();
                     insertM.put("createTime",new Date());
                     insertM.put("updateTime",new Date());
                     insertM.put("giftId",code);
                     insertM.put("giftName",buyInGoiftMap.get(code).get("dgName").toString());
                     insertM.put("giftImg",buyInGoiftMap.get(code).get("dgImgPath").toString());
-                    insertM.put("giftPrice",giftPrice);
+                    insertM.put("giftPrice",giftPrice*num);
                     insertM.put("userId",orderPO.getDoCustomerUserId());
-                    insertM.put("num",1);
+                    insertM.put("num",num);
                     buyInProMap.put(code,insertM);
                 }
 
