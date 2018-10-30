@@ -45,7 +45,7 @@
             #{value}
         </foreach>
         and t1.userId != #{userId}
-        <if test="weekList != null">
+        <if test="weekList != null and weekList == 1">
             and YEARWEEK(date_format(t2.createTime,'%Y-%m-%d')) = YEARWEEK(now())
         </if>
         group  by t2.goddessId
@@ -67,7 +67,7 @@
                 #{value}
             </foreach>
         </if>
-        <if test="weekList != null">
+        <if test="weekList != null and weekList == 1">
             and YEARWEEK(date_format(t2.createTime,'%Y-%m-%d')) = YEARWEEK(now())
         </if>
         group  by t2.goddessId
