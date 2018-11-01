@@ -13,4 +13,4 @@ import java.util.List;
  */
 @Mapper
 public interface GoodFriendPlayMapper {
-    List<GoodFriendPlayRoomListVO> getRoomList(@Param("centerId") Integer centerId,@Param("disabled") Integer disabled,@Param("type") Integer type,@Param("status") Integer status,@Param("roomOwner") Integer roomOwner, @Param("startNum") Integer startNum, @Param("endNum") Integer endNum);}
+    List<GoodFriendPlayRoomListVO> getRoomList(@Param("centerId") Integer centerId,@Param("disabled") Integer disabled,@Param("type") Integer type,@Param("status") String status,@Param("roomOwner") Integer roomOwner, @Param("startNum") Integer startNum, @Param("endNum") Integer endNum);}

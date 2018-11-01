@@ -1,6 +1,7 @@
 package com.ddw.beans;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,14 +28,15 @@ public class GoodFriendPlayCreateRoomDTO<T> {
     @ApiModelProperty(name = "endTime", value = "结束时间", example = "结束时间")
     private String endTime;
     @ApiModelProperty(name = "describe", value = "描述，500字上限", example = "描述，500字上限")
-    private String describe;
+    @JsonProperty("describe")
+    private String des;
 
-    public String getDescribe() {
-        return describe;
+    public String getDes() {
+        return des;
     }
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
+    public void setDes(String des) {
+        this.des = des;
     }
 
     public MultipartFile getRoomImg() {

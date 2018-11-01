@@ -5,6 +5,9 @@ import com.ddw.beans.ReviewPO;
 import com.ddw.enums.*;
 import com.ddw.services.CommonReviewService;
 import com.ddw.services.ReviewCallBackService;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonCountBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
@@ -65,11 +68,36 @@ public class ReviewService extends CommonService {
     }
 
     public Page findGoodFriendPlayPageByStore(Integer pageNo,Integer storeId)throws Exception{
+        Page page=new Page(pageNo,10);
         Map condtion=new HashMap();
         condtion.put("drReviewerType",ReviewReviewerTypeEnum.ReviewReviewerType1.getCode());
         condtion.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType10.getCode());
         condtion.put("drBelongToStoreId",storeId);
-        return this.findPage(pageNo,condtion);
+        CommonSearchBean csb= new CommonSearchBean("ddw_review","t1.createTime desc","t1.*,ct0.status roomStatus",page.getStartRow(),page.getEndRow(),condtion,
+                new CommonChildBean("ddw_goodfriendplay_room","id","drBusinessCode",null));
+        CommonCountBean ccb=new CommonCountBean();
+        PropertyUtils.copyProperties(ccb, csb);
+        long count = this.getCommonMapper().selectCount(ccb);
+        if(count>0){
+            List list=this.getCommonMapper().selectObjects(csb);
+            page.setResult(list);
+            page.setTotal(count);
+        }
+
+        return page;
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO endGoodFriendPlay(Integer id, Integer storeId)throws Exception{
+        if(id==null || id<=0){
+            return new ResponseVO(-2,"参数异常",null);
+        }
+        Map search=new HashMap();
+        search.put("id",id);
+        search.put("storeId",storeId);
+        Map updateMap=new HashMap();
+        updateMap.put("status",GoodFriendPlayRoomStatusEnum.status22.getCode());
+        updateMap.put("updateTime",new Date());
+        return this.commonUpdateByParams("ddw_goodfriendplay_room",updateMap,search);
     }
     /**
      * 判断门店是否有申请审核

@@ -29,7 +29,7 @@
                 and t1.disabled=#{disabled}
             </if>
             <if test="null!=status">
-                and t1.status=#{status}
+                and t1.status${status}
             </if>
             <if test="null!=type">
                 and t1.type=#{type}

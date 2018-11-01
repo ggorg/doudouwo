@@ -266,7 +266,24 @@ public class ReviewController {
         }catch (Exception e){
             logger.error("ReviewController->toGoodFriendPlayPage",e);
         }
-        return "pages/manager/review/list";
+        return "pages/manager/review/listByGoodFriendPlay";
+
+    }/**
+     * 门店-结束约玩
+     * @return
+     */
+    @PostMapping("/do-end-goodfriendplay")
+    @ResponseBody
+    public ResponseVO doEndGoodFriendPlay(Integer id){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(spo!=null){
+                return this.reviewService.endGoodFriendPlay(id,spo.getId());
+            }
+        }catch (Exception e){
+            logger.error("ReviewController->doEndGoodFriendPlay",e);
+        }
+        return new ResponseVO(-1,"操作失败",null);
 
     }
 

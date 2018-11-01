@@ -73,10 +73,10 @@ public class GoodFriendPlayController {
     @Token
     @ApiOperation(value = "约玩开桌")
     @PostMapping("/offlineplay/create/{token}")
-    public ResponseApiVO<GoodFriendPlayRoomVO> createOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
+    public ResponseApiVO<GoodFriendPlayRoomVO> createOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayTableDTO args){
         try {
 
-            return this.goodFriendPlayService.createOffLinePlay(token);
+            return this.goodFriendPlayService.createOffLinePlay(token,args);
         }catch (Exception e){
             logger.error("GoodFriendPlayController->createOffLinePlay",e);
             return new ResponseApiVO(-1,"约玩开桌失败",null);
