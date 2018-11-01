@@ -97,7 +97,21 @@ public class ReviewService extends CommonService {
         Map updateMap=new HashMap();
         updateMap.put("status",GoodFriendPlayRoomStatusEnum.status22.getCode());
         updateMap.put("updateTime",new Date());
-        return this.commonUpdateByParams("ddw_goodfriendplay_room",updateMap,search);
+        Map map=this.commonObjectBySingleParam("ddw_goodfriendplay_room","id",id);
+        if(map==null || map.isEmpty()){
+            return new ResponseVO(-2,"记录不存在",null);
+        }
+        if(!map.get("storeId").equals(storeId)){
+            return new ResponseVO(-2,"权限不足",null);
+        }
+
+        this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",updateMap,"id",id);
+        Map updateTable=new HashMap();
+        updateTable.put("status",TableStatusEnum.status0.getCode());
+        updateTable.put("updateTime",new Date());
+        this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_tables",updateTable,"id",map.get("tableCode"));
+
+        return new ResponseVO(1,"结束成功",null);
     }
     /**
      * 判断门店是否有申请审核
