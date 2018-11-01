@@ -224,6 +224,7 @@ public class PayCenterService extends BaseOrderService {
         //GiftPO gift=null;
         Map voData=null;
         List<Map> insertList=null;
+        PracticeOrderPO practiceOrderPO=null;
         //定金
         if(OrderTypeEnum.OrderType4.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
@@ -495,9 +496,12 @@ public class PayCenterService extends BaseOrderService {
         }else if(OrderTypeEnum.OrderType10.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(TokenUtil.getStoreId(token));
-            PracticeOrderPO practiceOrderPO=(PracticeOrderPO)CacheUtil.get("pay","practice-order-"+userId);
-            if(practiceOrderPO==null){
-                return new ResponseApiVO(-2,"代练订单支付失败",null);
+            practiceOrderPO=(PracticeOrderPO)CacheUtil.get("pay","practice-order-"+userId);
+            if(practiceOrderPO==null) {
+                return new ResponseApiVO(-2, "代练订单支付失败", null);
+
+            }else if(StringUtils.isNotBlank(practiceOrderPO.getOrderNo())){
+                return new ResponseApiVO(-2, "请稍等，支付还没完成", null);
 
             }
             orderPO.setDoCost(practiceOrderPO.getMoney());
@@ -760,6 +764,11 @@ public class PayCenterService extends BaseOrderService {
                 resVo=this.commonUpdateByParams("ddw_practice_order",setParams,searchCondition);
                 if(resVo.getReCode()!=1){
                     throw new GenException("代练支付失败");
+                }
+                if(StringUtils.isBlank(practiceOrderPO.getOrderNo())){
+                    practiceOrderPO.setOrderNo(orderNo);
+                    practiceOrderPO.setOrderId(insertResponseVO.getData());
+                    CacheUtil.put("pay","practice-order-"+userId,practiceOrderPO);
                 }
                 orderCacheData=codes[0];
             }
