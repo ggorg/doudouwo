@@ -128,7 +128,7 @@ public class AppIndexService {
             appIndexVO.setButtonList((List<AppIndexButtonVO>)CacheUtil.get("publicCache","appIndexButton"));
         }
         appIndexVO.setTicketList(ticketService.getTicketList());
-        appIndexVO.setGoodFriendPlayList((List)this.goodFriendPlayService.getIndexRoomRecord(token).getData());
+        appIndexVO.setGoodFriendPlayList(this.goodFriendPlayService.getIndexRoomRecord(token));
         return new ResponseApiVO(1,"成功",appIndexVO);
 
     }

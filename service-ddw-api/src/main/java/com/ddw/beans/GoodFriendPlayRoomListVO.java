@@ -28,7 +28,7 @@ public class GoodFriendPlayRoomListVO<T> {
     @ApiModelProperty(name = "peopleMaxNum", value = "人数上限", example = "人数上限")
     private Integer peopleMaxNum;
 
-    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1", example = "预约中：0，约战中：1")
+    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1,约玩结束：22", example = "预约中：0，约战中：1,约玩结束：22")
     private Integer status;
     @ApiModelProperty(name = "type", value = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100", example = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100")
     private Integer type;

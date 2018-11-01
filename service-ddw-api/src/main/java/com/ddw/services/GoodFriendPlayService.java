@@ -116,16 +116,16 @@ public class GoodFriendPlayService extends CommonService {
         dataMap.put("memberList",dataList);
         return new ResponseApiVO(1,"成功",dataMap);
     }
-    public ResponseApiVO getIndexRoomRecord(String token)throws Exception{
+    public List getIndexRoomRecord(String token)throws Exception{
         Page page=new Page(1,4);
 
         Integer storeId= TokenUtil.getStoreId(token);
         GoodFriendPlayChatCenterVO gfp=this.getChatCenterBean(storeId);
         List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,null,null,page.getStartRow(),page.getEndRow());
         if(offlist==null || offlist.isEmpty()){
-            return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+            new ArrayList<>();
         }
-        return new ResponseApiVO(1,"成功",new ListVO<>(offlist));
+        return offlist;
     }
     public ResponseApiVO getRoomRecord(String token,PageNoDTO dto)throws Exception{
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
@@ -354,12 +354,17 @@ public class GoodFriendPlayService extends CommonService {
 
         Map search=new HashMap();
         search.put("roomOwner",TokenUtil.getUserId(token));
-        search.put("disabled",DisabledEnum.disabled0.getCode());
         search.put("id",dto.getCode());
-        search.put("status,in","("+GoodFriendPlayRoomStatusEnum.status0.getCode()+","+GoodFriendPlayRoomStatusEnum.status21.getCode()+")");
-        List dataList=this.commonObjectsBySearchCondition("ddw_goodfriendplay_room",search);
-        if(dataList==null && dataList.isEmpty()){
+        search.put("disabled",DisabledEnum.disabled0.getCode());
+        Map map=this.commonObjectBySearchCondition("ddw_goodfriendplay_room",search);
+        if(map==null || map.isEmpty()){
             return new ResponseApiVO(-2,"抱歉，房间不存在或已经被解散了",null);
+
+        }
+        Integer status=(Integer) map.get("status");
+        if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(status) || GoodFriendPlayRoomStatusEnum.status22.getCode().equals(status)){
+            return new ResponseApiVO(-2,"抱歉，约战过的房间没法解散",null);
+
         }
 
         Map update=new HashMap();

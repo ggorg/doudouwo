@@ -9,7 +9,8 @@ public enum GoodFriendPlayRoomStatusEnum implements Dictionary {
     status0("预约中",0),
     status1("约战中",1),
     status20("可就坐",20),
-    status21("已拒绝",21);
+    status21("已拒绝",21),
+    status22("约战结束",22);
 
 
     private String name;

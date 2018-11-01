@@ -23,7 +23,7 @@ public class GoodFriendPlayRoomVO<T> {
 
     @ApiModelProperty(name = "tableNumber", value = "桌号", example = "桌号")
     private String tableNumber;
-    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1", example = "预约中：0，约战中：1,约玩审核中(可就坐)：20，已拒绝：21")
+    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1，约玩审核中(可就坐)：20，已拒绝：21，约玩结束：22", example = "预约中：0，约战中：1，约玩审核中(可就坐)：20，已拒绝：21，约玩结束：22")
     private Integer status;
 
 
