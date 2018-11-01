@@ -43,6 +43,9 @@ public class AppIndexService {
     @Autowired
     private BasePhotoService basePhotoService;
 
+    @Autowired
+    private GoodFriendPlayService goodFriendPlayService;
+
 
     public ResponseApiVO toIndex(String token)throws Exception{
         List<Map> obj=(List)CacheUtil.get("stores","store");
@@ -125,6 +128,7 @@ public class AppIndexService {
             appIndexVO.setButtonList((List<AppIndexButtonVO>)CacheUtil.get("publicCache","appIndexButton"));
         }
         appIndexVO.setTicketList(ticketService.getTicketList());
+        appIndexVO.setGoodFriendPlayList((List)this.goodFriendPlayService.getIndexRoomRecord(token).getData());
         return new ResponseApiVO(1,"成功",appIndexVO);
 
     }

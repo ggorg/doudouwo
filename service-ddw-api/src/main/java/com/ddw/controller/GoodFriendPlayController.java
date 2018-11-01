@@ -47,6 +47,18 @@ public class GoodFriendPlayController {
         }
     }
     @Token
+    @ApiOperation(value = "我的开房间记录")
+    @PostMapping("/room/roomOwner/list/{token}")
+    public ResponseApiVO<ListVO<GoodFriendPlayRoomListVO>> toMyRoomList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+        try {
+
+            return this.goodFriendPlayService.getRoomRecord(token,args);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->toMyRoomList",e);
+            return new ResponseApiVO(-1,"我的开房间记录",null);
+        }
+    }
+    @Token
     @ApiOperation(value = "进入小房间")
     @PostMapping("/room/gointo/{token}")
     public ResponseApiVO<GoodFriendPlayRoomVO> toRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
@@ -83,6 +95,17 @@ public class GoodFriendPlayController {
         }
     }
     @Token
+    @ApiOperation(value = "解散房间(只能解散预约中和审核被拒绝的)")
+    @PostMapping("/dismissRoom/room/{token}")
+    public ResponseApiVO dismissRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
+        try {
+
+            return this.goodFriendPlayService.dismissRoom(token,args);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->dismissRoom",e);
+            return new ResponseApiVO(-1,"解散房间失败",null);
+        }
+    } @Token
     @ApiOperation(value = "踢除开桌里的用户")
     @PostMapping("/offlineplay/out/{token}")
     public ResponseApiVO outUserOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayOutUserDTO args){

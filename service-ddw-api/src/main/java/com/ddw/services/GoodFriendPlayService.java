@@ -68,7 +68,7 @@ public class GoodFriendPlayService extends CommonService {
         }else{
             gfp.setOnLineList(onlist);
         }*/
-        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,null,page.getStartRow(),page.getEndRow());
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,null,null,page.getStartRow(),page.getEndRow());
         if(offlist==null || offlist.isEmpty()){
             gfp.setRoomList(new ArrayList());
         }else{
@@ -116,12 +116,32 @@ public class GoodFriendPlayService extends CommonService {
         dataMap.put("memberList",dataList);
         return new ResponseApiVO(1,"成功",dataMap);
     }
+    public ResponseApiVO getIndexRoomRecord(String token)throws Exception{
+        Page page=new Page(1,4);
+
+        Integer storeId= TokenUtil.getStoreId(token);
+        GoodFriendPlayChatCenterVO gfp=this.getChatCenterBean(storeId);
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,null,null,page.getStartRow(),page.getEndRow());
+        if(offlist==null || offlist.isEmpty()){
+            return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+        }
+        return new ResponseApiVO(1,"成功",new ListVO<>(offlist));
+    }
+    public ResponseApiVO getRoomRecord(String token,PageNoDTO dto)throws Exception{
+        Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
+
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(null,DisabledEnum.disabled0.getCode(),null,null,TokenUtil.getUserId(token),page.getStartRow(),page.getEndRow());
+        if(offlist==null || offlist.isEmpty()){
+            return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+        }
+        return new ResponseApiVO(1,"成功",new ListVO<>(offlist));
+    }
     public ResponseApiVO getRoomList(String token ,GoodFriendPlayRoomListDTO dto)throws Exception{
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
         Integer storeId= TokenUtil.getStoreId(token);
         GoodFriendPlayChatCenterVO gfp=this.getChatCenterBean(storeId);
 
-        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),dto.getType(),dto.getStatus(),page.getStartRow(),page.getEndRow());
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),dto.getType(),dto.getStatus(),null,page.getStartRow(),page.getEndRow());
         if(offlist==null || offlist.isEmpty()){
             return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
         }
@@ -298,6 +318,11 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"小房间不存在",null);
         }
         Integer status=(Integer) map.get("status");
+        Integer disabled=(Integer) map.get("disabled");
+        if(DisabledEnum.disabled1.getCode().equals(disabled)){
+            return new ResponseApiVO(-2,"抱歉，房间已解散",null);
+
+        }
 
         if(GoodFriendPlayRoomStatusEnum.status20.getCode().equals(status)){
             Map paramMap=new HashMap();
@@ -314,7 +339,7 @@ public class GoodFriendPlayService extends CommonService {
                 this.commonInsertMap("ddw_goodfriendplay_room_member",paramMap);
                 return new ResponseApiVO(1,"成功",null);
             }else{
-                Integer disabled=(Integer) dataMap.get("disabled");
+                disabled=(Integer) dataMap.get("disabled");
                 if(DisabledEnum.disabled1.getCode().equals(disabled)){
                     return new ResponseApiVO(-2,"抱歉，你被禁止加入开桌",null);
                 }
@@ -323,6 +348,30 @@ public class GoodFriendPlayService extends CommonService {
             }
         }
         return new ResponseApiVO(-2,"房主还没申请开桌",null);
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO dismissRoom(String token,CodeDTO dto)throws Exception{
+
+        Map search=new HashMap();
+        search.put("roomOwner",TokenUtil.getUserId(token));
+        search.put("disabled",DisabledEnum.disabled0.getCode());
+        search.put("id",dto.getCode());
+        search.put("status,in","("+GoodFriendPlayRoomStatusEnum.status0.getCode()+","+GoodFriendPlayRoomStatusEnum.status21.getCode()+")");
+        List dataList=this.commonObjectsBySearchCondition("ddw_goodfriendplay_room",search);
+        if(dataList==null && dataList.isEmpty()){
+            return new ResponseApiVO(-2,"抱歉，房间不存在或已经被解散了",null);
+        }
+
+        Map update=new HashMap();
+        update.put("disabled",DisabledEnum.disabled1.getCode());
+        update.put("updateTime",new Date());
+        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",update,"id",dto.getCode());
+        if(res.getReCode()!=1){
+            return new ResponseApiVO(-2,"解散失败",null);
+        }
+        return new ResponseApiVO(1,"成功",null);
+
+
     }
     private Map checkRoom(String token)throws Exception{
         Integer userId=TokenUtil.getUserId(token);

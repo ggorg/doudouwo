@@ -26,7 +26,16 @@ public class GoodFriendPlayCreateRoomDTO<T> {
     private Integer peopleMaxNum;
     @ApiModelProperty(name = "endTime", value = "结束时间", example = "结束时间")
     private String endTime;
+    @ApiModelProperty(name = "describe", value = "描述，500字上限", example = "描述，500字上限")
+    private String describe;
 
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
 
     public MultipartFile getRoomImg() {
         return roomImg;

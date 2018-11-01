@@ -25,7 +25,7 @@ public class AppIndexVO implements Serializable {
     public List<LiveRadioListVO> goddessList;
 
     @ApiModelProperty(name="goodFriendPlayList",value="好友约玩儿",example="")
-    public List<AppIndexGoodFriendPlayVO> goodFriendPlayList;
+    public List<GoodFriendPlayRoomListVO> goodFriendPlayList;
 
     @ApiModelProperty(name="practiceList",value="代练",example="")
     public List<AppIndexPracticeVO> practiceList;
@@ -65,11 +65,11 @@ public class AppIndexVO implements Serializable {
         this.goddessList = goddessList;
     }
 
-    public List<AppIndexGoodFriendPlayVO> getGoodFriendPlayList() {
+    public List<GoodFriendPlayRoomListVO> getGoodFriendPlayList() {
         return goodFriendPlayList;
     }
 
-    public void setGoodFriendPlayList(List<AppIndexGoodFriendPlayVO> goodFriendPlayList) {
+    public void setGoodFriendPlayList(List<GoodFriendPlayRoomListVO> goodFriendPlayList) {
         this.goodFriendPlayList = goodFriendPlayList;
     }
 
