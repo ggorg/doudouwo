@@ -95,7 +95,7 @@ public class GoodFriendPlayService extends CommonService {
         Map chid1=new HashMap();
         chid1.put("disabled",DisabledEnum.disabled0.getCode());
         chid1.put("roomId",dto.getCode());
-        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room",null,"t1.groupId,t1.id code,t1.roomImg,t1.name,t1.status,ct0.tableNumber,t1.peopleMaxNum,count(ct1.id) peopleNum",null,null,search,
+        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room",null,"t1.describe,t1.groupId,t1.id code,t1.roomImg,t1.name,t1.status,ct0.tableNumber,t1.peopleMaxNum,count(ct1.id) peopleNum",null,null,search,
                 new CommonChildBean("ddw_goodfriendplay_tables","id","tableCode",null),
                 new CommonChildBean("ddw_goodfriendplay_room_member","roomId","id",chid1));
         List<Map> list=this.getCommonMapper().selectObjects(csb);

@@ -38,6 +38,17 @@ public class GoodFriendPlayRoomVO<T> {
     @ApiModelProperty(name = "开桌成员列表", value = "开桌成员列表" , example = "开桌成员列表")
     private List memberList;
 
+    @ApiModelProperty(name = "describe", value = "描述", example = "描述")
+    private String describe;
+
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
+
     public List getMemberList() {
         return memberList;
     }
