@@ -12,6 +12,7 @@ import java.util.List;
 public class GoodFriendPlayRoomListVO  implements Serializable {
 
 
+    private static final long serialVersionUID = -4540734804255986566L;
     @ApiModelProperty(name = "code", value = "code", example = "code")
     private Integer code;
 
