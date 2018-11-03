@@ -42,7 +42,7 @@
         t4.gradeName pgradeName,count(t2.practiceId) AS ordersCount,t6.gameName,t7.rank,IFNULL(t8.star,0)star
         from ddw_practice_game t1
         left join ddw_practice_order t2 on t1.userId=t2.practiceId
-        <if test="weekList != null">
+        <if test="weekList != null and weekList == 1">
             and YEARWEEK(date_format(t2.createTime,'%Y-%m-%d')) = YEARWEEK(now())
         </if>
         left join ddw_userinfo t3 on t1.userId = t3.id
