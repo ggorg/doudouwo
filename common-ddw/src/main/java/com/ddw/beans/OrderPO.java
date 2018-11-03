@@ -101,6 +101,34 @@ public class OrderPO implements Serializable {
 
     private String doExtendStr;
 
+    private Integer doStoreProportion;
+    private Integer doStoreProportionCost;
+    private Integer doStoreProportionCouponCost;
+
+    public Integer getDoStoreProportionCouponCost() {
+        return doStoreProportionCouponCost;
+    }
+
+    public void setDoStoreProportionCouponCost(Integer doStoreProportionCouponCost) {
+        this.doStoreProportionCouponCost = doStoreProportionCouponCost;
+    }
+
+    public Integer getDoStoreProportion() {
+        return doStoreProportion;
+    }
+
+    public void setDoStoreProportion(Integer doStoreProportion) {
+        this.doStoreProportion = doStoreProportion;
+    }
+
+    public Integer getDoStoreProportionCost() {
+        return doStoreProportionCost;
+    }
+
+    public void setDoStoreProportionCost(Integer doStoreProportionCost) {
+        this.doStoreProportionCost = doStoreProportionCost;
+    }
+
     public BigDecimal getDoDicount() {
         return doDicount;
     }

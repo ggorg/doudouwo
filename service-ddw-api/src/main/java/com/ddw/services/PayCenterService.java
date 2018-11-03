@@ -845,25 +845,34 @@ public class PayCenterService extends BaseOrderService {
     }
     public ResponseApiVO executeCoupon(OrderPO po,Integer couponCode,String token)throws Exception{
         if(couponCode!=null && couponCode>0){
-            ResponseVO<Integer> couponVo=this.handleCoupon(po.getDoCost(),couponCode,TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
+            ResponseVO<Map<String,Integer>> couponVo=this.handleCoupon(po.getDoCost(),couponCode,TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
             if(couponVo.getReCode()!=1){
                 return new ResponseApiVO(-2,couponVo.getReMsg(),null);
             }else{
+                Map<String,Integer> data=couponVo.getData();
                 po.setDoCouponNo(couponCode==null?null:couponCode+"");
-                po.setDoCost(couponVo.getData());
+                po.setDoCost(data.get("cost"));
+                if(data.containsKey("proportion")){
+                    po.setDoStoreProportion(data.get("proportion"));
+                    po.setDoStoreProportionCost(data.get("proportionCost"));
+                    po.setDoStoreProportionCouponCost(data.get("storeProportionCouponCost"));
+                }
+
             }
         }
         return new ResponseApiVO(1,"成功",null);
     }
     public ResponseVO handleCoupon(Integer cost,Integer couponId,Integer userId,Integer storeId)throws Exception{
 
-        CouponPO po=this.walletService.getCoupon(couponId,userId,storeId);
+        CouponPO po=this.walletService.getCoupon(couponId,userId);
         if(po==null){
             return new ResponseVO(-2,"优惠卷不存在",null);
         }
+        if(po.getStoreId()!=-1 && !storeId.equals(po.getStoreId())){
+            return new ResponseVO(-2,"抱歉，不能使用别的店铺优惠卷",null);
+        }
         Date currentDate=new Date();
-        System.out.println(DateFormatUtils.format(po.getDcStartTime(),"yyyy-MM-dd HH:mm:ss")+","+po.getDcStartTime().after(currentDate));
-        System.out.println(DateFormatUtils.format(po.getDcEndTime(),"yyyy-MM-dd HH:mm:ss"));
+
         if(po.getDcStartTime().after(currentDate)){
             return new ResponseVO(-2,"优惠卷有效时间没开始",null);
         }
@@ -873,15 +882,26 @@ public class PayCenterService extends BaseOrderService {
         if(cost<po.getDcMinPrice()){
             return new ResponseVO(-2,"优惠卷消费额度不达标",null);
         }
+        Integer newCost=0;
         if(CouponTypeEnum.CouponType2.getCode().equals(po.getDcType())){
-            cost=(int)(cost*((float)po.getDcMoney()/100));
+            newCost=(int)(cost*((float)po.getDcMoney()/100));
         }else{
-            cost=cost-po.getDcMoney();
+            newCost=cost-po.getDcMoney();
         }
-        return new ResponseVO(1,"成功",cost);
+        Map couponMap=new HashMap();
+        couponMap.put("cost",newCost);
+        if(po.getStoreId()==-1 && po.getStoreProportion()!=null && po.getStoreProportion()>0){
+            Integer storeProportionCouponCost=BigDecimal.valueOf(cost-newCost).multiply(BigDecimal.valueOf(po.getStoreProportion()).divide(BigDecimal.valueOf(100))).intValue();
+            couponMap.put("proportion",po.getStoreProportion());
+            couponMap.put("proportionCost",cost+storeProportionCouponCost);
+            couponMap.put("storeProportionCouponCost",storeProportionCouponCost);
+        }
+
+        return new ResponseVO(1,"成功",couponMap);
     }
     public static void main(String[] args) {
         Integer[] id={1,2,3,4};
         System.out.println(Arrays.asList(id).toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+        System.out.println();
     }
 }

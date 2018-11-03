@@ -1,5 +1,6 @@
 package com.ddw.beans;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class CouponDTO {
@@ -10,6 +11,15 @@ public class CouponDTO {
     private String dtActiveTime;
     private String dcDesc;
     private Integer dcMinPrice;
+    private Integer storeProportion;
+
+    public Integer getStoreProportion() {
+        return storeProportion;
+    }
+
+    public void setStoreProportion(Integer storeProportion) {
+        this.storeProportion = storeProportion;
+    }
 
     public Integer getDcMinPrice() {
         return dcMinPrice;

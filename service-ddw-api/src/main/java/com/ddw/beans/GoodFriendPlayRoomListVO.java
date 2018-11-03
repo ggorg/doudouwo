@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GoodFriendPlayRoomListVO<T> {
+public class GoodFriendPlayRoomListVO  implements Serializable {
 
 
     @ApiModelProperty(name = "code", value = "code", example = "code")

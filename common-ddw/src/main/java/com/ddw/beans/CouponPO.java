@@ -11,6 +11,24 @@ public class CouponPO {
     private Date dcEndTime;
     private String dcDesc;
     private Integer dcMinPrice;
+    private Integer storeId;
+    private Integer storeProportion;
+
+    public Integer getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Integer storeId) {
+        this.storeId = storeId;
+    }
+
+    public Integer getStoreProportion() {
+        return storeProportion;
+    }
+
+    public void setStoreProportion(Integer storeProportion) {
+        this.storeProportion = storeProportion;
+    }
 
     public Integer getId() {
         return id;

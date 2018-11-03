@@ -49,7 +49,12 @@
 
     </div>
   </div>
-
+  <div class="layui-form-item" th:if="${store==null}">
+    <label class="layui-form-label">门店占比</label>
+    <div class="layui-input-block">
+      <input type="text" name="storeProportion" title="门店占比"   th:value="${ds!=null and ds['storeProportion']!=null? ds['storeProportion']:storeProportion}" autocomplete="off" class="layui-input" />
+    </div>
+  </div>
 
   <div class="layui-form-item">
     <label class="layui-form-label">描述</label>

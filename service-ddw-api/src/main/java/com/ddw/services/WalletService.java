@@ -170,12 +170,12 @@ public class WalletService extends CommonService {
         balanceVO.setExpenseCoin((int)this.commonSumByBySingleSearchMap("ddw_order_view","price",searchMap));
         return new ResponseApiVO(1,"成功",balanceVO);
     }
-    public CouponPO getCoupon(Integer couponId,Integer userId,Integer storeId)throws Exception{
+    public CouponPO getCoupon(Integer couponId,Integer userId)throws Exception{
         Map search=new HashMap();
         search.put("id",couponId);
         search.put("userId",userId);
         search.put("used",0);
-        search.put("storeId",storeId);
+       // search.put("storeId",storeId);
 
 
 

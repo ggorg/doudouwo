@@ -10,6 +10,7 @@ import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +26,15 @@ public class CouponController {
 
     @Autowired
     private StoreService storeService;
+    @Value("${coupon.default.storeProportion}")
+    private String storeProportion;
 
     @GetMapping("to-paging")
     public String toPaging(@RequestParam(defaultValue = "1") Integer pageNo, Model model){
         try {
-            model.addAttribute("sPage",couponService.findPage(pageNo));
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+
+            model.addAttribute("sPage",couponService.findPage(pageNo,spo==null?-1:spo.getId()));
         }catch (Exception e){
             logger.error("couponController->toPaging",e);
         }
@@ -42,8 +47,10 @@ public class CouponController {
             String id= MyEncryptUtil.getRealValue(idStr);
             if(StringUtils.isNotBlank(id)){
                 model.addAttribute("ds",this.couponService.getById(Integer.parseInt(id)));
-            }
 
+            }
+            model.addAttribute("store",this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId()));
+            model.addAttribute("storeProportion",storeProportion);
         }catch (Exception e){
             logger.error("couponController->toEdtitPage",e);
         }

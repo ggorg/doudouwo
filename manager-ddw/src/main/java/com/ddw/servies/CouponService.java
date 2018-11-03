@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -24,11 +25,12 @@ import java.util.Map;
 public class CouponService extends CommonService {
 
   
-    public Page findPage(Integer pageNo)throws Exception{
+    public Page findPage(Integer pageNo,Integer storeId)throws Exception{
 
-
+        Map search=new HashMap();
+        search.put("storeId",storeId);
         // condtion.put("dmStatus",dmStatus);
-        return this.commonPage("ddw_coupon","updateTime desc",pageNo,10,null);
+        return this.commonPage("ddw_coupon","updateTime desc",pageNo,10,search);
     }
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_coupon","id",id);
