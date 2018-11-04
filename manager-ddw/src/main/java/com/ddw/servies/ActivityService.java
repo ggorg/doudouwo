@@ -120,7 +120,7 @@ public class ActivityService extends CommonService {
                 return new ResponseVO(-2,"压缩包里面必须要有index.html",null);
             }
             map.put("dirPath",f.getPath());
-            map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/"+f.getName());
+            map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/"+f.getName()+"/index.html");
         }
         map.put("updateTime",new Date());
         map.remove("dtImgFile");
