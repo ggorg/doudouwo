@@ -35,7 +35,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label">活动时间</label>
     <div class="layui-input-block">
-      <input type="text" name="activeTime" id="dtActiveTime"  required="required" title="活动时间"  lay-verify="required" th:value="${ds!=null? #dates.format(ds['activeTime'],'yyyy-MM-dd HH:mm'):''}" placeholder="请输入活动时间" autocomplete="off" class="layui-input" />
+      <input type="text" name="activeTime" id="dtActiveTime"  required="required" title="活动时间"  lay-verify="required"  th:value="${ds!=null? #dates.format(ds['dtStartTime'],'yyyy-MM-dd HH:mm')+' - '+#dates.format(ds['dtEndTime'],'yyyy-MM-dd HH:mm'):''}" placeholder="请输入活动时间" autocomplete="off" class="layui-input" />
 
     </div>
   </div>
