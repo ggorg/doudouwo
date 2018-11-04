@@ -8,6 +8,8 @@ import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -20,10 +22,12 @@ public abstract class CommonService {
     @Autowired
     private CommonMapper commonMapper;
 
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     protected ResponseVO commonInsert(String tableName, Object bean){
         Map params= BeanToMapUtil.beanToMap(bean);
         return commonInsertMap(tableName,params);
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     protected ResponseVO commonInsertMap(String tableName, Map params){
         ResponseVO vo=new ResponseVO();
         CommonInsertBean cib=new CommonInsertBean(tableName,params);
@@ -103,6 +107,7 @@ public abstract class CommonService {
         return this.commonObjectBySearchCondition(tableName,condition);
 
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     protected ResponseVO commonUpdateBySingleSearchParam(String tableName, Map setParams, String searchParamName, Object searchParamValue){
         ResponseVO vo=new ResponseVO();
         Map searchCondition=new HashMap();
@@ -128,6 +133,7 @@ public abstract class CommonService {
      * @param calculatesName 要计算的字段名（加法计算）（比如金额字段）
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     protected  ResponseVO commonCalculateOptimisticLockUpdateByParam(String tableName,Map setParams,Map searchCondition,String versionName,String[] calculatesName)throws Exception{
         Map map=null;
         Integer version=null;
@@ -189,6 +195,7 @@ public abstract class CommonService {
      * @return
      * @throws Exception
      */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     protected ResponseVO commonOptimisticLockUpdateByParam(String tableName,Map setParams,Map searchCondition,String versionName)throws Exception{
         Map map=null;
         Integer version=null;
@@ -227,6 +234,7 @@ public abstract class CommonService {
         return new ResponseVO(1,"更新成功",null);
 
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     protected ResponseVO commonUpdateByParams(String tableName, Map setParams,Map searchCondition){
         ResponseVO vo=new ResponseVO();
 
@@ -273,6 +281,7 @@ public abstract class CommonService {
 
         return page;
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     protected int commonDelete(String tableName,String paramName,Object paramValue){
         Map searchCondition=new HashMap();
         searchCondition.put(paramName,paramValue);
@@ -317,7 +326,7 @@ public abstract class CommonService {
         }
         return vo;
     }
-
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     protected ResponseVO commonDeleteByCombination(String tableName,Map<String,Object> searchCondition){
         ResponseVO vo=new ResponseVO();
         int n=this.commonMapper.deleteObjectCombination(new CommonDeleteBean(tableName,searchCondition));
