@@ -58,6 +58,8 @@ public class PayCenterService extends BaseOrderService {
 
     @Autowired
     private DDWGlobals ddwGlobals;
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO searchPayStatus(String token,PayStatusDTO dto)throws Exception{
         if(dto==null || StringUtils.isBlank(dto.getOrderNo())){
             return new ResponseApiVO(-2,"参数异常",null);
