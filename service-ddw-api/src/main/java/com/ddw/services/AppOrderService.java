@@ -52,15 +52,12 @@ public class AppOrderService extends CommonService {
 
         List<Map> omainrderList=this.commonList("ddw_order","createTime desc",dto.getPageNo()==null?1:dto.getPageNo(),10,map);
 
-        if(omainrderList==null && omainrderList.isEmpty()){
+        if(omainrderList==null || omainrderList.isEmpty()){
             return new ResponseApiVO(2,"没有订单数据",new ListVO(new ArrayList()));
         }
         final Map<Integer,Integer> orderIdMap=new HashMap();
         omainrderList.forEach(a->orderIdMap.put((Integer)a.get("id"),(Integer)a.get("doCost")));
         map=new HashMap();
-        logger.info("orderIdMap->"+orderIdMap.toString());
-        logger.info("orderIdKey->"+orderIdMap.keySet().toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
-        logger.info("omainrderList->"+omainrderList);
         map.put("orderId,in",orderIdMap.keySet().toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
         List<Map> orderList=this.commonList("ddw_order_view","createTime desc",null,null,map);
         OrderViewVO orderViewVO=null;
@@ -98,7 +95,7 @@ public class AppOrderService extends CommonService {
 
 
         }
-        if(orderList==null && orderList.isEmpty()){
+        if(orderList==null || orderList.isEmpty()){
             return new ResponseApiVO(2,"没有订单数据",new ListVO(new ArrayList()));
         }else{
             orderIdMap.clear();
