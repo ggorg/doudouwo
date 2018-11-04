@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -114,7 +115,10 @@ public class ActivityService extends CommonService {
                 f=new File(dir,baseName+ DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
             }
             f.mkdirs();
-            ExtractZip.unZip(dto.getZipFile().getInputStream(),f.getPath());
+            List<String> files=ExtractZip.unZip(dto.getZipFile().getInputStream(),f.getPath());
+            if(!files.contains("index.html")){
+                return new ResponseVO(-2,"压缩包里面必须要有index.html",null);
+            }
             map.put("dirPath",f.getPath());
             map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/"+f.getName());
         }
