@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.controller.AppOrderController;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.gen.common.beans.CommonChildBean;
@@ -10,6 +11,7 @@ import com.gen.common.util.OrderUtil;
 import com.gen.common.util.Page;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,8 @@ import java.util.*;
 @Service
 @Transactional(readOnly = true)
 public class AppOrderService extends CommonService {
+    private final Logger logger = Logger.getLogger(AppOrderService.class);
+
     public ResponseApiVO getExitOrderList(String token,PageNoDTO dto)throws Exception{
 
         Page p=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
@@ -54,6 +58,9 @@ public class AppOrderService extends CommonService {
         final Map<Integer,Integer> orderIdMap=new HashMap();
         omainrderList.forEach(a->orderIdMap.put((Integer)a.get("id"),(Integer)a.get("doCost")));
         map=new HashMap();
+        logger.info("orderIdMap->"+orderIdMap.toString());
+        logger.info("orderIdKey->"+orderIdMap.keySet().toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+        logger.info("omainrderList->"+omainrderList);
         map.put("orderId,in",orderIdMap.keySet().toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
         List<Map> orderList=this.commonList("ddw_order_view","createTime desc",null,null,map);
         OrderViewVO orderViewVO=null;
