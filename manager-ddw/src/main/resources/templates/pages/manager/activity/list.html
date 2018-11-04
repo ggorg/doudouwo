@@ -83,7 +83,7 @@
                     <tr th:each="obj:${sPage?.result}">
                         <td th:text="${obj['dtTitle']}">Trident</td>
                         <td th:text="${#TdEnum.text('com.ddw.enums.ActivityTypeEnum',obj['dtType'])}">Trident</td>
-                        <td th:text="${obj['activeTime']}">Win 95+</td>
+                        <td th:text="${(#maps.containsKey(obj,'dtStartTime')?#dates.format(obj['dtStartTime'],'yyyy-MM-dd HH:mm'):'未设置')+' - '+(#maps.containsKey(obj,'dtEndTime')?#dates.format(obj['dtEndTime'],'yyyy-MM-dd HH:mm'):'未设置')}">Win 95+</td>
                         <td th:text="${obj['createTime']}">Win 95+</td>
 
                         <td class="center">
