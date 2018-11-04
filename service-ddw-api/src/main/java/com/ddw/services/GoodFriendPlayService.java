@@ -81,6 +81,7 @@ public class GoodFriendPlayService extends CommonService {
         GoodFriendPlayChatCenterVO gfp=(GoodFriendPlayChatCenterVO)CacheUtil.get("publicCache","gfplay-chatcenter-"+storeId);
         if(gfp==null){
             gfp=this.commonObjectBySingleParam("ddw_goodfriendplay_center","storeId",storeId,GoodFriendPlayChatCenterVO.class);
+            if(gfp==null)return null;
             CacheUtil.put("publicCache","gfplay-chatcenter-"+storeId,gfp);
         }
         return gfp;
