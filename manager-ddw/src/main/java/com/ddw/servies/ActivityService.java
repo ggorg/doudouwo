@@ -108,20 +108,25 @@ public class ActivityService extends CommonService {
             this.fileService.saveFile(f);
 
         }
-        if(ActivityTypeEnum.type2.getCode().equals(dto.getDtType()) && !dto.getZipFile().isEmpty()){
+        if(ActivityTypeEnum.type2.getCode().equals(dto.getDtType())){
 
-            String baseName=FilenameUtils.getBaseName(dto.getZipFile().getOriginalFilename());
-            File f=new File(dir,baseName);
-            if(f.exists()){
-                f=new File(dir,baseName+ DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
+            if(!dto.getZipFile().isEmpty()){
+                String baseName=FilenameUtils.getBaseName(dto.getZipFile().getOriginalFilename());
+                File f=new File(dir,baseName);
+                if(f.exists()){
+                    f=new File(dir,baseName+ DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
+                }
+                f.mkdirs();
+                List<String> files=ExtractZip.unZip(dto.getZipFile().getInputStream(),f.getPath());
+                if(!files.contains("index.html")){
+                    return new ResponseVO(-2,"压缩包里面必须要有index.html",null);
+                }
+                map.put("dirPath",f.getPath());
+                map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/"+f.getName()+"/index.html");
+            }else{
+                map.remove("dtTargetPath");
             }
-            f.mkdirs();
-            List<String> files=ExtractZip.unZip(dto.getZipFile().getInputStream(),f.getPath());
-            if(!files.contains("index.html")){
-                return new ResponseVO(-2,"压缩包里面必须要有index.html",null);
-            }
-            map.put("dirPath",f.getPath());
-            map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/"+f.getName()+"/index.html");
+
         }
         map.put("updateTime",new Date());
         map.remove("dtImgFile");
