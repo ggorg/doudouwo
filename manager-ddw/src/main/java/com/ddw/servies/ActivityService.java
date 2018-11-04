@@ -108,7 +108,8 @@ public class ActivityService extends CommonService {
             this.fileService.saveFile(f);
 
         }
-        if(ActivityTypeEnum.type2.getCode().equals(dto.getDtType())){
+        if(ActivityTypeEnum.type2.getCode().equals(dto.getDtType()) && !dto.getZipFile().isEmpty()){
+
             String baseName=FilenameUtils.getBaseName(dto.getZipFile().getOriginalFilename());
             File f=new File(dir,baseName);
             if(f.exists()){
@@ -126,6 +127,13 @@ public class ActivityService extends CommonService {
         map.remove("dtImgFile");
         map.remove("zipFile");
        // map.remove("isUpdateImg");
+        if(StringUtils.isNotBlank(dto.getActiveTime())){
+            String[] dateStr=dto.getActiveTime().split(" - ");
+            map.put("dtStartTime", DateUtils.parseDate(dateStr[0],"yyyy-MM-dd HH:mm"));
+            map.put("dtEndTime", DateUtils.parseDate(dateStr[1],"yyyy-MM-dd HH:mm"));
+            map.remove("activeTime");
+
+        }
         if(dto.getId()==null){
             map.put("createTime",new Date());
             map.put("storeId",storeId);

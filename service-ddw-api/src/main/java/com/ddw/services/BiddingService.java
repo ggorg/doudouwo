@@ -398,8 +398,10 @@ public class BiddingService extends CommonService {
                         throw new GenException("退款失败");
                     }
                     //break;
+                }else{
+                    s.add(bv.getOpenId());
+
                 }
-                s.add(bv.getOpenId());
             }
             if(vo!=null && refundVo!=null){
                 Date payCountDown=DateUtils.addMinutes(new Date(),this.payTimeMinute);

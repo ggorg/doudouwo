@@ -42,7 +42,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label">上传页面</label>
     <div class="layui-input-block">
-      <button type="button" class="layui-btn layui-btn-primary" id="test4"><i class="layui-icon"></i>只允许压缩文件</button>
+      <button type="button" class="layui-btn layui-btn-primary" id="test4"><i class="layui-icon"></i>只允许index.html压缩包</button>
 
     </div>
   </div>
@@ -65,6 +65,7 @@
         laydate.render({
             elem: '#dtActiveTime', //指定元素
             type: 'datetime',
+            range: true,
             format:'yyyy-MM-dd HH:mm'
         });
         initProForm(layui);
