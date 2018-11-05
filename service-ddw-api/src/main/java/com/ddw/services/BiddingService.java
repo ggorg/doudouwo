@@ -212,7 +212,12 @@ public class BiddingService extends CommonService {
 
         }
         Map setMap=new HashMap();
-        setMap.put("endTime",new Date());
+        Date current=new Date();
+        setMap.put("endTime",current);
+        if(!bidMap.containsKey("startTime") ||  bidMap.get("startTime")==null){
+            setMap.put("startTime",current);
+
+        }
         setMap.put("status",BiddingStatusEnum.Status10.getCode());
         ResponseVO resVo=this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",setMap,"id",bidCode);
         if(resVo.getReCode()!=1){
@@ -826,8 +831,13 @@ public class BiddingService extends CommonService {
         if(!map.containsKey("endTime") ||  map.get("endTime")==null){
             return new ResponseApiVO(-2,"约玩还没开始",null);
         }else{
+            Date current=new Date();
             Map setMap=new HashMap();
-            setMap.put("endTime",new Date());
+            setMap.put("endTime",current);
+            if(!map.containsKey("startTime") ||  map.get("startTime")==null){
+                setMap.put("startTime",current);
+
+            }
             ResponseVO vo=this.commonUpdateBySingleSearchParam("ddw_goddess_bidding",setMap,"id",map.get("id"));
             if(vo.getReCode()!=1){
                 return new ResponseApiVO(-2,"结束失败",null);
