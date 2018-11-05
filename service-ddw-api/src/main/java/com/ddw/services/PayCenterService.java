@@ -198,7 +198,7 @@ public class PayCenterService extends BaseOrderService {
             return new ResponseApiVO(-2,"抱歉，礼物只能逗币购买",null);
 
         }
-        if(codes==null || codes.length==0){
+        if((dto.getDouBiDtos()==null || dto.getDouBiDtos().isEmpty()) && (codes==null || codes.length==0)){
             return new ResponseApiVO(-2,"业务编号不能是空",null);
 
         }
