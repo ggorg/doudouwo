@@ -162,6 +162,8 @@ public class ActivityService extends CommonService {
                     map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/act/"+filename);
                 }else{
                     f=new File(dataMap.get("dirPath").toString());
+                    map.remove("dtTargetPath");
+                    map.remove("dirPath");
                 }
 
                 FileUtils.write(f,builder.toString(),"UTF-8");
