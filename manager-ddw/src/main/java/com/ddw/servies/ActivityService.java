@@ -144,7 +144,7 @@ public class ActivityService extends CommonService {
 
         }else if(ActivityTypeEnum.type3.getCode().equals(dto.getDtType())){
             StringBuilder builder=new StringBuilder();
-            builder.append("<!DOCTYPE html><html lang=\"zh-CN\"><body>").append(dto.getDtContent()).append("</body></html>");
+            builder.append("<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"></head><body>").append(dto.getDtContent()).append("</body></html>");
 
             if(dto.getId()==null){
                 String filename="act"+ RandomStringUtils.randomAlphanumeric(10)+".html";
