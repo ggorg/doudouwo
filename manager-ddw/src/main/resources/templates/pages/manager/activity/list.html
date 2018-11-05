@@ -91,6 +91,7 @@
                             <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\''+${obj['dtType']==3?'869px':'650px'}+'\',\''+${obj['dtType']==3?'510px':'450px'}+'\',\'修改\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
 
                                 <button  th:class="'layui-btn layui-btn-sm '+${obj['dtDisabled']==1?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dtDisabled']==1?0:1}+',\''+${obj['dtDisabled']==1?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['dtDisabled']==1?'发 布':'撤回发布'}"></button>
+                                <button  class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'confirmDelete(\''+${#TdTool.encrypt(obj['id'])}+'\')'" >删 除</button>
                             </div>
                         </td>
                     </tr>
@@ -110,6 +111,15 @@
             layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
                 if(index>0){
                     jQueryCommonSubmit("do-update-status",null,{idStr:id,status:status});
+
+                }
+                //layer.close(index);
+            });
+        }
+        function confirmDelete(id){
+            layer.confirm("是否删除？", {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-delete",null,{idStr:id});
 
                 }
                 //layer.close(index);

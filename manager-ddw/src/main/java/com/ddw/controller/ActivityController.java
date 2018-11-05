@@ -100,4 +100,16 @@ public class ActivityController {
 
     }
 
+    @PostMapping("do-delete")
+    @ResponseBody
+    public ResponseVO doDelete(String idStr){
+        try {
+            return this.activityService.delete(idStr);
+        }catch (Exception e){
+            logger.error("ActivityController->doDelete",e);
+            return new ResponseVO(-1,"操作失败",null);
+        }
+
+    }
+
 }

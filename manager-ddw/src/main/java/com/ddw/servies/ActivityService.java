@@ -60,6 +60,19 @@ public class ActivityService extends CommonService {
         return this.commonObjectBySingleParam("ddw_activity","id",id,TicketPO.class);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO delete(String idStr){
+        String ids= MyEncryptUtil.getRealValue(idStr);
+        if(StringUtils.isBlank(ids)){
+            return new ResponseVO(-2,"参数异常",null);
+        }
+        int n=this.commonDelete("ddw_activity","id",Integer.parseInt(ids));
+        if(n>0){
+            return new ResponseVO(1,"删除成功",null);
+        }
+        return new ResponseVO(-2,"删除失败",null);
+
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO update(String idStr,Integer status){
         String ids= MyEncryptUtil.getRealValue(idStr);
         if(StringUtils.isBlank(ids)){
