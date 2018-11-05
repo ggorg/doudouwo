@@ -13,7 +13,9 @@ import com.gen.common.services.FileService;
 import com.gen.common.util.*;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -122,11 +124,37 @@ public class ActivityService extends CommonService {
                     return new ResponseVO(-2,"压缩包里面必须要有index.html",null);
                 }
                 map.put("dirPath",f.getPath());
-                map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/"+f.getName()+"/index.html");
+                map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/act/"+f.getName()+"/index.html");
             }else{
                 map.remove("dtTargetPath");
             }
 
+        }else if(ActivityTypeEnum.type3.getCode().equals(dto.getDtType())){
+            StringBuilder builder=new StringBuilder();
+            builder.append("<!DOCTYPE html><html lang=\"zh-CN\"><body>").append(dto.getDtContent()).append("</body></html>");
+
+            if(dto.getId()==null){
+                String filename="act"+ RandomStringUtils.randomAlphanumeric(10)+".html";
+                FileUtils.write(new File(dir,filename),builder.toString(),"UTF-8");
+                map.put("dirPath",dir+filename);
+                map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/act/"+filename);
+            }else{
+                Map dataMap=this.commonObjectBySingleParam("ddw_activity","id",dto.getId());
+                String filename=null;
+                File f=null;
+                if(!dataMap.containsKey("dirPath") || StringUtils.isBlank(dataMap.get("dirPath").toString())){
+                    filename="act"+ RandomStringUtils.randomAlphanumeric(10)+".html";
+                    f=new File(dir,filename);
+                    map.put("dirPath",dir+filename);
+                    map.put("dtTargetPath",ddwGlobals.getCallBackHost()+"/ddw/act/"+filename);
+                }else{
+                    f=new File(dataMap.get("dirPath").toString());
+                }
+
+                FileUtils.write(f,builder.toString(),"UTF-8");
+            }
+
+            //FileUtils.write(new File(dir,"activity"));
         }
         map.put("updateTime",new Date());
         map.remove("dtImgFile");

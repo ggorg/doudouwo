@@ -53,7 +53,7 @@
 
                     <button class="radius3"  onclick="openDialog('650px','450px','新增外部链接活动','to-edit?dtType=1')" title="table2">新增外部链接活动</button> &nbsp;
                     <button class="radius3" onclick="openDialog('650px','450px','新增内部链接活动','to-edit?dtType=2')" title="table2">新增内部链接活动</button> &nbsp;
-                    <button class="radius3" onclick="openDialog('650px','450px','新增本文内容活动','to-edit?dtType=3')" title="table2">新增本文内容活动</button> &nbsp;
+                    <button class="radius3" onclick="openDialog('869px','510px','新增本文内容活动','to-edit?dtType=3')" title="table2">新增本文内容活动</button> &nbsp;
 
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
@@ -88,7 +88,7 @@
 
                         <td class="center">
                             <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'450px\',\'修改\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
+                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\''+${obj['dtType']==3?'869px':'650px'}+'\',\''+${obj['dtType']==3?'510px':'450px'}+'\',\'修改\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
 
                                 <button  th:class="'layui-btn layui-btn-sm '+${obj['dtDisabled']==1?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dtDisabled']==1?0:1}+',\''+${obj['dtDisabled']==1?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['dtDisabled']==1?'发 布':'撤回发布'}"></button>
                             </div>

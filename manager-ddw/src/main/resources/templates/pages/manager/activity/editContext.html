@@ -5,6 +5,7 @@
 <head>
   <meta charset="UTF-8" />
   <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+  <script type="text/javascript" src="/js/wangEditor/wangEditor.min.js"></script>
   <style type="text/css">
     .dmImge{z-index:10;width: 353px;height: 93.83px;position:absolute;top:0;left:0}
     .dmImg{z-index:10;width: 143.52px;height: 93.83px;position:absolute;top:0;left:0}
@@ -31,12 +32,6 @@
     </div>
   </div>
 
-  <div class="layui-form-item">
-    <label class="layui-form-label">活动内容</label>
-    <div class="layui-input-block">
-      <textarea placeholder="请输入活动内容" name="dtContent" th:text="${ds!=null? ds['dtContent']:''}" class="layui-textarea"></textarea>
-    </div>
-  </div>
 
 
   <div class="layui-form-item">
@@ -47,6 +42,16 @@
     </div>
   </div>
 
+  <div class="layui-form-item">
+    <label class="layui-form-label">活动内容</label>
+    <div class="layui-input-block">
+      <div id="dtContent" th:utext="${ds!=null?ds['dtContent']:''}">
+
+
+      </div>
+      <textarea id="hidTextArea" style="display: none" name="dtContent" th:utext="${ds!=null?ds['dtContent']:''}"></textarea>
+    </div>
+  </div>
 
 
 
@@ -59,7 +64,25 @@
 </form>
 <script type="text/javascript">
     //initForm("do-edit-user",".layui-form")
+    var E = window.wangEditor
+    var editor = new E('#dtContent')
 
+    editor.customConfig.uploadImgServer = '/rs/do-upload'
+    editor.customConfig.uploadImgTimeout = 60*1000
+    editor.customConfig.uploadFileName = "file";
+    editor.customConfig.uploadImgHooks ={
+        customInsert: function (insertImg, result, editor) {
+            if(result.reCode==1){
+                insertImg(result.data.urlPath);
+            }
+        }
+    }
+    editor.customConfig.onchange = function (html) {
+
+        // 监控变化，同步更新到 textarea
+        $("#hidTextArea").val(html)
+    }
+    editor.create()
 
     layui.use(['laydate','form','layer','upload'], function(){
         var upload = layui.upload;
