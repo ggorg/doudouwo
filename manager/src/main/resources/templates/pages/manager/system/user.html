@@ -4,7 +4,26 @@
         <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
         <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
         <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${userPage!=null?userPage.total:0}]]*/ );
+           initPage(/*[[${userPage!=null?userPage.total:0}]]*/ ,function(curr){
+               ajaxPage(curr);
+           },function(result){
+               var  htmls="<tr>";
+               htmls+="<td>"+result.uName+"</td>";
+               htmls+="<td>"+result.uNickName+"</td>";
+               htmls+="<td>"+(result.disabled>0?'已禁用':'已启用')+"</td>";
+               htmls+="<td>"+ new Date(result.createTime).Format("yyyy-MM-dd HH:mm:ss")+"</td>";
+
+               htmls+=" <td class='center'><div class='layui-btn-group'>";
+               htmls+="<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('400px','320px','修改用户','to-edit?uId="+result.id+"')\"  >修 改</button>";
+               htmls+="<button class=\"layui-btn layui-btn-sm "+(result.disabled0?'':'layui-btn-danger')+"\" onclick=\"confirmDisabled('"+result.id+"','"+result.disabled+"') \">"+(result.disabled>0?'启 用':'禁 用')+"</button>"
+
+
+
+               htmls+=" </div></td>";
+               htmls+="</tr>";
+               return htmls;
+
+           });
         </script>
 	</head>
     <body class="withvernav">
@@ -37,7 +56,7 @@
                                 <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
                             </div>
                         </div>
-                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
+                            <a href="javascript:void(0)" onclick="ajaxPage(1,'search')" class="btn btn_search radius50"><span>Search</span></a>
 
                     </div>
                     </form>
@@ -77,7 +96,7 @@
                     </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody >
                     <tr th:each="obj:${userPage?.result}">
                        
                         <td th:text="${obj['uName']}">Trident</td>
@@ -116,7 +135,9 @@
         layui.use('form', function(){
             var form = layui.form;
 
+
         })
+
 
     </script>
 	</body>

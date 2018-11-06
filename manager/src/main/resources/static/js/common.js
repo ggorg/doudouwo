@@ -1,6 +1,11 @@
 var laypage =null;
 var layer =null;
-function initPage(count,callBackFun){
+var f=null;
+function initPage(count,callBackFun,callBackAjaxPageFun){
+    if(callBackAjaxPageFun!=undefined){
+        f=callBackAjaxPageFun;
+    }
+
     layui.use(['laypage', 'layer'],function(){
         laypage= layui.laypage
         layer=layui.layer;
@@ -226,4 +231,48 @@ function openDialog(width,height,title,url){
 }
 function isFunction(fn) {
     return Object.prototype.toString.call(fn)=== '[object Function]';
+}
+function ajaxPage(pageNo,search,callFn){
+    var url=document.URL;
+    if(url.indexOf("?")>-1){
+        url=url+"&pageNo="+pageNo;
+    }else{
+        url=url+"?pageNo="+pageNo;
+    }
+    j=(isFunction(jQuery)?jQuery:$)
+    j.post(url,j(".layui-form").serializeArray(),function(data){
+        if(data.reCode==1){
+            var result=data.data.userPage.result;
+
+            if(result.length>0){
+                var htmls="";
+                for(var i=0;i<result.length;i++) {
+                    htmls+=f(result[i]);
+                }
+                j("tbody").html(htmls);
+                if(search!=undefined){
+                    initPage(data.data.userPage!=null?data.data.userPage.total:0,function(curr){
+                        ajaxPage(curr);
+                    });
+                }
+
+            }
+        }
+
+    })
+}
+Date.prototype.Format = function (fmt) {
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "H+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
 }

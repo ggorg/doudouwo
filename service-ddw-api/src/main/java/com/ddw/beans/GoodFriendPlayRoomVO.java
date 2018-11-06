@@ -35,11 +35,24 @@ public class GoodFriendPlayRoomVO<T> {
     @ApiModelProperty(name = "groupId", value = "群ID" , example = "群ID")
     private String groupId;
 
+
+
     @ApiModelProperty(name = "开桌成员列表", value = "开桌成员列表" , example = "开桌成员列表")
     private List memberList;
 
     @ApiModelProperty(name = "describe", value = "描述", example = "描述")
     private String describe;
+
+    @ApiModelProperty(name = "roomOwnerOpenId", value = "房主", example = "房主")
+    private String roomOwnerOpenId;
+
+    public String getRoomOwnerOpenId() {
+        return roomOwnerOpenId;
+    }
+
+    public void setRoomOwnerOpenId(String roomOwnerOpenId) {
+        this.roomOwnerOpenId = roomOwnerOpenId;
+    }
 
     public String getDescribe() {
         return describe;

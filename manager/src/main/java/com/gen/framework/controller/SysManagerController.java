@@ -43,6 +43,13 @@ public class SysManagerController {
         }
         return "pages/manager/system/user";
     }
+    @PostMapping("/user/to-list")
+    @ResponseBody
+    public ResponseVO toUserListPost(@RequestParam(defaultValue = "1") Integer pageNo,String uName, Model model){
+        this.toUserList(pageNo,uName,model);
+        return new ResponseVO(1,"成功", model.asMap());
+
+    }
     @PostMapping("/user/do-edit-user")
     @ResponseBody
     public ResponseVO doEditUser(SysUserBean sysUserBean){
