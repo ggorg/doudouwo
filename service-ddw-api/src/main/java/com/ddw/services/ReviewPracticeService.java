@@ -147,8 +147,9 @@ public class ReviewPracticeService extends CommonService {
         Integer start = pageNo > 0 ? (pageNo - 1) * pageSize : 0;
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();
+        List<AppIndexPracticeVO> appIndexPractice1 = new ArrayList<>();
         // 已发布按发布时间先后排序的代练
-        List<AppIndexPracticeVO> appIndexPractice1 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,1);
+//        appIndexPractice1 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,1);
 //        for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
 //            userIdList.add(appIndexPracticeVO.getUserId());
 //        }
