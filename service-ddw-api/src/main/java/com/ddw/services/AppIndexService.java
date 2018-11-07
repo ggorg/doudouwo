@@ -104,7 +104,7 @@ public class AppIndexService {
         }
         Object obPractice = CacheUtil.get("publicCache","appIndexPractice"+storeId);
         if(obPractice == null){
-            appIndexVO.setPracticeList(reviewPracticeService.practiceList(token,1,4,null));
+            appIndexVO.setPracticeList(reviewPracticeService.leaderboard(token,1,1,null));
             if(appIndexVO.getPracticeList().size()>0){
                 CacheUtil.put("publicCache","appIndexPractice"+storeId,appIndexVO.getPracticeList());
             }
