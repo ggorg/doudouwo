@@ -276,6 +276,7 @@ function isFunction(fn) {
     return Object.prototype.toString.call(fn)=== '[object Function]';
 }
 function ajaxPage(pageNo,search,callFn){
+    pageN=pageNo;
     var url=document.URL;
     if(url.indexOf("?")>-1){
         url=url+"&pageNo="+pageNo;
