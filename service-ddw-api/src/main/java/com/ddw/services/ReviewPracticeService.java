@@ -76,9 +76,9 @@ public class ReviewPracticeService extends CommonService {
 //                return new ResponseApiVO(-2,"不允许重复提交申请",null);
 //            }
             //更新会员代练状态为审核中
-            Map setParams = new HashMap<>();
-            setParams.put("practiceFlag",2);
-            this.commonUpdateBySingleSearchParam("ddw_userinfo",setParams,"id",id);
+//            Map setParams = new HashMap<>();
+//            setParams.put("practiceFlag",2);
+//            this.commonUpdateBySingleSearchParam("ddw_userinfo",setParams,"id",id);
             //插入审批表
             ReviewPO reviewPO=new ReviewPO();
             String bussinessCode = String.valueOf(new Date().getTime());
@@ -147,8 +147,9 @@ public class ReviewPracticeService extends CommonService {
         Integer start = pageNo > 0 ? (pageNo - 1) * pageSize : 0;
         Integer end = pageSize;
         List<Integer> userIdList = new ArrayList<>();
+        List<AppIndexPracticeVO> appIndexPractice1 = new ArrayList<>();
         // 已发布按发布时间先后排序的代练
-        List<AppIndexPracticeVO> appIndexPractice1 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,1);
+//        appIndexPractice1 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,1);
 //        for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
 //            userIdList.add(appIndexPracticeVO.getUserId());
 //        }
@@ -200,51 +201,48 @@ public class ReviewPracticeService extends CommonService {
      * @return
      * @throws Exception
      */
-//    public List<AppIndexPracticeVO> leaderboard(String token,Integer pageNo,Integer appointment,Integer weekList)throws Exception{
-//        Integer storeId = TokenUtil.getStoreId(token);
-//        Integer practiceId = TokenUtil.getUserId(token);
-//        Integer pageNum = pageNo;
-//        Integer pageSize = 10;
-//        Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
-//        Integer end = pageSize;
-//        List<Integer> userIdList = new ArrayList<>();
-//
-//        List<AppIndexPracticeVO> appIndexPractice1 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,appointment,weekList);
-//        for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
-//            userIdList.add(appIndexPracticeVO.getUserId());
-//        }
-//        if(pageSize-appIndexPractice1.size()>0){
-//            end = pageSize-appIndexPractice1.size();
-//            userIdList.clear();
-//            for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
-//                userIdList.add(appIndexPracticeVO.getUserId());
-//            }
-//            List<AppIndexPracticeVO> appIndexPractice3 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,null);
-//            appIndexPractice1.addAll(appIndexPractice3);
-//        }
-//
-//        //设置关注状态
-//        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPractice1.listIterator();
-//        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(practiceId,1,9999).getData();
-//        List<MyAttentionInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
-//        while (appIndexPracticeIterator.hasNext()){
-//            AppIndexPracticeVO appIndexPracticeVO = appIndexPracticeIterator.next();
-//            Long fans = myAttentionService.queryPracticeFansCountByUserId(appIndexPracticeVO.getUserId());
-//            appIndexPracticeVO.setFans(fans==null?0:fans);
-//            PracticeEvaluationPO practiceEvaluationPO = this.getEvaluation(appIndexPracticeVO.getUserId());
-//            int star = practiceEvaluationPO == null?0:practiceEvaluationPO.getStar();
-//            appIndexPracticeVO.setStar(star);
-//            if (myAttentionGoddessList != null) {
-//                for(MyAttentionInfoVO userInfoVO:myAttentionGoddessList){
-//                    if(userInfoVO.getUserId() == appIndexPracticeVO.getUserId()){
-//                        appIndexPracticeVO.setFocus(true);
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        return appIndexPractice1;
-//    }
+    public List<AppIndexPracticeVO> leaderboard(String token,Integer pageNo,Integer appointment,Integer weekList)throws Exception{
+        Integer storeId = TokenUtil.getStoreId(token);
+        Integer practiceId = TokenUtil.getUserId(token);
+        Integer pageSize = 4;
+        Integer start = pageNo > 0 ? (pageNo - 1) * pageSize : 0;
+        Integer end = pageSize;
+        List<Integer> userIdList = new ArrayList<>();
+        List<AppIndexPracticeVO> appIndexPractice1 = new ArrayList<>();
+        // 已发布按发布时间先后排序的代练
+        appIndexPractice1 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,1);
+        for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
+            userIdList.add(appIndexPracticeVO.getUserId());
+        }
+        //取按订单排序
+        if(pageSize-appIndexPractice1.size()>0){
+            end = pageSize-appIndexPractice1.size();
+            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,null,weekList);
+            appIndexPractice1.addAll(appIndexPractice2);
+        }
+        //设置关注状态
+        ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPractice1.listIterator();
+        MyAttentionVO myAttentionVO = (MyAttentionVO)myAttentionService.queryPracticeByUserId(practiceId,1,9999).getData();
+        List<MyAttentionInfoVO> myAttentionGoddessList = myAttentionVO.getUserInfoList();
+        while (appIndexPracticeIterator.hasNext()){
+            AppIndexPracticeVO appIndexPracticeVO = appIndexPracticeIterator.next();
+            Long fans = myAttentionService.queryPracticeFansCountByUserId(appIndexPracticeVO.getUserId());
+            appIndexPracticeVO.setFans(fans==null?0:fans);
+            PracticeEvaluationPO practiceEvaluationPO = this.getEvaluation(appIndexPracticeVO.getUserId());
+            int star = practiceEvaluationPO == null?0:practiceEvaluationPO.getStar();
+            appIndexPracticeVO.setStar(star);
+            if (myAttentionGoddessList != null) {
+                for(MyAttentionInfoVO userInfoVO:myAttentionGoddessList){
+                    if(userInfoVO.getUserId() == appIndexPracticeVO.getUserId()){
+                        appIndexPracticeVO.setFocus(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return appIndexPractice1;
+    }
 
 
     /**
@@ -421,12 +419,14 @@ public class ReviewPracticeService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO cancleOrder(PracticeOrderDTO practiceOrderDTO)throws Exception{
-        //变更代练状态,删除订单
+        //变更代练状态,修改订单状态为3
         PracticeOrderPO practiceOrderPO = this.getOrder(practiceOrderDTO.getId());
         this.updatePracticeGame(practiceOrderPO.getPracticeId(),practiceOrderPO.getGameId(),1);
+        Map setParams = new HashMap<>();
+        setParams.put("payState",3);
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",practiceOrderDTO.getId());
-        return super.commonDeleteByParams("ddw_practice_order",searchCondition);
+        return super.commonUpdateByParams("ddw_practice_order",setParams,searchCondition);
     }
     /**
      * 插入代练订单
