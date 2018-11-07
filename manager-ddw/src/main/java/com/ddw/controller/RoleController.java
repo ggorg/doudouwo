@@ -29,11 +29,11 @@ public class RoleController {
 
     @PostMapping("do-give-hqpower-to-role")
     @ResponseBody
-    public ResponseVO doGiveHqPowerToRole(String ridStr){
+    public ResponseVO doGiveHqPowerToRole(Integer rid){
         try {
             List roleList=this.roleService.getRoleByUserId(Toolsddw.getCurrentUserId(),RoleTypeEnum.RoleType1_3.getCode());
             if(roleList!=null && roleList.size()>0){
-                ResponseVO res=roleService.modifyRoleType(ridStr, RoleTypeEnum.RoleType1_0.getCode());
+                ResponseVO res=roleService.modifyRoleType(rid, RoleTypeEnum.RoleType1_0.getCode());
                 if(res.getReCode()==1){
                    return  new ResponseVO(1,"赋予总店权限成功",null);
                 }
@@ -47,11 +47,11 @@ public class RoleController {
 
     @PostMapping("do-cancel-hqpower")
     @ResponseBody
-    public ResponseVO doCancelHqPower(String ridStr){
+    public ResponseVO doCancelHqPower(Integer rid){
         try {
             List roleList=this.roleService.getRoleByUserId(Toolsddw.getCurrentUserId(),RoleTypeEnum.RoleType1_3.getCode());
             if(roleList!=null && roleList.size()>0){
-                ResponseVO res=roleService.modifyRoleType(ridStr, RoleTypeEnum.RoleType1_1.getCode());
+                ResponseVO res=roleService.modifyRoleType(rid, RoleTypeEnum.RoleType1_1.getCode());
                 if(res.getReCode()==1){
                    return  new ResponseVO(1,"撤回总店权限成功",null);
                 }

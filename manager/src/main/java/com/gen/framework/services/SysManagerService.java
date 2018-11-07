@@ -423,12 +423,10 @@ public class SysManagerService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO deleteRole(String ridStr)throws Exception{
-        String ridValue= MyEncryptUtil.getRealValue(ridStr);
-        if(StringUtils.isBlank(ridValue)){
+    public ResponseVO deleteRole(Integer rid)throws Exception{
+        if(rid==null || rid<=0){
             return new ResponseVO(-2,"删除失败",null);
         }
-        Integer rid=Integer.valueOf(ridValue);
         int n=this.commonDelete("base_role","id",rid);
         if(n>0){
             this.resetPowerByRid(rid);

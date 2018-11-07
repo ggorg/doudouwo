@@ -1,121 +1,110 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-            initPage(/*[[${rolePage!=null?rolePage.total:0}]]*/ );
-            function del(val) {
-                //删除菜单
-                layer.confirm('确定删除?',{icon:2,title:'删除'}, function(index){
-                    // layer.close(index);
-                    //向服务端发送删除指令
-                    jQueryCommonSubmit("do-del-role",null,{ridStr:val});
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-                });
-            }
-            function setHqPower(val) {
-                //删除菜单
-                layer.confirm('是否赋予总店权限?',{icon:3,title:'提示'}, function(index){
-                    // layer.close(index);
-                    //向服务端发送删除指令
-                    jQueryCommonSubmit("/manager/role/do-give-hqpower-to-role",null,{ridStr:val});
-
-                });
-            }
-            function cancelHqPower(val) {
-                //删除菜单
-                layer.confirm('是否撤回总店权限?',{icon:3,title:'提示'}, function(index){
-                    // layer.close(index);
-                    //向服务端发送删除指令
-                    jQueryCommonSubmit("/manager/role/do-cancel-hqpower",null,{ridStr:val});
-
-                });
-            }
-
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
-
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-       <div class="centercontent tables">
-
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
-
-       </div>--><!--pageheader-->
-
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>角色列表</h3>
-                </div><!--contenttitle-->
-                <div class="tableoptions">
-                    <button class="radius3" id="createBtn" title="table2" onclick="openDialog('500px','500px','创建角色','to-edit')">新建</button> &nbsp;
-                    <!-- <select class="radius3">
-                         <option value="">Show All</option>
-                         <option value="">Rendering Engine</option>
-                         <option value="">Platform</option>
-                     </select> &nbsp;
-                     <button class="radius3">Apply Filter</button>
-                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
-                </div><!--tableoptions-->
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <colgroup>
-                        <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-
-                        <col class="con0" />
-                    </colgroup>
-                    <thead>
-                    <tr>
-                       
-                        <th class="head1">角色名</th>
-                        <th class="head1">角色别称</th>
-                        <th class="head1">创建时间</th>
-
-                        <th class="head1">操作</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="obj:${rolePage?.result}">
-                       
-                        <td th:text="${obj['rName']}">Trident</td>
-                        <td th:text="${obj['rByname']}">Internet Explorer 4.0</td>
-                        <td th:text="${obj['createTime']}">Win 95+</td>
-
-                        <td class="center">
-                            <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'500px\',\'修改角色\',\'to-edit?rId='+${obj['id']}+'\')'" >修 改</button>
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'600px\',\'480px\',\'菜单授权\',\'to-menu-power?rId='+${obj['id']}+'\')'"  >菜单授权</button>
-                            <th:block th:unless="${obj['rType'] eq '1_0'}">
-                                <button class="layui-btn layui-btn-sm " th:onclick="'setHqPower(\''+${#TdTool.encrypt(obj['id'])}+'\')'"  >赋予总店权限</button>
-
-                            </th:block>
-                                <th:block th:if="${obj['rType'] eq '1_0'}">
-                                <button class="layui-btn layui-btn-sm " th:onclick="'cancelHqPower(\''+${#TdTool.encrypt(obj['id'])}+'\')'"  >撤回总店权限</button>
-
-                                </th:block>
-                            <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${#TdTool.encrypt(obj['id'])}+'\')'"  >删 除</button>
-
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-                <div id="pages"></div>
-            </div>
-        </div>
-
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>角色列表</h3>
+    </div><!--contenttitle-->
+    <div class="tableoptions">
+        <button class="radius3" id="createBtn" title="table2" onclick="openDialog('500px','500px','创建角色','to-edit')">新建</button> &nbsp;
+        <!-- <select class="radius3">
+             <option value="">Show All</option>
+             <option value="">Rendering Engine</option>
+             <option value="">Platform</option>
+         </select> &nbsp;
+         <button class="radius3">Apply Filter</button>
+         <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
     </div>
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
 
-	</body>
-	
+        <colgroup >
+            <!--<col class="con0" style="width: 4%" />-->
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+
+            <col class="con0" />
+        </colgroup>
+        <thead >
+
+        <tr>
+
+            <th class="head1">角色名</th>
+            <th class="head1">角色别称</th>
+            <th class="head1">创建时间</th>
+
+            <th class="head1">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${rolePage!=null?rolePage.total:0}">
+    <tr th:each="obj:${rolePage?.result}">
+
+        <td th:text="${obj['rName']}">Trident</td>
+        <td th:text="${obj['rByname']}">Internet Explorer 4.0</td>
+        <td th:text="${obj['createTime']}">Win 95+</td>
+
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'500px\',\'修改角色\',\'to-edit?rId='+${obj['id']}+'\')'" >修 改</button>
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'600px\',\'480px\',\'菜单授权\',\'to-menu-power?rId='+${obj['id']}+'\')'"  >菜单授权</button>
+                <th:block th:unless="${obj['rType'] eq '1_0'}">
+                    <button class="layui-btn layui-btn-sm " th:onclick="'setHqPower('+${obj['id']}+')'"  >赋予总店权限</button>
+
+                </th:block>
+                <th:block th:if="${obj['rType'] eq '1_0'}">
+                    <button class="layui-btn layui-btn-sm " th:onclick="'cancelHqPower('+${obj['id']}+')'"  >撤回总店权限</button>
+
+                </th:block>
+                <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del('+${obj['id']}+')'"  >删 除</button>
+
+            </div>
+        </td>
+    </tr>
+
+    </tbody>
+
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${rolePage!=null?rolePage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
+        });
+
+        function del(val) {
+            //删除菜单
+            layer.confirm('确定删除?',{icon:2,title:'删除'}, function(index){
+                // layer.close(index);
+                //向服务端发送删除指令
+                jQueryCommonSubmit("do-del-role",null,{rid:val});
+
+            });
+        }
+        function setHqPower(val) {
+            //删除菜单
+            layer.confirm('是否赋予总店权限?',{icon:3,title:'提示'}, function(index){
+                // layer.close(index);
+                //向服务端发送删除指令
+                jQueryCommonSubmit("/manager/role/do-give-hqpower-to-role",null,{rid:val});
+
+            });
+        }
+        function cancelHqPower(val) {
+            //删除菜单
+            layer.confirm('是否撤回总店权限?',{icon:3,title:'提示'}, function(index){
+                // layer.close(index);
+                //向服务端发送删除指令
+                jQueryCommonSubmit("/manager/role/do-cancel-hqpower",null,{rid:val});
+
+            });
+        }
+    </script>
+
+</th:block>
+
+
 </html>

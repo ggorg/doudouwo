@@ -48,13 +48,13 @@ public class ActivityController {
         }
         return "pages/manager/activity/list";
     }
-    @GetMapping("to-edit")
-    public String toEdtitPage(String idStr,Integer dtType,Model model){
-        try {
 
-            String id= MyEncryptUtil.getRealValue(idStr);
-            if(StringUtils.isNotBlank(id)){
-                Map data=this.activityService.getById(Integer.parseInt(id));
+    @GetMapping("to-edit")
+    public String toEdtitPage(Integer id,Integer dtType,Model model){
+        try {
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            if(id!=null && id>0){
+                Map data=this.activityService.getById(id,spo==null?-1:spo.getId());
                 model.addAttribute("ds",data);
                 dtType=(Integer) data.get("dtType");
 
@@ -90,9 +90,10 @@ public class ActivityController {
 
     @PostMapping("do-update-status")
     @ResponseBody
-    public ResponseVO doUpdate(String idStr,Integer status){
+    public ResponseVO doUpdate(Integer id,Integer status){
         try {
-            return this.activityService.update(idStr,status);
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            return this.activityService.update(id,spo==null?-1:spo.getId(),status);
         }catch (Exception e){
             logger.error("ActivityController->doUpdate",e);
             return new ResponseVO(-1,"操作失败",null);
@@ -102,9 +103,10 @@ public class ActivityController {
 
     @PostMapping("do-delete")
     @ResponseBody
-    public ResponseVO doDelete(String idStr){
+    public ResponseVO doDelete(Integer id){
         try {
-            return this.activityService.delete(idStr);
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+            return this.activityService.delete(id,spo==null?-1:spo.getId());
         }catch (Exception e){
             logger.error("ActivityController->doDelete",e);
             return new ResponseVO(-1,"操作失败",null);

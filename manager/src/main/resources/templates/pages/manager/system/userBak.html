@@ -1,13 +1,51 @@
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
+        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
+        <script type="text/javascript"  th:inline="javascript">
+           initPage(/*[[${userPage!=null?userPage.total:0}]]*/ ,function(curr){
+               ajaxPage(curr);
+           },function(result){
+               var  htmls="<tr>";
+               htmls+="<td>"+result.uName+"</td>";
+               htmls+="<td>"+result.uNickName+"</td>";
+               htmls+="<td>"+(result.disabled>0?'已禁用':'已启用')+"</td>";
+               htmls+="<td>"+ new Date(result.createTime).Format("yyyy-MM-dd HH:mm:ss")+"</td>";
 
-                <th:block   layout:fragment="options">
-                <div class="contenttitle2" >
+               htmls+=" <td class='center'><div class='layui-btn-group'>";
+               htmls+="<button class=\"layui-btn layui-btn-sm\" onclick=\"openDialog('400px','320px','修改用户','to-edit?uId="+result.id+"')\"  >修 改</button>";
+               htmls+="<button class=\"layui-btn layui-btn-sm "+(result.disabled0?'':'layui-btn-danger')+"\" onclick=\"confirmDisabled('"+result.id+"','"+result.disabled+"') \">"+(result.disabled>0?'启 用':'禁 用')+"</button>"
+
+
+
+               htmls+=" </div></td>";
+               htmls+="</tr>";
+               return htmls;
+
+           },"userPage");
+        </script>
+	</head>
+    <body class="withvernav">
+    <div class="bodywrapper">
+
+        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
+        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
+       <div class="centercontent tables">
+
+           <!-- <div class="pageheader notab">
+           <h1 class="pagetitle">Tables</h1>
+           <span class="pagedesc">This is a sample description of a page</span>
+
+       </div>--><!--pageheader-->
+
+            <div id="contentwrapper" class="contentwrapper">
+                <div class="contenttitle2">
                     <h3>用户列表</h3>
 
                 </div><!--contenttitle-->
 
-                <div class="tableoptions" >
+                <div class="tableoptions">
 
                     <form class="layui-form" >
                         <div class="layui-form-item2 layui-form-item">
@@ -30,16 +68,13 @@
                      <button class="radius3">Apply Filter</button>
                      <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
                 </div><!--tableoptions-->
-                <div class="tableoptions" >
+                <div class="tableoptions">
 
                     <button class="radius3" id="createBtn" onclick="openDialog('400px','320px','创建系统用户','to-edit')" title="table2">新建</button> &nbsp;
 
                 </div>
-                </th:block>
                 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <th:block   layout:fragment="dataHead">
-
-                    <colgroup >
+                    <colgroup>
                         <!--<col class="con0" style="width: 4%" />-->
                         <col class="con0" />
                         <col class="con0" />
@@ -48,7 +83,7 @@
 
                         <col class="con0" />
                     </colgroup>
-                    <thead >
+                    <thead>
 
                     <tr>
                        
@@ -60,8 +95,8 @@
                         <th class="head1">操作</th>
                     </tr>
                     </thead>
-                    </th:block>
-                    <tbody layout:fragment="dataBody" th:attr="total=${userPage!=null?userPage.total:0}">
+
+                    <tbody >
                     <tr th:each="obj:${userPage?.result}">
                        
                         <td th:text="${obj['uName']}">Trident</td>
@@ -80,12 +115,13 @@
                     </tbody>
 
                 </table>
-    <th:block  layout:fragment="myjs" >
 
-    <script type="text/javascript"  th:inline="javascript">
-        initPage(/*[[${userPage!=null?userPage.total:0}]]*/ ,function(curr){
-            ajaxPage(curr);
-        });
+                <div id="pages"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript">
 
         function confirmDisabled(id,isDisabled){
             layer.confirm(isDisabled?"是否禁用":"是否启用", {icon: 3, title:'提示'}, function(index){
@@ -101,9 +137,9 @@
 
 
         })
+
+
     </script>
-
-    </th:block>
-
+	</body>
 
 </html>

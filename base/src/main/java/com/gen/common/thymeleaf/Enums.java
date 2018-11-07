@@ -1,8 +1,12 @@
 package com.gen.common.thymeleaf;
 
 
+import com.alibaba.fastjson.JSON;
 import com.gen.common.dict.Dictionary;
 import com.gen.common.dict.DictionaryUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class Enums {
 
@@ -35,6 +39,22 @@ public final class Enums {
 			return unknownDic.getName();
 		}
 		return "";
+	}
+	public String jsArray(String classNames){
+		StringBuilder builder=new StringBuilder();
+		Map m=new HashMap();
+		String[] cs=classNames.split(",");
+		String className=null;
+		for(String c:cs){
+			className=c.replaceAll("^(.*)[.]([^.]+)$","$2");
+			Dictionary[] dictionaries = DictionaryUtils.getDictionaries(c);
+			for (Dictionary dictionary : dictionaries) {
+				m.put(className+dictionary.getCode(),dictionary.getName());
+
+			}
+		}
+		return JSON.toJSONString(m);
+
 	}
 	public String createDictOptions( String className,Integer code){
 		StringBuilder builder=new StringBuilder();

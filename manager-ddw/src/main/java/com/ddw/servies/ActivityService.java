@@ -56,26 +56,35 @@ public class ActivityService extends CommonService {
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_activity","id",id);
     }
+    public Map getById(Integer id,Integer storeId)throws Exception{
+        Map m=new HashMap();
+        m.put("id",id);
+        m.put("storeId",storeId);
+        return this.commonObjectBySearchCondition("ddw_activity",m);
+    }
     public TicketPO getBeanById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_activity","id",id,TicketPO.class);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO delete(String idStr){
-        String ids= MyEncryptUtil.getRealValue(idStr);
-        if(StringUtils.isBlank(ids)){
+    public ResponseVO delete(Integer id,Integer storeId){
+
+        if(id==null ||id<=0){
             return new ResponseVO(-2,"参数异常",null);
         }
-        int n=this.commonDelete("ddw_activity","id",Integer.parseInt(ids));
-        if(n>0){
+        Map m=new HashMap();
+        m.put("id",id);
+        m.put("storeId",storeId);
+        ResponseVO re=this.commonDeleteByParams("ddw_activity",m);
+        if(re.getReCode()==1){
             return new ResponseVO(1,"删除成功",null);
         }
         return new ResponseVO(-2,"删除失败",null);
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO update(String idStr,Integer status){
-        String ids= MyEncryptUtil.getRealValue(idStr);
-        if(StringUtils.isBlank(ids)){
+    public ResponseVO update(Integer id,Integer storeId,Integer status){
+
+        if(id==null || id<=0){
             return new ResponseVO(-2,"参数异常",null);
         }
         if(StringUtils.isBlank(DisabledEnum.getName(status))){
@@ -83,7 +92,10 @@ public class ActivityService extends CommonService {
         }
         Map map=new HashMap();
         map.put("dtDisabled",status);
-        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_activity",map,"id",Integer.parseInt(ids));
+        Map search=new HashMap();
+        search.put("id",id);
+        search.put("storeId",storeId);
+        ResponseVO res=this.commonUpdateByParams("ddw_activity",map,search);
         if(res.getReCode()==1){
 
             if(DisabledEnum.disabled0.getCode().equals(status)){

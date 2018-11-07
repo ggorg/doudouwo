@@ -16,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.view.ThymeleafView;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.util.TemplateModeUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,13 +46,6 @@ public class SysManagerController {
             logger.error("SysUserController->toUserList",e);
         }
         return "pages/manager/system/user";
-    }
-    @PostMapping("/user/to-list")
-    @ResponseBody
-    public ResponseVO toUserListPost(@RequestParam(defaultValue = "1") Integer pageNo,String uName, Model model){
-        this.toUserList(pageNo,uName,model);
-        return new ResponseVO(1,"成功", model.asMap());
-
     }
     @PostMapping("/user/do-edit-user")
     @ResponseBody
@@ -130,6 +127,7 @@ public class SysManagerController {
         }
         return "pages/manager/system/role";
     }
+
     @PostMapping("/role/do-edit-role")
     @ResponseBody
     public ResponseVO doEditRole(SysRoleBean sysRoleBean, Integer[] uId){
@@ -243,10 +241,10 @@ public class SysManagerController {
     }
     @PostMapping("/role/do-del-role")
     @ResponseBody
-    public ResponseVO deleteRole(String ridStr){
+    public ResponseVO deleteRole(Integer rid){
         try {
 
-            return this.sysManagerService.deleteRole(ridStr);
+            return this.sysManagerService.deleteRole(rid);
         }catch (Exception e){
             logger.error("SysUserController->deleteRole->系统异常",e);
             return new ResponseVO(-1,"删除失败",null);

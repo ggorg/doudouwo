@@ -21,19 +21,15 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class RoleService extends CommonService{
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO modifyRoleType(String ridStr, String roleType)throws Exception {
-        if(StringUtils.isBlank(ridStr)){
+    public ResponseVO modifyRoleType(Integer rid, String roleType)throws Exception {
+        if(rid==null || rid<=0){
             return new ResponseVO(-2,"参数异常",null);
 
         }
-        String ridS=MyEncryptUtil.getRealValue(ridStr);
-        if(StringUtils.isBlank(ridS)){
-            return new ResponseVO(-2,"参数异常",null);
 
-        }
         Map setParams=new HashMap();
         setParams.put("rType",roleType);
-        ResponseVO res=this.commonUpdateBySingleSearchParam("base_role",setParams,"id",Integer.parseInt(ridS));
+        ResponseVO res=this.commonUpdateBySingleSearchParam("base_role",setParams,"id",rid);
         if(res.getReCode()==1){
             CacheUtil.deleteByStartWith("commonCache","roleByUserId-");
         }

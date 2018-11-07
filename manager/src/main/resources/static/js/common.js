@@ -1,11 +1,10 @@
 var laypage =null;
 var layer =null;
 var f=null;
-function initPage(count,callBackFun,callBackAjaxPageFun){
-    if(callBackAjaxPageFun!=undefined){
-        f=callBackAjaxPageFun;
-    }
-
+var pn=null;
+var pageN=1;
+function initPage(count,callBackFun){
+    f=callBackFun;
     layui.use(['laypage', 'layer'],function(){
         laypage= layui.laypage
         layer=layui.layer;
@@ -18,10 +17,11 @@ function initPage(count,callBackFun,callBackAjaxPageFun){
             layout: ['prev','page','next', 'skip','count'],
             curr: function(){ //通过url获取当前页，也可以同上（pages）方式获取
                 var page = location.search.match(/pageNo=(\d+)/);
-
-                return page ? page[1] : 1;
+                page=page==null?pageN:page;
+                return page!=null && page!=undefined? page : 1;
             }(),
             jump: function(e, first){ //触发分页后的回调
+                pageN=e.curr;
                 if(!first){ //一定要加此判断，否则初始时会无限刷新
 
                     if(callBackFun==undefined){
@@ -108,18 +108,38 @@ function commonJsonAjaxFunction(url,params,callback){
 
         },
         success: function(data, textStatus, jqXHR) {
-            layer.msg(data.reMsg);
+            var msgIndex=layer.msg(data.reMsg);
 
             if(data.reCode==1){
 
                 window.setTimeout(function(){
+                    layer.close(msgIndex);
                     if(callback!=undefined && isFunction(callback)){
                         callback(data);
                     }else{
                         if(data.data!=null && data.data.jumpUrl!=undefined){
-                            top.location.href= data.data.jumpUrl;
+                            if(window.parent.f!=null && window.parent.f!=undefined){
+                                window.parent.closeDialog();
+                                window.parent.ajaxPage(1,"search");
+                            }else if(f!=null && f!=undefined){
+
+                                ajaxPage(1,"search");
+                            }else{
+                                top.location.href= data.data.jumpUrl;
+                            }
+
                         }else{
-                            top.location.href=window.parent.location.href;
+                            if(window.parent.f!=null && window.parent.f!=undefined){
+                                window.parent.closeDialog();
+                                window.parent.ajaxPage(1,"search");
+                            }else if(f!=null && f!=undefined){
+
+                                ajaxPage(1,"search");
+                            }else{
+                                top.location.href=window.parent.location.href;
+                            }
+
+
 
                         }
                     }
@@ -153,7 +173,7 @@ function commonAjaxFunction(url,params,isUpload,callback){
 
         },
         success: function(data, textStatus, jqXHR) {
-            layer.msg(data.reMsg);
+            var msgIndex=layer.msg(data.reMsg);
 
             if(data.reCode==1){
 
@@ -161,10 +181,29 @@ function commonAjaxFunction(url,params,isUpload,callback){
                     if(callback!=undefined && isFunction(callback)){
                         callback(data);
                     }else{
+                        layer.close(msgIndex);
                         if(data.data!=null && data.data.jumpUrl!=undefined){
-                            top.location.href= data.data.jumpUrl;
+
+                            if(window.parent.f!=null && window.parent.f!=undefined){
+                                window.parent.closeDialog();
+                                window.parent.ajaxPage(1,"search");
+                            }else if(f!=null && f!=undefined){
+
+                                ajaxPage(1,"search");
+                            }else{
+                                top.location.href= data.data.jumpUrl;
+                            }
                         }else{
-                            top.location.href=window.parent.location.href;
+
+                            if(window.parent.f!=null && window.parent.f!=undefined){
+                                window.parent.closeDialog();
+                                window.parent.ajaxPage(1,"search");
+                            }else if(f!=null && f!=undefined){
+
+                                ajaxPage(1,"search");
+                            }else{
+                                top.location.href=window.parent.location.href;
+                            }
 
                         }
                     }
@@ -203,8 +242,12 @@ function viewDialog(width,height,title,url){
 
     });
 }
+function closeDialog(){
+    layer.close(openIndex)
+}
+var openIndex=null;
 function openDialog(width,height,title,url){
-    layer.open({
+    openIndex=layer.open({
         id:"mydialog",
         type: 2,
         area: [width,height],
@@ -239,27 +282,33 @@ function ajaxPage(pageNo,search,callFn){
     }else{
         url=url+"?pageNo="+pageNo;
     }
+    url+="&isAjax=true";
     j=(isFunction(jQuery)?jQuery:$)
-    j.post(url,j(".layui-form").serializeArray(),function(data){
-        if(data.reCode==1){
-            var result=data.data.userPage.result;
-
+    var pindex= layer.load();
+    j.get(url,j(".layui-form").serializeArray(),function(data){
+        var ajaxObjTbody=j(data).find("tbody");
+        j("tbody").html(ajaxObjTbody.html());
+       initPage(ajaxObjTbody.attr("total"),function(curr){
+            ajaxPage(curr);
+        });
+        layer.close(pindex);
+        /*if(data.reCode==1){
+            var result=data.data[pn].result;
             if(result.length>0){
                 var htmls="";
                 for(var i=0;i<result.length;i++) {
                     htmls+=f(result[i]);
                 }
                 j("tbody").html(htmls);
+                layer.close(pindex);
                 if(search!=undefined){
-                    initPage(data.data.userPage!=null?data.data.userPage.total:0,function(curr){
-                        ajaxPage(curr);
-                    });
+
                 }
 
             }
-        }
+        }*/
 
-    })
+    },"HTML")
 }
 Date.prototype.Format = function (fmt) {
     var o = {

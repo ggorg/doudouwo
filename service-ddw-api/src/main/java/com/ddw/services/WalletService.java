@@ -579,8 +579,10 @@ public class WalletService extends CommonService {
             list.forEach(a->{
                 if(StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
                     a.setTitle(OrderTypeEnum.getName(a.getType()));
+                }else if(a.getDealType()==4){
+                    a.setTitle("充值");
                 }else{
-                    a.setTitle(IncomeTypeEnum.getName(a.getType()));
+                    a.setTitle(IncomeTypeEnum.getName(a.getType())+"转入钱包");
 
                 }
             });

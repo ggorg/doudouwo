@@ -17,11 +17,11 @@
             t1.createTime,
             t1.doType type,
             t1.doCost cost,
-            t1.doPayStatus dealType
+        (case  when t1.doType=3 then 4 else t1.doPayStatus end) as dealType
         FROM
             ddw_order t1
         WHERE
-            t1.doPayType = 5
+            (t1.doPayType = 5 or t1.doType=3)
             AND t1.doCustomerUserId = #{userId} UNION ALL
         SELECT
             t2.createTime,
@@ -38,12 +38,11 @@
             AND v.doCustomerUserId = #{userId} UNION ALL
         SELECT
             dt.createTime,
-            dt.diType type,
-
-            dt.diMoney cost,
-        3 dealType
+            dt.type,
+            dt.cost,
+            3 dealType
         FROM
-        ddw_income_record dt
+          ddw_transfer dt
         WHERE
             dt.userId = #{userId}
             ) mt
