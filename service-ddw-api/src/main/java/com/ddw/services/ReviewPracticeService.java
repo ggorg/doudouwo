@@ -421,12 +421,14 @@ public class ReviewPracticeService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO cancleOrder(PracticeOrderDTO practiceOrderDTO)throws Exception{
-        //变更代练状态,删除订单
+        //变更代练状态,修改订单状态为3
         PracticeOrderPO practiceOrderPO = this.getOrder(practiceOrderDTO.getId());
         this.updatePracticeGame(practiceOrderPO.getPracticeId(),practiceOrderPO.getGameId(),1);
+        Map setParams = new HashMap<>();
+        setParams.put("payState",3);
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",practiceOrderDTO.getId());
-        return super.commonDeleteByParams("ddw_practice_order",searchCondition);
+        return super.commonUpdateByParams("ddw_practice_order",setParams,searchCondition);
     }
     /**
      * 插入代练订单
