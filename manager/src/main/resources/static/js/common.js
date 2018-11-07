@@ -288,9 +288,13 @@ function ajaxPage(pageNo,search,callFn){
     j.get(url,j(".layui-form").serializeArray(),function(data){
         var ajaxObjTbody=j(data).find("tbody");
         j("tbody").html(ajaxObjTbody.html());
-       initPage(ajaxObjTbody.attr("total"),function(curr){
-            ajaxPage(curr);
-        });
+        var attrTotal=ajaxObjTbody.attr("total");
+        if(attrTotal!=null && attrTotal!=undefined){
+            initPage(attrTotal,function(curr){
+                ajaxPage(curr);
+            });
+        }
+
         layer.close(pindex);
         /*if(data.reCode==1){
             var result=data.data[pn].result;
