@@ -5,10 +5,10 @@ var pn=null;
 var pageN=1;
 function initPage(count,callBackFun){
     f=callBackFun;
-    layui.use(['laypage', 'layer'],function(){
-        laypage= layui.laypage
+    layui.use(['laypage', 'layer','form'],function(){
+        laypage= layui.laypage;
         layer=layui.layer;
-
+        var form = layui.form;
         laypage.render({
             elem: 'pages',
             skip: true,

@@ -1,101 +1,80 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${goddessPage!=null?goddessPage.total:0}]]*/ );
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-       <div class="centercontent tables">
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>女神列表</h3>
 
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
+    </div><!--contenttitle-->
 
-       </div>--><!--pageheader-->
+    <div class="tableoptions">
+        <form class="layui-form" >
+            <div class="layui-form-item2 layui-form-item">
+                <div class="float-left-div" >
 
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>女神列表</h3>
-
-                </div><!--contenttitle-->
-
-                <div class="tableoptions">
-                    <form class="layui-form" >
-                        <div class="layui-form-item2 layui-form-item">
-                            <div class="float-left-div" >
-
-                                <label class="layui-form-label" >名称</label>
-                                <div class="layui-input-inline" >
-                                    <input class="layui-input" name="userName" th:value="${#httpServletRequest.getParameter('userName')}"/>
-                                </div>
-                            </div>
-                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
-
-                        </div>
-                    </form>
+                    <label class="layui-form-label" >名称</label>
+                    <div class="layui-input-inline" >
+                        <input class="layui-input" name="userName" th:value="${#httpServletRequest.getParameter('userName')}"/>
+                    </div>
                 </div>
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <colgroup>
-                        <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th class="head0">身份证</th>
-                        <th class="head1">昵称</th>
-                        <th class="head0">预约开关</th>
-                        <th class="head1">店内桌号（桌名）</th>
-                        <th class="head0">竞价金额（分）</th>
-                        <th class="head1">竞价定金（分）</th>
-                        <th class="head0">创建时间</th>
-                        <th class="head1">操作</th>
-                    </tr>
-                    </thead>
+                <a href="javascript:void(0)" onclick="ajaxPage(1,'search')" class="btn btn_search radius50"><span>Search</span></a>
 
-                    <tbody>
-                    <tr th:each="obj:${goddessPage?.result}">
-                        <td><img data-method="notice" th:attr="src=${obj['idcardFrontUrl']}" th:width="40px" th:height="40px"></td>
-                        <td th:text="${obj['nickName']}">Trident</td>
-                        <td th:text="${obj['appointment'] == 1?'开启':'关闭'}">Trident</td>
-                        <td th:text="${obj['tableNo']}">Trident</td>
-                        <td th:text="${obj['bidPrice']}">Trident</td>
-                        <td th:text="${obj['earnest']}">Trident</td>
-                        <td th:text="${obj['updateTime']!=null ? #dates.format(obj['updateTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
-                        <td class="center">
-                            <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'380px\',\'修改\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-                <div id="pages"></div>
             </div>
-        </div>
-
+        </form>
     </div>
-    <script type="text/javascript">
-        layui.use('form', function(){
-            var form = layui.form;
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
 
-        })
+        <colgroup >
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+        </colgroup>
+        <thead >
+        <tr>
+            <th class="head0">身份证</th>
+            <th class="head1">昵称</th>
+            <th class="head0">预约开关</th>
+            <th class="head1">店内桌号（桌名）</th>
+            <th class="head0">竞价金额（分）</th>
+            <th class="head1">竞价定金（分）</th>
+            <th class="head0">创建时间</th>
+            <th class="head1">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${goddessPage!=null?goddessPage.total:0}">
+    <tr th:each="obj:${goddessPage?.result}">
+        <td><img data-method="notice" th:attr="src=${obj['idcardFrontUrl']}" th:width="40px" th:height="40px"></td>
+        <td th:text="${obj['nickName']}">Trident</td>
+        <td th:text="${obj['appointment'] == 1?'开启':'关闭'}">Trident</td>
+        <td th:text="${obj['tableNo']}">Trident</td>
+        <td th:text="${obj['bidPrice']}">Trident</td>
+        <td th:text="${obj['earnest']}">Trident</td>
+        <td th:text="${obj['updateTime']!=null ? #dates.format(obj['updateTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'380px\',\'修改\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+            </div>
+        </td>
+    </tr>
 
+    </tbody>
+
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${goddessPage!=null?goddessPage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
+        });
         layui.use('layer', function(){ //独立版的layer无需执行这一句
             var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
 
@@ -127,6 +106,8 @@
         });
 
     </script>
-	</body>
+
+</th:block>
+
 
 </html>

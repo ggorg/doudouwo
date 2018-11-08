@@ -1,106 +1,86 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${smpage!=null?smpage.total:0}]]*/ );
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-       <div class="centercontent tables">
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>配方列表</h3>
 
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
+    </div><!--contenttitle-->
 
-       </div>--><!--pageheader-->
+    <div class="tableoptions">
 
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>配方列表</h3>
+        <form class="layui-form" >
+            <div class="layui-form-item2 layui-form-item">
+                <div class="float-left-div" >
 
-                </div><!--contenttitle-->
-
-                <div class="tableoptions">
-
-                    <form class="layui-form" >
-                        <div class="layui-form-item2 layui-form-item">
-                        <div class="float-left-div" >
-
-                            <label class="layui-form-label" >名称</label>
-                            <div class="layui-input-inline" >
-                                <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
-                            </div>
-                        </div>
-                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
-
+                    <label class="layui-form-label" >名称</label>
+                    <div class="layui-input-inline" >
+                        <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
                     </div>
-                    </form>
-                    <!-- <select class="radius3">
-                         <option value="">Show All</option>
-                         <option value="">Rendering Engine</option>
-                         <option value="">Platform</option>
-                     </select> &nbsp;
-                     <button class="radius3">Apply Filter</button>
-                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
-                </div><!--tableoptions-->
-                <div class="tableoptions">
-
-                    <button class="radius3" id="createBtn" onclick="openDialog('550px','530px','新增配方','to-edit')" title="table2">新增配方</button> &nbsp;
-
                 </div>
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <colgroup>
-                        <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
+                <a href="javascript:void(0)" onclick="ajaxPage(1,'search')" class="btn btn_search radius50"><span>Search</span></a>
 
-                    </colgroup>
-                    <thead>
-
-                    <tr>
-                        <th class="head1">配方名称</th>
-                        <th class="head1">配方编号</th>
-
-                        <th class="head1">创建时间</th>
-
-                        <th class="head1">操作</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="obj:${smpage?.result}" >
-                        <td th:text="${obj['dfName']}">Trident</td>
-                        <td th:text="${obj['dfNumber']}">Trident</td>
-
-
-                        <td th:text="${obj['createTime']}">Win 95+</td>
-
-                        <td class="center">
-                            <div class="layui-btn-group">
-                            <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'550px\',\'530px\',\'修改\',\'to-edit?idStr='+${#toolsddw.encrypt(obj['id'])}+'\')'"  >修改</button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-                <div id="pages"></div>
             </div>
-        </div>
+        </form>
+        <!-- <select class="radius3">
+             <option value="">Show All</option>
+             <option value="">Rendering Engine</option>
+             <option value="">Platform</option>
+         </select> &nbsp;
+         <button class="radius3">Apply Filter</button>
+         <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+    </div><!--tableoptions-->
+    <div class="tableoptions">
+
+        <button class="radius3" id="createBtn" onclick="openDialog('550px','530px','新增配方','to-edit')" title="table2">新增配方</button> &nbsp;
 
     </div>
-    <script type="text/javascript">
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
 
+        <colgroup >
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+        </colgroup>
+        <thead >
+        <tr>
+            <th class="head1">配方名称</th>
+            <th class="head1">配方编号</th>
+
+            <th class="head1">创建时间</th>
+
+            <th class="head1">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${smpage!=null?smpage.total:0}">
+    <tr th:each="obj:${smpage?.result}" >
+        <td th:text="${obj['dfName']}">Trident</td>
+        <td th:text="${obj['dfNumber']}">Trident</td>
+
+
+        <td th:text="${obj['createTime']}">Win 95+</td>
+
+        <td class="center">
+            <div class="layui-btn-group">
+                <button  class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'550px\',\'530px\',\'修改\',\'to-edit?idStr='+${#toolsddw.encrypt(obj['id'])}+'\')'"  >修改</button>
+            </div>
+        </td>
+    </tr>
+
+    </tbody>
+
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${smpage!=null?smpage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
+        });
         function confirmDisabled(id,status,msg){
             layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
                 if(index>0){
@@ -110,12 +90,9 @@
                 //layer.close(index);
             });
         }
-        layui.use('form', function(){
-            var form = layui.form;
-
-        })
-
     </script>
-	</body>
+
+</th:block>
+
 
 </html>

@@ -1,119 +1,100 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${sPage!=null?sPage.total:0}]]*/ );
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-       <div class="centercontent tables">
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>门店列表</h3>
 
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
+    </div><!--contenttitle-->
 
-       </div>--><!--pageheader-->
+    <div class="tableoptions">
 
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>门店列表</h3>
+        <form class="layui-form" >
+            <div class="layui-form-item2 layui-form-item">
+                <div class="float-left-div" >
 
-                </div><!--contenttitle-->
-
-                <div class="tableoptions">
-
-                    <form class="layui-form" >
-                        <div class="layui-form-item2 layui-form-item">
-                        <div class="float-left-div" >
-
-                            <label class="layui-form-label" >名称</label>
-                            <div class="layui-input-inline" >
-                                <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
-                            </div>
-                        </div>
-                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
-
+                    <label class="layui-form-label" >名称</label>
+                    <div class="layui-input-inline" >
+                        <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
                     </div>
-                    </form>
-                    <!-- <select class="radius3">
-                         <option value="">Show All</option>
-                         <option value="">Rendering Engine</option>
-                         <option value="">Platform</option>
-                     </select> &nbsp;
-                     <button class="radius3">Apply Filter</button>
-                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
-                </div><!--tableoptions-->
-                <div class="tableoptions">
-
-                    <button class="radius3" id="createBtn" onclick="openDialog('650px','530px','新增门店','to-edit')" title="table2">新增门店</button> &nbsp;
-
                 </div>
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <colgroup>
-                        <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
+                <a href="javascript:void(0)" onclick="ajaxPage(1,'search')" class="btn btn_search radius50"><span>Search</span></a>
 
-                        <col class="con0" />
-                    </colgroup>
-                    <thead>
-
-                    <tr>
-                        <th class="head1">门店名称</th>
-                        <th class="head1">联系人</th>
-                        <th class="head1">联系方式</th>
-                        <th class="head1">企业名称</th>
-                        <th class="head1">地区</th>
-                        <th class="head1">经纬度</th>
-                        <th class="head1">状态</th>
-                        <th class="head1">创建时间</th>
-
-                        <th class="head1">操作</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="obj:${sPage?.result}">
-                        <td th:text="${obj['dsName']}"></td>
-                        <td th:text="${obj['dsLeaderName']}">Trident</td>
-                        <td th:text="${obj['dsLeaderTelNo']}">Trident</td>
-                        <td th:text="${obj['dsCompanyName']}">Trident</td>
-                        <td th:text="${obj['dsCity']}">Trident</td>
-                        <td th:text="${obj['dsLongitude']+','+obj['dsLatitude']}">Trident</td>
-                        <td th:text="${obj['dsStatus']==0||obj['dsStatus']==null?'已启用':'已禁用'}">Trident</td>
-
-                        <td th:text="${obj['createTime']}">Win 95+</td>
-
-                        <td class="center">
-                            <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改门店\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'340px\',\'关联系统用户\',\'to-relate-sysuser?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >关联系统用户</button>
-                            <button  th:class="'layui-btn layui-btn-sm '+${obj['dmStatus']==2?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dmStatus']==1?0:1}+',\''+${obj['dmStatus']==1?'是否启用':'是否禁用'}+'\')'" th:text="${obj['dmStatus']==1?'启 用':'禁 用'}"></button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-                <div id="pages"></div>
             </div>
-        </div>
+        </form>
+        <!-- <select class="radius3">
+             <option value="">Show All</option>
+             <option value="">Rendering Engine</option>
+             <option value="">Platform</option>
+         </select> &nbsp;
+         <button class="radius3">Apply Filter</button>
+         <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
+    </div><!--tableoptions-->
+    <div class="tableoptions">
+
+        <button class="radius3" id="createBtn" onclick="openDialog('650px','530px','新增门店','to-edit')" title="table2">新增门店</button> &nbsp;
 
     </div>
-    <script type="text/javascript">
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
 
+        <colgroup >
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+
+            <col class="con0" />
+        </colgroup>
+        <thead >
+        <tr>
+            <th class="head1">门店名称</th>
+            <th class="head1">联系人</th>
+            <th class="head1">联系方式</th>
+            <th class="head1">企业名称</th>
+            <th class="head1">地区</th>
+            <th class="head1">经纬度</th>
+            <th class="head1">状态</th>
+            <th class="head1">创建时间</th>
+
+            <th class="head1">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${sPage!=null?sPage.total:0}">
+    <tr th:each="obj:${sPage?.result}">
+        <td th:text="${obj['dsName']}"></td>
+        <td th:text="${obj['dsLeaderName']}">Trident</td>
+        <td th:text="${obj['dsLeaderTelNo']}">Trident</td>
+        <td th:text="${obj['dsCompanyName']}">Trident</td>
+        <td th:text="${obj['dsCity']}">Trident</td>
+        <td th:text="${obj['dsLongitude']+','+obj['dsLatitude']}">Trident</td>
+        <td th:text="${obj['dsStatus']==0||obj['dsStatus']==null?'已启用':'已禁用'}">Trident</td>
+
+        <td th:text="${obj['createTime']}">Win 95+</td>
+
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改门店\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'340px\',\'关联系统用户\',\'to-relate-sysuser?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >关联系统用户</button>
+                <button  th:class="'layui-btn layui-btn-sm '+${obj['dmStatus']==2?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dmStatus']==1?0:1}+',\''+${obj['dmStatus']==1?'是否启用':'是否禁用'}+'\')'" th:text="${obj['dmStatus']==1?'启 用':'禁 用'}"></button>
+            </div>
+        </td>
+    </tr>
+
+    </tbody>
+
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${sPage!=null?sPage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
+        });
         function confirmDisabled(id,status,msg){
             layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
                 if(index>0){
@@ -123,12 +104,9 @@
                 //layer.close(index);
             });
         }
-        layui.use('form', function(){
-            var form = layui.form;
-
-        })
-
     </script>
-	</body>
+
+</th:block>
+
 
 </html>

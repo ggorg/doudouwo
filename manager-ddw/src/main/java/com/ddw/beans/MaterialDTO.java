@@ -19,13 +19,13 @@ public class MaterialDTO {
     private ArrayList isUpdateImg;
     private Integer dmSort;
 
-    private String dmNetWeight;
+    private Integer dmNetWeight;
 
-    public String getDmNetWeight() {
+    public Integer getDmNetWeight() {
         return dmNetWeight;
     }
 
-    public void setDmNetWeight(String dmNetWeight) {
+    public void setDmNetWeight(Integer dmNetWeight) {
         this.dmNetWeight = dmNetWeight;
     }
 

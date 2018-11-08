@@ -1,122 +1,103 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${oPage!=null?oPage.total:0}]]*/ );
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-       <div class="centercontent tables">
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>订单列表</h3>
 
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
+    </div><!--contenttitle-->
 
-       </div>--><!--pageheader-->
+    <div class="tableoptions">
 
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>订单列表</h3>
+        <form class="layui-form" >
+            <div class="layui-form-item2 layui-form-item">
+                <div class="float-left-div" >
 
-                </div><!--contenttitle-->
-
-                <div class="tableoptions">
-
-                    <form class="layui-form" >
-                        <div class="layui-form-item2 layui-form-item">
-                        <div class="float-left-div" >
-
-                            <label class="layui-form-label" >订单编号</label>
-                            <div class="layui-input-inline" >
-                                <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
-                            </div>
-                        </div>
-                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
-
+                    <label class="layui-form-label" >订单编号</label>
+                    <div class="layui-input-inline" >
+                        <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
                     </div>
-                    </form>
-                    <!-- <select class="radius3">
-                         <option value="">Show All</option>
-                         <option value="">Rendering Engine</option>
-                         <option value="">Platform</option>
-                     </select> &nbsp;
-                     <button class="radius3">Apply Filter</button>
-                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
-                </div><!--tableoptions-->
+                </div>
+                <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
 
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <colgroup>
-                        <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-
-                        <col class="con0" />
-                    </colgroup>
-                    <thead>
-
-                    <tr>
-                        <th class="head1">订单号</th>
-                        <th class="head1">订单金额(元)</th>
-                        <th class="head1">付款状态</th>
-                        <th class="head1">付款方式</th>
-                        <th class="head1">订单类型</th>
-                        <th class="head1">货品状态</th>
-                        <th  class="head1">订单状态</th>
-                        <th class="head1">提交人</th>
-                        <th class="head1">创建时间</th>
-                        <th class="head1">业务信息</th>
-
-
-                        <th class="head1">操作</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="obj:${oPage?.result}" th:with="orderNo=${#orderUtil.createOrderNo(obj['doOrderDate']+'',obj['doType'],obj['doPayType'],obj['id'])}">
-                        <td  th:text="${orderNo}"></td>
-                        <td th:text="${obj['doCost']==null ||obj['doCost']==0?0:#toolsddw.divided(obj['doCost'],100)}">Trident</td>
-                        <td th:text="${#TdEnum.text('com.ddw.enums.PayStatusEnum',obj['doPayStatus'])}">Trident</td>
-                        <td th:text="${#TdEnum.text('com.ddw.enums.PayTypeEnum',obj['doPayType'])}">Trident</td>
-                        <td th:text="${#TdEnum.text('com.ddw.enums.OrderTypeEnum',obj['doType'])}">Trident</td>
-                        <td th:text="${#TdEnum.text('com.ddw.enums.ShipStatusEnum',obj['doShipStatus'])}">Trident</td>
-                        <td th:text="${#toolsddw.getOrderStatusInfo(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}" >
-                        </td>
-                        <td th:text="${obj['creater']}">Trident</td>
-                        <td th:text="${#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
-                        <td th:text="${obj['doExtendStr']}">Trident</td>
-
-                        <td class="center">
-                            <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm"  th:onclick="'viewDialog(\'650px\',\'580px\',\'订单详情\',\'to-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >查 看</button>
-                                <th:block th:utext="${#toolsddw.getBtnMsgByStore(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}"></th:block>
-
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-                <div id="pages"></div>
             </div>
-        </div>
-
+        </form>
+        <!-- <select class="radius3">
+             <option value="">Show All</option>
+             <option value="">Rendering Engine</option>
+             <option value="">Platform</option>
+         </select> &nbsp;
+         <button class="radius3">Apply Filter</button>
+         <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
     </div>
-    <script type="text/javascript">
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
+
+        <colgroup >
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+
+            <col class="con0" />
+        </colgroup>
+        <thead >
+        <tr>
+            <th class="head1">订单号</th>
+            <th class="head1">订单金额(元)</th>
+            <th class="head1">付款状态</th>
+            <th class="head1">付款方式</th>
+            <th class="head1">订单类型</th>
+            <th class="head1">货品状态</th>
+            <th  class="head1">订单状态</th>
+            <th class="head1">提交人</th>
+            <th class="head1">创建时间</th>
+            <th class="head1">业务信息</th>
+
+
+            <th class="head1">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${oPage!=null?oPage.total:0}">
+    <tr th:each="obj:${oPage?.result}" th:with="orderNo=${#orderUtil.createOrderNo(obj['doOrderDate']+'',obj['doType'],obj['doPayType'],obj['id'])}">
+        <td  th:text="${orderNo}"></td>
+        <td th:text="${obj['doCost']==null ||obj['doCost']==0?0:#toolsddw.divided(obj['doCost'],100)}">Trident</td>
+        <td th:text="${#TdEnum.text('com.ddw.enums.PayStatusEnum',obj['doPayStatus'])}">Trident</td>
+        <td th:text="${#TdEnum.text('com.ddw.enums.PayTypeEnum',obj['doPayType'])}">Trident</td>
+        <td th:text="${#TdEnum.text('com.ddw.enums.OrderTypeEnum',obj['doType'])}">Trident</td>
+        <td th:text="${#TdEnum.text('com.ddw.enums.ShipStatusEnum',obj['doShipStatus'])}">Trident</td>
+        <td th:text="${#toolsddw.getOrderStatusInfo(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}" >
+        </td>
+        <td th:text="${obj['creater']}">Trident</td>
+        <td th:text="${#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
+        <td th:text="${obj['doExtendStr']}">Trident</td>
+
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm"  th:onclick="'viewDialog(\'650px\',\'580px\',\'订单详情\',\'to-order-info?orderNo='+${#toolsddw.encrypt(orderNo)}+'\')'"  >查 看</button>
+                <th:block th:utext="${#toolsddw.getBtnMsgByStore(obj['doPayStatus'],obj['doShipStatus'],obj['doEndTime'],orderNo)}"></th:block>
+
+            </div>
+        </td>
+    </tr>
+
+    </tbody>
+
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${oPage!=null?oPage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
+        });
         function toMakeSure(orderNo){
             layer.confirm("是否发货？", {icon: 3, title:'提示'}, function(index){
                 if(index>0){
@@ -177,12 +158,9 @@
                 //layer.close(index);
             });
         }
-        layui.use('form', function(){
-            var form = layui.form;
-
-        })
-
     </script>
-	</body>
+
+</th:block>
+
 
 </html>
