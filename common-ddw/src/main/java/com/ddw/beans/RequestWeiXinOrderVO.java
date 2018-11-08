@@ -16,6 +16,8 @@ public class RequestWeiXinOrderVO implements Serializable {
     private String err_code_des;
     private String trade_type;
     private String prepay_id;
+    private String trade_state;
+
 
     @Override
     public String toString() {
@@ -31,7 +33,16 @@ public class RequestWeiXinOrderVO implements Serializable {
                 ", err_code_des='" + err_code_des + '\'' +
                 ", trade_type='" + trade_type + '\'' +
                 ", prepay_id='" + prepay_id + '\'' +
+                ", trade_state='" + trade_state + '\'' +
                 '}';
+    }
+
+    public String getTrade_state() {
+        return trade_state;
+    }
+
+    public void setTrade_state(String trade_state) {
+        this.trade_state = trade_state;
     }
 
     public String getReturn_code() {

@@ -103,7 +103,7 @@ public class PayCenterService extends BaseOrderService {
                    logger.info("请求微信支付-》查看订单情况->"+dto);
                    RequestWeiXinOrderVO res= PayApiUtil.weiXinOrderQuery(dto.getOrderNo());
                    logger.info("微信支付响应-》查看订单情况->"+res);
-                   flag=res!=null && "SUCCESS".equals(res.getReturn_code()) && "SUCCESS".equals(res.getResult_code());
+                   flag=res!=null && "SUCCESS".equals(res.getReturn_code()) && "SUCCESS".equals(res.getResult_code()) && "SUCCESS".equals(res.getTrade_state());
 
                }else if(PayTypeEnum.PayType2.getCode().equals(payType)){
                    logger.info("请求阿里支付-》查看订单情况->"+dto);
@@ -117,11 +117,15 @@ public class PayCenterService extends BaseOrderService {
                    ResponseVO orderRes=this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOrderNo());
                    if(orderRes.getReCode()!=1){
                        logger.info("更新订单表-》失败->"+orderRes);
+                      // return new ResponseApiVO(-2,"支付失败",null);
                    }else{
                        logger.info("更新订单表-》成功->"+orderRes);
-
                    }
                    return new ResponseApiVO(1,"支付成功",null);
+
+               }else{
+                   return new ResponseApiVO(-2,"支付失败",null);
+
                }
 
             }
