@@ -76,9 +76,13 @@ public class GoodFriendPlayTableService extends CommonService {
             map.put("tableNumber",dataMap.get("tableNumber"));
             map.put("storeId",po.getId());
             map.put("storeName",po.getDsName());
+            Map mainMap=new HashMap();
+            mainMap.put("command","order");
+            mainMap.put("commandDesc","商城扫码下单");
+            mainMap.put("data",mainMap);
             response.setContentType("image/jpeg");
             os=response.getOutputStream();
-            QrCodeCreateUtil.createQrCode(os, JSONObject.toJSONString(map),900,"jpeg");
+            QrCodeCreateUtil.createQrCode(os, JSONObject.toJSONString(mainMap),900,"jpeg");
 
         }catch (Exception e){
             logger.error("GoodFriendPlayTableService->loadQrCode",e);
