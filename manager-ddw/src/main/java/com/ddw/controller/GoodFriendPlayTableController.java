@@ -18,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Controller
 @RequestMapping("/manager/table")
 public class GoodFriendPlayTableController {
@@ -55,6 +57,20 @@ public class GoodFriendPlayTableController {
             logger.error("GoodFriendPlayTableController->toEdtitPage",e);
         }
         return "pages/manager/store/table/edit";
+    }
+    @GetMapping("to-qrCodePage")
+    public String toQrCodePage(){
+        return "pages/manager/store/table/qrCode";
+    }
+    @GetMapping("to-loadQrCode")
+    public void toLoadQrCode(Integer id, HttpServletResponse res){
+        try {
+
+            StorePO spo=this.storeService.getStoreBySysUserid(Toolsddw.getCurrentUserId());
+           this.goodFriendPlayTableService.loadQrCode(id,spo,res);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayTableController->to-loadQrCode",e);
+        }
     }
 
     @PostMapping("do-edit")

@@ -1,12 +1,16 @@
 package com.ddw.servies;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ddw.beans.StorePO;
 import com.ddw.beans.TableDTO;
 import com.ddw.beans.TicketDTO;
 import com.ddw.beans.TicketPO;
 import com.ddw.config.DDWGlobals;
+import com.ddw.controller.GoodFriendPlayTableController;
 import com.ddw.enums.DisabledEnum;
 import com.ddw.enums.GoodFriendPlayRoomStatusEnum;
 import com.ddw.enums.TableStatusEnum;
+import com.ddw.util.QrCodeCreateUtil;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
@@ -15,13 +19,18 @@ import com.gen.common.util.*;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +38,7 @@ import java.util.Map;
 @Service
 @Transactional(readOnly = true)
 public class GoodFriendPlayTableService extends CommonService {
+    private final Logger logger = Logger.getLogger(GoodFriendPlayTableService.class);
 
     @Autowired
     private MainGlobals mainGlobals;
@@ -54,6 +64,27 @@ public class GoodFriendPlayTableService extends CommonService {
         if(n>0)return true;
         return false;
 
+    }
+    public void loadQrCode(Integer id, StorePO po, HttpServletResponse response){
+        OutputStream os=null;
+        try {
+            Map search=new HashMap();
+            search.put("id",id);
+            search.put("storeId",po.getId());
+            Map dataMap=this.commonObjectBySearchCondition("ddw_goodfriendplay_tables",search);
+            Map map=new HashMap();
+            map.put("tableNumber",dataMap.get("tableNumber"));
+            map.put("storeId",po.getId());
+            map.put("storeName",po.getDsName());
+            response.setContentType("image/jpeg");
+            os=response.getOutputStream();
+            QrCodeCreateUtil.createQrCode(os, JSONObject.toJSONString(map),900,"jpeg");
+
+        }catch (Exception e){
+            logger.error("GoodFriendPlayTableService->loadQrCode",e);
+        }finally {
+            if(os!=null)IOUtils.closeQuietly(os);
+        }
     }
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_goodfriendplay_tables","id",id);
