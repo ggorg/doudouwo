@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.GradePO;
+import com.ddw.beans.OldBringingNewPO;
 import com.ddw.beans.UserInfoPO;
 import com.ddw.enums.DoubiRecordTypeEnum;
 import com.gen.common.services.CommonService;
@@ -41,9 +42,27 @@ public class StraregyService extends CommonService {
         return super.commonObjectBySingleParam("ddw_accrual_recharge","userId",userId);
     }
 
+    public Map queryStrategyOldBringingNew(int levelId)throws Exception{
+        return super.commonObjectBySingleParam("ddw_strategy_old_bringing_new","levelId",levelId);
+    }
+
     public UserInfoPO queryUser(int userId)throws Exception{
         return super.commonObjectBySingleParam("ddw_userinfo","id",userId,UserInfoPO.class);
     }
+    /**
+     * 根据新用户查询老用户
+     * @param newOpenid
+     * @return
+     */
+    public OldBringingNewPO getOldBringingNewPO(String newOpenid){
+        try {
+            return this.commonObjectBySingleParam("ddw_old_bringing_new","newOpenid",newOpenid,OldBringingNewPO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //乐观锁更新累积充值表
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO updateAccrualRecharge(int money, int userId)throws Exception{
@@ -168,6 +187,7 @@ public class StraregyService extends CommonService {
             }else{
                 userInfoPO.setGradeId(gradeCumulationPO.getId());
             }
+            //TODO 这里写老带新逻辑,根据升级对应等级,赠送老会员优惠券
             this.update(userInfoPO);
         }else if(gradeCumulationPO.getSort() > gradePO.getSort()){
             if(gradeSinglePO.getSort() > gradeCumulationPO.getSort()){
@@ -175,6 +195,7 @@ public class StraregyService extends CommonService {
             }else{
                 userInfoPO.setGradeId(gradeCumulationPO.getId());
             }
+            //TODO 这里写老带新逻辑,根据升级对应等级,赠送老会员优惠券
             this.update(userInfoPO);
         }
         //更新赠送逗币

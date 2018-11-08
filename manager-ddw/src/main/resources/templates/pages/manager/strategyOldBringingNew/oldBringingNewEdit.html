@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="/sysframe2/css/style.default.css" type="text/css" />
+
+  <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
+
+  <style type="text/css">
+    .mystyle1{
+      line-height: 35px;
+    }
+  </style>
+</head>
+<body style="padding:10px 10px 10px 10px">
+<form class="layui-form">
+  <input type="hidden" th:if="${strategy!=null && strategy['id']!=null}" name="id" th:value="${strategy!=null?strategy['id']:''}"/>
+
+    <div  class="layui-form-pane">
+      <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-block">
+          <input type="text" name="name" required="required" title="名称"  lay-verify="required|max20" th:value="${strategy!=null? strategy['name']:''}" placeholder="请输名称" autocomplete="off" class="layui-input" />
+        </div>
+      </div>
+
+      <div class="layui-form-item" style="margin-top: 15px">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-block">
+          <textarea name="describe" th:text="${strategy!=null? strategy['describe']:''}" placeholder="描述" autocomplete="off" class="layui-textarea"></textarea>
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">会员等级</label>
+        <div class="layui-input-inline">
+          <select name="levelId" id="levelId" lay-filter="type">
+            <option th:each="grade:${gradePage.result}" th:value="${grade?.id}" th:text="${grade?.gradeName}" th:selected="${strategy['levelId'] == grade?.id}"> 会员等级</option>
+          </select>
+        </div>
+      </div>
+
+
+    <div class="layui-form-item layui-form-text">
+      <label class="layui-form-label">优惠券</label>
+      <div class="layui-input-block" >
+        <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+          <colgroup>
+            <col class="con0" style="width: 25%"  />
+            <col class="con0" style="width: 15%"  />
+            <col class="con0" style="width: 25%"  />
+            <col class="con0" style="width: 25%"  />
+            <col class="con0" style="width: 15%"  />
+          </colgroup>
+          <thead>
+          <tr>
+            <th class="head1">名称</th>
+            <th class="head1">类型</th>
+            <th class="head1">优惠幅度（单位:分）</th>
+            <th class="head1">最低消费（单位:分）</th>
+            <th class="head1">操作</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr th:if="${strategy!=null and #maps.containsKey(strategy,'child')}" th:each="obj:${strategy['child']}">
+              <th:block th:utext="${#toolsddw.createCouponSelect(couponList,obj['couponId'])}"></th:block>
+            <td>
+              <button type="button"   class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+            </td>
+          </tr>
+          <tr th:if="${strategy==null or #lists.isEmpty(strategy['child'])}">
+            <th:block th:utext="${#toolsddw.createCouponSelect(couponList,0)}"></th:block>
+            <td>
+              <button  type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+            </td>
+          </tr>
+          <tr id="addtr">
+            <td colspan="5" align="center">
+              <i class="layui-icon" onclick="add()">&#xe654;</i>
+            </td>
+          </tr>
+
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+      <div class="layui-form-item" style="display: none">
+        <div class="layui-input-block">
+          <button class="layui-btn" lay-submit="lay-submit" lay-filter="formDemo">立即提交</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+      </div>
+  </div>
+</form>
+</body>
+<script type="text/javascript">
+  var form1;
+    initForm("do-save",".layui-form",function(f){
+        form1=f;
+       f.on('select(select)',function(data){
+           var selectObj=$(data.elem);
+           selectObj.parent().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcType"));
+           selectObj.parent().next().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcMoney"));
+           selectObj.parent().next().next().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcMinPrice"));
+
+       })
+    });
+
+    function add(){
+        var cloneObj=$("tbody tr").eq(0).clone();
+
+       $("#addtr").before(cloneObj);
+       form1.render("select");
+    }
+
+    function toDelete(obj){
+        if($("tbody tr").length>2){
+            $(obj).parent().parent().remove()
+        }else{
+            $("tbody tr input").val("");
+            $("tbody tr td").eq(1).text("")
+        }
+
+    }
+</script>
+</html>
