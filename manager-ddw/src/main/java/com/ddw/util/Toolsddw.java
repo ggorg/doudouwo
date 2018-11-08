@@ -1,7 +1,5 @@
 package com.ddw.util;
 
-import com.ddw.beans.OrderMaterialPO;
-import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
 import com.ddw.beans.StorePO;
 import com.ddw.enums.*;
@@ -9,22 +7,14 @@ import com.ddw.servies.OrderService;
 import com.ddw.servies.ReviewService;
 import com.ddw.servies.RoleService;
 import com.ddw.servies.StoreService;
-import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.Tools;
-import freemarker.template.utility.NumberUtil;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +26,11 @@ public class Toolsddw extends Tools {
             return (Integer)usermap.get("id");
         }
         return null;
+    }
+
+    @Override
+    public String getFullUseTime(Date startDate, Date CompleteDate) {
+        return super.getFullUseTime(startDate, CompleteDate);
     }
 
     /**
@@ -242,6 +237,73 @@ public class Toolsddw extends Tools {
         }*/
     }
 
+    public static String  createCouponSelect(List<Map> coupons,Integer couponId){
+        Integer dcType=0;
+        Integer dcMoney=0;
+        Integer dcMinPrice=0;
+        StringBuilder builder=new StringBuilder();
+        boolean flag = false;//无优惠券标志,false无数据,true有数据
+        builder.append("<td>");
+        builder.append("<select name='couponId' required='required' lay-filter='select'>");
+        builder.append("<option value=''></option>");
+        if(coupons!=null){
+            Integer id=null;
+            String name=null;
+
+            for(Map m:coupons){
+                id=(Integer) m.get("id");
+                name=(String) m.get("dcName");
+                dcType=(Integer) m.get("dcType");
+                dcMoney=(Integer) m.get("dcMoney");
+                dcMinPrice=(Integer) m.get("dcMinPrice");
+                builder.append("<option");
+                if(id.equals(couponId)||id==couponId){
+                    builder.append(" selected='selected'");
+                }
+                builder.append(" data-dcType='").append(CouponTypeEnum.getName(dcType)).append("'");
+                builder.append(" data-dcMoney='").append(dcMoney).append("'");
+                builder.append(" data-dcMinPrice='").append(dcMinPrice).append("'");
+                builder.append(" value='");
+                builder.append(id);
+                builder.append("' >");
+                builder.append(name);
+                builder.append("</option>");
+            }
+        }
+        builder.append("</select>");
+        if(coupons!=null){
+            Integer id=null;
+            for(Map m:coupons){
+                id=(Integer) m.get("id");
+                dcType=(Integer) m.get("dcType");
+                dcMoney=(Integer) m.get("dcMoney");
+                dcMinPrice=(Integer) m.get("dcMinPrice");
+                if(id.equals(couponId)||id==couponId){
+                    flag = true;
+                    builder.append("<td>");
+                    builder.append(CouponTypeEnum.getName(dcType));
+                    builder.append("</td>");
+                    builder.append("<td>");
+                    builder.append(dcMoney);
+                    builder.append("</td>");
+                    builder.append("<td>");
+                    builder.append(dcMinPrice);
+                    builder.append("</td>");
+                }
+            }
+        }
+        if(flag==false){
+            builder.append("<td>");
+            builder.append("</td>");
+            builder.append("<td>");
+            builder.append("</td>");
+            builder.append("<td>");
+            builder.append("</td>");
+        }
+        return builder.toString();
+
+    }
+
     public static String  createStoreMaterialSelect(List<Map> materials,Integer materialId){
         Integer dsCountNetWeight=0;
         String dsUnit="";
@@ -327,7 +389,7 @@ public class Toolsddw extends Tools {
             return "无";
         }
         for(Map m:plates){
-           if( ((Integer)m.get("id")).equals(plateId)){
+           if( m.get("id").equals(plateId)){
                return m.get("dgtName").toString();
            }
         }

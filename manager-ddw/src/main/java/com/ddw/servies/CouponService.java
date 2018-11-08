@@ -2,7 +2,6 @@ package com.ddw.servies;
 
 import com.ddw.beans.CouponDTO;
 import com.ddw.beans.CouponPO;
-import com.ddw.beans.TicketPO;
 import com.ddw.enums.CouponTypeEnum;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -32,6 +32,11 @@ public class CouponService extends CommonService {
         // condtion.put("dmStatus",dmStatus);
         return this.commonPage("ddw_coupon","updateTime desc",pageNo,10,search);
     }
+
+    public List getAll()throws Exception{
+        return this.commonObjectsBySearchCondition("ddw_coupon",new HashMap<>());
+    }
+
     public Map getById(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_coupon","id",id);
     }
