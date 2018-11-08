@@ -79,7 +79,7 @@ public class GoodFriendPlayTableService extends CommonService {
             Map mainMap=new HashMap();
             mainMap.put("command","order");
             mainMap.put("commandDesc","商城扫码下单");
-            mainMap.put("data",mainMap);
+            mainMap.put("data",map);
             response.setContentType("image/jpeg");
             os=response.getOutputStream();
             QrCodeCreateUtil.createQrCode(os, JSONObject.toJSONString(mainMap),900,"jpeg");
