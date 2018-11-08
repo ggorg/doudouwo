@@ -109,12 +109,15 @@ public class GoodFriendPlayService extends CommonService {
         Map searchMap=new HashMap();
         searchMap.put("roomId",roomId);
         searchMap.put("joinOffLine", JoinOffLineStatusEnum.Status1.getCode());
-        List<Map> openIdList=this.commonList("ddw_goodfriendplay_room_member",null,"t1.openId",null,null,searchMap);
-        List dataList=new ArrayList();
-        if(openIdList!=null && !openIdList.isEmpty()){
-            openIdList.forEach(a->dataList.add(a.get("openId")));
+        CommonSearchBean memberCsb=new CommonSearchBean("ddw_goodfriendplay_room_member",null,"t1.openId,ct0.nickName,ct0.headImgUrl",null,null,searchMap,
+                new CommonChildBean("ddw_userinfo","id","userId",null));
+        List<Map> memberList=this.getCommonMapper().selectObjects(memberCsb);
+        if(memberList!=null && !memberList.isEmpty()){
+            dataMap.put("memberList",memberList);
+        }else{
+            dataMap.put("memberList",new ArrayList());
         }
-        dataMap.put("memberList",dataList);
+
         return new ResponseApiVO(1,"成功",dataMap);
     }
     public List getIndexRoomRecord(String token)throws Exception{

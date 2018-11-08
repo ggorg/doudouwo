@@ -288,6 +288,10 @@ function ajaxPage(pageNo,search,callFn){
     var pindex= layer.load();
     j.get(url,j(".layui-form").serializeArray(),function(data){
         var ajaxObjTbody=j(data).find("tbody");
+        if(ajaxObjTbody==null　|| ajaxObjTbody.length==0){
+            document.write(data);
+            return ;
+        }
         j("tbody").html(ajaxObjTbody.html());
         var attrTotal=ajaxObjTbody.attr("total");
         if(attrTotal!=null && attrTotal!=undefined){
