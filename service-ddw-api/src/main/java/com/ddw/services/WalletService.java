@@ -9,6 +9,7 @@ import com.ddw.enums.OrderTypeEnum;
 import com.ddw.enums.PayStatusEnum;
 import com.ddw.enums.WalletDealCountTypeEnum;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.CouponComparator;
 import com.ddw.util.MsgUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -293,6 +294,7 @@ public class WalletService extends CommonService {
                     e.printStackTrace();
                 }
             });
+            Collections.sort(list,new CouponComparator());
         }
         if(couponlist==null){
             return new ResponseApiVO(2,"没有优惠卷",new ListVO(list));

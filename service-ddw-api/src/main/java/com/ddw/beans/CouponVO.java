@@ -115,4 +115,20 @@ public class CouponVO {
     public void setMinPrice(Integer minPrice) {
         this.minPrice = minPrice;
     }
+
+    @Override
+    public String toString() {
+        return "CouponVO{" +
+                "couponCode=" + couponCode +
+                ", type=" + type +
+                ", mop=" + mop +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", desc='" + desc + '\'' +
+                ", storeName='" + storeName + '\'' +
+                ", minPrice=" + minPrice +
+                ", expire=" + expire +
+                ", used=" + used +
+                '}';
+    }
 }
