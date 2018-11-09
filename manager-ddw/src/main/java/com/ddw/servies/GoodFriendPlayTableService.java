@@ -3,32 +3,24 @@ package com.ddw.servies;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.StorePO;
 import com.ddw.beans.TableDTO;
-import com.ddw.beans.TicketDTO;
 import com.ddw.beans.TicketPO;
 import com.ddw.config.DDWGlobals;
-import com.ddw.controller.GoodFriendPlayTableController;
-import com.ddw.enums.DisabledEnum;
 import com.ddw.enums.GoodFriendPlayRoomStatusEnum;
 import com.ddw.enums.TableStatusEnum;
 import com.ddw.util.QrCodeCreateUtil;
-import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
 import com.gen.common.util.*;
-import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.util.Date;
@@ -82,7 +74,8 @@ public class GoodFriendPlayTableService extends CommonService {
             mainMap.put("data",map);
             response.setContentType("image/jpeg");
             os=response.getOutputStream();
-            QrCodeCreateUtil.createQrCode(os, JSONObject.toJSONString(mainMap),1100,"jpeg");
+            QrCodeCreateUtil.createQrCode(JSONObject.toJSONString(mainMap),500,500,os,this.getClass().getClassLoader().getResourceAsStream("static/images/logo.png"),null);
+           // QrCodeCreateUtil.createQrCode(os, JSONObject.toJSONString(mainMap),1100,"jpeg");
 
         }catch (Exception e){
             logger.error("GoodFriendPlayTableService->loadQrCode",e);

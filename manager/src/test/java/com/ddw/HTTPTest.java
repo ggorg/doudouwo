@@ -15,7 +15,7 @@ public class HTTPTest {
         data.put("tableCode",1);
         data.put("peopleMaxNum",10);
         data.put("endTime","2018-10-31 10:10:10");
-        data.put("roomImg", FileUtils.getFile("C:\\Users\\Administrator\\Desktop\\0.png"));
+        data.put("roomImg", FileUtils.getFile("C:\\Users\\Administrator\\Desktop\\logo.png"));
         HttpUtil.doPostWithFile("http://127.0.0.1:8833/ddwapp/goodfriendplay/room/create/OTYzMDI3NzAxNzIwMTgxMDIzMDM0NDI1ODU4MjE2MzE=",data);
     }
 }

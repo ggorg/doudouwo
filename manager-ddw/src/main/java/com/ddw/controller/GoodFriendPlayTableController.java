@@ -58,10 +58,7 @@ public class GoodFriendPlayTableController {
         }
         return "pages/manager/store/table/edit";
     }
-    @GetMapping("to-qrCodePage")
-    public String toQrCodePage(){
-        return "pages/manager/store/table/qrCode";
-    }
+
     @GetMapping("to-loadQrCode")
     public void toLoadQrCode(Integer id, HttpServletResponse res){
         try {
