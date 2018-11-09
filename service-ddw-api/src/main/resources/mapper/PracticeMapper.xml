@@ -101,6 +101,7 @@
             ct2.rank,
             t1.realityRankId,
             ct3.rank AS realityRank,
+            ct5.headImgUrl,
             IFNULL( ct4.star, 0 ) AS star,
             IFNULL( t1.money, 0 ) AS money,
             IFNULL( t1.realityMoney, 0 ) AS realityMoney
@@ -110,6 +111,7 @@
             INNER JOIN ddw_rank ct2 ON ct2.id = t1.rankId
             INNER JOIN ddw_rank ct3 ON ct3.id = t1.targetRankId
             LEFT JOIN ddw_practice_evaluation ct4 ON ct4.practiceId = t1.practiceId
+            LEFT JOIN ddw_userinfo ct5 ON ct5.id = t1.userId
         WHERE
             t1.practiceId = #{practiceId}
             AND t1.payState = 1
