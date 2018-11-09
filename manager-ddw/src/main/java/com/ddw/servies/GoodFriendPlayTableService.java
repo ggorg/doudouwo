@@ -17,9 +17,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
@@ -39,6 +41,9 @@ public class GoodFriendPlayTableService extends CommonService {
     private DDWGlobals ddwGlobals;
     @Autowired
     private FileService fileService;
+
+    @Value("${qrCode.url}")
+    private String qrCodeUrl;
 
 
     public Page findPage(Integer pageNo)throws Exception{
@@ -67,14 +72,14 @@ public class GoodFriendPlayTableService extends CommonService {
             Map map=new HashMap();
             map.put("tableNumber",dataMap.get("tableNumber"));
             map.put("storeId",po.getId());
-            map.put("storeName",po.getDsName());
-            Map mainMap=new HashMap();
-            mainMap.put("command","order");
-           // mainMap.put("commandDesc","商城扫码下单");
-            mainMap.put("data",map);
+            map.put("cmd","shop");
+
             response.setContentType("image/jpeg");
+            StringBuilder builder=new StringBuilder();
+            builder.append(mainGlobals.getServiceUrl()).append(qrCodeUrl).append("?");
+            builder.append("DDW=").append(Base64Utils.encodeToString(JSONObject.toJSONString(map).getBytes()));
             os=response.getOutputStream();
-            QrCodeCreateUtil.createQrCode(JSONObject.toJSONString(mainMap),500,500,os,this.getClass().getClassLoader().getResourceAsStream("static/images/logo.png"),null);
+            QrCodeCreateUtil.createQrCode(builder.toString(),500,500,os,this.getClass().getClassLoader().getResourceAsStream("static/images/logo.png"),null);
            // QrCodeCreateUtil.createQrCode(os, JSONObject.toJSONString(mainMap),1100,"jpeg");
 
         }catch (Exception e){

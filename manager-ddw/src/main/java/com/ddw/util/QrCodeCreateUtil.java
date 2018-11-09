@@ -192,7 +192,7 @@ public class QrCodeCreateUtil {
         mainMap.put("command","order");
         // mainMap.put("commandDesc","商城扫码下单");
         mainMap.put("data",map);
-        createQrCode(JSONObject.toJSONString(mainMap),500,500,new FileOutputStream(new File("d:\\qrcode.jpg")), QrCodeCreateUtil.class.getClassLoader().getResourceAsStream("static/images/logo.png"),null);
+        createQrCode("http://www.baidu.com",500,500,new FileOutputStream(new File("d:\\qrcode.jpg")), QrCodeCreateUtil.class.getClassLoader().getResourceAsStream("static/images/logo.png"),null);
        // createQrCode(new FileOutputStream(new File("d:\\qrcode.jpg")),"WE1231238239128sASDASDSADSDWEWWREWRERWSDFDFSDSDF123123123123213123",900,"JPEG");
        // readQrCode(new FileInputStream(new File("d:\\qrcode.jpg")));
     }
