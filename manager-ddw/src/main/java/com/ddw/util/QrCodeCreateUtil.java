@@ -108,10 +108,10 @@ public class QrCodeCreateUtil {
         // 在二维码图片上绘制logo图片
         g.drawImage(logoImage, x, y, width, height, null);
         // 绘制logo边框,可选
-        g.drawRoundRect(x, y, logoImage.getWidth(), logoImage.getHeight(), 10, 10);
-        g.setStroke(new BasicStroke(2)); // 画笔粗细
-        g.setColor(Color.WHITE); // 边框颜色
-        g.drawRect(x, y, width, height); // 矩形边框
+        //g.drawRoundRect(x, y, logoImage.getWidth(), logoImage.getHeight(), 10, 10);
+       // g.setStroke(new BasicStroke(2)); // 画笔粗细
+        //g.setColor(Color.WHITE); // 边框颜色
+       // g.drawRect(x, y, width, height); // 矩形边框
         logoImage.flush();
         g.dispose();
         in.close();
