@@ -42,13 +42,14 @@ public class StraregyService extends CommonService {
         return super.commonObjectBySingleParam("ddw_accrual_recharge","userId",userId);
     }
 
-    public Map queryStrategyOldBringingNew(int levelId)throws Exception{
-        return super.commonObjectBySingleParam("ddw_strategy_old_bringing_new","levelId",levelId);
-    }
-
     public UserInfoPO queryUser(int userId)throws Exception{
         return super.commonObjectBySingleParam("ddw_userinfo","id",userId,UserInfoPO.class);
     }
+
+    public UserInfoPO queryUserByOpenid(String openid)throws Exception{
+        return super.commonObjectBySingleParam("ddw_userinfo","openid",openid,UserInfoPO.class);
+    }
+
     /**
      * 根据新用户查询老用户
      * @param newOpenid
@@ -61,6 +62,14 @@ public class StraregyService extends CommonService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Map queryStrategyOldBringingNew(int levelId)throws Exception{
+        return super.commonObjectBySingleParam("ddw_strategy_old_bringing_new","levelId",levelId);
+    }
+
+    public List queryCoupon(int strategyId)throws Exception{
+        return super.commonObjectsBySingleParam("ddw_strategy_old_bringing_new_coupon","strategyId",strategyId);
     }
 
     //乐观锁更新累积充值表
@@ -112,6 +121,16 @@ public class StraregyService extends CommonService {
         setParams.put("createTime",new Date());
         setParams.put("updateTime",new Date());
         return super.commonInsertMap("ddw_accrual_recharge",setParams);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO insertCoupon(int couponId, int userId,int storeId)throws Exception{
+        Map setParams = new HashMap<>();
+        setParams.put("couponId",couponId);
+        setParams.put("userId",userId);
+        setParams.put("storeId",storeId);
+        setParams.put("used",0);
+        return super.commonInsertMap("ddw_userinfo_coupon",setParams);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -187,20 +206,43 @@ public class StraregyService extends CommonService {
             }else{
                 userInfoPO.setGradeId(gradeCumulationPO.getId());
             }
-            //TODO 这里写老带新逻辑,根据升级对应等级,赠送老会员优惠券
+            //更新会员等级
             this.update(userInfoPO);
+            //根据升级对应等级,赠送老会员优惠券
+            this.setOldBringingNewCoupon(userInfoPO);
         }else if(gradeCumulationPO.getSort() > gradePO.getSort()){
             if(gradeSinglePO.getSort() > gradeCumulationPO.getSort()){
                 userInfoPO.setGradeId(gradeSinglePO.getId());
             }else{
                 userInfoPO.setGradeId(gradeCumulationPO.getId());
             }
-            //TODO 这里写老带新逻辑,根据升级对应等级,赠送老会员优惠券
+            //根据升级对应等级,赠送老会员优惠券
             this.update(userInfoPO);
+            this.setOldBringingNewCoupon(userInfoPO);
         }
         //更新赠送逗币
         if(coinSingle > 0 || coinCumulation > 0){
             this.updateMyWallet((coinSingle>0 && coinCumulation>0)?coinSingle+coinCumulation:(coinSingle>0)?coinSingle:coinCumulation,userId);
+        }
+    }
+
+    /**
+     * 根据升级对应等级,赠送老会员优惠券
+     * @param userInfoPO
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    private void setOldBringingNewCoupon(UserInfoPO userInfoPO)throws Exception{
+        OldBringingNewPO oldBringingNewPO = this.getOldBringingNewPO(userInfoPO.getOpenid());
+        UserInfoPO userInfoPO1 = this.queryUserByOpenid(userInfoPO.getOpenid());
+        Map smap = this.queryStrategyOldBringingNew(userInfoPO.getGradeId());
+        if(smap != null && smap.containsKey("id")){
+            List couponList = this.queryCoupon((Integer) smap.get("id"));
+            for(int i=0;i<couponList.size();i++){
+                Map cmap = (Map)couponList.get(i);
+                //插入ddw_userinfo_coupon
+                this.insertCoupon(Integer.valueOf(cmap.get("couponId").toString()), userInfoPO1.getId(),1);
+            }
         }
     }
 }
