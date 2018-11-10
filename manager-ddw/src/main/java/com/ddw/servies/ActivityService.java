@@ -138,12 +138,16 @@ public class ActivityService extends CommonService {
         if(ActivityTypeEnum.type2.getCode().equals(dto.getDtType())){
 
             if(!dto.getZipFile().isEmpty()){
-                String baseName=FilenameUtils.getBaseName(dto.getZipFile().getOriginalFilename());
-                File f=new File(dir,baseName);
-                if(f.exists()){
-                    f=new File(dir,baseName+ DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
+                File f=null;
+                if(dto.getId()==null){
+                    f=new File(dir,DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
+                }else{
+                    Map dataMap=this.commonObjectBySingleParam("ddw_activity","id",dto.getId());
+                    f=new File(dataMap.get("dirPath").toString());
+                    FileUtils.deleteDirectory(f);
                 }
                 f.mkdirs();
+
                 List<String> files=ExtractZip.unZip(dto.getZipFile().getInputStream(),f.getPath());
                 if(!files.contains("index.html")){
                     return new ResponseVO(-2,"压缩包里面必须要有index.html",null);
