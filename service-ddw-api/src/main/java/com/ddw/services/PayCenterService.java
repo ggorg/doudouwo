@@ -231,6 +231,7 @@ public class PayCenterService extends BaseOrderService {
         Map voData=null;
         List<Map> insertList=null;
         PracticeOrderPO practiceOrderPO=null;
+        Integer currentOrderId=null;
         //定金
         if(OrderTypeEnum.OrderType4.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
@@ -507,10 +508,19 @@ public class PayCenterService extends BaseOrderService {
                 return new ResponseApiVO(-2, "代练订单支付失败", null);
 
             }else if(StringUtils.isNotBlank(practiceOrderPO.getOrderNo())){
-                return new ResponseApiVO(-2, "请稍等，支付还没完成", null);
+                currentOrderId=practiceOrderPO.getOrderId();
+                RequestWeiXinOrderVO v=PayApiUtil.weiXinOrderQuery(practiceOrderPO.getOrderNo());
+                if("SUCCESS".equals(v.getReturn_code()) && "SUCCESS".equals(v.getResult_code()) && "SUCCESS".equals(v.getTrade_state())){
+                    return new ResponseApiVO(-2, "请稍等，支付正在处理中", null);
+                }else{
+                    orderPO= this.getCacheOrder(practiceOrderPO.getOrderNo());
+                }
+
+
+            }else{
+                orderPO.setDoCost(practiceOrderPO.getMoney());
 
             }
-            orderPO.setDoCost(practiceOrderPO.getMoney());
         }
         if(PayTypeEnum.PayType5.getCode().equals(payType)){
             if(StringUtils.isBlank(TokenUtil.getPayCode(token))){
@@ -540,7 +550,13 @@ public class PayCenterService extends BaseOrderService {
                 }
             }
         }
-        ResponseVO<Integer> insertResponseVO=this.commonInsert("ddw_order",orderPO);
+        ResponseVO<Integer> insertResponseVO=null;
+        if(currentOrderId==null){
+            insertResponseVO=this.commonInsert("ddw_order",orderPO);
+        }else{
+            insertResponseVO=new ResponseVO<>(1,"成功",currentOrderId);
+        }
+
 
         if(insertResponseVO.getReCode()==1){
             Object orderCacheData=orderType;
