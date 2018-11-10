@@ -600,7 +600,7 @@ public class ReviewPracticeService extends CommonService {
                 practiceOrderPO.setRealityMoney(payMoney);
             }
         }
-        if(payMoney == practiceOrderPO.getMoney()){
+        if(payMoney >= practiceOrderPO.getMoney()){
             practiceOrderPO.setStatus(2);
         }
         practiceOrderPO.setUpdateTime(new Date());
