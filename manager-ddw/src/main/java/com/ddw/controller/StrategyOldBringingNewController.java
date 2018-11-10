@@ -40,7 +40,7 @@ public class StrategyOldBringingNewController {
         try{
             model.addAttribute("gradePage",gradeService.findList(null));
             model.addAttribute("strategy",this.strategyOldBringingNewService.getById(idStr));
-            model.addAttribute("couponList",this.couponService.getAll());
+            model.addAttribute("couponList",this.couponService.getHeadOffice());
             model.addAttribute("gradeList",this.gradeService.getAll());
         }catch (Exception e){
             logger.error("StrategyOldBringingNewController->toEdit->系统异常");

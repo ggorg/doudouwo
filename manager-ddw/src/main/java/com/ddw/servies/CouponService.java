@@ -33,8 +33,10 @@ public class CouponService extends CommonService {
         return this.commonPage("ddw_coupon","updateTime desc",pageNo,10,search);
     }
 
-    public List getAll()throws Exception{
-        return this.commonObjectsBySearchCondition("ddw_coupon",new HashMap<>());
+    public List getHeadOffice()throws Exception{
+        Map<String,Object> searchCondition = new HashMap<>();
+        searchCondition.put("storeId",-1);
+        return this.commonObjectsBySearchCondition("ddw_coupon",searchCondition);
     }
 
     public Map getById(Integer id)throws Exception{

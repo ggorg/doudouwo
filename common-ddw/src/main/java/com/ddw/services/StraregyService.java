@@ -241,7 +241,7 @@ public class StraregyService extends CommonService {
             for(int i=0;i<couponList.size();i++){
                 Map cmap = (Map)couponList.get(i);
                 //插入ddw_userinfo_coupon
-                this.insertCoupon(Integer.valueOf(cmap.get("couponId").toString()), userInfoPO1.getId(),1);
+                this.insertCoupon(Integer.valueOf(cmap.get("couponId").toString()), userInfoPO1.getId(),-1);
             }
         }
     }
