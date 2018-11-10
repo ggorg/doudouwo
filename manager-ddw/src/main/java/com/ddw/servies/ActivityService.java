@@ -140,7 +140,7 @@ public class ActivityService extends CommonService {
             if(!dto.getZipFile().isEmpty()){
                 File f=null;
                 if(dto.getId()==null){
-                    new File(dir,DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
+                    f=new File(dir,DateFormatUtils.format(new Date(),"yyyyMMddHHmmss"));
                 }else{
                     Map dataMap=this.commonObjectBySingleParam("ddw_activity","id",dto.getId());
                     f=new File(dataMap.get("dirPath").toString());
