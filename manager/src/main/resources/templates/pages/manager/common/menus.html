@@ -3,7 +3,7 @@
 
 <body th:fragment="sysmenus">
 <div class="header">
-	<ul class="headermenu">
+	<ul class="headermenu" th:style="'width:'+${#lists.size(#TdTool.getParentMenu())*102}+'px;height:102px;'+${#TdTool.getCookieValue('menuPost') eq ''?'':'margin-left:'+#TdTool.getCookieValue('menuPost')}" >
 
 		<li th:each="menu:${#TdTool.getUserPowerMenu()}" th:if="${menu.mParentId==-1}" th:inline="text" th:with="currentPage=${#httpServletRequest.getRequestURI() eq menu.mUrl or #httpServletRequest.getParameter('currentPid')== menu.id.toString() ?#TdTool.setParentSession(menu.id):false}" th:class="${currentPage?'current':''}"  >
 
@@ -11,6 +11,15 @@
 		</li>
 
 	</ul>
+	<div style="position:absolute;right: 0px;top:0px;height: 95px;line-height: 95px;cursor: pointer;width:25px;display: none" id="mleft" onclick="moveLeft()">
+
+		<i class="layui-icon" style="font-size: 30px;color: white">&#xe602;</i>
+	</div>
+	<div style="position:absolute;left: 0px;top:0px;height: 95px;line-height: 95px;cursor: pointer;width:25px;display: none" id="mright" onclick="moveRight()">
+
+		<i class="layui-icon" style="font-size: 30px;color: white">&#xe603;</i>
+	</div>
+
 
 
 </div><!--header-->

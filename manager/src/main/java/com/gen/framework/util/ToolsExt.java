@@ -11,12 +11,14 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ToolsExt extends Tools {
     public static List getSysPowerMenu(Integer uid){
@@ -31,6 +33,27 @@ public class ToolsExt extends Tools {
             return (Integer)usermap.get("id");
         }
         return null;
+    }
+    public static List getParentMenu(){
+        List<SysMenuBean> list= getUserPowerMenu();
+        if(list==null)return new ArrayList();
+        return list.stream().filter(a->a.getmParentId()==-1).collect(Collectors.toList());
+    }
+    public static String getCookieValue(String name){
+        ServletRequestAttributes attrs =  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        Cookie[] cookies=attrs.getRequest().getCookies();
+        if(cookies!=null){
+            for(Cookie c:cookies){
+
+                if(c.getName().equals(name)){
+                    return c.getValue();
+                }
+            }
+        }
+        return "";
+
+
     }
     public static List getUserPowerMenu(){
         ServletRequestAttributes attrs =  (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

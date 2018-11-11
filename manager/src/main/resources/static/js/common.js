@@ -335,3 +335,72 @@ Date.prototype.Format = function (fmt) {
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
+function moveLeft(){
+
+    j=(isFunction(jQuery)?jQuery:$)
+
+    var mobj=j(".headermenu");
+
+    if(mobj.attr("ing")!=undefined){
+       return
+     }
+    var dwidth=window.screen.width;
+    var mwidth=mobj.width();
+    var marginleft=parseInt(mobj.css("margin-left").replace(/px/,""));
+    var magrinAfterWidth=mwidth+marginleft;
+    if(magrinAfterWidth>dwidth){
+        mobj.attr("ing","true");
+        mobj.animate({"margin-left":(marginleft-102)+"px"},"fast",null,function(){
+            mobj.removeAttr("ing");
+            j("#mright").show();
+            j.cookie("menuPost",mobj.css("margin-left"),{path:"/"});
+            if((mwidth+marginleft-102)<=dwidth){
+                j("#mleft").hide();
+            }
+        })
+    }
+
+    //j(".headermenu").css("margin-left","-100px")
+}
+function moveRight(){
+    j=(isFunction(jQuery)?jQuery:$)
+    var mobj=j(".headermenu");
+    if(mobj.attr("ing")!=undefined){
+        return
+    }
+    var marginleft=parseInt(mobj.css("margin-left").replace(/px/,""));
+    if(marginleft<0){
+        mobj.attr("ing","true");
+        mobj.animate({"margin-left":(marginleft+102)+"px"},"fast",null,function(){
+            mobj.removeAttr("ing");
+            j("#mleft").show();
+            j.cookie("menuPost",mobj.css("margin-left"),{path:"/"});
+            if((marginleft+102)==0){
+                j("#mright").hide();
+            }
+        })
+    }
+}
+window.onload=function(){
+    j=(isFunction(jQuery)?jQuery:$)
+
+    var mobj=j(".headermenu");
+    var dwidth=window.screen.width;
+    var mwidth=mobj.width();
+    if(mwidth>=dwidth){
+        var marginleft=parseInt(mobj.css("margin-left").replace(/px/,""));
+        if(mwidth+marginleft>dwidth){
+            j("#mleft").show();
+        }
+        if(marginleft<0){
+            j("#mright").show();
+            return ;
+        }
+    }else{
+        mobj.animate({"margin-left":"0px"},"fast");
+        j.cookie("menuPost",null,{path:"/"});
+    }
+
+
+
+}
