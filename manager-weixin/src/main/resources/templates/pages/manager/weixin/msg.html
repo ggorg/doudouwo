@@ -1,156 +1,136 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${msgPage!=null?msgPage.total:0}]]*/ );
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-       <div class="centercontent tables">
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>消息列表</h3>
+    </div><!--contenttitle-->
+    <form class="layui-form" th:action="list">
+        <div class="tableoptions">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label" >公众号</label>
+                    <div class="layui-input-inline">
+                        <select name="appid" id="appid" lay-filter="appid">
+                            <option th:each="pubweixin:${pubweixinList}" th:value="${pubweixin?.appid}" th:text="${pubweixin?.name}" th:selected="${appid eq pubweixin?.appid}"> 公众号名称</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">关键字</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="content" placeholder="请输入关键字" th:value="${msg?.content}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">回 复</label>
+                    <div class="layui-input-inline">
+                        <select name="reply" lay-filter="appid">
+                            <option th:selected="${msg?.reply == null}"></option>
+                            <option value="0" th:selected="${msg?.reply == '0'}">未回复</option>
+                            <option value="1" th:selected="${msg?.reply == '1'}">已回复</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">昵 称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="userInfo.nickname" placeholder="请输入昵称" th:value="${msg.userInfo?.nickname}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">openid</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="openid" placeholder="请输入openid" th:value="${msg?.openid}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">收 藏</label>
+                    <div class="layui-input-inline">
+                        <select name="collect" lay-filter="appid">
+                            <option th:selected="${msg?.collect == null}"></option>
+                            <option value="0" th:selected="${msg?.collect == '0'}">未收藏</option>
+                            <option value="1" th:selected="${msg?.collect == '1'}">已收藏</option>
+                        </select>
+                    </div>
+                </div>
 
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
-
-       </div>--><!--pageheader-->
-
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>消息列表</h3>
-                </div><!--contenttitle-->
-                <form class="layui-form" th:action="list">
-                    <div class="tableoptions">
-                        <div class="layui-form-item">
-                            <div class="layui-inline">
-                                <label class="layui-form-label" >公众号</label>
-                                <div class="layui-input-inline">
-                                    <select name="appid" id="appid" lay-filter="appid">
-                                        <option th:each="pubweixin:${pubweixinList}" th:value="${pubweixin?.appid}" th:text="${pubweixin?.name}" th:selected="${appid eq pubweixin?.appid}"> 公众号名称</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label">关键字</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="content" placeholder="请输入关键字" th:value="${msg?.content}" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label">回 复</label>
-                                <div class="layui-input-inline">
-                                    <select name="reply" lay-filter="appid">
-                                        <option th:selected="${msg?.reply == null}"></option>
-                                        <option value="0" th:selected="${msg?.reply == '0'}">未回复</option>
-                                        <option value="1" th:selected="${msg?.reply == '1'}">已回复</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label">昵 称</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="userInfo.nickname" placeholder="请输入昵称" th:value="${msg.userInfo?.nickname}" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label">openid</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="openid" placeholder="请输入openid" th:value="${msg?.openid}" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-inline">
-                                <label class="layui-form-label">收 藏</label>
-                                <div class="layui-input-inline">
-                                    <select name="collect" lay-filter="appid">
-                                        <option th:selected="${msg?.collect == null}"></option>
-                                        <option value="0" th:selected="${msg?.collect == '0'}">未收藏</option>
-                                        <option value="1" th:selected="${msg?.collect == '1'}">已收藏</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <button class="btn btn_search radius50" lay-submit="lay-submit" lay-filter="formDemo">Search</button> &nbsp;
-                        </div>
-                    </div><!--tableoptions-->
-                </form>
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" lay-filter="demo" class="stdtable stdtablecb">
-                    <colgroup>
-                        <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" style="width: 250px"/>
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th class="head1">头像</th>
-                        <th class="head0">昵称</th>
-                        <th class="head1">openid</th>
-                        <th class="head0">消息内容</th>
-                        <th class="head1">时间</th>
-                        <th class="head0">回复标记</th>
-                        <th class="head1">收藏</th>
-                        <th class="head0">操作</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="obj:${msgPage?.result}">
-                        <td><img th:attr="src=${obj['userInfo']['headimgurl']}" th:width="40px" th:height="40px"></td>
-                        <td th:text="${obj['userInfo']['nickname']}">Internet Explorer 4.0</td>
-                        <td th:text="${obj['openid']}">Win 95+</td>
-                        <td th:switch="${obj['msgtype']}">
-                            <span th:case="1" th:text="${obj['content']}">Win 95+</span>
-                            <img th:case="2" th:attr="src=${obj['content']}" th:width="40px" th:height="40px">
-                        </td>
-                        <td th:text="${#dates.format(obj['create_date'], 'yyyy-MM-dd HH:mm:ss')}">Win 95+</td>
-                        <td th:switch="${obj['reply']}">
-                            <span th:case="1" style="color: #FF5722;">已回复</span>
-                        </td>
-                        <td th:switch="${obj['collect']}">
-                            <i th:case="1" class="layui-icon" style="font-size: 30px; color: #FF5722;">&#xe650;</i>
-                        </td>
-                        <td class="center">
-                            <div class="layui-btn-group">
-                                <button class="layui-btn layui-btn-sm" th:onclick="'collect('+${obj['id']}+')'"  >收藏</button>
-                                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'340px\',\'快捷回复\',\'reply?id='+${obj['id']}+'\')'"  >快捷回复</button>
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <div id="pages"></div>
+                <button class="btn btn_search radius50" lay-submit="lay-submit"  onclick="ajaxPage(1,'search')"  lay-filter="formDemo">Search</button> &nbsp;
             </div>
-        </div>
+        </div><!--tableoptions-->
+    </form>
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
 
-    </div>
-    <script type="text/javascript">
-        layui.use('form', function(){
-            var form = layui.form;
-            jQuery(".layui-form").submit(function(data){
-                console.log(data);
-            });
+        <colgroup >
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" style="width: 250px"/>
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+        </colgroup>
+        <thead >
+        <tr>
+            <th class="head1">头像</th>
+            <th class="head0">昵称</th>
+            <th class="head1">openid</th>
+            <th class="head0">消息内容</th>
+            <th class="head1">时间</th>
+            <th class="head0">回复标记</th>
+            <th class="head1">收藏</th>
+            <th class="head0">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${msgPage!=null?msgPage.total:0}">
+    <tr th:each="obj:${msgPage?.result}">
+        <td><img th:attr="src=${obj['userInfo']['headimgurl']}" th:width="40px" th:height="40px"></td>
+        <td th:text="${obj['userInfo']['nickname']}">Internet Explorer 4.0</td>
+        <td th:text="${obj['openid']}">Win 95+</td>
+        <td th:switch="${obj['msgtype']}">
+            <span th:case="1" th:text="${obj['content']}">Win 95+</span>
+            <img th:case="2" th:attr="src=${obj['content']}" th:width="40px" th:height="40px">
+        </td>
+        <td th:text="${#dates.format(obj['create_date'], 'yyyy-MM-dd HH:mm:ss')}">Win 95+</td>
+        <td th:switch="${obj['reply']}">
+            <span th:case="1" style="color: #FF5722;">已回复</span>
+        </td>
+        <td th:switch="${obj['collect']}">
+            <i th:case="1" class="layui-icon" style="font-size: 30px; color: #FF5722;">&#xe650;</i>
+        </td>
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm" th:onclick="'collect('+${obj['id']}+')'"  >收藏</button>
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'340px\',\'快捷回复\',\'reply?id='+${obj['id']}+'\')'"  >快捷回复</button>
+            </div>
+        </td>
+    </tr>
+
+    </tbody>
+
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${msgPage!=null?msgPage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
         });
-        //收藏
         function collect(obj){
-            //向服务端发送发布菜单指令
-            jQuery.post("collect",{id:obj},function(data){
-                layer.msg(data.reMsg);
-                window.setTimeout(function(){
-                    top.location.href=window.parent.location.href;
-                },500)
-            });
-        }
+            layer.confirm('是否发布?',{icon:3,title:'提示'}, function(index){
+                // layer.close(index);
+                //向服务端发送删除指令
+                jQueryCommonSubmit("collect",null,{id:obj});
 
+            });
+
+        }
     </script>
-	</body>
-	
+
+</th:block>
+
+
 </html>

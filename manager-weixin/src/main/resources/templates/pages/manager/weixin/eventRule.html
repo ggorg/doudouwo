@@ -1,120 +1,93 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-            initPage(/*[[${eventRulePage!=null?eventRulePage.total:0}]]*/ );
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-        <div class="centercontent tables">
-
-            <!-- <div class="pageheader notab">
-            <h1 class="pagetitle">Tables</h1>
-            <span class="pagedesc">This is a sample description of a page</span>
-
-        </div>--><!--pageheader-->
-
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>回复规则列表</h3>
-                </div><!--contenttitle-->
-                <div class="tableoptions">
-                    <form class="layui-form">
-                        <div class="layui-form-item2 layui-form-item" style="float: left;">
-                            <div class="float-left-div" >
-                                <label class="layui-form-label" >公众号</label>
-                                <div class="layui-input-inline" >
-                                    <select name="appid" id="appid" lay-filter="appid">
-                                        <option th:each="pubweixin:${pubweixinList}" th:value="${pubweixin?.appid}" th:text="${pubweixin?.name}" th:selected="${appid eq pubweixin?.appid}"> 公众号名称</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <button class="radius3" id="createBtn" title="新建回复规则" onclick="openDialog('500px','440px','新建回复规则','edit?id=-1&appid='+jQuery('#appid').val())">新建回复规则</button> &nbsp;
-                </div><!--tableoptions-->
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <colgroup>
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th class="head0">主键</th>
-                        <th class="head1">标题</th>
-                        <th class="head0">事件类型</th>
-                        <th class="head1">图文ID</th>
-                        <th class="head0">回复内容</th>
-                        <th class="head1">操作</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="obj:${eventRulePage?.result}">
-                        <td th:text="${obj['id']}">Trident</td>
-                        <td th:text="${obj['title']}">Internet Explorer 4.0</td>
-                        <td th:switch="${obj['event_type']}">
-                            <span th:case="1">关注时自动回复（唯一）</span>
-                            <span th:case="2">消息自动回复(唯一）</span>
-                            <span th:case="3">关键词回复</span>
-                        </td>
-                        <td th:text="${obj['message']['title']}">Win 95+</td>
-                        <td th:text="${obj['content']}">Win 95+</td>
-                        <td class="center">
-                            <div class="layui-btn-group">
-                                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'440px\',\'修改回复规则\',\'edit?id='+${obj['id']}+'\')'"  >修 改</button>
-                                <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
-                            </div>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-                <div id="pages"></div>
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>回复规则列表</h3>
+    </div><!--contenttitle-->
+    <div class="tableoptions">
+        <form class="layui-form">
+            <div class="layui-form-item2 layui-form-item" style="float: left;">
+                <div class="float-left-div" >
+                    <label class="layui-form-label" >公众号</label>
+                    <div class="layui-input-inline" >
+                        <select name="appid" id="appid" lay-filter="appid">
+                            <option th:each="pubweixin:${pubweixinList}" th:value="${pubweixin?.appid}" th:text="${pubweixin?.name}" th:selected="${appid eq pubweixin?.appid}"> 公众号名称</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-        </div>
-
+        </form>
+        <button class="radius3" id="createBtn" title="新建回复规则" onclick="openDialog('500px','440px','新建回复规则','edit?id=-1&appid='+jQuery('#appid').val())">新建回复规则</button> &nbsp;
     </div>
-    <script type="text/javascript">
-        layui.use('form', function(){
-            var form = layui.form;
-            form.on('select(appid)', function(data){
-                jQuery.post("list",{appid:data.value},function(){
-                    var currentUrl=window.parent.location.href;
-                    if(currentUrl.indexOf("?")==-1){
-                        top.location.href=currentUrl+"?appid="+data.value;
-                        return ;
-                    }else{
-                        if(currentUrl.indexOf("appid")==-1){
-                            top.location.href=currentUrl+"&appid="+data.value;
-                        }else{
-                            top.location.href=currentUrl.replace(/appid=[^&]+/,"appid="+data.value);
-                        }
-                    }
-                });
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
+
+        <colgroup >
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+        </colgroup>
+        <thead >
+        <tr>
+            <th class="head0">主键</th>
+            <th class="head1">标题</th>
+            <th class="head0">事件类型</th>
+            <th class="head1">图文ID</th>
+            <th class="head0">回复内容</th>
+            <th class="head1">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${eventRulePage!=null?eventRulePage.total:0}">
+    <tr th:each="obj:${eventRulePage?.result}">
+        <td th:text="${obj['id']}">Trident</td>
+        <td th:text="${obj['title']}">Internet Explorer 4.0</td>
+        <td th:switch="${obj['event_type']}">
+            <span th:case="1">关注时自动回复（唯一）</span>
+            <span th:case="2">消息自动回复(唯一）</span>
+            <span th:case="3">关键词回复</span>
+        </td>
+        <td th:text="${obj['message']['title']}">Win 95+</td>
+        <td th:text="${obj['content']}">Win 95+</td>
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'440px\',\'修改回复规则\',\'edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
+            </div>
+    </tr>
+
+    </tbody>
+
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${eventRulePage!=null?eventRulePage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
+        });
+
+        layerForm.on('select(appid)', function(data){
+            ajaxPage(1,"search");
             });
-        })
+
 
         function del(obj) {
-            //删除回复规则
-            jQuery.post("delete",{id:obj},function(data){
-                layer.msg(data.reMsg);
-                window.setTimeout(function(){
-                    top.location.href=window.parent.location.href;
-                },500)
+            layer.confirm('是否删除?',{icon:3,title:'提示'}, function(index){
+                // layer.close(index);
+                //向服务端发送删除指令
+                jQueryCommonSubmit("delete",null,{id:obj});
+
             });
         }
     </script>
-	</body>
-	
+
+</th:block>
+
+
 </html>

@@ -1,5 +1,6 @@
 var laypage =null;
 var layer =null;
+var layerForm=null;
 var f=null;
 var pn=null;
 var pageN=1;
@@ -8,7 +9,7 @@ function initPage(count,callBackFun){
     layui.use(['laypage', 'layer','form'],function(){
         laypage= layui.laypage;
         layer=layui.layer;
-        var form = layui.form;
+        layerForm = layui.form;
         laypage.render({
             elem: 'pages',
             skip: true,

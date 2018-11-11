@@ -49,7 +49,7 @@
         <td class="center">
             <div class="layui-btn-group">
                 <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'500px\',\'修改角色\',\'to-edit?rId='+${obj['id']}+'\')'" >修 改</button>
-                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'600px\',\'480px\',\'菜单授权\',\'to-menu-power?rId='+${obj['id']}+'\')'"  >菜单授权</button>
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'800px\',\'480px\',\'菜单授权\',\'to-menu-power?rId='+${obj['id']}+'\')'"  >菜单授权</button>
                 <th:block th:unless="${obj['rType'] eq '1_0'}">
                     <button class="layui-btn layui-btn-sm " th:onclick="'setHqPower('+${obj['id']}+')'"  >赋予总店权限</button>
 

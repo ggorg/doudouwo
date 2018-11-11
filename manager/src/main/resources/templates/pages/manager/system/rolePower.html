@@ -6,17 +6,7 @@
         <th:block th:include="pages/manager/common/editResources::syseditjsresources"></th:block>
 	</head>
     <body >
-    <div class="bodywrapper">
 
-       <div class="centercontent tables">
-
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
-
-       </div>--><!--pageheader-->
-
-            <div id="contentwrapper" class="contentwrapper">
 
                 <form class="layui-form">
                     <input type="hidden" name="rId" th:value="${#httpServletRequest.getParameter('rId')}"/>
@@ -31,9 +21,9 @@
                     <thead>
                     <tr>
                        
-                        <th class="head1">菜单名称</th>
-                        <th class="head1">Url地址</th>
-                        <th class="head1">操作</th>
+                        <th class="head1"  >菜单名称</th>
+                        <th class="head1" >Url地址</th>
+                        <th class="head1"  >操作</th>
                     </tr>
                     </thead>
 
@@ -62,10 +52,6 @@
                     </div>
                 </form>
 
-            </div>
-        </div>
-
-    </div>
     <script type="text/javascript">
         initForm("do-power",".layui-form")
 

@@ -24,7 +24,7 @@
     <label class="layui-form-label">礼物照片</label>
     <div class="layui-input-block">
       <button type="button" class="layui-btn myupload1"  style="width: 143.52px;height: 93.83px;" >
-        <span  style="z-index: 1000;position: relative">上传图片</span>
+        <i class="layui-icon" style="font-size: 90px;">&#xe64a;</i>
         <img th:if="${ds!=null and ds['dgImgPath']!=null}" th:src="${ds['dgImgPath']}" class="dmImg" />
         <input th:if="${ds!=null and ds['id']!=null}" type="hidden" name="isUpdateImg" value="dsImgFile"/>
       </button>
