@@ -95,6 +95,18 @@ public class GoodFriendPlayController {
         }
     }
     @Token
+    @ApiOperation(value = "离开约玩（非房主）")
+    @PostMapping("/offlineplay/leave/{token}")
+    public ResponseApiVO leaveOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
+        try {
+
+            return this.goodFriendPlayService.leave(token,args);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->leaveOffLinePlay",e);
+            return new ResponseApiVO(-1,"离开约玩失败",null);
+        }
+    }
+    @Token
     @ApiOperation(value = "解散房间(只能解散预约中和审核被拒绝的)")
     @PostMapping("/dismissRoom/room/{token}")
     public ResponseApiVO dismissRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){

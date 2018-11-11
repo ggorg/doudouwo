@@ -416,6 +416,34 @@ public class GoodFriendPlayService extends CommonService {
 
 
     }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public  ResponseApiVO leave(String token,CodeDTO dto)throws Exception{
+        Integer userId=TokenUtil.getUserId(token);
+        if(dto.getCode()==null || dto.getCode()<=0){
+            return new ResponseApiVO(-2,"缺少房间code参数",null);
+        }
+        Map map=this.commonObjectBySingleParam("ddw_goodfriendplay_room","id",dto.getCode());
+        if(map==null || map.isEmpty()){
+            return new ResponseApiVO(-2,"抱歉，房间不存在或已经被解散了",null);
+
+        }
+        Integer status=(Integer) map.get("status");
+        if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(status) || GoodFriendPlayRoomStatusEnum.status22.getCode().equals(status)){
+            return new ResponseApiVO(-2,"抱歉，约战过的房间没法离开",null);
+
+        }
+        Map search=new HashMap();
+        search.put("userId",userId);
+        search.put("roomId",dto.getCode());
+        search.put("disabled",DisabledEnum.disabled0.getCode());
+        search.put("roomOwner,!=",userId);
+        ResponseVO res=this.commonDeleteByParams("ddw_goodfriendplay_room_member",search);
+        if(res.getReCode()!=1){
+            return new ResponseApiVO(-2,"离开房间失败",null);
+        }
+        return new ResponseApiVO(1,"成功",null);
+
+    }
     private Map checkRoom(String token)throws Exception{
         Integer userId=TokenUtil.getUserId(token);
         Map search=new HashMap();
