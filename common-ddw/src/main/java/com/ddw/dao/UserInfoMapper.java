@@ -11,7 +11,6 @@ import java.util.List;
  * 会员信息
  * Created by Jacky on 2018/4/12.
  */
-@Mapper
 public interface UserInfoMapper {
     public int save(@Param("userInfoPO")UserInfoPO userInfoPO);
 

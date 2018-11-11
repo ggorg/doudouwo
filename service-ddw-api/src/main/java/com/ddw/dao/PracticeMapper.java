@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * Created by Jacky on 2018/6/3.
  */
-@Mapper
 public interface PracticeMapper {
     List<AppIndexPracticeVO> getPracticeList( @Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end,@Param("appointment") Integer appointment);
 

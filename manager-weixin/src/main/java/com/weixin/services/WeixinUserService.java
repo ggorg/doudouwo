@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
-import com.weixin.dao.UserInfoMapper;
+import com.weixin.dao.WxUserInfoMapper;
 import com.weixin.entity.UserInfo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class WeixinUserService {
     @Autowired
     private WeixinInterfaceService weixinInterfaceService;
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private WxUserInfoMapper wxUserInfoMapper;
 
 
     /**
@@ -37,8 +37,8 @@ public class WeixinUserService {
     public Page<UserInfo> findUser(Integer pageNum,UserInfo userInfo) {
         Page<UserInfo> page = new Page<UserInfo>(pageNum,10);
         // 设置分页参数
-        List<UserInfo> UserInfoList = userInfoMapper.findList(page,userInfo);
-        int total =  userInfoMapper.findListCount(userInfo);
+        List<UserInfo> UserInfoList = wxUserInfoMapper.findList(page,userInfo);
+        int total =  wxUserInfoMapper.findListCount(userInfo);
         // 执行分页查询
         page.setResult(UserInfoList);
         page.setTotal(total);
@@ -51,7 +51,7 @@ public class WeixinUserService {
      * @return
      */
     public List<UserInfo>findUserAll(UserInfo userInfo){
-        return userInfoMapper.findListAll(userInfo);
+        return wxUserInfoMapper.findListAll(userInfo);
     }
     /**
      * 添加或更新微信用户资料
@@ -63,12 +63,12 @@ public class WeixinUserService {
     @Transactional(readOnly = false)
     public UserInfo saveOrUpdate(String appid, String openid) {
     	UserInfo userinfo = weixinInterfaceService.getUserInfo(appid, openid.toString());
-    	UserInfo ui = userInfoMapper.selectByopenid(userinfo.getOpenid());
+    	UserInfo ui = wxUserInfoMapper.selectByopenid(userinfo.getOpenid());
     	if (ui != null) {
     		ui.setOpenid(ui.getOpenid());
-    		userInfoMapper.update(userinfo);
+    		wxUserInfoMapper.update(userinfo);
     	} else {
-    		userInfoMapper.insert(userinfo);
+    		wxUserInfoMapper.insert(userinfo);
     	}
     	return userinfo;
     }
@@ -82,12 +82,12 @@ public class WeixinUserService {
     @Transactional(readOnly = false)
     public int saveOrUpdate(UserInfo userInfo) {
         int ret = 0;
-        UserInfo ui = userInfoMapper.selectByopenid(userInfo.getOpenid());
+        UserInfo ui = wxUserInfoMapper.selectByopenid(userInfo.getOpenid());
         if (ui != null) {
             ui.setOpenid(ui.getOpenid());
-            ret = userInfoMapper.update(userInfo);
+            ret = wxUserInfoMapper.update(userInfo);
         } else {
-            ret = userInfoMapper.insert(userInfo);
+            ret = wxUserInfoMapper.insert(userInfo);
         }
         return ret;
     }
@@ -96,7 +96,7 @@ public class WeixinUserService {
     public ResponseVO update(UserInfo userInfo) {
         ResponseVO vo = new ResponseVO();
         int res = 0;
-        res = userInfoMapper.update(userInfo);
+        res = wxUserInfoMapper.update(userInfo);
         if(res>0){
             vo.setReCode(1);
             vo.setReMsg("成功");
@@ -117,7 +117,7 @@ public class WeixinUserService {
     public ResponseVO batchUpdateTags(UserInfo userInfo,String tagid_list) {
         ResponseVO vo = new ResponseVO();
         int res = 0;
-        res = userInfoMapper.batchUpdateTags(userInfo,tagid_list);
+        res = wxUserInfoMapper.batchUpdateTags(userInfo,tagid_list);
         if(res>0){
             vo.setReCode(1);
             vo.setReMsg("成功");
@@ -134,7 +134,7 @@ public class WeixinUserService {
      * @param userInfo 微信用户资料实体bean
      */
     public void save(UserInfo userInfo) {
-        userInfoMapper.insert(userInfo);
+        wxUserInfoMapper.insert(userInfo);
     }
 
     /**
@@ -144,7 +144,7 @@ public class WeixinUserService {
      * @return
      */
     public UserInfo selectByopenid(String openid) {
-        return userInfoMapper.selectByopenid(openid);
+        return wxUserInfoMapper.selectByopenid(openid);
     }
 
 
@@ -160,7 +160,7 @@ public class WeixinUserService {
             // 获取关注者列表
             jsonObject = weixinInterfaceService.getAllUser(appid, "");
             // 从数据库中用户信息
-            List<Map<String, String>> dblist = userInfoMapper.findOpenidList(appid);
+            List<Map<String, String>> dblist = wxUserInfoMapper.findOpenidList(appid);
             if (jsonObject.containsKey("data")) {
                 // 拉取列表的后一个用户的OPENID
                 String next_openid = this.updateOrSave(appid, jsonObject, dblist);
@@ -193,7 +193,7 @@ public class WeixinUserService {
             next_openid = jsonObject.getString("next_openid");
             try {
                 // 数据库微信列表
-                List<UserInfo> userlist = userInfoMapper.findList(null,new UserInfo());
+                List<UserInfo> userlist = wxUserInfoMapper.findList(null,new UserInfo());
                 // 从接口取回来的openid List移除数据库已经存在的用户信息，剩下新增的微信用户
                 List<Map<String, String>> removeList = new ArrayList<Map<String, String>>();
                 for (Map<String, String> m : dblist) {
@@ -211,7 +211,7 @@ public class WeixinUserService {
                                         || (userinfo_interface.getCountry() != null && !userinfo_interface.getCountry().equals(userinfo_db.getCountry()))
                                         || (userinfo_interface.getProvince() != null && !userinfo_interface.getProvince().equals(userinfo_db.getProvince()))
                                         || (userinfo_interface.getCity() != null && !userinfo_interface.getCity().equals(userinfo_db.getCity()))) {
-                                    userInfoMapper.update(userinfo_interface);
+                                    wxUserInfoMapper.update(userinfo_interface);
                                 }
                             }
                         }
@@ -229,7 +229,7 @@ public class WeixinUserService {
                 for (Map<String, String> m : dblist) {
                     user.setOpenid(m.get("openid"));
                     user.setSubscribe("0");
-                    userInfoMapper.update(user);
+                    wxUserInfoMapper.update(user);
                 }
                 // 请求单个用户资料并入库
                 for (Object openid : jsarray.toArray()) {
@@ -252,10 +252,10 @@ public class WeixinUserService {
      */
     public UserInfo updateUser(String appid, String openid) {
         UserInfo userinfo_interface = weixinInterfaceService.getUserInfo(appid, openid);
-        UserInfo userinfo_db = userInfoMapper.selectByopenid(openid);
+        UserInfo userinfo_db = wxUserInfoMapper.selectByopenid(openid);
         // 已取消关注，从公众号接口获取不到用户信息
         if (userinfo_interface.getSubscribe().equals("0")) {
-            userInfoMapper.update(userinfo_interface);
+            wxUserInfoMapper.update(userinfo_interface);
         } else {
             // 这里添加判断差异的字段
             if (!userinfo_interface.getNickname().equals(userinfo_db.getNickname()) ||
@@ -264,10 +264,10 @@ public class WeixinUserService {
                     !userinfo_interface.getProvince().equals(userinfo_db.getProvince()) ||
                     !userinfo_interface.getCity().equals(userinfo_db.getCity()) ||
                     !userinfo_interface.getRemark().equals(userinfo_db.getRemark())) {
-                userInfoMapper.update(userinfo_interface);
+                wxUserInfoMapper.update(userinfo_interface);
             }
         }
-        UserInfo userinfo_dbnew = userInfoMapper.selectByopenid(openid);
+        UserInfo userinfo_dbnew = wxUserInfoMapper.selectByopenid(openid);
         return userinfo_dbnew;
     }
     

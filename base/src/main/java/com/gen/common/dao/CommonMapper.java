@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
-@Mapper
 public interface CommonMapper {
 	long selectCount(CommonCountBean commonCountBean);
 	List selectObjects(CommonSearchBean commonSearchBean);

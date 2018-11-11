@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by Jacky on 2017/12/15.
  */
-@Mapper
 public interface EventKeyMapper {
     List<EventKey> findList(@Param("page") Page page, @Param("appid") String appid);
     /** 查询总数*/

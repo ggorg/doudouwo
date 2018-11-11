@@ -12,7 +12,6 @@ import java.util.List;
  * @author Jacky
  *
  */
-@Mapper
 public interface PubweixinMapper {
 	
 	Pubweixin selectByAppid(@Param("appid") String appid);

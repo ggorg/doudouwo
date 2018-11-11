@@ -13,8 +13,7 @@ import java.util.Map;
  *
  * @author Jacky
  */
-@Mapper
-public interface UserInfoMapper {
+public interface WxUserInfoMapper {
     int insert(@Param("userInfo") UserInfo userInfo);
     
     int update(UserInfo userInfo);

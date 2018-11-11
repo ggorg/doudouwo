@@ -11,7 +11,6 @@ import java.util.List;
  * 图文消息
  * Created by Jacky on 2017/12/6.
  */
-@Mapper
 public interface MessageMapper {
     List<Message> findList(@Param("page") Page page, @Param("appid") String appid);
     /** 不分页*/

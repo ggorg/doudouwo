@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Param;
  *
  * @author Jacky
  */
-@Mapper
 public interface RedPackMapper {
     int insert(@Param("userInfo") RedPack redPack);
     

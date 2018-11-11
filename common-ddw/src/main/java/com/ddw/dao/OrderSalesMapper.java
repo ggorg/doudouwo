@@ -11,7 +11,6 @@ import java.util.List;
  * 销量统计
  *
  */
-@Mapper
 public interface OrderSalesMapper {
 
 

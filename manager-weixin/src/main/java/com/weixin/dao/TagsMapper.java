@@ -11,7 +11,6 @@ import java.util.List;
  * 用户标签管理
  * Created by Jacky on 2017/12/27.
  */
-@Mapper
 public interface TagsMapper {
     List<Tags> findList(@Param("page") Page page, @Param("entity") Tags entity);
     List<Tags> findListAll(@Param("entity") Tags entity);

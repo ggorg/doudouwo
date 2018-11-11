@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by Jacky on 2018/6/3.
  */
-@Mapper
 public interface GoddessMapper {
     List<AppIndexGoddessVO> getGoddessList(@Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end);
     List<AppIndexGoddessVO> getGoddessListByIds(@Param("userIdList") List<Integer> userIdList, @Param("userId") Integer userId,

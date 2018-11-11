@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by Jacky on 2017/12/18.
  */
-@Mapper
 public interface PushMapper {
     List<Push> findList(@Param("page") Page page, @Param("appid") String appid);
     /** 查询总数*/

@@ -11,7 +11,6 @@ import java.util.List;
  * @author Jacky
  *
  */
-@Mapper
 public interface UserAnalysisMapper {
 	
 	int insert(UserAnalysis entity);

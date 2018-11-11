@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
-public class MessageService extends CommonService  {
+public class SysMsgService extends CommonService  {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO saveMsg(CommonMessageBean cmb){

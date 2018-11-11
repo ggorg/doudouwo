@@ -19,6 +19,7 @@ public class EventRuleService {
     @Autowired
     private EventRuleMapper eventRuleMapper;
 
+
     /**
      * 根据appid查询回复规则
      * @param pageNum 页数

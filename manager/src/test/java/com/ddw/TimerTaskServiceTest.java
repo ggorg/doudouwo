@@ -1,7 +1,7 @@
 package com.ddw;
 
 import com.GenFrameworkApplication;
-import com.ddw.servies.TimerTaskService;
+//import com.ddw.servies.TimerTaskService;
 import com.gen.common.services.CommonService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,12 +14,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class TimerTaskServiceTest extends CommonService {
 
     @Autowired
-    private TimerTaskService timerTaskService;
+  //  private TimerTaskService timerTaskService;
 
 
     @Test
     public void handleFreeBidTest()throws Exception{
 
-        this.timerTaskService.handleFreeBid();
+       // this.timerTaskService.handleFreeBid();
     }
 }

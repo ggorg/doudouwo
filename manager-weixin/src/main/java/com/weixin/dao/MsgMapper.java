@@ -13,7 +13,6 @@ import java.util.List;
  * @author Jacky
  * 
  */
-@Mapper
 public interface MsgMapper {
     /** 消息入库 */
     public int save(Msg msg);

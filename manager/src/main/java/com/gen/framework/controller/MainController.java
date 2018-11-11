@@ -24,6 +24,7 @@ import java.io.OutputStream;
 @Controller
 @RequestMapping("/")
 public class MainController {
+
     private final Logger logger = Logger.getLogger(MainController.class);
     @Autowired
     private MainGlobals mainGlobals;

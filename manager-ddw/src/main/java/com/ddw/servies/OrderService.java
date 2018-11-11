@@ -4,12 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
-import com.ddw.controller.ClientOrderController;
 import com.ddw.dao.OrderSalesMapper;
 import com.ddw.dao.StoreProductFormulaMaterialMapper;
 import com.ddw.enums.*;
 import com.ddw.services.BaseOrderService;
-import com.ddw.services.LiveRadioService;
 import com.ddw.services.OrderViewService;
 import com.ddw.util.Constant;
 import com.ddw.util.IMApiUtil;
@@ -23,8 +21,7 @@ import com.gen.common.enums.MessageStatusEnum;
 import com.gen.common.enums.MessageTypeEnum;
 import com.gen.common.enums.MessageUserTypeEnum;
 import com.gen.common.exception.GenException;
-import com.gen.common.services.CommonService;
-import com.gen.common.services.MessageService;
+import com.gen.common.services.SysMsgService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
 import com.gen.common.util.OrderUtil;
@@ -62,7 +59,7 @@ public class OrderService extends BaseOrderService {
     private StoreProductFormulaMaterialMapper spfmm;
 
     @Autowired
-    private MessageService messageService;
+    private SysMsgService messageService;
     @Autowired
     private OrderSalesMapper orderSalesMapper;
 

@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @author Jacky
  *
  */
-@Mapper
 public interface ShakeRecordMapper {
 	
 	int insert(ShakeRecord shakeRecord);

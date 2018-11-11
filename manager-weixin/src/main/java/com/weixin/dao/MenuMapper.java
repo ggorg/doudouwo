@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by Jacky on 2017/12/6.
  */
-@Mapper
 public interface MenuMapper {
     List<Menu> findList(@Param("page") Page page, @Param("appid") String appid);
     /** 查询总数*/

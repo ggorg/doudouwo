@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @author Jacky
  *
  */
-@Mapper
 public interface RedPackRecordMapper {
 	int insert(RedPackRecord redPackRecord);
 }

@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by Jacky on 2018/6/3.
  */
-@Mapper
 public interface UserInfoMapper {
     List<UserInfoVO> getUserInfoList(@Param("userId") List<Integer> userId);
     List<MyAttentionInfoVO> getMyAttentionPracticeInfoList(@Param("userId") List<Integer> userId);

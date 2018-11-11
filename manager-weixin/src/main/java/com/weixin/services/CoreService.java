@@ -1,7 +1,7 @@
 package com.weixin.services;
 
 
-import com.weixin.dao.UserInfoMapper;
+import com.weixin.dao.WxUserInfoMapper;
 import com.weixin.entity.*;
 import com.weixin.util.MessageUtil;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class CoreService {
     @Autowired
     private WeixinInterfaceService weixinInterfaceService;
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private WxUserInfoMapper wxUserInfoMapper;
     @Autowired
     private PubweixinMapper pubweixinMapper;
     @Autowired
@@ -119,14 +119,14 @@ public class CoreService {
                 // 订阅
                 if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)) {
                     //这里获取用户信息
-                    UserInfo ui = userInfoMapper.selectByopenid(fromUserName);
+                    UserInfo ui = wxUserInfoMapper.selectByopenid(fromUserName);
                     if (ui != null) {
                         //曾经关注过的用户
                         UserInfo userInfo = new UserInfo();
                         userInfo.setOpenid(fromUserName);
                         userInfo.setSubscribe("1");
                         userInfo.setSubscribe_time(new Date());
-                        userInfoMapper.update(userInfo);
+                        wxUserInfoMapper.update(userInfo);
                     } else {
                         UserInfo userInfo = weixinInterfaceService.getUserInfo(appid, fromUserName);
                         // 保存微信用户资料入库
@@ -146,7 +146,7 @@ public class CoreService {
                     UserInfo userInfo = new UserInfo();
                     userInfo.setOpenid(fromUserName);
                     userInfo.setSubscribe("0");
-                    userInfoMapper.update(userInfo);
+                    wxUserInfoMapper.update(userInfo);
                  // 自定义菜单点击事件
                 }else if (eventType.equals(MessageUtil.EVENT_TYPE_CLICK)) {
                     // 事件KEY值，与创建自定义菜单时指定的KEY值对应

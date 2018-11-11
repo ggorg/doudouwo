@@ -19,9 +19,9 @@ import java.util.List;
  * @author Jacky
  * 
  */
-@Service
+/*@Service
 @Lazy(false)
-@Component
+@Component*/
 public class TaskJob {
 
     private static final Logger logger = Logger.getLogger(TaskJob.class);
