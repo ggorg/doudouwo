@@ -42,12 +42,19 @@ public class RechargeService extends CommonService {
         map.clear();map=null;
         return costMap;
     }
-    @Cacheable(value ="publicCache",key="'recharge-all'" )
+   // @Cacheable(value ="publicCache",key="'recharge-all'" )
     public List getRechargeList(){
-        Map map=new HashMap<>();
-        map.put("drDisabled", DisabledEnum.disabled0.getCode());
-        CommonSearchBean csb=new CommonSearchBean("ddw_recharge","drSort asc","t1.id,t1.drName 'name',t1.drDesc 'desc',t1.drDiscount discount,t1.drCost price",null,null,null);
-        return  this.getCommonMapper().selectObjects(csb);
+        List list=(List)CacheUtil.get("publicCache","recharge-all");
+        if(list==null || list.isEmpty()){
+            Map map=new HashMap<>();
+            map.put("drDisabled", DisabledEnum.disabled0.getCode());
+            CommonSearchBean csb=new CommonSearchBean("ddw_recharge","drSort asc","t1.id,t1.drName 'name',t1.drDesc 'desc',t1.drDiscount discount,t1.drCost price",null,null,null);
+            list=this.getCommonMapper().selectObjects(csb);
+            CacheUtil.put("publicCache","recharge-all",list);
+        }
+        return list;
+
+
     }
 
 }
