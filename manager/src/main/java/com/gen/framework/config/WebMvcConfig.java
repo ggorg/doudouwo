@@ -15,7 +15,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
 
 	public void addInterceptors(InterceptorRegistry registry) {
 		//System.out.println(	123);
-		System.out.println(loginInterceptor);
 		registry.addInterceptor(loginInterceptor);
 
 	}

@@ -5,3 +5,8 @@ span.style1{  width:25px;display: inline-block;text-align:center;  }
 .layui-form-item2 .float-left-div{ float: left}
 .layui-form-item2 a.btn_search{ background-position: -10px -9px;line-height: 26px}
 .mystyle1{ line-height: 35px;  }
+.ml_div{position:absolute;right: 0px;top:0px;height: 95px;line-height: 95px;cursor: pointer;width:25px;display: none}
+.mr_div{position:absolute;left: 0px;top:0px;height: 95px;line-height: 95px;cursor: pointer;width:25px;display: none}
+.ml_div i,.mr_div i{font-size: 30px;color: white}
+.ma{font-size: 13px}
+.ma_fa { display: inline-block;  font: normal normal normal 14px/1 FontAwesome;  text-rendering: auto;  -webkit-font-smoothing: antialiased;  -moz-osx-font-smoothing: grayscale;  }

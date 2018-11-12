@@ -47,6 +47,28 @@ public class LiveRadioController {
         }
     }
     @Token
+    @ApiOperation(value = "女神申请直播（带上传图片）",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/applWithPic/{token}")
+    @ResponseBody
+    @ApiResponses(value={
+            @ApiResponse(code= 1,message="成功"),
+            @ApiResponse(code= -1,message="系统异常"),
+            @ApiResponse(code= -2,message="失败"),
+            @ApiResponse(code= -2000,message="用户不存在"),
+            @ApiResponse(code= -2001,message="请先申请当女神"),
+            @ApiResponse(code= -2002,message="直播房间已开，请关闭再申请"),
+            @ApiResponse(code= -2003,message="正在审核中，请耐心等待")
+    })
+    public ResponseApiVO applWithPicLiveRadio(@PathVariable String token,LiveRadioApplWithPicDTO args){
+        try {
+            return this.reviewService.applyWithPicLiveRadio(token,args);
+        }catch (Exception e){
+            logger.error("LiveRadioController->applWithPicLiveRadio",e);
+            return new ResponseApiVO(-1,"提交申请失败",null);
+
+        }
+    }
+    @Token
     @ApiOperation(value = "查看是否有直播权限",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/queryLiveRadioPower/{token}")
     @ResponseBody

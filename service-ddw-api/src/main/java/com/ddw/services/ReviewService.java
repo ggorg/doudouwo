@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +30,9 @@ public class ReviewService extends CommonService {
 
     @Autowired
     private LiveRadioService liveRadioService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     @Value("${withdraw.max.cost:30000}")
     private Integer withdrawMaxCost;
@@ -59,6 +63,19 @@ public class ReviewService extends CommonService {
 
         }
         return new ResponseApiVO(1,"未申请",null);
+
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO applyWithPicLiveRadio(String token, LiveRadioApplWithPicDTO dto)throws Exception{
+        String openId=TokenUtil.getUserObject(token).toString();
+        Integer userId=TokenUtil.getUserId(token);
+        Integer storeId=TokenUtil.getStoreId(token);
+        if(!dto.getLiveHeadImg().isEmpty()){
+           userInfoService.uploadPhotograph(userId.toString(),new MultipartFile[]{dto.getLiveHeadImg()});
+
+        }
+        return this.applyLiveRadio(openId, storeId, dto);
 
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

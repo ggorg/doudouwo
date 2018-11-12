@@ -304,6 +304,7 @@ body.withmenucoll2 { background-position: 35px 0; } /* with menu style 2 in coll
 .headermenu li a { 
 	display: block; font-family: 'RobotoCondensed', Arial, Helvetica, sans-serif; color: #fff; text-transform: uppercase; 
 	padding: 17px 10px;
+	font-size: 13px;
 }
 .headermenu li a { min-width: 80px; text-align: center; }
 .headermenu li a span { opacity: 0.5; }

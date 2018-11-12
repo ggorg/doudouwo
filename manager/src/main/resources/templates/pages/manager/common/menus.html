@@ -11,13 +11,13 @@
 		</li>
 
 	</ul>
-	<div style="position:absolute;right: 0px;top:0px;height: 95px;line-height: 95px;cursor: pointer;width:25px;display: none" id="mleft" onclick="moveLeft()">
+	<div class="ml_div" id="mleft" onclick="moveLeft()">
 
-		<i class="layui-icon" style="font-size: 30px;color: white">&#xe602;</i>
+		<i class="layui-icon" >&#xe602;</i>
 	</div>
-	<div style="position:absolute;left: 0px;top:0px;height: 95px;line-height: 95px;cursor: pointer;width:25px;display: none" id="mright" onclick="moveRight()">
+	<div class="mr_div" id="mright" onclick="moveRight()">
 
-		<i class="layui-icon" style="font-size: 30px;color: white">&#xe603;</i>
+		<i class="layui-icon" >&#xe603;</i>
 	</div>
 
 
@@ -27,7 +27,7 @@
 <div class="vernav2 iconmenu ">
 	<ul>
 		<li th:each="menu:${#TdTool.getUserPowerMenu()}" th:inline="text" th:if="${#TdTool?.getParentId()==menu.mParentId}" th:class="${#httpServletRequest.getServletPath() eq menu.mUrl?'current':''}" >
-			<a th:href="${menu.mUrl+'?currentPid='+menu.mParentId}" ><span  th:class="'icon fa fa-1x style1 '+${menu.mIcon}" ></span>[[${menu.mName}]]</a>
+			<a th:href="${menu.mUrl+'?currentPid='+menu.mParentId}" class="ma"><span  th:class="'icon ma_fa fa-1x style1 '+${menu.mIcon}" ></span>[[${menu.mName}]]</a>
 		</li>
 
 	</ul>
