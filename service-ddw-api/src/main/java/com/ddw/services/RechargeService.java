@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.beans.RechargeVO;
 import com.ddw.enums.DisabledEnum;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CacheService;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class RechargeService extends CommonService {
 
 
-    public Integer getRechargeCost(Integer id){
+    public Map getRechargeCost(Integer id){
         List<Map> rechargeList=(List) CacheUtil.get("publicCache","recharge-all");
         if(rechargeList==null){
             rechargeList=getRechargeList();
@@ -35,7 +36,11 @@ public class RechargeService extends CommonService {
         Map map=rechargeList.get(0);
        Integer discount=(Integer) map.get("discount");
        Integer price=(Integer) map.get("price");
-        return discount==null?price:discount;
+       Map costMap=new HashMap();
+       costMap.put("discount",discount==null?price:discount);
+       costMap.put("price",price);
+        map.clear();map=null;
+        return costMap;
     }
     @Cacheable(value ="publicCache",key="'recharge-all'" )
     public List getRechargeList(){

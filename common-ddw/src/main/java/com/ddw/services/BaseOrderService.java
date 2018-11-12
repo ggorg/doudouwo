@@ -92,6 +92,7 @@ public class BaseOrderService extends CommonService {
             if(OrderTypeEnum.OrderType3.getCode().equals(doType)){
                 Map mapRecharge=this.commonObjectBySingleParam("ddw_order_recharge","orderNo",orderNo);
                 Integer userid=(Integer) mapRecharge.get("creater");
+                Integer dorActCost=(Integer) mapRecharge.get("dorActCost");
                 Integer dorCost=(Integer) mapRecharge.get("dorCost");
                 Map setParams=new HashMap();
                 setParams.put("money",dorCost);
@@ -112,7 +113,7 @@ public class BaseOrderService extends CommonService {
                 po.setOrderType(OrderTypeEnum.OrderType3.getCode());
                 po.setOrderId(OrderUtil.getOrderId(orderNo));
                 po.setOrderNo(orderNo);
-                po.setPrice(dorCost);
+                po.setPrice(dorActCost);
                 po.setUserId(userid);
                 po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
                 po.setShipStatus(cacheOrder.getDoShipStatus());

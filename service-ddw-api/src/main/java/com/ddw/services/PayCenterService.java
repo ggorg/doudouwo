@@ -287,9 +287,8 @@ public class PayCenterService extends BaseOrderService {
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(-1);
-            Integer recCost=rechargeService.getRechargeCost(codes[0]);
-
-            orderPO.setDoCost(recCost);
+            voData=rechargeService.getRechargeCost(codes[0]);
+            orderPO.setDoCost((Integer) voData.get("discount"));
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
             }
@@ -569,7 +568,8 @@ public class PayCenterService extends BaseOrderService {
                 m.put("createTime",new Date());
                 m.put("updateTime",new Date());
                 m.put("creater",userId);
-                m.put("dorCost",orderPO.getDoCost());
+                m.put("dorCost",voData.get("price"));
+                m.put("dorActCost",voData.get("discount"));
                 m.put("rechargeId",codes[0]);
                 resVo=this.commonInsertMap("ddw_order_recharge",m);
             }if(orderType.equals(OrderTypeEnum.OrderType8.getCode())){
