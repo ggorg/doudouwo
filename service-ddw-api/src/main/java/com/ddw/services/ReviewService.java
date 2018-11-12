@@ -157,7 +157,7 @@ public class ReviewService extends CommonService {
             return new ResponseApiVO(-2,"提现金额异常",null);
         }
         if(dto.getMoney()<this.withdrawMaxCost){
-            return new ResponseApiVO(-2,"提现金额不能小于"+((double)dto.getMoney()/100)+"元",null);
+            return new ResponseApiVO(-2,"提现金额不能小于"+((double)withdrawMaxCost/100)+"元",null);
 
         }
         Integer userId= TokenUtil.getUserId(token);
