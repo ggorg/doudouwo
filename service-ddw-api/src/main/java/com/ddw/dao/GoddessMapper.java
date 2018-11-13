@@ -1,8 +1,7 @@
 package com.ddw.dao;
 
-import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.beans.vo.AppIndexGoddessVO;
-import org.apache.ibatis.annotations.Mapper;
+import com.ddw.beans.vo.LiveRadioListVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -16,5 +15,7 @@ public interface GoddessMapper {
                                                 @Param("start") Integer start, @Param("end") Integer end,@Param("weekList") Integer weekList);
     List<AppIndexGoddessVO> getGoddessListByNotInIds(@Param("userIdList") List<Integer> userIdList, @Param("userId") Integer userId,
                                                      @Param("start") Integer start, @Param("end") Integer end,@Param("weekList") Integer weekList);
+    List<AppIndexGoddessVO> getGoddessListByNotInIdsNoFans(@Param("userIdList") List<Integer> userIdList, @Param("userId") Integer userId,
+                                                     @Param("start") Integer start, @Param("end") Integer end);
     List<LiveRadioListVO> liveGoddess(@Param("startNum") Integer startNum, @Param("endNum") Integer endNum,@Param("storeId") Integer storeId,@Param("userId") Integer userId);
 }
