@@ -208,7 +208,7 @@ public class ReviewService extends CommonService {
         reviewPO.setDrProposer(userId);
         reviewPO.setDrApplyDesc("提现申请("+IncomeTypeEnum.getName(dto.getIncomeType())+")");
         reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.withdrawAppl8.getCode());
-        reviewPO.setDrExtend("提现申请-金额："+(double)dto.getMoney()/100);
+        reviewPO.setDrExtend("提现申请-金额:"+(double)dto.getMoney()/100+"元");
         res=this.commonReviewService.submitAppl(reviewPO);
         if(res.getReCode()!=1){
             return new ResponseApiVO(-2,"提现失败-申请审核失败",null);

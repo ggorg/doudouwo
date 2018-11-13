@@ -84,4 +84,14 @@ public class StoreController {
             return new ResponseVO(-1,"关联用户失败",null);
         }
     }
+    @PostMapping("do-update-status")
+    @ResponseBody
+    public ResponseVO doUpdateStatus(String idStr,Integer status){
+        try {
+            return this.storeService.update(idStr,status);
+        }catch (Exception e){
+            logger.error("StoreController->doUpdateStatus",e);
+            return new ResponseVO(-1,"更改状态失败",null);
+        }
+    }
 }

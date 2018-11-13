@@ -381,14 +381,15 @@ function moveRight(){
         })
     }
 }
-window.onload=function(){
+function loadMoveMenu(){
     j=(isFunction(jQuery)?jQuery:$)
 
     var mobj=j(".headermenu");
     var dwidth=window.screen.width;
     var mwidth=mobj.width();
+    var marginleft=parseInt(mobj.css("margin-left").replace(/px/,""));
     if(mwidth>=dwidth){
-        var marginleft=parseInt(mobj.css("margin-left").replace(/px/,""));
+
         if(mwidth+marginleft>dwidth){
             j("#mleft").show();
         }
@@ -396,11 +397,8 @@ window.onload=function(){
             j("#mright").show();
             return ;
         }
-    }else{
+    }else if(marginleft!=0){
         mobj.animate({"margin-left":"0px"},"fast");
         j.cookie("menuPost",null,{path:"/"});
     }
-
-
-
 }

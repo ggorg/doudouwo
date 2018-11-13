@@ -2,6 +2,7 @@ package com.ddw.servies;
 
 import com.ddw.beans.StoreDTO;
 import com.ddw.beans.StorePO;
+import com.ddw.enums.DisabledEnum;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -51,6 +52,33 @@ public class StoreService extends CommonService{
     public StorePO getBeanById(Integer id)throws Exception{
 
         return this.commonObjectBySingleParam("ddw_store","id",id,StorePO.class);
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO update(String idStr, Integer status){
+        String ids= MyEncryptUtil.getRealValue(idStr);
+        if(StringUtils.isBlank(ids)){
+            return new ResponseVO(-2,"参数异常",null);
+        }
+        if(StringUtils.isBlank(DisabledEnum.getName(status))){
+            return new ResponseVO(-2,"状态值异常",null);
+        }
+        Map map=new HashMap();
+        map.put("dsStatus",status);
+        ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_store",map,"id",Integer.parseInt(ids));
+        if(res.getReCode()==1){
+
+
+            if(DisabledEnum.disabled0.getCode().equals(status)){
+                return new ResponseVO(1,"启用成功",null);
+
+            }else if(DisabledEnum.disabled1.getCode().equals(status)){
+                return new ResponseVO(1,"停用成功",null);
+
+            }
+        }
+        return new ResponseVO(-2,"操作失败",null);
+
+
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(StoreDTO storeDTO)throws Exception{

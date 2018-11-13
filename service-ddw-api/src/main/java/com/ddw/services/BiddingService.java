@@ -641,22 +641,17 @@ public class BiddingService extends CommonService {
                earnestMap.put("biddingId",bidId);
                 logger.info("putPrice->(bidEndTime.after(currentDate) && endTime==null)->bidId:"+bidId+"+bidEndTime:"+DateFormatUtils.format(bidEndTime,"yyyy-MM-dd HH:mm:ss")+",endTime:"+endTime+",userId:"+TokenUtil.getUserId(token));
 
-                Map mapPO=this.commonObjectBySearchCondition("ddw_order_bidding_pay",earnestMap);
 
-               if(mapPO!=null){
-
-
-                   Integer orderId=(Integer) mapPO.get("orderId");
-                   OrderPO orderPO=this.commonObjectBySingleParam("ddw_order","id",orderId,OrderPO.class);
-                   logger.info("putPrice->判断定金有没有交->bidId:"+bidId+"，order:"+orderPO);
-
-                   if(!PayStatusEnum.PayStatus1.getCode().equals(orderPO.getDoPayStatus())){
-                        flag=true;
-                    }
-               }else{
-                   flag=true;
-
-               }
+                //List list=this.commonList("","createTime desc",null,null,earnestMap);
+                Map orderSearch=new HashMap();
+                orderSearch.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
+               CommonSearchBean csb=new CommonSearchBean("ddw_order_bidding_pay","t1.createTime desc","ct0.*",null,null,earnestMap,
+                       new CommonChildBean("ddw_order","id","orderId",orderSearch));
+                List list=this.getCommonMapper().selectObjects(csb);
+                logger.info("putPrice->判断定金有没有交->bidId:"+bidId+"，order:"+list);
+                if(list==null|| list.isEmpty()){
+                    flag=true;
+                 }
 
            }else if(endTime!=null && endTime.after(currentDate)){
                 logger.info("putPrice->endTime!=null && endTime.after(currentDate)->陪玩中，空闲时间约在->bidId:"+bidId+"，endTime:"+endTime);
