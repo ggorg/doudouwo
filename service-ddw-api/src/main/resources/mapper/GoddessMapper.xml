@@ -53,6 +53,24 @@
         limit #{start},#{end}
     </select>
 
+    <select id="getGoddessListByNotInIdsNoFans" resultMap="BaseResultMap">
+        select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t3.job,t3.age,t3.signature,t3.interest,t3.starSign,
+        t4.gradeName ggradeName,0 AS fans,t5.id AS storeId,t5.dsName,2 AS liveRadioFlag
+        from ddw_goddess t1
+        LEFT join ddw_userinfo t3 on t1.userId = t3.id
+        left join ddw_goddess_grade t4 on t4.id=t3.goddessGradeId
+        LEFT JOIN ddw_store t5 on t5.id=t1.storeId
+        where t1.userId != #{userId}
+        <if test="userIdList !=null and userIdList.size() >0 ">
+            and t3.id NOT in
+            <foreach collection="userIdList" item="value"  index="key" open="(" separator="," close=")">
+                #{value}
+            </foreach>
+        </if>
+        order by t1.createTime desc
+        limit #{start},#{end}
+    </select>
+
     <select id="getGoddessListByNotInIds" resultMap="BaseResultMap">
         select t1.bidPrice,t3.id,t3.nickName,t3.headImgUrl,t3.label,t3.job,t3.age,t3.signature,t3.interest,t3.starSign,
         t4.gradeName ggradeName,count(t2.goddessId) AS fans,t5.id AS storeId,t5.dsName,2 AS liveRadioFlag
@@ -74,6 +92,7 @@
         order by count(t2.goddessId) desc
         limit #{start},#{end}
     </select>
+
     <select id="liveGoddess" resultType="com.ddw.beans.vo.LiveRadioListVO">
         SELECT
             t1.nickName,

@@ -248,16 +248,34 @@ public class ReviewGoddessService extends CommonService {
         Integer pageNum = pageNo;
         Integer pageSize = 10;
         Integer start = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
+        Integer end = pageSize;
         List<AppIndexGoddessVO> appIndexGoddess = goddessMapper.getGoddessListByNotInIds(null,userId,start,pageSize,weekList);
+        List<Integer> userIdList = new ArrayList<>();
         if(appIndexGoddess!=null){
             appIndexGoddess.forEach(a -> {
                 try {
+                    userIdList.add(a.getId());
                     a.setHeadImgUrl(photoService.getPhotograph(a.getId()));
                     a.setFocus(myAttentionService.isFocusGoddess(userId, a.getId()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
+        }
+        if(weekList != 1 && pageSize - appIndexGoddess.size()>0){
+            end = pageSize-appIndexGoddess.size();
+            List<AppIndexGoddessVO> appIndexGoddess1 = goddessMapper.getGoddessListByNotInIdsNoFans(userIdList,userId,start,end);
+            if(appIndexGoddess1!=null){
+                appIndexGoddess1.forEach(a -> {
+                    try {
+                        a.setHeadImgUrl(photoService.getPhotograph(a.getId()));
+                        a.setFocus(myAttentionService.isFocusGoddess(userId, a.getId()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+            appIndexGoddess.addAll(appIndexGoddess1);
         }
         return appIndexGoddess;
     }
