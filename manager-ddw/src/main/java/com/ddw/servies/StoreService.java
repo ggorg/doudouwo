@@ -67,6 +67,7 @@ public class StoreService extends CommonService{
         ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_store",map,"id",Integer.parseInt(ids));
         if(res.getReCode()==1){
 
+            CacheUtil.delete("stores","store");
 
             if(DisabledEnum.disabled0.getCode().equals(status)){
                 return new ResponseVO(1,"启用成功",null);

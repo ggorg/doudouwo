@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.alibaba.druid.sql.PagerUtils;
 import com.ddw.beans.*;
+import com.ddw.enums.DisabledEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.Distance;
 import com.ddw.util.LanglatComparator;
@@ -39,7 +40,9 @@ public class AppStoresService extends CommonService {
     public List getStoreList(){
         List<Map> obj=(List)CacheUtil.get("stores","store");
         if(obj==null){
-            obj= this.commonList("ddw_store","dsSort asc",null,null,null);
+            Map search=new HashMap();
+            search.put("dsStatus", DisabledEnum.disabled0.getCode());
+            obj= this.commonList("ddw_store","dsSort asc",null,null,search);
             CacheUtil.put("stores","store",obj);
         }
         return obj;

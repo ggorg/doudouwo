@@ -80,7 +80,7 @@
             <div class="layui-btn-group">
                 <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改门店\',\'to-edit?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >修 改</button>
                 <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'340px\',\'关联系统用户\',\'to-relate-sysuser?idStr='+${#TdTool.encrypt(obj['id'])}+'\')'"  >关联系统用户</button>
-                <button  th:class="'layui-btn layui-btn-sm '+${obj['dmStatus']==2?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dmStatus']==1?0:1}+',\''+${obj['dmStatus']==1?'是否启用':'是否禁用'}+'\')'" th:text="${obj['dmStatus']==1?'启 用':'禁 用'}"></button>
+                <button  th:class="'layui-btn layui-btn-sm '+${obj['dmStatus']==2?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${#TdTool.encrypt(obj['id'])}+'\','+${obj['dsStatus']==1?0:1}+',\''+${obj['dsStatus']==1?'是否启用':'是否禁用'}+'\')'" th:text="${obj['dsStatus']==1?'启 用':'禁 用'}"></button>
             </div>
         </td>
     </tr>
