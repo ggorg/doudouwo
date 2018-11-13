@@ -8,6 +8,15 @@ import java.util.Map;
 public class CommonDeleteBean {
     private String tablename;
     private Object condition;
+    private boolean isAuto=true;
+
+    public boolean isAuto() {
+        return isAuto;
+    }
+
+    public void setAuto(boolean auto) {
+        isAuto = auto;
+    }
 
     public CommonDeleteBean(String tablename, Object condition) {
         this.tablename = tablename;

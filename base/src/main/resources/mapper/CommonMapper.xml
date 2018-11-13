@@ -233,9 +233,44 @@
   	</update>
 	<delete id="deleteObject" parameterType="com.gen.common.beans.CommonDeleteBean" >
 		delete from ${tablename}
-		<foreach collection="condition" item="value"  index="key" open="where" separator="and">
-			${key}=#{value}
-		</foreach>
+		<if test="null!=condition">
+			<where>
+				<foreach collection="condition" item="value"  index="key"   >
+					<choose>
+
+						<when test="key.matches('([a-zA-Z0-9]+)|(\\[[a-zA-Z0-9]+\\])') and !key.matches('^or($| +)') and !key.matches('^and($| +)')">
+							<if test="auto">
+								and
+							</if>
+							${key} = #{value}
+						</when>
+						<otherwise>
+							<choose>
+								<when test="key.indexOf('(')>-1 or key.indexOf(')')>-1 or key.matches('[)] or [(]') or key.matches('^or($| +)') or key.matches('^and($| +)')">
+									${key}
+								</when>
+								<otherwise>
+									<if test="auto">
+										and
+									</if>
+									<choose>
+										<when test="key.matches('^([a-zA-Z0-9]+),(in|is)$')">
+											${key.split(",")[0]} ${key.split(",")[1]} ${value}
+
+										</when>
+										<otherwise>
+											${key.split(",")[0]} ${key.split(",")[1]} #{value}
+										</otherwise>
+									</choose>
+								</otherwise>
+							</choose>
+
+
+						</otherwise>
+					</choose>
+				</foreach>
+			</where>
+		</if>
 	</delete>
 	<delete id="deleteObjectCombination" parameterType="com.gen.common.beans.CommonDeleteBean" >
         delete from ${tablename}

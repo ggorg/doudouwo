@@ -6,6 +6,7 @@ import com.ddw.beans.vo.GoodFriendPlayRoomListVO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.dao.GoodFriendPlayMapper;
 import com.ddw.enums.*;
+import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
@@ -183,7 +184,7 @@ public class GoodFriendPlayService extends CommonService {
         if(StringUtils.isBlank(dto.getChatRoomEndTime())){
             return new ResponseApiVO(-2,"请填写房间结束时间",null);
 
-        }else if(new Date().before(DateUtils.parseDate(dto.getChatRoomEndTime(),"yyyy-MM-dd HH:mm"))){
+        }else if(new Date().after(DateUtils.parseDate(dto.getChatRoomEndTime(),"yyyy-MM-dd HH:mm","yyyy-MM-dd HH:mm:ss","yyyy-MM-dd HH"))){
             return new ResponseApiVO(-2,"结束时间不能小于当前时间",null);
 
         }
@@ -196,9 +197,9 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"当前桌号已被使用",null);
 
         }
-        Map res=this.checkRoom(token);
-        if(res!=null){
-            return new ResponseApiVO(-2,"抱歉，不能创建多个房间",null);
+        ResponseVO res=this.isOkCreateRoom(token);
+        if(res.getReCode()!=1){
+            return new ResponseApiVO(-2,res.getReMsg(),null);
         }
         Map map= BeanToMapUtil.beanToMap(dto,true);
         map.put("createTime",new Date());
@@ -235,6 +236,11 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"小房不存在",null);
         }
         Integer status=(Integer) callMap.get("status");
+        Integer roomId=TokenUtil.getRoomId(token);
+        if(roomId!=null && !callMap.get("id").equals(roomId)){
+            return new ResponseApiVO(-2,"请离开别的开桌再申请",null);
+
+        }
         if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(status)){
             return new ResponseApiVO(-2,"已经约玩开桌中",null);
         }else if(GoodFriendPlayRoomStatusEnum.status20.getCode().equals(status)){
@@ -286,6 +292,7 @@ public class GoodFriendPlayService extends CommonService {
         paramMap.put("joinOffLine",JoinOffLineStatusEnum.Status1.getCode());
         paramMap.put("openId",TokenUtil.getUserObject(token));
         this.commonInsertMap("ddw_goodfriendplay_room_member",paramMap);
+        TokenUtil.putRoomId(token,(Integer)callMap.get("id"));
         return new ResponseApiVO(1,"成功",null);
     }
     private ResponseApiVO commonHandleUser(Integer userId,GoodFriendPlayOutUserDTO dto){
@@ -352,35 +359,71 @@ public class GoodFriendPlayService extends CommonService {
         if(dto==null || dto.getCode()==null || dto.getCode()<=0){
             return new ResponseApiVO(-2,"参数异常",null);
         }
-        Map map=this.commonObjectBySingleParam("ddw_goodfriendplay_room","id",dto.getCode());
+
+
+        Integer roomId=TokenUtil.getRoomId(token);
+        Map map=null;
+        Map searchRoom=new HashMap();
+        if(roomId==null){
+            searchRoom.put("id",dto.getCode());
+
+        }else{
+            searchRoom.put("id,in","("+dto.getCode()+","+roomId+")");
+        }
+        Map userMap=new HashMap();
+        userMap.put("userId",TokenUtil.getUserId(token));
+        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room",null,"t1.*,ct0.userId,ct0.disabled memDisabled",null,null,searchRoom,
+                new CommonChildBean("ddw_goodfriendplay_room_member","roomId","id",userMap));
+        csb.setJointName("left");
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
+
+        if(list==null || list.isEmpty()){
+            return new ResponseApiVO(-2,"小房间不存在",null);
+        }
+        Map oldRoom=null;
+        for(Map m:list){
+            if(m.get("id").equals(dto.getCode())){
+                map=m;
+            }else if(m.get("id").equals(roomId)){
+                oldRoom=m;
+            }
+        }
+        if(oldRoom!=null){
+            if(!DisabledEnum.disabled1.getCode().equals(oldRoom.get("disabled")) && !GoodFriendPlayRoomStatusEnum.status22.getCode().equals(oldRoom.get("status")) && !DisabledEnum.disabled1.getCode().equals("memDisabled")){
+                return new ResponseApiVO(-2,"没法加入，你已经参与到别的开桌！",null);
+            }
+        }
+
         if(map==null ||  map.isEmpty()){
             return new ResponseApiVO(-2,"小房间不存在",null);
         }
         Integer status=(Integer) map.get("status");
         Integer disabled=(Integer) map.get("disabled");
+        Integer memDisabled=(Integer) map.get("memDisabled");
         Integer peopleMaxNum=(Integer) map.get("peopleMaxNum");
+        Integer memberUserId=(Integer) map.get("userId");
         if(DisabledEnum.disabled1.getCode().equals(disabled)){
             return new ResponseApiVO(-2,"抱歉，房间已解散",null);
 
         }
-
+        if(DisabledEnum.disabled1.getCode().equals(memDisabled)){
+            return new ResponseApiVO(-2,"抱歉，你被禁止加入开桌",null);
+        }
         if(GoodFriendPlayRoomStatusEnum.status20.getCode().equals(status)){
-            Map paramMap=new HashMap();
-            paramMap.put("userId",TokenUtil.getUserId(token));
-            paramMap.put("roomId",dto.getCode());
 
-            Map chidMap=new HashMap();
-            chidMap.put("disabled",DisabledEnum.disabled0.getCode());
-            CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room_member",null," t1.userId,t1.disabled,count(ct0.id) c ",null,null,paramMap,
-                    new CommonChildBean("ddw_goodfriendplay_room_member","roomId","roomId",chidMap));
-            csb.setJointName("left");
-            List<Map> listDataMap=this.getCommonMapper().selectObjects(csb);
-            Map dataMap=listDataMap.get(0);
-            Long menberNum=(Long) dataMap.get("c");
+
+            Map countSearch=new HashMap();
+            countSearch.put("disabled",DisabledEnum.disabled0.getCode());
+            countSearch.put("roomId",dto.getCode());
+
+            Long menberNum=this.commonCountBySearchCondition("ddw_goodfriendplay_room_member",countSearch);
             if(menberNum>=peopleMaxNum){
                 return new ResponseApiVO(-2,"抱歉，人数已满",null);
             }
-            if(dataMap==null || dataMap.isEmpty() || dataMap.get("userId")==null){
+            if(memberUserId==null){
+                Map paramMap=new HashMap();
+                paramMap.put("userId",TokenUtil.getUserId(token));
+                paramMap.put("roomId",dto.getCode());
                 paramMap.put("disabled",DisabledEnum.disabled0.getCode());
                 paramMap.put("createTime",new Date());
                 paramMap.put("updateTime",new Date());
@@ -388,12 +431,10 @@ public class GoodFriendPlayService extends CommonService {
                 paramMap.put("joinOffLine",JoinOffLineStatusEnum.Status1.getCode());
                 paramMap.put("openId",TokenUtil.getUserObject(token));
                 this.commonInsertMap("ddw_goodfriendplay_room_member",paramMap);
+                TokenUtil.putRoomId(token,dto.getCode());
                 return new ResponseApiVO(1,"成功",null);
             }else{
-                disabled=(Integer) dataMap.get("disabled");
-                if(DisabledEnum.disabled1.getCode().equals(disabled)){
-                    return new ResponseApiVO(-2,"抱歉，你被禁止加入开桌",null);
-                }
+
                 return new ResponseApiVO(-2,"你已经加入开桌了，无需再加入",null);
 
             }
@@ -461,6 +502,7 @@ public class GoodFriendPlayService extends CommonService {
         if(res.getReCode()!=1){
             return new ResponseApiVO(-2,"离开房间失败",null);
         }
+        TokenUtil.putRoomId(token,dto.getCode());
         return new ResponseApiVO(1,"成功",null);
 
     }
@@ -492,5 +534,38 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(2,"成功",new ArrayList<>());
         }
         return new ResponseApiVO(1,"成功",new ListVO<>(list));
+    }
+    public ResponseVO isOkCreateRoom(String token ){
+        if(TokenUtil.getRoomId(token)!=null){
+            return new ResponseVO(-2,"抱歉，请离开别的开桌再创建",null);
+        }
+        Integer userId=TokenUtil.getUserId(token);
+
+        Map map=new HashMap();
+        map.put("userId",userId);
+        Map chid=new HashMap();
+        chid.put("disabled",DisabledEnum.disabled0.getCode());
+        chid.put("status,<=",GoodFriendPlayRoomStatusEnum.status20.getCode());
+        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room_member",null,"ct0.disabled memDisabled,t1.id,t1.roomOwner",null,null,map,
+                new CommonChildBean("ddw_goodfriendplay_room","id","roomId",chid));
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
+        if(list!=null && !list.isEmpty()){
+            for(Map m:list){
+                if(DisabledEnum.disabled0.getCode().equals(m.get("memDisabled"))){
+                    if(userId.equals(m.get("roomOwner"))){
+                        return new ResponseVO(-3,"抱歉，不能创建多个房间",null);
+                    }else{
+                        return new ResponseVO(-2,"抱歉，请离开别的开桌再创建",null);
+
+                    }
+
+                }
+            }
+
+        }
+        return new ResponseVO(1,"成功",null);
+
+
+
     }
 }

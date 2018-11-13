@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
+import jdk.nashorn.internal.objects.annotations.Property;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -25,11 +29,9 @@ public class GoodFriendPlayCreateRoomDTO<T> {
 
     @ApiModelProperty(name = "peopleMaxNum", value = "人数上限", example = "人数上限")
     private Integer peopleMaxNum;
-    @ApiModelProperty(name = "endTime", value = "结束时间", example = "结束时间")
-    @JsonProperty("endTime")
+    @ApiModelProperty(name = "chatRoomEndTime", value = "结束时间", example = "结束时间")
     private String chatRoomEndTime;
     @ApiModelProperty(name = "describe", value = "描述，500字上限", example = "描述，500字上限")
-    @JsonProperty("describe")
     private String des;
 
     public String getDes() {

@@ -171,6 +171,18 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
+    public static void putRoomId(String base64Token,Integer roomId){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            if(roomId==null){
+                map.remove("roomId");
+            }else{
+                map.put("roomId",roomId);
+            }
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
     public static Integer getUseGrade(String base64Token){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){
@@ -231,6 +243,14 @@ public class TokenUtil {
         if(obj!=null){
             Map map=(Map)obj;
             return (Integer) map.get("userId");
+        }
+        return null;
+    }
+    public static Integer getRoomId(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (Integer) map.get("roomId");
         }
         return null;
     }
