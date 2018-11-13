@@ -17,6 +17,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -480,7 +481,26 @@ public class Tools {
 		}
 		return null;
 	}
+	public static String getSurplusTimeStr(Date currentDate,Date startTime){
 
+		long l=currentDate.getTime()-startTime.getTime();
+		BigDecimal v= BigDecimal.valueOf(l).divide(BigDecimal.valueOf(1000)).divide(BigDecimal.valueOf(60),2,BigDecimal.ROUND_DOWN);
+		long part=(long)v.doubleValue();
+		BigDecimal point=v.subtract(BigDecimal.valueOf(part)).multiply(BigDecimal.valueOf(60));
+		StringBuilder builder=new StringBuilder();
+		if(part>60){
+			BigDecimal hv= BigDecimal.valueOf(part).divide(BigDecimal.valueOf(60),2,BigDecimal.ROUND_DOWN);
+			long h=(long)hv.doubleValue();
+			builder.append(h).append("小时");
+			builder.append(hv.subtract(BigDecimal.valueOf(h)).multiply(BigDecimal.valueOf(60)).intValue()).append("分").append(point.intValue()).append("秒");
+
+		}else{
+			builder.append(part).append("分").append(point.intValue()).append("秒");
+
+		}
+		return builder.toString();
+
+	}
 
     public static void main(String[] args) {
 		Map map=xmlCastMap("<xml><appid><![CDATA[wx0c0f25470c893a03]]></appid>\n" +

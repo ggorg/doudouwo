@@ -26,7 +26,8 @@ public class GoodFriendPlayCreateRoomDTO<T> {
     @ApiModelProperty(name = "peopleMaxNum", value = "人数上限", example = "人数上限")
     private Integer peopleMaxNum;
     @ApiModelProperty(name = "endTime", value = "结束时间", example = "结束时间")
-    private String endTime;
+    @JsonProperty("endTime")
+    private String chatRoomEndTime;
     @ApiModelProperty(name = "describe", value = "描述，500字上限", example = "描述，500字上限")
     @JsonProperty("describe")
     private String des;
@@ -79,12 +80,12 @@ public class GoodFriendPlayCreateRoomDTO<T> {
         this.peopleMaxNum = peopleMaxNum;
     }
 
-    public String getEndTime() {
-        return endTime;
+    public String getChatRoomEndTime() {
+        return chatRoomEndTime;
     }
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+    public void setChatRoomEndTime(String chatRoomEndTime) {
+        this.chatRoomEndTime = chatRoomEndTime;
     }
 }
 

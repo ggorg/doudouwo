@@ -2,6 +2,7 @@ package com.ddw.services;
 
 import com.ddw.beans.*;
 import com.ddw.beans.vo.GoodFriendPlayChatCenterVO;
+import com.ddw.beans.vo.GoodFriendPlayRoomListVO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.dao.GoodFriendPlayMapper;
 import com.ddw.enums.*;
@@ -11,12 +12,10 @@ import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
+import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.services.FileService;
-import com.gen.common.util.BeanToMapUtil;
-import com.gen.common.util.CacheUtil;
-import com.gen.common.util.Page;
-import com.gen.common.util.UploadFileMoveUtil;
+import com.gen.common.util.*;
 import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.io.FilenameUtils;
@@ -24,6 +23,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -105,7 +105,6 @@ public class GoodFriendPlayService extends CommonService {
         }
         Map dataMap=list.get(0);
         Integer roomId=(Integer) dataMap.get("code");
-        this.commonObjectsBySingleParam("ddw_goodfriendplay_room_member","roomId",roomId);
         Map searchMap=new HashMap();
         searchMap.put("roomId",roomId);
         searchMap.put("joinOffLine", JoinOffLineStatusEnum.Status1.getCode());
@@ -136,8 +135,21 @@ public class GoodFriendPlayService extends CommonService {
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
 
         List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(null,DisabledEnum.disabled0.getCode(),null,null,TokenUtil.getUserId(token),page.getStartRow(),page.getEndRow());
+
         if(offlist==null || offlist.isEmpty()){
             return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
+        }else{
+            offlist.forEach(a->{
+                if(a.getChatRoomEndTime()!=null){
+                    a.setChatRoomUseTime(Tools.getSurplusTimeStr(a.getChatRoomEndTime(),a.getCreateDate()));
+                }
+                a.setCreateTime(DateFormatUtils.format(a.getCreateDate(),"yyyy-MM-dd HH:mm"));
+                if(a.getStartTime()!=null){
+                    a.setPlayUseTime(Tools.getSurplusTimeStr(a.getEndDate(),a.getCreateDate()));
+                }else{
+                    a.setPlayUseTime("未开始");
+                }
+            });
         }
         return new ResponseApiVO(1,"成功",new ListVO<>(offlist));
     }
@@ -168,8 +180,11 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"请选择桌号",null);
 
         }
-        if(StringUtils.isBlank(dto.getEndTime())){
+        if(StringUtils.isBlank(dto.getChatRoomEndTime())){
             return new ResponseApiVO(-2,"请填写房间结束时间",null);
+
+        }else if(new Date().before(DateUtils.parseDate(dto.getChatRoomEndTime(),"yyyy-MM-dd HH:mm"))){
+            return new ResponseApiVO(-2,"结束时间不能小于当前时间",null);
 
         }
         Map tableMap=getTableById(token,dto.getTableCode());
@@ -408,9 +423,14 @@ public class GoodFriendPlayService extends CommonService {
         Map update=new HashMap();
         update.put("disabled",DisabledEnum.disabled1.getCode());
         update.put("updateTime",new Date());
+        update.put("chatRoomEndTime",new Date());
         ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",update,"id",dto.getCode());
         if(res.getReCode()!=1){
             return new ResponseApiVO(-2,"解散失败",null);
+        }
+        boolean flag=IMApiUtil.destoryGroup(map.get("groupId").toString());
+        if(!flag){
+            throw new GenException("解散群失败");
         }
         return new ResponseApiVO(1,"成功",null);
 

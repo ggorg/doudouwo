@@ -2,6 +2,7 @@ package com.ddw.controller;
 
 import com.ddw.beans.*;
 import com.ddw.beans.vo.GoodFriendPlayChatCenterVO;
+import com.ddw.beans.vo.GoodFriendPlayRoomListVO;
 import com.ddw.services.GoodFriendPlayService;
 import com.ddw.token.Token;
 import io.swagger.annotations.Api;

@@ -175,7 +175,7 @@ public class StoreService extends CommonService{
             vo=this.commonUpdateBySingleSearchParam("ddw_store",updatePoMap,"id",storeDTO.getId());
 
         }else{
-            storePO.setDsStatus(0);
+            storePO.setDsStatus(DisabledEnum.disabled0.getCode());
             storePO.setCreateTime(new Date());
             vo= this.commonInsert("ddw_store",storePO);
         }

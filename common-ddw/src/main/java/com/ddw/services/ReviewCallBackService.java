@@ -61,6 +61,7 @@ public class ReviewCallBackService extends CommonService {
             Map roomUpdate=new HashMap();
             roomUpdate.put("status",GoodFriendPlayRoomStatusEnum.status1.getCode());
             roomUpdate.put("updateTime",new Date());
+            roomUpdate.put("startTime",new Date());
             this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",roomUpdate,"id",roomId);
             Map ts=new HashMap();
             ts.put("id",map.get("id"));

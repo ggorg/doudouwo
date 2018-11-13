@@ -14,6 +14,7 @@ import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
+import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -335,26 +336,7 @@ public class ReviewGoddessService extends CommonService {
         return new ResponseApiVO(1,"成功",vo);
 
     }
-    private String getSurplusTimeStr(Date currentDate,Date startTime){
 
-        long l=currentDate.getTime()-startTime.getTime();
-        BigDecimal v= BigDecimal.valueOf(l).divide(BigDecimal.valueOf(1000)).divide(BigDecimal.valueOf(60),2,BigDecimal.ROUND_DOWN);
-        long part=(long)v.doubleValue();
-        BigDecimal point=v.subtract(BigDecimal.valueOf(part)).multiply(BigDecimal.valueOf(60));
-        StringBuilder builder=new StringBuilder();
-        if(part>60){
-            BigDecimal hv= BigDecimal.valueOf(part).divide(BigDecimal.valueOf(60),2,BigDecimal.ROUND_DOWN);
-            long h=(long)hv.doubleValue();
-            builder.append(h).append("小时");
-            builder.append(hv.subtract(BigDecimal.valueOf(h)).multiply(BigDecimal.valueOf(60)).intValue()).append("分").append(point.intValue()).append("秒");
-
-        }else{
-            builder.append(part).append("分").append(point.intValue()).append("秒");
-
-        }
-        return builder.toString();
-
-    }
     public ResponseApiVO getDynamics(String token,String dynRoleType,DynamicsDTO pageNoDTO)throws Exception{
 
         if(pageNoDTO.getCode()==null || pageNoDTO.getCode()<1){
@@ -371,11 +353,11 @@ public class ReviewGoddessService extends CommonService {
                 a.remove("roleType");
                 a.remove("userId");
                 if(!a.containsKey("endTime") || a.get("endTime")==null ){
-                    a.put("useTime",getSurplusTimeStr(currentDate,(Date)a.get("createTime")));
+                    a.put("useTime", Tools.getSurplusTimeStr(currentDate,(Date)a.get("createTime")));
                 }else if(currentDate.before((Date)a.get("endTime"))){
-                    a.put("useTime",getSurplusTimeStr(currentDate,(Date)a.get("createTime")));
+                    a.put("useTime",Tools.getSurplusTimeStr(currentDate,(Date)a.get("createTime")));
                 }else{
-                    a.put("useTime",getSurplusTimeStr((Date)a.get("endTime"),(Date)a.get("createTime")));
+                    a.put("useTime",Tools.getSurplusTimeStr((Date)a.get("endTime"),(Date)a.get("createTime")));
                 }
                 a.put("createTime",DateFormatUtils.format((Date)a.get("createTime"),"yyyy-MM-dd HH:mm"));
                 a.remove("busId");
@@ -489,7 +471,7 @@ public class ReviewGoddessService extends CommonService {
     }
 
     public static void main(String[] args) throws Exception{
-        System.out.println(        new ReviewGoddessService().getSurplusTimeStr(new Date(), DateUtils.parseDate("2018-09-12 14:1:1","yyyy-MM-dd HH:mm:ss")));
+        System.out.println(        Tools.getSurplusTimeStr(new Date(), DateUtils.parseDate("2018-09-12 14:1:1","yyyy-MM-dd HH:mm:ss")));
     }
 
 }

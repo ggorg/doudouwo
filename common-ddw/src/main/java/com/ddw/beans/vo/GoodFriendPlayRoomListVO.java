@@ -1,15 +1,16 @@
-package com.ddw.beans;
+package com.ddw.beans.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Date;
 
 @ApiModel
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GoodFriendPlayRoomListVO  implements Serializable {
+public class GoodFriendPlayRoomListVO implements Serializable {
 
 
     private static final long serialVersionUID = -4540734804255986566L;
@@ -34,6 +35,84 @@ public class GoodFriendPlayRoomListVO  implements Serializable {
     private Integer status;
     @ApiModelProperty(name = "type", value = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100", example = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100")
     private Integer type;
+
+    @ApiModelProperty(name = "createTime", value = "创建时间", example = "创建时间")
+    private String createTime;
+
+    @ApiModelProperty(name = "playUseTime", value = "约玩开桌用时", example = "约玩开桌用时")
+    private String playUseTime;
+
+    @ApiModelProperty(name = "chatRoomUseTime", value = "聊天房间用时", example = "聊天房间用时")
+    private String chatRoomUseTime;
+
+
+
+    @JsonIgnore
+    private Date createDate;
+    @JsonIgnore
+    private Date endDate;
+    @JsonIgnore
+    private Date chatRoomEndTime;
+    @JsonIgnore
+    private Date startTime;
+
+    public String getPlayUseTime() {
+        return playUseTime;
+    }
+
+    public void setPlayUseTime(String playUseTime) {
+        this.playUseTime = playUseTime;
+    }
+
+    public String getChatRoomUseTime() {
+        return chatRoomUseTime;
+    }
+
+    public void setChatRoomUseTime(String chatRoomUseTime) {
+        this.chatRoomUseTime = chatRoomUseTime;
+    }
+
+    public Date getChatRoomEndTime() {
+        return chatRoomEndTime;
+    }
+
+    public void setChatRoomEndTime(Date chatRoomEndTime) {
+        this.chatRoomEndTime = chatRoomEndTime;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+
 
     public Integer getType() {
         return type;

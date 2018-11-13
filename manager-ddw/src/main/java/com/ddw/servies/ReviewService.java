@@ -104,7 +104,7 @@ public class ReviewService extends CommonService {
         if(!map.get("storeId").equals(storeId)){
             return new ResponseVO(-2,"权限不足",null);
         }
-
+        updateMap.put("endTime",new Date());
         this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",updateMap,"id",id);
         Map updateTable=new HashMap();
         updateTable.put("status",TableStatusEnum.status0.getCode());

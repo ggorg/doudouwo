@@ -5,7 +5,7 @@
 <mapper namespace="com.ddw.dao.GoodFriendPlayMapper">
 
 
-    <select id="getRoomList" resultType="com.ddw.beans.GoodFriendPlayRoomListVO">
+    <select id="getRoomList" resultType="com.ddw.beans.vo.GoodFriendPlayRoomListVO">
         SELECT
         t1.id CODE,
         t1.roomImgIcon,
@@ -14,6 +14,10 @@
         t1.STATUS,
         t1.peopleMaxNum,
         t1.type,
+        t1.createTime createDate,
+        t1.startTime,
+        (case  when t1.endTime is null then now() else t1.endTime end) as endDate,
+        (case  when t1.chatRoomEndTime is null then now() else t1.chatRoomEndTime end) as chatRoomEndTime,
         count( ct0.id ) peopleNum
         FROM
         ddw_goodfriendplay_room t1
