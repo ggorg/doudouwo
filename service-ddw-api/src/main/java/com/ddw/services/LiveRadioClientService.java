@@ -68,7 +68,7 @@ public class LiveRadioClientService  extends CommonService{
 
             PropertyUtils.copyProperties(liveRadioPushVO,liveRadioPO);
             TokenUtil.putStreamId(token,liveRadioPO.getStreamid());
-
+            liveRadioPushVO.setBackImgUrl(this.basePhotoService.getPhotograph(userid));
             return new ResponseApiVO(1,"成功",liveRadioPushVO);
         }else{
             return new ResponseApiVO(-2004,"请向管理员申请开通直播",null);

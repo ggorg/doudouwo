@@ -80,7 +80,7 @@ public class LiveRadioController {
             @ApiResponse(code= -2001,message="请先申请当女神"),
             @ApiResponse(code= -2004,message="请向管理员申请开通直播")
     })
-    public ResponseApiVO toLiveRadio(@PathVariable String token){
+    public ResponseApiVO<LiveRadioPushVO> toLiveRadio(@PathVariable String token){
         try {
             return this.liveRadioClientService.toLiveRadio(token);
         }catch (Exception e){

@@ -18,7 +18,17 @@ public class LiveRadioPushVO {
     @ApiModelProperty(name="groupId",value="群ID",example="")
     private String groupId;
 
+    @ApiModelProperty(name="backImgUrl",value="背景图片",example="背景图片")
+    private String backImgUrl;
 
+
+    public String getBackImgUrl() {
+        return backImgUrl;
+    }
+
+    public void setBackImgUrl(String backImgUrl) {
+        this.backImgUrl = backImgUrl;
+    }
 
     public String getPushUrl() {
         return pushUrl;
