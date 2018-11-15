@@ -51,4 +51,30 @@
             limit #{startNum },#{endNum}
         </if>
     </select>
+
+    <select id="selecrHistoryFriend" resultType="java.util.HashMap" >
+        SELECT DISTINCT
+            ct0.openId,
+            ct0.nickName,
+            ct0.headImgUrl
+        FROM
+            ddw_goodfriendplay_room_member t
+            INNER JOIN ddw_userinfo ct0 ON t.userId = ct0.id
+            INNER JOIN (
+            SELECT
+            t1.roomId
+            FROM
+            ddw_goodfriendplay_room_member t1
+            WHERE
+            t1.userId = #{userId}
+            ) ct2 on ct2.roomId=t.roomId
+        <if test="null!=roomId">
+            and ct2.roomId !=#{roomId}
+        </if>
+        ORDER BY
+        t.createTime Desc
+        <if test="null!=startNum and null!=endNum" >
+            limit #{startNum },#{endNum}
+        </if>
+    </select>
 </mapper>

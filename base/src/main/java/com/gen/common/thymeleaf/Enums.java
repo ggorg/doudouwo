@@ -61,7 +61,7 @@ public final class Enums {
 		Dictionary[] dictionaries = DictionaryUtils.getDictionaries(className);
 		builder.append("<option value=''>不限</option>");
 		for (Dictionary dictionary : dictionaries) {
-			builder.append("<option value='").append(dictionary.getCode()).append("'").append(dictionary.getCode()==code?"selected='selected'":"").append(" >");
+			builder.append("<option value='").append(dictionary.getCode()).append("'").append(dictionary.getCode()==code || dictionary.getCode().equals(code)?"selected='selected'":"").append(" >");
 			builder.append(dictionary.getName()).append("</option>");
 		}
 		return builder.toString();

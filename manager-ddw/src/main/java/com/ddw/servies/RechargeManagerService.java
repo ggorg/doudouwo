@@ -3,6 +3,8 @@ package com.ddw.servies;
 
 import com.ddw.beans.RechargeDTO;
 import com.ddw.enums.DisabledEnum;
+import com.ddw.enums.DisountEnum;
+import com.ddw.enums.RechargeValueEnum;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.MyEncryptUtil;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,16 +73,20 @@ public class RechargeManagerService extends CouponService{
             return new ResponseVO(-2,"请填写充值卷名称",null);
 
         }
-        if(dto.getDrCost()==null ||dto.getDrCost()<0){
-            return new ResponseVO(-2,"请填写有效的价格",null);
+        if(dto.getDrCost()==null ||dto.getDrCost()<0 || StringUtils.isBlank(RechargeValueEnum.getName(dto.getDrCost()))){
+            return new ResponseVO(-2,"请选择有效的价格",null);
 
         }
-        if(dto.getDrDiscount()!=null && dto.getDrDiscount()<0){
-            return new ResponseVO(-2,"请填写有效的活动价格",null);
+        if(dto.getDrDiscountCode()!=null && StringUtils.isBlank(DisountEnum.getName(dto.getDrDiscountCode()))){
+            return new ResponseVO(-2,"请选择有效的折扣",null);
 
         }
         Map map= BeanToMapUtil.beanToMap(dto,true);
         map.put("updateTime",new Date());
+        if(StringUtils.isNotBlank(DisountEnum.getName(dto.getDrDiscountCode()))){
+            map.put("drDiscount", BigDecimal.valueOf(dto.getDrCost()).multiply(BigDecimal.valueOf(dto.getDrDiscountCode()).divide(BigDecimal.valueOf(100))).intValue());
+        }
+
         if(dto.getId()==null){
             map.put("createTime",new Date());
             map.put("drDisabled",DisabledEnum.disabled0.getCode());

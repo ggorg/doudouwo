@@ -24,13 +24,18 @@
   <div class="layui-form-item">
     <label class="layui-form-label">价格(分)</label>
     <div class="layui-input-block">
-      <input type="number" name="drCost" required="required" title="价格"  id="drCost"  lay-verify="required|numMax10" th:value="${ds!=null? ds['drCost']:''}" placeholder="请输入价格" autocomplete="off" class="layui-input" />
+      <select lay-filter="drCost" name="drCost" required="required" placeholder="请选择价格" >
+        <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.DoubiValueEnum',#maps.isEmpty(ds)?'':ds['drCost'])}"></th:block>
+      </select>
     </div>
   </div>
   <div class="layui-form-item">
-    <label class="layui-form-label">活动价格(分)</label>
+    <label class="layui-form-label">折扣</label>
     <div class="layui-input-block">
-      <input type="number" name="drDiscount" title="活动价格"   th:value="${ds!=null? ds['drDiscount']:''}" placeholder="请输入活动价格" autocomplete="off" class="layui-input" />
+      <select name="drDiscountCode" >
+
+        <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.DisountEnum',#maps.isEmpty(ds)?'':ds['drDiscountCode'])}"></th:block>
+      </select>
     </div>
   </div>
   <div class="layui-form-item">
@@ -113,18 +118,21 @@
             return  commonSubmit("do-edit",$(".layui-form"));
 
         })
-        $("#drCost").blur(function(){
-            handleDb($(this));
+        form.on('select(drCost)', function(data){
+            handleDb(data.value);
+        });
+        $("#drCost").select(function(){
+
         })
 
-        function handleDb(obj){
-            if(obj.val()!="" && obj.val()<10){
-                layer.msg("价格不能小于10分");
+        function handleDb(val){
+           if(val!="") {
 
-                obj.focus();
-            }else if(obj.val()!="" ){
-                $("#db").text(obj.val()/10);
-            }
+               $("#db").text(parseInt(val/10));
+           }
+
+
+
         }
     }
 </script>

@@ -60,6 +60,18 @@ public class GoodFriendPlayController {
         }
     }
     @Token
+    @ApiOperation(value = "历史桌友")
+    @PostMapping("/room/historyFriend/list/{token}")
+    public ResponseApiVO<ListVO<GoodFriendPlayHistoryVO>> getHistoryFriend(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayHistoryDTO args){
+        try {
+
+            return this.goodFriendPlayService.getHistoryFriend(token,args);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->getHistoryFriend",e);
+            return new ResponseApiVO(-1,"历史桌友",null);
+        }
+    }
+    @Token
     @ApiOperation(value = "进入小房间")
     @PostMapping("/room/gointo/{token}")
     public ResponseApiVO<GoodFriendPlayRoomVO> toRoom(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){

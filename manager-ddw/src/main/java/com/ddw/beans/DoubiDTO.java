@@ -4,9 +4,9 @@ public class DoubiDTO {
     private Integer id;
     private String drName;
     private Integer drCost;
-    private Integer drDiscount;
     private Integer drSort;
     private Integer drDoubiNum;
+    private Integer drDiscountCode;
     private String drDesc;
 
     public String getDrDesc() {
@@ -49,13 +49,6 @@ public class DoubiDTO {
         this.drCost = drCost;
     }
 
-    public Integer getDrDiscount() {
-        return drDiscount;
-    }
-
-    public void setDrDiscount(Integer drDiscount) {
-        this.drDiscount = drDiscount;
-    }
 
     public Integer getDrSort() {
         return drSort;
@@ -63,5 +56,13 @@ public class DoubiDTO {
 
     public void setDrSort(Integer drSort) {
         this.drSort = drSort;
+    }
+
+    public Integer getDrDiscountCode() {
+        return drDiscountCode;
+    }
+
+    public void setDrDiscountCode(Integer drDiscountCode) {
+        this.drDiscountCode = drDiscountCode;
     }
 }

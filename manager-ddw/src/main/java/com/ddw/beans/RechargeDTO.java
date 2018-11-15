@@ -4,7 +4,7 @@ public class RechargeDTO {
     private Integer id;
     private String drName;
     private Integer drCost;
-    private Integer drDiscount;
+    private Integer drDiscountCode;
     private Integer drSort;
     private String drDesc;
 
@@ -40,13 +40,6 @@ public class RechargeDTO {
         this.drCost = drCost;
     }
 
-    public Integer getDrDiscount() {
-        return drDiscount;
-    }
-
-    public void setDrDiscount(Integer drDiscount) {
-        this.drDiscount = drDiscount;
-    }
 
     public Integer getDrSort() {
         return drSort;
@@ -54,5 +47,13 @@ public class RechargeDTO {
 
     public void setDrSort(Integer drSort) {
         this.drSort = drSort;
+    }
+
+    public Integer getDrDiscountCode() {
+        return drDiscountCode;
+    }
+
+    public void setDrDiscountCode(Integer drDiscountCode) {
+        this.drDiscountCode = drDiscountCode;
     }
 }
