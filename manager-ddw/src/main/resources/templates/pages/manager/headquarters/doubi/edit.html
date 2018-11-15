@@ -24,7 +24,7 @@
   <div class="layui-form-item">
     <label class="layui-form-label">价格(分)</label>
     <div class="layui-input-block">
-      <select lay-filter="drCost" name="drCost" required="required" placeholder="请选择价格" >
+      <select lay-filter="drCost" name="drCost" required="required" lay-verify="required" placeholder="请选择价格" >
         <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.DoubiValueEnum',#maps.isEmpty(ds)?'':ds['drCost'])}"></th:block>
       </select>
     </div>
