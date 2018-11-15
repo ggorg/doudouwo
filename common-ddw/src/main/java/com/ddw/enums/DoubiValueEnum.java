@@ -5,7 +5,7 @@ import com.gen.common.dict.Dictionary;
 /**
  *
  */
-public enum DoubiValueEnum  {
+public enum DoubiValueEnum implements Dictionary {
     value000("0.1元",100),
     value00("1元",1000),
     value0("5元",500),
