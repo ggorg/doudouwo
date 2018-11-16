@@ -54,6 +54,16 @@ public class LiveRadioListVO  implements Serializable {
 
     @JsonIgnore
     private String groupId;
+    @JsonIgnore
+    private String langlat;
+
+    public String getLanglat() {
+        return langlat;
+    }
+
+    public void setLanglat(String langlat) {
+        this.langlat = langlat;
+    }
 
     public String getGroupId() {
         return groupId;

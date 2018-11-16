@@ -103,8 +103,7 @@ public class LiveRadioClientService  extends CommonService{
 
         }
         Map store=(Map)storeObj.get(0);
-        double longitude=Double.parseDouble((String)store.get("dsLongitude"));
-        double latitude=Double.parseDouble((String)store.get("dsLatitude"));
+
         String city=(String)store.get("dsCity");
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
         Integer userId=TokenUtil.getUserId(token);
@@ -129,9 +128,11 @@ public class LiveRadioClientService  extends CommonService{
             }
             o.setCity(city);
            // o.setAge("20岁");
-            o.setDistance(Distance.getDistance(longitude,latitude,Double.parseDouble(lls[0]),Double.parseDouble(lls[1]))+"km");
             o.setBackImgUrl(basePhotoService.getPhotograph(o.getUserId()));
-
+        }
+        ResponseApiVO rs=Distance.mathGoddessDistance(dto.getLanglat(),lists);
+        if(rs.getReCode()!=1){
+            return rs;
         }
         ListVO list=new ListVO(lists);
         return new ResponseApiVO(1,"成功",list);

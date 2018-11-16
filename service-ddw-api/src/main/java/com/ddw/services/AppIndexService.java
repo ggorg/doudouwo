@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.beans.AppIndexDTO;
 import com.ddw.beans.AppIndexVO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.vo.AppIndexBannerVO;
@@ -9,15 +10,18 @@ import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.dao.GoddessMapper;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.Distance;
 import com.ddw.util.IMApiUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,7 +51,7 @@ public class AppIndexService {
     private GoodFriendPlayService goodFriendPlayService;
 
 
-    public ResponseApiVO toIndex(String token)throws Exception{
+    public ResponseApiVO toIndex(String token, AppIndexDTO dto)throws Exception{
         List<Map> obj=(List)CacheUtil.get("stores","store");
         if(obj==null || obj.isEmpty()){
             return new ResponseApiVO(-2,"请先加载门店列表",null);
@@ -99,6 +103,11 @@ public class AppIndexService {
             }else{
                 appIndexVO.setGoddessList(newList);
             }
+            ResponseApiVO rs=Distance.mathGoddessDistance(dto.getLanglat(),appIndexVO.getGoddessList());
+            if(rs.getReCode()!=1){
+                return rs;
+            }
+
         }else{
             appIndexVO.setGoddessList(new ArrayList<>());
         }

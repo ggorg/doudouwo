@@ -1,6 +1,12 @@
 package com.ddw.util;
 
+import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.vo.LiveRadioListVO;
+import com.gen.common.vo.ResponseVO;
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 根据两个位置的经纬度，来计算两地的距离（单位为KM）
@@ -31,5 +37,31 @@ public class Distance {
                 * Math.asin(Math.sqrt(sa2 * sa2 + Math.cos(lat1)
                 * Math.cos(lat2) * sb2 * sb2));
         return BigDecimal.valueOf(d).setScale(1,BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
+    public static ResponseApiVO mathGoddessDistance(String paramLanglat,List<LiveRadioListVO> newList){
+        if(StringUtils.isNotBlank(paramLanglat)){
+            String[] lls= paramLanglat.split(",");
+            if(lls.length!=2 || !paramLanglat.matches("^[0-9]+[.][^,]+,[0-9]+[.][0-9]+$")){
+                return new ResponseApiVO(-2,"坐标格式有误",null);
+
+            }
+            String[] strs=paramLanglat.split(",");
+            String[] dataStrs=null;
+
+            for(LiveRadioListVO v:newList){
+                if(StringUtils.isNotBlank(v.getLanglat())){
+                    dataStrs=v.getLanglat().split(",");
+                    if(dataStrs.length==2 && paramLanglat.matches("^[0-9]+[.][^,]+,[0-9]+[.][0-9]+$")){
+                        v.setDistance(Distance.getDistance(Double.parseDouble(strs[0]),Double.parseDouble(strs[1]),Double.parseDouble(dataStrs[0]),Double.parseDouble(dataStrs[1]))+"km");
+                    }else{
+                        v.setDistance("");
+                    }
+
+                }
+
+            }
+
+        }
+        return new ResponseApiVO(1,"成功",null);
     }
 }

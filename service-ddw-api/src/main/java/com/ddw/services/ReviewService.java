@@ -4,6 +4,7 @@ import com.ddw.beans.*;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.BusinessCodeUtil;
+import com.ddw.util.LanglatComparator;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.vo.ResponseVO;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,6 +98,17 @@ public class ReviewService extends CommonService {
         if(apiVO.getReCode()!=1){
             return apiVO;
         }
+        if(StringUtils.isNotBlank(dto.getLanglat())){
+            String[] lls= dto.getLanglat().split(",");
+            if(lls.length!=2 || !dto.getLanglat().matches("^[0-9]+[.][^,]+,[0-9]+[.][0-9]+$")){
+                return new ResponseApiVO(-2,"坐标格式有误",null);
+
+            }
+            Map gooddess=new HashMap();
+            gooddess.put("langlat",dto.getLanglat());
+            this.commonUpdateBySingleSearchParam("ddw_goddess",gooddess,"userId",userid);
+        }
+
         ReviewPO reviewPO=new ReviewPO();
         reviewPO.setDrBusinessCode(BusinessCodeUtil.createLiveRadioCode(userid,storeId));
         reviewPO.setDrBelongToStoreId(storeId);
