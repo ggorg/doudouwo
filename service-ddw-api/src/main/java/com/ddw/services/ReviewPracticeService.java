@@ -418,12 +418,19 @@ public class ReviewPracticeService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO cancleOrder(PracticeOrderDTO practiceOrderDTO)throws Exception{
-        //变更代练状态,修改订单状态为3
+    public ResponseVO cancleOrder(Integer userId,PracticeOrderDTO practiceOrderDTO)throws Exception{
+        //变更代练状态,修改订单状态,3用户取消,4代练取消
         PracticeOrderPO practiceOrderPO = this.getOrder(practiceOrderDTO.getId());
+        if(practiceOrderPO.getPayState() != 0){
+            return new ResponseVO(-2,"只有未支付的订单才允许取消",null);
+        }
         this.updatePracticeGame(practiceOrderPO.getPracticeId(),practiceOrderPO.getGameId(),1);
         Map setParams = new HashMap<>();
-        setParams.put("payState",3);
+        if(userId == practiceOrderPO.getUserId()){
+            setParams.put("payState",3);
+        }else{
+            setParams.put("payState",4);
+        }
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",practiceOrderDTO.getId());
         return super.commonUpdateByParams("ddw_practice_order",setParams,searchCondition);

@@ -202,7 +202,7 @@ public class PracticeController {
     public ResponseVO cancleOrder(@PathVariable String token,
                                                           @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeOrderDTO practiceOrderDTO){
         try {
-            return reviewPracticeService.cancleOrder(practiceOrderDTO);
+            return reviewPracticeService.cancleOrder(TokenUtil.getUserId(token),practiceOrderDTO);
         }catch (Exception e){
             logger.error("PracticeController->cancleOrder",e);
             return new ResponseVO(-1,"提交失败",null);

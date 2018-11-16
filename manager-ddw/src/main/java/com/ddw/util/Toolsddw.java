@@ -237,14 +237,14 @@ public class Toolsddw extends Tools {
         }*/
     }
 
-    public static String  createCouponSelect(List<Map> coupons,Integer couponId){
+    public static String  createCouponSelect(List<Map> coupons,String formName,Integer couponId){
         Integer dcType=0;
         Integer dcMoney=0;
         Integer dcMinPrice=0;
         StringBuilder builder=new StringBuilder();
         boolean flag = false;//无优惠券标志,false无数据,true有数据
         builder.append("<td>");
-        builder.append("<select name='couponId' required='required' lay-filter='select'>");
+        builder.append("<select name='"+formName+"' lay-filter='select'>");
         builder.append("<option value=''></option>");
         if(coupons!=null){
             Integer id=null;
