@@ -75,8 +75,47 @@ public class UserInfoService extends CommonService {
             if(!flag){
                 throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
             }
+            //查询老带新绑定关系是否存在,是则根据老带新策略查询赠送优惠券
+            Map map = this.commonObjectBySingleParam("ddw_old_bringing_new","newOpenid",userInfoDTO.getOpenid());
+            if(map != null && map.containsKey("oldOpenid")){
+                String oldOpenid = map.get("oldOpenid").toString();
+                Integer oldId = this.querySimpleByOpenid(oldOpenid).getId();
+                List<Map> list = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_new",new HashMap<>());
+                if(list != null && list.size()>0){
+                    for (Map m:list){
+                        if(m.containsKey("couponId")){
+                            //新用户赠送优惠券
+                            this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), (Integer) re.getData(),-1);
+                        }
+                    }
+                    //老用户赠送优惠券
+                    Map m = list.get(0);
+                    if(m != null && m.containsKey("strategyId")){
+                        Map<String,Object> searchCondition = new HashMap<>();
+                        searchCondition.put("strategyId",m.get("strategyId"));
+                        List<Map> Olist = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_old",new HashMap<>());
+                        for (Map om:Olist){
+                            if(om.containsKey("couponId")){
+                                //老用户赠送优惠券
+                                this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), oldId,-1);
+                            }
+                        }
+                    }
+
+                }
+            }
         }
         return re;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO insertCoupon(int couponId, int userId,int storeId)throws Exception{
+        Map setParams = new HashMap<>();
+        setParams.put("couponId",couponId);
+        setParams.put("userId",userId);
+        setParams.put("storeId",storeId);
+        setParams.put("used",0);
+        return super.commonInsertMap("ddw_userinfo_coupon",setParams);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -161,6 +200,10 @@ public class UserInfoService extends CommonService {
 
     public UserInfoPO querySimple(Integer id)throws Exception{
         return this.commonObjectBySingleParam("ddw_userinfo","id",id, UserInfoPO.class);
+    }
+
+    public UserInfoPO querySimpleByOpenid(String openid)throws Exception{
+        return this.commonObjectBySingleParam("ddw_userinfo","openid",openid, UserInfoPO.class);
     }
 
     public UserInfoVO setFlag(UserInfoVO userInfoVO,boolean isAppendOrderNum) throws Exception{

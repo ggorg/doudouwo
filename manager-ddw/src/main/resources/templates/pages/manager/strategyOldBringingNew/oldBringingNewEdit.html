@@ -36,7 +36,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">会员等级</label>
         <div class="layui-input-inline">
-          <select name="levelId" id="levelId" lay-filter="type">
+          <select name="levelId" id="levelId" lay-filter="gradeSelect">
             <option th:each="grade:${gradePage.result}" th:value="${grade?.id}" th:text="${grade?.gradeName}" th:selected="${strategy['levelId'] == grade?.id}"> 会员等级</option>
           </select>
         </div>
@@ -44,7 +44,7 @@
 
 
     <div class="layui-form-item layui-form-text">
-      <label class="layui-form-label">优惠券</label>
+      <label class="layui-form-label">老会员获赠优惠券</label>
       <div class="layui-input-block" >
         <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
           <colgroup>
@@ -66,13 +66,13 @@
 
           <tbody>
           <tr th:if="${strategy!=null and #maps.containsKey(strategy,'child')}" th:each="obj:${strategy['child']}">
-              <th:block th:utext="${#toolsddw.createCouponSelect(couponList,obj['couponId'])}"></th:block>
+              <th:block th:utext="${#toolsddw.createCouponSelect(couponList,'couponId',obj['couponId'])}"></th:block>
             <td>
               <button type="button"   class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
             </td>
           </tr>
           <tr th:if="${strategy==null or #lists.isEmpty(strategy['child'])}">
-            <th:block th:utext="${#toolsddw.createCouponSelect(couponList,0)}"></th:block>
+            <th:block th:utext="${#toolsddw.createCouponSelect(couponList,'couponId',0)}"></th:block>
             <td>
               <button  type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
             </td>
@@ -88,6 +88,52 @@
         </table>
       </div>
     </div>
+
+        <div class="layui-form-item layui-form-text" id="newCoupon" th:hidden="${strategy['levelId'] != 1}">
+            <label class="layui-form-label">新人获赠优惠券</label>
+            <div class="layui-input-block" >
+                <table cellpadding="0" cellspacing="0" border="0" id="table3" class="stdtable stdtablecb">
+                    <colgroup>
+                        <col class="con0" style="width: 25%"  />
+                        <col class="con0" style="width: 15%"  />
+                        <col class="con0" style="width: 25%"  />
+                        <col class="con0" style="width: 25%"  />
+                        <col class="con0" style="width: 15%"  />
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th class="head1">名称</th>
+                        <th class="head1">类型</th>
+                        <th class="head1">优惠幅度（单位:分）</th>
+                        <th class="head1">最低消费（单位:分）</th>
+                        <th class="head1">操作</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr th:if="${strategy!=null and #maps.containsKey(strategy,'child2')}" th:each="obj:${strategy['child2']}">
+                        <th:block th:utext="${#toolsddw.createCouponSelect(couponList,'newCouponId',obj['couponId'])}"></th:block>
+                        <td>
+                            <button type="button"   class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+                        </td>
+                    </tr>
+                    <tr th:if="${strategy==null or #lists.isEmpty(strategy['child2'])}">
+                        <th:block th:utext="${#toolsddw.createCouponSelect(couponList,'newCouponId',0)}"></th:block>
+                        <td>
+                            <button  type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="toDelete(this)">删　除</button>
+                        </td>
+                    </tr>
+                    <tr id="addtr2">
+                        <td colspan="5" align="center">
+                            <i class="layui-icon" onclick="add2()">&#xe654;</i>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
 
       <div class="layui-form-item" style="display: none">
         <div class="layui-input-block">
@@ -108,7 +154,15 @@
            selectObj.parent().next().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcMoney"));
            selectObj.parent().next().next().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcMinPrice"));
 
-       })
+       });
+
+        f.on('select(gradeSelect)', function(data){
+            if(data.value ==1){
+                $("#newCoupon").show();
+            }else{
+                $("#newCoupon").hide();
+            }
+        });
     });
 
     function add(){
@@ -118,9 +172,16 @@
        form1.render("select");
     }
 
+    function add2(){
+        var cloneObj=$("tbody tr").eq(0).clone();
+
+        $("#addtr2").before(cloneObj);
+        form1.render("select");
+    }
+
     function toDelete(obj){
         if($("tbody tr").length>2){
-            $(obj).parent().parent().remove()
+            $(obj).parent().parent().remove();
         }else{
             $("tbody tr input").val("");
             $("tbody tr td").eq(1).text("")

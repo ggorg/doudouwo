@@ -9,6 +9,7 @@ public class StrategyOldBringingNewDTO {
     private int levelId;
     private String describe;
     private Integer[]couponId;
+    private Integer[]newCouponId;
 
     public int getId() {
         return id;
@@ -48,5 +49,13 @@ public class StrategyOldBringingNewDTO {
 
     public void setCouponId(Integer[] couponId) {
         this.couponId = couponId;
+    }
+
+    public Integer[] getNewCouponId() {
+        return newCouponId;
+    }
+
+    public void setNewCouponId(Integer[] newCouponId) {
+        this.newCouponId = newCouponId;
     }
 }
