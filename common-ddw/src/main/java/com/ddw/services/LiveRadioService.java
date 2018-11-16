@@ -193,7 +193,7 @@ public class LiveRadioService extends CommonService{
             return new ResponseVO(-2,"创建直播间失败",null);
         }
         if(!ReviewStatusEnum.ReviewStatus1.getCode().equals(reviewPO.getDrReviewStatus())){
-            return new ResponseVO(-2,"没有审批通过",null);
+            return new ResponseVO(1,"审批不通过",null);
         }
         //直播审核中
         CacheUtil.put("review","liveRadio"+reviewPO.getDrProposer(),1);
