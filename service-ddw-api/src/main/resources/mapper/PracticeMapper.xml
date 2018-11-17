@@ -43,7 +43,7 @@
         from ddw_practice_game t1
         left join ddw_practice_order t2 on t1.userId=t2.practiceId
         <if test="weekList != null and weekList == 1">
-            and YEARWEEK(date_format(t2.createTime,'%Y-%m-%d')) = YEARWEEK(now())
+            and YEARWEEK(date_format(t2.createTime,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
         </if>
         left join ddw_userinfo t3 on t1.userId = t3.id
         left join ddw_practice_grade t4 on t4.id=t3.practiceGradeId
