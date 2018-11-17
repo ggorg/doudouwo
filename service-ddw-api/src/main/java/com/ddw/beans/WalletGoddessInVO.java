@@ -13,6 +13,17 @@ public class WalletGoddessInVO {
     @JsonProperty("goddessIn")
     private Integer goddessIncome;
 
+    @ApiModelProperty(name="withdrawMaxMoney",value="最少提现金额(分)",example="最少提现金额(分)")
+    private Integer withdrawMinMoney;
+
+    public Integer getWithdrawMinMoney() {
+        return withdrawMinMoney;
+    }
+
+    public void setWithdrawMinMoney(Integer withdrawMinMoney) {
+        this.withdrawMinMoney = withdrawMinMoney;
+    }
+
     public Integer getGoddessIncome() {
         return goddessIncome;
     }

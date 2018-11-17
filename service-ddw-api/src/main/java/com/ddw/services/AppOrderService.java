@@ -70,7 +70,7 @@ public class AppOrderService extends CommonService {
                 OrderViewVO ov=handleMap.get(orderId);
                 ov.setName(ov.getName()+" "+m.get("name"));
                 ov.setDesc(ov.getDesc()+" "+m.get("name")+" *"+m.get("num"));
-                ov.setPrice(orderIdMap.get(orderId));
+                //ov.setPrice(orderIdMap.get(orderId));
                 ov.setType(1);
                 ov.setId(-orderId);
             }else{
@@ -86,7 +86,7 @@ public class AppOrderService extends CommonService {
                     orderViewVO.setShipStatusName(ClientShipStatusEnum.getName(orderViewVO.getShipStatus()));
                 }
                 orderViewVO.setOrderTypeName(OrderTypeEnum.getName(orderViewVO.getOrderType()));
-
+                orderViewVO.setPrice(orderIdMap.get(orderId));
                 orderViewVO.setOrderNo(orderViewVO.getOrderNo().substring(16));
                 orderViewVO.setDesc(orderViewVO.getName()+" *"+orderViewVO.getNum());
                 handleMap.put(orderId,orderViewVO);

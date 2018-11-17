@@ -5,6 +5,7 @@ import com.ddw.beans.OrderPO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.dao.OrderSalesMapper;
 import com.ddw.services.PayCenterService;
+import com.ddw.services.UserGradeService;
 import com.ddw.token.TokenUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +22,9 @@ public class PayCenterServiceTest {
 
     @Autowired
     private OrderSalesMapper orderSalesMapper;
+
+    @Autowired
+    private UserGradeService userGradeService;
 
     @Test
     public void executeCouponTest()throws Exception{
@@ -39,7 +43,10 @@ public class PayCenterServiceTest {
     public void executeSales()throws Exception{
         System.out.println(this.orderSalesMapper.sales(1,"6,7","2018-06%"));
     }
-
+    @Test
+    public void testDistcount()throws Exception{
+        this.userGradeService.save(userGradeService.getDiscount(2));
+    }
     public static void main(String[] args) {
         System.out.println((int)(10000*((float)100/100)));
     }

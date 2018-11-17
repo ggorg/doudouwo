@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,9 @@ public class WalletService extends CommonService {
 
     @Autowired
     protected BaseConsumeRankingListService baseConsumeRankingListService;
+
+    @Value("${withdraw.max.cost:30000}")
+    private Integer withdrawMaxCost;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO transferMoney(String token ,WalletTransferMoneyDTO dto)throws Exception{
@@ -332,7 +336,7 @@ public class WalletService extends CommonService {
      */
     public ResponseApiVO getGoddessIn(Integer userid)throws Exception{
         WalletGoddessInVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletGoddessInVO.class);
-
+        balanceVO.setWithdrawMinMoney(withdrawMaxCost);
         return new ResponseApiVO(1,"成功",balanceVO);
     }
 
@@ -345,7 +349,7 @@ public class WalletService extends CommonService {
      */
     public ResponseApiVO getPracticeIn(Integer userid)throws Exception{
         WalletPracticeInVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userid, WalletPracticeInVO.class);
-
+        balanceVO.setWithdrawMinMoney(withdrawMaxCost);
         return new ResponseApiVO(1,"成功",balanceVO);
     }
 

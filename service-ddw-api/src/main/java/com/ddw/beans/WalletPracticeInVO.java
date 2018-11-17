@@ -13,6 +13,17 @@ public class WalletPracticeInVO {
     @JsonProperty("practiceIn")
     private Integer practiceIncome;
 
+    @ApiModelProperty(name="withdrawMaxMoney",value="最少提现金额(分)",example="最少提现金额(分)")
+    private Integer withdrawMinMoney;
+
+    public Integer getWithdrawMinMoney() {
+        return withdrawMinMoney;
+    }
+
+    public void setWithdrawMinMoney(Integer withdrawMinMoney) {
+        this.withdrawMinMoney = withdrawMinMoney;
+    }
+
     public Integer getPracticeIncome() {
         return practiceIncome;
     }
