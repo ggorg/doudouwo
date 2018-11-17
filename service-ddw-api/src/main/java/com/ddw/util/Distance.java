@@ -54,7 +54,7 @@ public class Distance {
                     if(dataStrs.length==2 && paramLanglat.matches("^[0-9]+[.][^,]+,[0-9]+[.][0-9]+$")){
                         v.setDistance(Distance.getDistance(Double.parseDouble(strs[0]),Double.parseDouble(strs[1]),Double.parseDouble(dataStrs[0]),Double.parseDouble(dataStrs[1]))+"km");
                     }else{
-                        v.setDistance("");
+                        v.setDistance("未知");
                     }
 
                 }
