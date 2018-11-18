@@ -7,6 +7,7 @@ import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.LoginAuthApiUtil;
 import com.ddw.util.MsgUtil;
 import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
@@ -39,6 +40,35 @@ public class UserController {
     @Autowired
     private ConsumeRankingListService consumeRankingListService;
 
+    @ApiOperation(value = "微信登录")
+    @PostMapping("/loginWeiXin")
+    public ResponseApiVO<UserInfoVO> loginWeiXin(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)LoginWeiXinDTO dto){
+        try {
+            ResponseApiVO<UserInfoDTO> res=LoginAuthApiUtil.weiXinOauth(dto.getAuthCode());
+            if(res.getReCode()!=1){
+                return save(res.getData());
+            }
+        }catch (Exception e){
+            logger.error("loginWeiXin",e);
+
+        }
+        return new ResponseApiVO<>(-2,"登录失败",null);
+    }
+
+    @ApiOperation(value = "QQ登录")
+    @PostMapping("/loginQQ")
+    public ResponseApiVO<UserInfoVO> loginQQ(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)LoginQQDTO dto){
+        try {
+            ResponseApiVO<UserInfoDTO> res=LoginAuthApiUtil.qqOauth(dto);
+            if(res.getReCode()!=1){
+                return save(res.getData());
+            }
+        }catch (Exception e){
+            logger.error("loginQQ",e);
+
+        }
+        return new ResponseApiVO<>(-2,"登录失败",null);
+    }
     @ApiOperation(value = "会员注册用例")
     // @ApiImplicitParam(name = "args", value = "参数", required = true, dataType = "UserInfoDTO")
     @PostMapping("/save")
