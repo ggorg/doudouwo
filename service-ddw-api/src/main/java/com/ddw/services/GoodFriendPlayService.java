@@ -511,7 +511,7 @@ public class GoodFriendPlayService extends CommonService {
         if(res.getReCode()!=1){
             return new ResponseApiVO(-2,"离开房间失败",null);
         }
-        TokenUtil.putRoomId(token,dto.getCode());
+        TokenUtil.putRoomId(token,null);
         return new ResponseApiVO(1,"成功",null);
 
     }
@@ -556,9 +556,7 @@ public class GoodFriendPlayService extends CommonService {
         return new ResponseApiVO(1,"成功",new ListVO<>(list));
     }
     public ResponseVO isOkCreateRoom(String token ){
-        if(TokenUtil.getRoomId(token)!=null){
-            return new ResponseVO(-2,"抱歉，请离开别的开桌再创建",null);
-        }
+
         Integer userId=TokenUtil.getUserId(token);
 
         Map map=new HashMap();
