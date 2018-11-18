@@ -55,7 +55,7 @@ public class LoginAuthApiUtil {
                 }
             }
         }
-        logger.error("登录失败-》"+str);
+        logger.error("微信登录失败-》"+str);
         return new ResponseApiVO(-2,"登录失败",null);
     }
 
@@ -82,7 +82,7 @@ public class LoginAuthApiUtil {
                 return new ResponseApiVO(1,"成功",userInfoDTO);
             }
         }
-        logger.error("登录失败-》"+str);
+        logger.error("QQ登录失败-》"+str);
         return new ResponseApiVO(-2,"登录失败",null);
     }
     public static String qqSign(Map data)throws Exception{
