@@ -45,7 +45,7 @@ public class UserController {
     public ResponseApiVO<UserInfoVO> loginPublic(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)LoginPublicDTO dto){
         try {
             ResponseApiVO<UserInfoDTO> res=LoginAuthApiUtil.oauth(dto);
-            if(res.getReCode()!=1){
+            if(res.getReCode()==1 || res.getReCode().equals(1)){
                 return save(res.getData());
             }
         }catch (Exception e){
