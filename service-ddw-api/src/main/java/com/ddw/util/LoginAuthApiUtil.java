@@ -1,6 +1,7 @@
 package com.ddw.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ddw.beans.LoginPublicDTO;
 import com.ddw.beans.LoginQQDTO;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.UserInfoDTO;
@@ -18,44 +19,60 @@ import java.util.TreeMap;
 public class LoginAuthApiUtil {
     private static final Logger logger = Logger.getLogger(LoginAuthApiUtil.class);
 
-    public static ResponseApiVO weiXinOauth(String code){
-        Map data=new HashMap<>();
-        data.put("appid",PayApiConstant.WEI_XIN_APP_APP_ID);
-        data.put("secret",PayApiConstant.WEI_XIN_APP_SECRET);
-        data.put("code",code);
-        data.put("grant_type","authorization_code");
-        String str=HttpUtil.doGet("https://api.weixin.qq.com/sns/oauth2/access_token",data);
-        if(StringUtils.isNotBlank(str)){
-            JSONObject json=JSONObject.parseObject(str);
-            String access_token=null;
-            if(json.containsKey("access_token") && StringUtils.isNotBlank((access_token=json.getString("access_token")))){
-                String openId=json.getString("openid");
-                //https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID
-                data.clear();
-                data.put("access_token",access_token);
-                data.put("openid",openId);
-                str=HttpUtil.doGet("https://api.weixin.qq.com/sns/userinfo",data);
-                if(StringUtils.isNotBlank(str)){
-                    json=JSONObject.parseObject(str);
-                    if(json.containsKey("unionid") && StringUtils.isNotBlank(json.getString("unionid"))){
 
-                        UserInfoDTO userInfoDTO=new UserInfoDTO();
-                        userInfoDTO.setOpenid(json.getString("unionid"));
-                        userInfoDTO.setRealOpenid(json.getString("openid"));
-                        userInfoDTO.setUnionID(json.getString("unionid"));
-                        userInfoDTO.setNickName(json.getString("nickname"));
-                        userInfoDTO.setUserName(json.getString("nickname"));
-                        userInfoDTO.setSex(json.getInteger("sex"));
-                        userInfoDTO.setHeadImgUrl(json.getString("headimgurl"));
-                        userInfoDTO.setPhone(json.containsKey("phone")?json.getString("phone"):"");
-                        userInfoDTO.setRegisterType(1);
-                        return new ResponseApiVO(1,"成功",userInfoDTO);
+
+    public static ResponseApiVO oauth(LoginPublicDTO dto){
+        String str=null;
+        if(StringUtils.isNotBlank(dto.getAccessToken())){
+            String openId=dto.getOpenId();
+            Map data=new HashMap();
+            data.put("access_token",dto.getAccessToken());
+            data.put("openid",openId);
+            if(dto.getRegisterType()==1){
+
+                str=HttpUtil.doGet("https://api.weixin.qq.com/sns/auth",data);
+                if(StringUtils.isNotBlank(str) && JSONObject.parseObject(str).getInteger("errcode")==0){
+                    str=HttpUtil.doGet("https://api.weixin.qq.com/sns/userinfo",data);
+                    if(StringUtils.isNotBlank(str)){
+                        JSONObject json=JSONObject.parseObject(str);
+                        if(json.containsKey("unionid") && StringUtils.isNotBlank(json.getString("unionid"))){
+
+                            UserInfoDTO userInfoDTO=new UserInfoDTO();
+                            userInfoDTO.setOpenid(json.getString("unionid"));
+                            userInfoDTO.setRealOpenid(json.getString("openid"));
+                            userInfoDTO.setUnionID(json.getString("unionid"));
+                            userInfoDTO.setNickName(json.getString("nickname"));
+                            userInfoDTO.setUserName(json.getString("nickname"));
+                            userInfoDTO.setSex(json.getInteger("sex"));
+                            userInfoDTO.setHeadImgUrl(json.getString("headimgurl"));
+                            userInfoDTO.setPhone(json.containsKey("phone")?json.getString("phone"):"");
+                            userInfoDTO.setRegisterType(1);
+                            return new ResponseApiVO(1,"成功",userInfoDTO);
+                        }
+
                     }
+                }
 
+            }else if(dto.getRegisterType()==2){
+                data.put("oauth_consumer_key",PayApiConstant.QQ_APP_ID);
+                str=HttpUtil.doGet("https://graph.qq.com/user/get_user_info",data);
+                if(StringUtils.isNotBlank(str) && JSONObject.parseObject(str).getInteger("ret")==0){
+                    JSONObject json=JSONObject.parseObject(str);
+                    UserInfoDTO userInfoDTO=new UserInfoDTO();
+                    userInfoDTO.setOpenid(openId);
+                    userInfoDTO.setRealOpenid(openId);
+                    userInfoDTO.setUnionID(openId);
+                    userInfoDTO.setNickName(json.getString("nickname"));
+                    userInfoDTO.setUserName(json.getString("nickname"));
+                    userInfoDTO.setSex(json.getString("gender").equals("男")?1:2);
+                    userInfoDTO.setHeadImgUrl(json.getString("figureurl_qq_1"));
+                    userInfoDTO.setRegisterType(2);
+                    return new ResponseApiVO(1,"成功",userInfoDTO);
                 }
             }
+
         }
-        logger.error("微信登录失败-》"+str);
+        logger.error("微信登录失败-》request："+dto+",response："+str);
         return new ResponseApiVO(-2,"登录失败",null);
     }
 

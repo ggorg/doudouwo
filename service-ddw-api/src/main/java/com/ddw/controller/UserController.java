@@ -40,11 +40,11 @@ public class UserController {
     @Autowired
     private ConsumeRankingListService consumeRankingListService;
 
-    @ApiOperation(value = "微信登录")
-    @PostMapping("/loginWeiXin")
-    public ResponseApiVO<UserInfoVO> loginWeiXin(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)LoginWeiXinDTO dto){
+    @ApiOperation(value = "微信和QQ登录")
+    @PostMapping("/loginPublic")
+    public ResponseApiVO<UserInfoVO> loginPublic(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)LoginPublicDTO dto){
         try {
-            ResponseApiVO<UserInfoDTO> res=LoginAuthApiUtil.weiXinOauth(dto.getAuthCode());
+            ResponseApiVO<UserInfoDTO> res=LoginAuthApiUtil.oauth(dto);
             if(res.getReCode()!=1){
                 return save(res.getData());
             }
@@ -55,20 +55,6 @@ public class UserController {
         return new ResponseApiVO<>(-2,"登录失败",null);
     }
 
-    @ApiOperation(value = "QQ登录")
-    @PostMapping("/loginQQ")
-    public ResponseApiVO<UserInfoVO> loginQQ(@RequestBody @ApiParam(name="args",value="传入json格式",required=true)LoginQQDTO dto){
-        try {
-            ResponseApiVO<UserInfoDTO> res=LoginAuthApiUtil.qqOauth(dto);
-            if(res.getReCode()!=1){
-                return save(res.getData());
-            }
-        }catch (Exception e){
-            logger.error("loginQQ",e);
-
-        }
-        return new ResponseApiVO<>(-2,"登录失败",null);
-    }
     @ApiOperation(value = "会员注册用例")
     // @ApiImplicitParam(name = "args", value = "参数", required = true, dataType = "UserInfoDTO")
     @PostMapping("/save")
