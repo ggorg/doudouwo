@@ -65,6 +65,7 @@ public class ReviewCallBackService extends CommonService {
             this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",roomUpdate,"id",roomId);
             Map ts=new HashMap();
             ts.put("id",map.get("id"));
+            roomUpdate.remove("startTime");
             this.commonOptimisticLockUpdateByParam("ddw_goodfriendplay_tables",roomUpdate,ts,"version");
             return new ResponseVO(1,"成功",null);
         }else{
@@ -92,7 +93,7 @@ public class ReviewCallBackService extends CommonService {
            setParam.put("status", WithdrawStatusEnum.withdrawStatus1.getCode());
             ResponseVO res=this.commonUpdateBySingleSearchParam("ddw_withdraw_record",setParam,"id",id);
             if(res.getReCode()!=1){
-                throw new GenException("更新提现记录失败");
+                return new ResponseVO(-2,"更新提现记录失败",null);
             }
            Map searchIncome=new HashMap();
            searchIncome.put("userId",userId);
@@ -107,15 +108,18 @@ public class ReviewCallBackService extends CommonService {
 
             res=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setIncome,searchIncome,"version",new String[]{fieldName});
             if(res.getReCode()==-2){
-                throw new GenException("提现金额不足");
+                return new ResponseVO(-2,"提现金额不足",null);
+
             }else if(res.getReCode()!=1){
-                throw new GenException("更新钱包失败");
+                return new ResponseVO(-2,"更新钱包失败",null);
+
             }
             if(WithdrawTypeEnum.WithdrawType1.getCode().equals(map.get("accountType"))){
                 String dcost=(double)money/100+"";
                res= PayApiUtil.requestAliTransfer(dcost,rb.getBusinessCode(),(String) map.get("accountNoStr"),(String) map.get("accountRealName"),IncomeTypeEnum.getName(incomeType)+"提现",IncomeTypeEnum.getName(incomeType)+"提现");
                 if(res.getReCode()!=1){
-                    throw new GenException("阿里转账失败");
+                    return new ResponseVO(-2,"阿里转账失败",null);
+                    //throw new GenException("阿里转账失败");
                 }
             }
         }
