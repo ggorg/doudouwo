@@ -47,7 +47,7 @@ public class WithdrawController {
     @ApiOperation(value = "提现明细",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/searchWithdrawDetail/{token}")
     @ResponseBody
-    public ResponseApiVO<ListVO<WithdrawDetailVO>> searchWithdrawDetail(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PageNoDTO args){
+    public ResponseApiVO<ListVO<WithdrawDetailVO>> searchWithdrawDetail(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)WithdrawDetailDTO args){
         try {
             logger.info("searchWithdrawDetail->request："+args);
             ResponseApiVO res=this.withdrawService.searchWithdrawDetail(token,args);

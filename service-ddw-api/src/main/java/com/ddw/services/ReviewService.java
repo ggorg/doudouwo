@@ -5,8 +5,11 @@ import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.BusinessCodeUtil;
 import com.ddw.util.LanglatComparator;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 审批
@@ -189,11 +189,14 @@ public class ReviewService extends CommonService {
         Map searchMap=new HashMap();
         searchMap.put("userId",userId);
         searchMap.put("id",dto.getCode());
-        Map map=this.commonObjectBySearchCondition("ddw_withdraw_way",searchMap);
-        if(map==null){
-            return new ResponseApiVO(-2,"提现失败-没有绑定的信息",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_withdraw_way",null,"t1.*,ct0.realName",null,null,searchMap,
+                new CommonChildBean("ddw_userinfo","id","userId",null));
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
 
+        if(list==null ||  list.isEmpty()){
+            return new ResponseApiVO(-2,"提现失败-没有绑定的信息",null);
         }
+        Map map=list.get(0);
         Map insertMap=new HashMap();
         insertMap.put("withdrawWayId",dto.getCode());
         insertMap.put("money",dto.getMoney());
@@ -202,6 +205,10 @@ public class ReviewService extends CommonService {
         insertMap.put("status",WithdrawStatusEnum.withdrawStatus0.getCode());
         insertMap.put("userId",userId);
         insertMap.put("incomeType",dto.getIncomeType());
+        insertMap.put("accountType",map.get("accountType"));
+        insertMap.put("accountNoStr",map.get("accountNoStr"));
+        insertMap.put("accountRealName",map.get("accountRealName"));
+
         ResponseVO res=this.commonInsertMap("ddw_withdraw_record",insertMap);
         if(res.getReCode()!=1){
             return new ResponseApiVO(-2,"提现失败-添加记录失败",null);
@@ -212,7 +219,7 @@ public class ReviewService extends CommonService {
         reviewPO.setDrBelongToStoreId(storeId);
         reviewPO.setCreateTime(new Date());
 
-        reviewPO.setDrProposerName( TokenUtil.getUserName(token));
+        reviewPO.setDrProposerName(TokenUtil.getUserName(token)+"("+map.get("realName")+ ")");
         reviewPO.setDrBusinessType(ReviewBusinessTypeEnum.ReviewBusinessType8.getCode());
         reviewPO.setDrReviewStatus(ReviewStatusEnum.ReviewStatus0.getCode());
         reviewPO.setDrProposerType(ReviewProposerTypeEnum.ReviewProposerType1.getCode());
@@ -221,7 +228,10 @@ public class ReviewService extends CommonService {
         reviewPO.setDrProposer(userId);
         reviewPO.setDrApplyDesc("提现申请("+IncomeTypeEnum.getName(dto.getIncomeType())+")");
         reviewPO.setDrBusinessStatus(ReviewBusinessStatusEnum.withdrawAppl8.getCode());
-        reviewPO.setDrExtend("提现申请-金额:"+(double)dto.getMoney()/100+"元");
+        StringBuilder builder=new StringBuilder();
+        builder.append("【账户：").append(map.get("accountNoStr"));
+        builder.append(",账户姓名：").append(map.get("accountRealName")).append(",").append("提现金额：").append((double)dto.getMoney()/100).append("元】");
+        reviewPO.setDrExtend(builder.toString());
         res=this.commonReviewService.submitAppl(reviewPO);
         if(res.getReCode()!=1){
             return new ResponseApiVO(-2,"提现失败-申请审核失败",null);

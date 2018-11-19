@@ -337,6 +337,11 @@ public class ReviewController {
             }
         }catch (Exception e){
             logger.error("ReviewController->doReviewByStore",e);
+            if(e instanceof  GenException){
+                return new ResponseVO(-1,e.getMessage(),null);
+
+            }
+
 
         }
         return new ResponseVO(-1,"提交审批失败",null);

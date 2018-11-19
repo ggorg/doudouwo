@@ -83,13 +83,8 @@ public class ReviewCallBackService extends CommonService {
     public ResponseVO executeWithdraw(ReviewCallBackBean rb)throws Exception{
         if(ReviewStatusEnum.ReviewStatus1.getCode().equals(rb.getReviewPO().getDrReviewStatus())){
             Integer id=Integer.parseInt(rb.getBusinessCode());
+            Map map=this.commonObjectBySingleParam("ddw_withdraw_record","id",id);
 
-            Map wmap=new HashMap();
-            wmap.put("id",id);
-            CommonSearchBean csb=new CommonSearchBean("ddw_withdraw_record",null,"t1.money,t1.incomeType,ct0.accountNoStr,ct0.accountType,ct0.accountRealName",null,null,wmap,
-                    new CommonChildBean("ddw_withdraw_way","id","withdrawWayId",null));
-            List<Map> list=this.getCommonMapper().selectObjects(csb);
-            Map map=list.get(0);
            Integer money=(Integer) map.get("money");
            Integer incomeType=(Integer) map.get("incomeType");
            Integer userId=rb.getReviewPO().getDrProposer();
@@ -111,7 +106,9 @@ public class ReviewCallBackService extends CommonService {
             setIncome.put(fieldName,-money);
 
             res=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setIncome,searchIncome,"version",new String[]{fieldName});
-            if(res.getReCode()!=1){
+            if(res.getReCode()==-2){
+                throw new GenException("提现金额不足");
+            }else if(res.getReCode()!=1){
                 throw new GenException("更新钱包失败");
             }
             if(WithdrawTypeEnum.WithdrawType1.getCode().equals(map.get("accountType"))){

@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.*;
+import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.enums.ReviewStatusEnum;
 import com.ddw.enums.WithdrawStatusEnum;
 import com.ddw.enums.WithdrawTypeEnum;
@@ -23,13 +24,15 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class WithdrawService extends CommonService {
 
-    public ResponseApiVO searchWithdrawDetail(String token, PageNoDTO pageNoDTO){
+    public ResponseApiVO searchWithdrawDetail(String token, WithdrawDetailDTO dto){
         Map searchMap = new HashMap();
         searchMap.put("userId", TokenUtil.getUserId(token));//drReviewStatus,//drReviewDesc
-        Page page=new Page(pageNoDTO.getPageNo()==null?1:pageNoDTO.getPageNo(),10);
-        CommonSearchBean csb=new CommonSearchBean("ddw_withdraw_record","t1.updateTime desc","t1.incomeType type,t1.money,DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') applTime,ct1.accountType,ct0.drReviewStatus reviewStatus,ct0.drReviewDesc reviewDesc,DATE_FORMAT(ct0.updateTime,'%Y-%m-%d %H:%i:%S') reviewTime",page.getStartRow(),page.getEndRow(),searchMap,
-                new CommonChildBean("ddw_review","drBusinessCode","id",null),
-                new CommonChildBean("ddw_withdraw_way","id","withdrawWayId",null)
+        if(StringUtils.isNotBlank(IncomeTypeEnum.getName(dto.getIncomeType()))){
+            searchMap.put("incomeType",dto.getIncomeType());
+        }
+        Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
+        CommonSearchBean csb=new CommonSearchBean("ddw_withdraw_record","t1.updateTime desc","t1.incomeType type,t1.money,DATE_FORMAT(t1.createTime,'%Y-%m-%d %H:%i:%S') applTime,t1.accountType,ct0.drReviewStatus reviewStatus,ct0.drReviewDesc reviewDesc,DATE_FORMAT(ct0.updateTime,'%Y-%m-%d %H:%i:%S') reviewTime",page.getStartRow(),page.getEndRow(),searchMap,
+                new CommonChildBean("ddw_review","drBusinessCode","id",null)
         );
 
         List<Map> list=this.getCommonMapper().selectObjects(csb);

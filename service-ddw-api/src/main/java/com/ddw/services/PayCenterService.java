@@ -849,7 +849,9 @@ public class PayCenterService extends BaseOrderService {
                     //CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
                     this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo,orderPO);
                     TokenUtil.deletePayCode(token);
-                    return new ResponseApiVO(1,"钱包支付成功",null);
+                    Map costMap=new HashMap();
+                    costMap.put("payCost",orderPO.getDoCost());
+                    return new ResponseApiVO(1,"钱包支付成功",costMap);
 
                 }
             }else{
