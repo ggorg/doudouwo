@@ -523,6 +523,7 @@ public class PayCenterService extends BaseOrderService {
         }
         if(PayTypeEnum.PayType5.getCode().equals(payType)){
             if(StringUtils.isBlank(TokenUtil.getPayCode(token))){
+                orderPO.setDoPayStatus(PayStatusEnum.PayStatus1.getCode());
                 return new ResponseApiVO(-2,"密码口令无效",null);
             }
         }
