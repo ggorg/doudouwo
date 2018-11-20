@@ -158,21 +158,12 @@ public class BiddingService extends CommonService {
         Map map=bidList.get(0);
         Map searchOrderBidMap=new HashMap();
         searchOrderBidMap.put("biddingId",map.get("id"));
-        List<Map> list= this.commonObjectsBySingleParam("ddw_order_bidding_pay","biddingId",map.get("id"));
+        searchOrderBidMap.put("creater,!=",filterUserId);
+        List<Map> list=this.commonList("ddw_order_bidding_pay",null,"t1.orderId",null,null,searchOrderBidMap);
         List orders=new ArrayList();
-        Integer userid=null;
-        Map vMap=null;
-        Map filterUserMap=null;
-        for(int b=list.size()-1;b>-1;b--){
-            vMap=list.get(b);
-            userid=(Integer) vMap.get("creater");
-            if(!filterUserId.equals(userid)){
-                orders.add(vMap.get("orderId"));
-            }/*else{
-                filterUserMap=vMap;
-            }*/
+        if(list!=null && !list.isEmpty()){
+            list.forEach(a->orders.add(a.get("orderId")));
         }
-
         ResponseApiVO apiVo=payCenterService.exitOrder(orders);
        // apiVo.setData(filterUserMap);
         return apiVo;
