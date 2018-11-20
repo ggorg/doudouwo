@@ -381,7 +381,7 @@ public class BiddingService extends CommonService {
             BiddingVO bv=null;
             for(int i=list.size()-1;i>-1;i--){
                 bv=list.get(i);
-                if(bv.getOpenId().equals(openId)){
+                if(bv.getOpenId().equals(openId.trim())){
                     if(vo!=null && refundVo!=null){
                         continue;
                     }
@@ -395,17 +395,21 @@ public class BiddingService extends CommonService {
                     }
                     //break;
                 }else{
-                    s.add(bv.getOpenId());
+                    s.add(bv.getOpenId().trim());
 
                 }
             }
             if(vo!=null && refundVo!=null){
+                logger.info("退定金用户："+s+",不用退定金的用户："+openId+",BiddingVOList:"+list);
                 Date payCountDown=DateUtils.addMinutes(new Date(),this.payTimeMinute);
 
                 IMApiUtil.pushSimpleChat(LiveRadioConstant.ACCOUNT_TONG_ZHI,openId,"你竞价预约的主播已经选择了你，请您在30分钟内，在我的订单->预约女神订单查看并支付完成，并到店陪她一起玩耍吧！时间到计时："+this.getSurplusTimeStr(payCountDown));
 
                 for(String k:s){
-                    IMApiUtil.pushSimpleChat(LiveRadioConstant.ACCOUNT_TONG_ZHI,k,"由于主播没有选择你，你竞价主播的定金已经退回，请在退款订单查看");
+                    if(!k.equals(openId.trim())){
+                        IMApiUtil.pushSimpleChat(LiveRadioConstant.ACCOUNT_TONG_ZHI,k,"由于主播没有选择你，你竞价主播的定金已经退回，请在退款订单查看");
+
+                    }
                 }
                 return vo;
             }
