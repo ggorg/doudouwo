@@ -525,32 +525,12 @@ public class PayCenterService extends BaseOrderService {
             if(StringUtils.isBlank(TokenUtil.getPayCode(token))){
                 return new ResponseApiVO(-2,"密码口令无效",null);
             }
-
-            ResponseApiVO<WalletBalanceVO> responseApiVO= this.walletService.getBalance(userId);
-            if(responseApiVO.getReCode()!=1 ){
-                return new ResponseApiVO(-2,"钱包余额支付失败",null);
-            }else{
-                WalletBalanceVO walletBalanceVO=responseApiVO.getData();
-                if(walletBalanceVO.getMoney()==null || orderPO.getDoCost()>walletBalanceVO.getMoney()){
-                    return new ResponseApiVO(-2,"钱包余额不足",null);
-
-                }else{
-                   Map setMap=new HashMap();
-                   setMap.put("money",-orderPO.getDoCost());
-                   setMap.put("updateTime",new Date());
-                   Map searchMap=new HashMap();
-                   searchMap.put("userId",userId);
-                   ResponseVO res=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setMap,searchMap,"version",new String[]{"money"});
-                    if(res.getReCode()!=1){
-                        return new ResponseApiVO(-2,"钱包余额不足",null);
-                    }
-                    orderPO.setDoPayStatus(PayStatusEnum.PayStatus1.getCode());
-
-                }
-            }
         }
         ResponseVO<Integer> insertResponseVO=null;
         if(currentOrderId==null){
+            if(orderPO.getDoCost()==null || orderPO.getDoCost()<=0){
+                return new ResponseApiVO(-2,"支付金额异常",null);
+            }
             insertResponseVO=this.commonInsert("ddw_order",orderPO);
         }else{
             insertResponseVO=new ResponseVO<>(1,"成功",currentOrderId);
@@ -827,14 +807,14 @@ public class PayCenterService extends BaseOrderService {
                         CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
                         return new ResponseApiVO(1,"成功",wxVo);
                     }else{
-                        throw new GenException("调用微信支付接口失败");
+                        throw new GenException(-2,"调用微信支付接口失败",vo);
                     }
                 }else if(PayTypeEnum.PayType2.getCode().equals(payType)){
                     String dcost=(double)orderPO.getDoCost()/100+"";
                     PayCenterAliPayVO alipayVo=new PayCenterAliPayVO();
                     RequestAliOrderVO rvo=PayApiUtil.requestAliPayOrder(OrderTypeEnum.getName(orderType),orderNo,dcost,Tools.getIpAddr());
                     if(rvo==null){
-                        throw new GenException("调用支付宝接口失败");
+                        throw new GenException(-2,"调用支付宝接口失败",rvo);
 
                     }
                     PropertyUtils.copyProperties(alipayVo,rvo);
@@ -845,13 +825,35 @@ public class PayCenterService extends BaseOrderService {
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
                 }else if(PayTypeEnum.PayType5.getCode().equals(payType)){
 
-                    CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
-                    //CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
-                    this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo,orderPO);
-                    TokenUtil.deletePayCode(token);
-                    Map costMap=new HashMap();
-                    costMap.put("payCost",orderPO.getDoCost());
-                    return new ResponseApiVO(1,"钱包支付成功",costMap);
+                    ResponseApiVO<WalletBalanceVO> responseApiVO= this.walletService.getBalance(userId);
+                    if(responseApiVO.getReCode()!=1 ){
+                        throw new GenException(-2,"钱包余额支付失败");
+                    }else{
+                        WalletBalanceVO walletBalanceVO=responseApiVO.getData();
+                        if(walletBalanceVO.getMoney()==null || orderPO.getDoCost()>walletBalanceVO.getMoney()){
+                            throw new GenException(-2,"钱包余额不足");
+
+                        }else{
+                            Map setMap=new HashMap();
+                            setMap.put("money",-orderPO.getDoCost());
+                            setMap.put("updateTime",new Date());
+                            Map searchMap=new HashMap();
+                            searchMap.put("userId",userId);
+                            ResponseVO res=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setMap,searchMap,"version",new String[]{"money"});
+                            if(res.getReCode()!=1){
+                                throw new GenException(-2,"钱包余额不足");
+                            }
+
+                            CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
+                            //CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
+                            this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo,orderPO);
+                            TokenUtil.deletePayCode(token);
+                            Map costMap=new HashMap();
+                            costMap.put("payCost",orderPO.getDoCost());
+                            return new ResponseApiVO(1,"钱包支付成功",costMap);
+                        }
+                    }
+
 
                 }
             }else{

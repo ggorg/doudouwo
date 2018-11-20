@@ -22,6 +22,10 @@ public class IncomeService extends CommonService{
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO commonIncome(Integer goddessUserId, Integer cost, IncomeTypeEnum incomeType, OrderTypeEnum orderType,String orderNo)throws Exception{
        Integer income=(int)(cost*0.6);
+       if(income<=0){
+           return new ResponseVO(1,"成功",null);
+
+       }
        Map setmap=new HashMap();
         String[] strs=null;
        if(IncomeTypeEnum.IncomeType1.getCode().equals(incomeType.getCode())){

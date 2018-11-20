@@ -25,7 +25,7 @@ public class MsgUtil {
     //找回支付密码
     private final static Integer paypwd_id=189074;
 
-    private final static boolean isMsg=false;
+    private final static boolean isMsg=true;
 
     private static String sendMsgTimes(String telphone){
         Integer n=(Integer) CacheUtil.get("msgTimesTimeOut","telphone-"+telphone);

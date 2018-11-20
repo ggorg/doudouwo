@@ -3,6 +3,7 @@ package com.ddw.servies;
 import com.ddw.beans.StoreDTO;
 import com.ddw.beans.StorePO;
 import com.ddw.enums.DisabledEnum;
+import com.ddw.util.IMApiUtil;
 import com.gen.common.beans.CommonBeanFiles;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -14,6 +15,7 @@ import com.gen.common.vo.FileInfoVo;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,6 +180,10 @@ public class StoreService extends CommonService{
             storePO.setDsStatus(DisabledEnum.disabled0.getCode());
             storePO.setCreateTime(new Date());
             vo= this.commonInsert("ddw_store",storePO);
+            if(vo.getReCode()==1){
+
+                IMApiUtil.createGroup("ddwGuanFang",vo.getData()+"_gf_"+ RandomStringUtils.randomNumeric(10),storePO.getDsName()+"聊天室");
+            }
         }
         CacheUtil.delete("stores","store");
         return vo;

@@ -63,7 +63,9 @@ public class PayCenterController {
             logger.info("publicPay->response:"+vo);
             return vo;
         }catch (Exception e){
+
             if(e instanceof GenException){
+                logger.info("publicPay->response:"+((GenException)e).toString());
                 return new ResponseApiVO(-2,e.getMessage(),null);
 
             }
@@ -86,10 +88,14 @@ public class PayCenterController {
             return vo;
         }catch (Exception e){
             if(e instanceof GenException){
+                logger.info("blancePay->response："+((GenException)e).toString());
+
+
                 return new ResponseApiVO(-2,e.getMessage(),null);
 
             }
             logger.error("PayCenterController-blancePay-》余额支付-》系统异常",e);
+
 
             return new ResponseApiVO(-1,"余额支付失败",null);
 
@@ -111,10 +117,12 @@ public class PayCenterController {
             return vo;
         }catch (Exception e){
             if(e instanceof GenException){
+                logger.info("weixinPay->response："+((GenException)e).toString());
                 return new ResponseApiVO(-2,e.getMessage(),null);
 
             }
             logger.error("PayCenterController-weixinPay-》微信支付-》系统异常",e);
+
 
             return new ResponseApiVO(-1,"微信支付失败",null);
 
@@ -136,10 +144,13 @@ public class PayCenterController {
             return vo;
         }catch (Exception e){
             if(e instanceof GenException){
+                logger.info("aliPay->response："+((GenException)e).toString());
+
                 return new ResponseApiVO(-2,e.getMessage(),null);
 
             }
             logger.error("PayCenterController-aliPay-》支付宝支付-》系统异常",e);
+
             return new ResponseApiVO(-1,"支付宝支付失败",null);
         }
     }
@@ -159,10 +170,12 @@ public class PayCenterController {
             return vo;
         }catch (Exception e){
             if(e instanceof GenException){
+                logger.info("doubiPay->response："+((GenException)e).toString());
                 return new ResponseApiVO(-2,e.getMessage(),null);
 
             }
             logger.error("PayCenterController-doubiPay-》逗币支付-》系统异常",e);
+
             return new ResponseApiVO(-1,"逗币支付",null);
         }
     }
@@ -180,10 +193,13 @@ public class PayCenterController {
             return vo;
         }catch (Exception e){
             if(e instanceof GenException){
+                logger.info("doubiPayMarket->response："+((GenException)e).toString());
+
                 return new ResponseApiVO(-2,e.getMessage(),null);
 
             }
             logger.error("PayCenterController-doubiPayMarket-》逗币支付-商城-》系统异常",e);
+
             return new ResponseApiVO(-1,"逗币支付-商城",null);
         }
     }

@@ -221,9 +221,11 @@ public class ReviewController {
                }
            }
        }catch (Exception e){
-           logger.error("ReviewController->doReviewByHq",e);
+
            if(e instanceof GenException){
                return new ResponseVO(-1,e.getMessage(),null);
+           }else{
+               logger.error("ReviewController->doReviewByHq",e);
            }
 
 
@@ -328,7 +330,6 @@ public class ReviewController {
             if(spo!=null){
                 String on=MyEncryptUtil.getRealValue(businessCode);
                 if(StringUtils.isNotBlank(on)){
-
                     ResponseVO res=this.reviewService.editReivew(id,on,drReviewDesc,ReviewStatusEnum.get(drReviewStatus),Toolsddw.getUserMap());
                     if(res.getReCode()==1){
                         return new ResponseVO(1,"提交审批成功",null);
@@ -336,10 +337,11 @@ public class ReviewController {
                 }
             }
         }catch (Exception e){
-            logger.error("ReviewController->doReviewByStore",e);
+
             if(e instanceof  GenException){
                 return new ResponseVO(-1,e.getMessage(),null);
-
+            }else{
+                logger.error("ReviewController->doReviewByStore",e);
             }
 
 
