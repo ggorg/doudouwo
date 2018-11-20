@@ -545,6 +545,10 @@ public class BaseOrderService extends CommonService {
             exitOrderPO.setCreateTime(new Date());
             exitOrderPO.setTotalCost((Integer) o.get("doCost"));
             exitOrderPO.setExitCost(intBaseExitCost!=null?intBaseExitCost:exitOrderPO.getTotalCost());
+            if(exitOrderPO.getExitCost()==null || exitOrderPO.getExitCost()<=0){
+                throw new GenException("退款金额不能为0");
+
+            }
             if(exitOrderPO.getExitCost()>exitOrderPO.getTotalCost()){
                 throw new GenException("退款金额比总金额大");
             }
