@@ -676,7 +676,7 @@ public class BiddingService extends CommonService {
         }
 
         if(flag){
-            if(gpo.getEarnest()==null){
+            if(gpo.getEarnest()==null || gpo.getEarnest()<=0){
                 throw new GenException("请联系管理员配置定金额度");
             }
             /*BiddingEarnestVO be=new BiddingEarnestVO();
