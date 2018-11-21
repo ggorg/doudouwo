@@ -36,6 +36,18 @@ public class GoodFriendPlayController {
         }
     }
     @Token
+    @ApiOperation(value = "进入我的房间")
+    @PostMapping("/room/myroom/{token}")
+    public ResponseApiVO<GoodFriendPlayMyRoomVO> toMyRoom(@PathVariable String token){
+        try {
+
+            return this.goodFriendPlayService.goIntoMyRoom(token);
+        }catch (Exception e){
+            logger.error("GoodFriendPlayController->toMyRoom",e);
+            return new ResponseApiVO(-1,"进入我的房间",null);
+        }
+    }
+    @Token
     @ApiOperation(value = "小房间列表")
     @PostMapping("/room/list/{token}")
     public ResponseApiVO<ListVO<GoodFriendPlayRoomListVO>> toRoomList(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayRoomListDTO args){

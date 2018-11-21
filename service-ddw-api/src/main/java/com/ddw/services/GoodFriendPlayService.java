@@ -237,7 +237,23 @@ public class GoodFriendPlayService extends CommonService {
         Map mapret=new HashMap();
         mapret.put("roomCode",vo.getData());
         mapret.put("groupId",groupId);
+
         return new ResponseApiVO(1,"成功",mapret);
+    }
+    public ResponseApiVO goIntoMyRoom(String token){
+       Integer userId=TokenUtil.getUserId(token);
+       Map search=new HashMap();
+       search.put("roomOwner",userId);
+       List<Map> list=this.commonList("ddw_goodfriendplay_room","createTime desc","t1.id roomCode",1,1,search);
+       if(list==null || list.isEmpty()){
+           return new ResponseApiVO(-2,"没有房间",null);
+       }
+       Map map= list.get(0);
+       if(DisabledEnum.disabled1.getCode( ).equals(map.get("disabled"))){
+            return new ResponseApiVO(-2,"房间已被停用，请重新建一个",null);
+        }
+
+        return new ResponseApiVO(1,"成功",map);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO createOffLinePlay(String token,GoodFriendPlayTableDTO dto)throws Exception{
@@ -355,6 +371,7 @@ public class GoodFriendPlayService extends CommonService {
         deleteMap.put("roomOwner",userId);
         deleteMap.put("roomId",dto.getCode());
         deleteMap.put("openId",dto.getOpenId());
+        deleteMap.put("openId,!=",TokenUtil.getUserObject(token).toString());
         ResponseVO res=this.commonDeleteByParams("ddw_goodfriendplay_room_member",deleteMap);
         if(res.getReCode()==1){
            return new ResponseApiVO(1,"成功",null);
