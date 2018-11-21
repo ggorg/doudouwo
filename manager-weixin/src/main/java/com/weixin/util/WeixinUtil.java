@@ -32,9 +32,9 @@ public class WeixinUtil {
 	
 	@Autowired
 	private PubweixinMapper pubweixinMapper;
-	
+
 	static Set<AccessToken> AccessTokenSet = new HashSet<AccessToken>();
-	
+
 	// 获取access_token的接口地址（GET） 限200（次/天）
 	public final static String access_token_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
 	//获得jsapi_ticket
@@ -42,35 +42,35 @@ public class WeixinUtil {
 
 	/**
 	 * 获取access_token
-	 * 
+	 *
 	 * @param appid 凭证
 	 * @param appsecret 密钥
 	 * @return
 	 */
 	public static AccessToken getAccessToken(String appid, String appsecret) {
 		AccessToken accessToken = null;
-		
+
 		String requestUrl = access_token_url.replace("APPID", appid).replace("APPSECRET", appsecret);
-		
+
 		//首先判断本地有无记录，记录是否过期 7200s
-	    boolean isExpired = WeChatSystemContext.getInstance().isExpired();
-	    accessToken = new AccessToken();
-	    if(isExpired) {           
-	    	JSONObject jsonObject = httpRequest(requestUrl, "GET", null);
+		boolean isExpired = WeChatSystemContext.getInstance().isExpired();
+		accessToken = new AccessToken();
+		if(isExpired) {
+			JSONObject jsonObject = httpRequest(requestUrl, "GET", null);
 			accessToken.setToken(jsonObject.getString("access_token"));
 			//取jsapi_ticket
 			JSONObject jsapi_ticketjson = httpRequest(jsapi_ticket_url.replace("ACCESS_TOKEN", accessToken.getToken()), "GET", null);
 			accessToken.setTicket(jsapi_ticketjson.getString("ticket"));
-	        //记录到配置 access_token 当前时间
-	        WeChatSystemContext.getInstance().saveLocalAccessonToke(accessToken.getToken());
-	        return accessToken;
-	    } else {
-	      //从配置中直接获取access_token 
-	      accessToken.setToken(WeChatSystemContext.getInstance().getAccessToken());
-	      return accessToken;
-	    }
+			//记录到配置 access_token 当前时间
+			WeChatSystemContext.getInstance().saveLocalAccessonToke(accessToken.getToken());
+			return accessToken;
+		} else {
+			//从配置中直接获取access_token
+			accessToken.setToken(WeChatSystemContext.getInstance().getAccessToken());
+			return accessToken;
+		}
 	}
-	
+
 	/**
 	 * 根据公众号取相关的token
 	 * get_customer_token
@@ -128,64 +128,64 @@ public class WeixinUtil {
 			}
 		}
 	}
-	
+
 	/**
-     * 解析微信用户资料json数据
-     */
-    public UserInfo parseJsonToUserInfo(JSONObject jsonObject, String openid, String appid) {
-        UserInfo user = new UserInfo();
-        try {
-        	user.setOpenid(openid);
-        	user.setAppid(appid);
-        	if(jsonObject.containsKey("city")){
-        		user.setCity(jsonObject.getString("city"));
-        	}
-        	if(jsonObject.containsKey("country")){
-        		user.setCountry(jsonObject.getString("country"));
-        	}
-        	if(jsonObject.containsKey("headimgurl")){
-        		user.setHeadimgurl(jsonObject.getString("headimgurl"));
-        	}
-        	if(jsonObject.containsKey("language")){
-        		user.setLanguage(jsonObject.getString("language"));
-        	}
-        	if(jsonObject.containsKey("province")){
-        		user.setProvince(jsonObject.getString("province"));
-        	}
-        	if(jsonObject.containsKey("sex")){
-        		user.setSex(jsonObject.getString("sex"));
-        	}
-            if(jsonObject.containsKey("nickname")){
-                user.setNickname(EmojiUtil.resolveToByteFromEmoji(jsonObject.getString("nickname")));
+	 * 解析微信用户资料json数据
+	 */
+	public UserInfo parseJsonToUserInfo(JSONObject jsonObject, String openid, String appid) {
+		UserInfo user = new UserInfo();
+		try {
+			user.setOpenid(openid);
+			user.setAppid(appid);
+			if(jsonObject.containsKey("city")){
+				user.setCity(jsonObject.getString("city"));
+			}
+			if(jsonObject.containsKey("country")){
+				user.setCountry(jsonObject.getString("country"));
+			}
+			if(jsonObject.containsKey("headimgurl")){
+				user.setHeadimgurl(jsonObject.getString("headimgurl"));
+			}
+			if(jsonObject.containsKey("language")){
+				user.setLanguage(jsonObject.getString("language"));
+			}
+			if(jsonObject.containsKey("province")){
+				user.setProvince(jsonObject.getString("province"));
+			}
+			if(jsonObject.containsKey("sex")){
+				user.setSex(jsonObject.getString("sex"));
+			}
+			if(jsonObject.containsKey("nickname")){
+				user.setNickname(EmojiUtil.resolveToByteFromEmoji(jsonObject.getString("nickname")));
 //                user.setNickname(jsonObject.getString("nickname"));
-            }
-            if(jsonObject.containsKey("subscribe")){
-                user.setSubscribe(jsonObject.getString("subscribe"));
-            }else{
-            	user.setSubscribe("0");
-            }
-            if (jsonObject.containsKey("subscribe_time")) {
-                user.setSubscribe_time(new Date(Long.valueOf(jsonObject.getString("subscribe_time")) * 1000));
-            }
-            if(jsonObject.containsKey("remark")){
-                user.setRemark(jsonObject.getString("remark"));
-            }
-            if(jsonObject.containsKey("unionid")){
-                user.setUnionid(jsonObject.getString("unionid"));
-            }
-            if(jsonObject.containsKey("tagid_list")){
-                user.setTagid_list(jsonObject.getString("tagid_list").replace("[","").replace("]",""));
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(),e);
-        }
-        return user;
-    }
-    
+			}
+			if(jsonObject.containsKey("subscribe")){
+				user.setSubscribe(jsonObject.getString("subscribe"));
+			}else{
+				user.setSubscribe("0");
+			}
+			if (jsonObject.containsKey("subscribe_time")) {
+				user.setSubscribe_time(new Date(Long.valueOf(jsonObject.getString("subscribe_time")) * 1000));
+			}
+			if(jsonObject.containsKey("remark")){
+				user.setRemark(jsonObject.getString("remark"));
+			}
+			if(jsonObject.containsKey("unionid")){
+				user.setUnionid(jsonObject.getString("unionid"));
+			}
+			if(jsonObject.containsKey("tagid_list")){
+				user.setTagid_list(jsonObject.getString("tagid_list").replace("[","").replace("]",""));
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		return user;
+	}
+
 
 	/**
 	 * 发起https请求并获取结果
-	 * 
+	 *
 	 * @param requestUrl 请求地址
 	 * @param requestMethod 请求方式（GET、POST）
 	 * @param outputStr 提交的数据
@@ -240,9 +240,9 @@ public class WeixinUtil {
 			httpUrlConn.disconnect();
 			jsonObject = JSONObject.parseObject(buffer.toString());
 		} catch (ConnectException ce) {
-		    logger.error("Weixin server connection timed out.");
+			logger.error("Weixin server connection timed out.");
 		} catch (Exception e) {
-		    logger.error(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 		}
 		return jsonObject;
 	}

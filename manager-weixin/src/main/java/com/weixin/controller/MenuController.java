@@ -6,8 +6,12 @@ import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import com.weixin.core.pojo.Button;
 import com.weixin.core.pojo.CommonButton;
+import com.weixin.core.pojo.ComplexButton;
+import com.weixin.core.pojo.ViewButton;
+import com.weixin.entity.Menu;
 import com.weixin.entity.Pubweixin;
 import com.weixin.services.MenuService;
+import com.weixin.services.PubWeixinService;
 import com.weixin.services.WeixinInterfaceService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.weixin.core.pojo.ComplexButton;
-import com.weixin.core.pojo.ViewButton;
-import com.weixin.services.PubWeixinService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -69,14 +70,14 @@ public class MenuController {
             if(id != null && id >0){
                 model.addAttribute("menuObject",menuService.selectById(id));
             }else if(parent_id != null && parent_id != -1){
-                com.weixin.entity.Menu parent_menu = menuService.selectById(parent_id);
-                com.weixin.entity.Menu menu = new com.weixin.entity.Menu();
+                Menu parent_menu = menuService.selectById(parent_id);
+                Menu menu = new Menu();
                 menu.setParent_id(parent_id);
                 appid = parent_menu.getAppid();
                 menu.setAppid(appid);
                 model.addAttribute("menuObject",menu);
             }else if(parent_id == -1){
-                com.weixin.entity.Menu menu = new com.weixin.entity.Menu();
+                Menu menu = new Menu();
                 menu.setParent_id(parent_id);
             }
             model.addAttribute("appid",appid);
@@ -89,7 +90,7 @@ public class MenuController {
 
     @RequestMapping(value = "save")
     @ResponseBody
-    public ResponseVO save(com.weixin.entity.Menu menu, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+    public ResponseVO save(Menu menu, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
         try {
             return menuService.saveOrUpdate(menu);
         } catch (Exception e) {
@@ -113,21 +114,21 @@ public class MenuController {
     public ResponseVO release(String appid, HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
         try {
             // 从数据库取出该公众号配置好的菜单,组成json调用微信接口生成菜单
-            Page<com.weixin.entity.Menu> pageMenu = menuService.findList(1,appid);
-            List<com.weixin.entity.Menu> menuList = pageMenu.getResult();
+            Page<Menu> pageMenu = menuService.findList(1,appid);
+            List<Menu> menuList = pageMenu.getResult();
             JSONObject jsonObject = new JSONObject();
             com.weixin.core.pojo.Menu m = new com.weixin.core.pojo.Menu();
             //父级菜单
             List<Button>list = new ArrayList<Button>();
-            for(com.weixin.entity.Menu menu:menuList){
+            for(Menu menu:menuList){
                 if(menu.getParent_id()==-1){
-                    List<com.weixin.entity.Menu> submenuList= menuService.findListById(menu.getId());
+                    List<Menu> submenuList= menuService.findListById(menu.getId());
                     if(submenuList.size()>0){
                         ComplexButton btn = new ComplexButton();
                         btn.setName(menu.getName());
                         //子菜单
                         List<Button>sublist = new ArrayList<Button>();
-                        for(com.weixin.entity.Menu submenu:submenuList){
+                        for(Menu submenu:submenuList){
                             if(submenu.getType().equals("click")){
                                 CommonButton cb = new CommonButton();
                                 cb.setName(submenu.getName());
@@ -142,7 +143,7 @@ public class MenuController {
                                 sublist.add(vbtn);
                             }
                         }
-                        btn.setSub_button((Button[])sublist.toArray(new Button[sublist.size()]));
+                        btn.setSub_button(sublist.toArray(new Button[sublist.size()]));
                         list.add(btn);
                     }else{
                         if(menu.getType().equals("click")){
@@ -161,7 +162,7 @@ public class MenuController {
                     }
                 }
             }
-            m.setButton((Button[])list.toArray(new Button[list.size()]));
+            m.setButton(list.toArray(new Button[list.size()]));
             JSONObject js = weixinInterfaceService.createMenu(appid,m);
             //成功返回 {"errcode":0,"errmsg":"ok"}
             //失败返回 {"errcode":40055,"errmsg":"invalid button url domain hint: [lmkCQA0454vr21]"}

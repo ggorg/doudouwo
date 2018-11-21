@@ -117,6 +117,9 @@ public class WeixinOauthController {
                 if("redpack".equals(page)){
                     return InternalResourceViewResolver.REDIRECT_URL_PREFIX + "pages/manager/weixin/menu";
                 }
+                if("obn".equals(page)){
+                    //TODO 这里跳转老带新绑定接口URL
+                }
                 String jumpUrlValue= WXGlobals.getOauthJumUrlByKey(page);
                 if(StringUtils.isNotBlank(jumpUrlValue)){
 
@@ -156,9 +159,16 @@ public class WeixinOauthController {
     public static void main(String[] args) {
         Base32 base32 = new Base32();
         String abc = "{\"appid\":\"wxac4072fc723524ff\",\"page\":\"myself-center\"}";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("appid","wxac4072fc723524ff");
+        jsonObject.put("page","obn");
+        jsonObject.put("param","m27123,m26102");
+//        jsonObject.put("param","oNSHajg7OZ-K3yqzERRHOzudEm27123,oNSHajg7OZ-K3yqzERRHOzudEm26102");
+
         logger.info(abc);
 
-        System.out.println(CommonUtil.base32Encode(abc));
+        System.out.println(CommonUtil.base32Encode(jsonObject.toString()));
+        System.out.println(CommonUtil.base32Encode(jsonObject.toString()).length());
         System.out.println(CommonUtil.base32Decode("PMRGC4DQNFSCEORCO54GINLCMEYWCYRTGA4GGMJZGA4GEIRMEJYGCZ3FEI5CE33QMVXC24TFMQWXAYLDNNSXIIT5"));
         System.out.println(CommonUtil.base32Decode("PMRGC4DQNFSCEORCO54GINLCMEYWCYRTGA4GGMJZGA4GEIRMEJYGCZ3FEI5CE5TPOVRWQZLSEJ6Q"));
         System.out.println(CommonUtil.base32Decode("PMRGC4DQNFSCEORCO54GINLCMEYWCYRTGA4GGMJZGA4GEIRMEJYGCZ3FEI5CE3LZONSWYZRNMNSW45DFOIRH2"));
