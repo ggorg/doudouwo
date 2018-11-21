@@ -27,7 +27,14 @@ public enum IncomeTypeEnum implements Dictionary {
         }
         return null;
     }
-
+    public static IncomeTypeEnum getIncomeTypeEnum(Integer code) {
+        for (IncomeTypeEnum c : IncomeTypeEnum.values()) {
+            if (c.getCode() == code || c.getCode().equals(code)) {
+                return c;
+            }
+        }
+        return null;
+    }
     public String getName() {
         return name;
     }

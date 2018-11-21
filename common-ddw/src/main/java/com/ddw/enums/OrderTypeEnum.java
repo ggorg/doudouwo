@@ -35,6 +35,14 @@ public enum OrderTypeEnum  implements Dictionary {
             }
         }
         return null;
+    }    // 普通方法
+    public static OrderTypeEnum getOrderTypeEnum(Integer code) {
+        for (OrderTypeEnum c : OrderTypeEnum.values()) {
+            if (c.getCode() == code || c.getCode().equals(code)) {
+                return c;
+            }
+        }
+        return null;
     }
 
     public String getName() {

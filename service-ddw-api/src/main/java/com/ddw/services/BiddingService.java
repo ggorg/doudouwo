@@ -317,7 +317,7 @@ public class BiddingService extends CommonService {
         baseDynService.saveBideDyn(bidMap,(Date)updateMap.get("endTime"));
         Map map=(Map) CacheUtil.get("pay","bidding-pay-"+ub);
        Integer earnestPrice=(Integer) map.get("earnestPrice");
-       this.incomeService.commonIncome(TokenUtil.getUserId(token),earnestPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType4,(String)map.get("earnestOrderNo"));
+      // this.incomeService.commonIncome(TokenUtil.getUserId(token),earnestPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType4,(String)map.get("earnestOrderNo"));
 
         this.consumeRankingListService.save(luckyDogUserId,TokenUtil.getUserId(token),earnestPrice,IncomeTypeEnum.IncomeType1);
 
@@ -812,7 +812,7 @@ public class BiddingService extends CommonService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseApiVO  doEndPlay(String token){
+    public ResponseApiVO  doEndPlay(String token)throws Exception{
 
         Map map=this.getCurrentBidByUserId(TokenUtil.getUserId(token));
         if(map==null ){
@@ -832,6 +832,7 @@ public class BiddingService extends CommonService {
             if(vo.getReCode()!=1){
                 return new ResponseApiVO(-2,"结束失败",null);
             }
+            this.incomeService.handleGoddessIncome((Integer) map.get("id"));
         }
         return new ResponseApiVO(1,"成功",null);
 

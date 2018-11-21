@@ -223,7 +223,7 @@ public class BaseOrderService extends CommonService {
 
                     bid_goddessid.add(payMap.get("code").toString()+"-"+gid);
                     needPayPrice=Integer.parseInt((String) payMap.get("needPayPrice"));
-                    this.incomeService.commonIncome(gid,needPayPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType5,orderNo);
+                   // this.incomeService.commonIncome(gid,needPayPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType5,orderNo);
                     this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),gid,needPayPrice,IncomeTypeEnum.IncomeType1);
 
 
@@ -264,7 +264,7 @@ public class BaseOrderService extends CommonService {
                 Integer time=(Integer)renewMap.get("time");
 
                 Integer gid=(Integer) renewMap.get("goddessUserId");
-                this.incomeService.commonIncome(gid,needPayPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType9,orderNo);
+                //this.incomeService.commonIncome(gid,needPayPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType9,orderNo);
                 this.baseConsumeRankingListService.save(cacheOrder.getDoCustomerUserId(),gid,needPayPrice,IncomeTypeEnum.IncomeType1);
 
 
