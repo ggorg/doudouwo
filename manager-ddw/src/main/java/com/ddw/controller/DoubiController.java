@@ -83,5 +83,16 @@ public class DoubiController {
         return new ResponseVO(-1,"操作失败",null);
 
     }
+    @PostMapping("do-update-status")
+    @ResponseBody
+    public ResponseVO doUpdate(String idStr,Integer status){
+        try {
 
+            return this.douBiService.update(idStr,status);
+        }catch (Exception e){
+            logger.error("doubiController->doUpdate",e);
+            return new ResponseVO(-1,"操作失败",null);
+        }
+
+    }
 }

@@ -51,18 +51,21 @@
   </div>
 </form>
 <script type="text/javascript">
-    initForm("do-edit",".layui-form")
-    layui.use('form', function(){
-        var form = layui.form;
+    window.onload=function(){
+        initForm("do-edit",".layui-form")
+        layui.use('form', function(){
+            var form = layui.form;
 
-        form.on('switch(appointment)', function(data){
-            if(data.elem.checked){
-                $("[name='appointment']").val(1);
-            }else {
-                $("[name='appointment']").val(0);
-            }
-        });
-    })
+            form.on('switch(appointment)', function(data){
+                if(data.elem.checked){
+                    $("[name='appointment']").val(1);
+                }else {
+                    $("[name='appointment']").val(0);
+                }
+            });
+        })
+    }
+
 
 </script>
 </body>

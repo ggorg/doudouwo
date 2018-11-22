@@ -83,5 +83,16 @@ public class RechargeController {
         return new ResponseVO(-1,"操作失败",null);
 
     }
+    @PostMapping("do-update-status")
+    @ResponseBody
+    public ResponseVO doUpdate(String idStr,Integer status){
+        try {
 
+            return this.rechargeManagerService.update(idStr,status);
+        }catch (Exception e){
+            logger.error("RechargeController->doUpdate",e);
+            return new ResponseVO(-1,"操作失败",null);
+        }
+
+    }
 }

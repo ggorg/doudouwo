@@ -67,17 +67,20 @@
   </div>
 </form>
 <script type="text/javascript">
-    initForm("do-edit",".layui-form")
-    layui.use('form', function(){
-        var form = layui.form;
-        form.on('select(type)', function(data){
-            if(data.value == 0){
-                jQuery("[name='url']").parent().parent().show();
-            }else{
-                jQuery("[name='url']").parent().parent().hide();
-            }
-        });
-    });
+  window.onload=function(){
+      initForm("do-edit",".layui-form")
+      layui.use('form', function(){
+          var form = layui.form;
+          form.on('select(type)', function(data){
+              if(data.value == 0){
+                  jQuery("[name='url']").parent().parent().show();
+              }else{
+                  jQuery("[name='url']").parent().parent().hide();
+              }
+          });
+      });
+  }
+
 </script>
 </body>
 </html>

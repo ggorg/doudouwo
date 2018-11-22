@@ -42,17 +42,19 @@
 <script type="text/javascript">
 
     var form1;
+    window.onload=function(){
+        layui.use(['upload','form','layer'], function(){
+            var upload = layui.upload;
+            form1=layui.form;
+            initProForm(layui);
 
-    layui.use(['upload','form','layer'], function(){
-      var upload = layui.upload;
-      form1=layui.form;
-      initProForm(layui);
-
-      //执行实例
-      var uploadInst1 = upload.render(initUpload(".myupload1","fileImgShow","dmImg"));
+            //执行实例
+            var uploadInst1 = upload.render(initUpload(".myupload1","fileImgShow","dmImg"));
 
 
-    });
+        });
+    }
+
     function initProForm(layui){
       var form = layui.form;
       form.verify({

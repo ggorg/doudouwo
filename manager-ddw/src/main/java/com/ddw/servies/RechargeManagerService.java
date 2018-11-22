@@ -89,7 +89,7 @@ public class RechargeManagerService extends CouponService{
 
         if(dto.getId()==null){
             map.put("createTime",new Date());
-            map.put("drDisabled",DisabledEnum.disabled0.getCode());
+            map.put("drDisabled",DisabledEnum.disabled1.getCode());
             ResponseVO res=this.commonInsertMap("ddw_recharge",map);
             if(res.getReCode()==1){
                 CacheUtil.delete("publicCache","recharge-all");
