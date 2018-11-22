@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class UserValidPhoneDTO {
     @ApiModelProperty(name="telphone",value="手机号码",example="18566666666")
     private String telphone;
-    @ApiModelProperty(name="type",value="发送验证码类型,1实名验证,2找回支付密码",example="1")
+    @ApiModelProperty(name="type",value="发送验证码类型,1实名验证,2找回支付密码",example="发送验证码类型,1实名验证,2找回支付密码")
     private Integer type;
 
     public String getTelphone() {

@@ -101,18 +101,20 @@
             });
         }
 
-        layui.use('form', function(){
-            var form = layui.form;
-            form.on('checkbox(allChoose)', function (data) {
-                var child = jQuery(data.elem).parents('table').find('tbody input[type="checkbox"]');
-                child.each(function (index, item) {
-                    item.checked = data.elem.checked;
-                });
-                form.render('checkbox');
+     window.onload=function(){
+         layui.use('form', function(){
+             var form = layui.form;
+             form.on('checkbox(allChoose)', function (data) {
+                 var child = jQuery(data.elem).parents('table').find('tbody input[type="checkbox"]');
+                 child.each(function (index, item) {
+                     item.checked = data.elem.checked;
+                 });
+                 form.render('checkbox');
 
-            });
+             });
 
-        })
+         })
+     }
 
     </script>
 	</body>

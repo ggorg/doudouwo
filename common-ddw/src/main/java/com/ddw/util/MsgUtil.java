@@ -2,6 +2,7 @@ package com.ddw.util;
 
 import com.gen.common.util.CacheUtil;
 import com.github.qcloudsms.SmsSingleSender;
+import com.github.qcloudsms.SmsSingleSenderResult;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -130,11 +131,13 @@ public class MsgUtil {
         SmsSingleSender sender=new SmsSingleSender(MsgConstant.APP_ID,MsgConstant.APP_KEY);
         ArrayList list=new ArrayList();
         list.add(content);
-        sender.sendWithParam("86",telphone,templateId,list,"","","");
+        SmsSingleSenderResult result=sender.sendWithParam("86",telphone,templateId,list,"","","");
+        logger.info(result+","+result.errMsg);
     }
 
     public static void main(String[] args) throws Exception{
-        sendVaildCode("13416605209");
+        //sendVaildCode("13416605209");
+        commonModel(paypwd_id,"13416605209","123456");
         System.out.println();
     }
 }

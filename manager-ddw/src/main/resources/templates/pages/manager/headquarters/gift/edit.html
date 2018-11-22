@@ -58,18 +58,20 @@
 </form>
 <script type="text/javascript">
     //initForm("do-edit-user",".layui-form")
+    window.onload=function(){
+
+        layui.use(['upload','form','layer'], function(){
+            var upload = layui.upload;
+            layer=layui.layer;
+            initProForm(layui);
+
+            //执行实例
+            var uploadInst1 = upload.render(initUpload(".myupload1","dgImg","dmImg"));
 
 
-    layui.use(['upload','form','layer'], function(){
-        var upload = layui.upload;
-        layer=layui.layer;
-        initProForm(layui);
+        });
+    }
 
-        //执行实例
-        var uploadInst1 = upload.render(initUpload(".myupload1","dgImg","dmImg"));
-
-
-    });
     function initProForm(layui){
         var form = layui.form;
         form.verify({

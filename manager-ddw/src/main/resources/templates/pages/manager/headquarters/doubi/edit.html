@@ -22,7 +22,7 @@
   </div>
 
   <div class="layui-form-item">
-    <label class="layui-form-label">价格(分)</label>
+    <label class="layui-form-label">价格</label>
     <div class="layui-input-block">
       <select lay-filter="drCost" name="drCost" required="required" lay-verify="required" placeholder="请选择价格" >
         <th:block th:utext="${#TdEnum.createDictOptions('com.ddw.enums.DoubiValueEnum',#maps.isEmpty(ds)?'':ds['drCost'])}"></th:block>
@@ -73,17 +73,18 @@
 <script type="text/javascript">
     //initForm("do-edit-user",".layui-form")
 
+    window.onload=function(){
+        layui.use(['laydate','form','layer'], function(){
+            layer=layui.layer;
 
-    layui.use(['laydate','form','layer'], function(){
-        layer=layui.layer;
+            initProForm(layui);
 
-        initProForm(layui);
-
-        //执行实例
-       // var uploadInst1 = upload.render(initUpload(".myupload1","dgImg","dmImg"));
+            //执行实例
+            // var uploadInst1 = upload.render(initUpload(".myupload1","dgImg","dmImg"));
 
 
-    });
+        });
+    }
     function initProForm(layui){
         var form = layui.form;
         var layer=layui.layer;

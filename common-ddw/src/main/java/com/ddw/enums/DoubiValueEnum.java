@@ -6,8 +6,8 @@ import com.gen.common.dict.Dictionary;
  *
  */
 public enum DoubiValueEnum implements Dictionary {
-    value000("0.1元",100),
-    value00("1元",1000),
+    value000("0.1元",10),
+    value00("1元",100),
     value0("5元",500),
     value1("10元",1000),
     value2("20元",2000),

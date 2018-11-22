@@ -221,59 +221,61 @@
 <script type="text/javascript">
   var form1;
   var element;
+  window.onload=function(){
 
+      layui.use(['upload','form','layer','element'], function(){
+          var upload = layui.upload;
+          form1=layui.form;
+          initProForm(layui);
 
-  layui.use(['upload','form','layer','element'], function(){
-      var upload = layui.upload;
-      form1=layui.form;
-      initProForm(layui);
+          //执行实例
+          element = layui.element;
 
-      //执行实例
-      element = layui.element;
+          //一些事件监听
+          /*element.on('tab(demo)', function(data){
+              var layid=$(this).attr('lay-id');
+              if(layid==-1){
+                  alert(layid)
+                  var maId=(Math.random()*1000|0);
+                  $(this).before("<li lay-id='"+maId+"'>未命名</li>");
+                  $("#add-item").before($("#first-item").clone());
+                  element.render("tab","demo");
+                  element.tabChange("demo", maId+"");
+                  $("#add i").remove();
+              }
+          });*/
 
-      //一些事件监听
-      /*element.on('tab(demo)', function(data){
-          var layid=$(this).attr('lay-id');
-          if(layid==-1){
-              alert(layid)
+          $("#add").mousedown(function(){
               var maId=(Math.random()*1000|0);
               $(this).before("<li lay-id='"+maId+"'>未命名</li>");
-              $("#add-item").before($("#first-item").clone());
+              var cloneObj=$(".layui-tab-item").eq(0).clone();
+              cloneObj.attr("item-id",maId);
+              var trs=cloneObj.find(".addtr").prevAll();
+              cloneObj.find("input").val("");
+              cloneObj.find("select option").eq(0).attr("selected","selected");
+              if(trs.length>1){
+
+                  for(var i=1;i<trs.length;i++){
+                      trs.eq(i).remove();
+                  }
+              }
+              $("#add-item").before(cloneObj);
               element.render("tab","demo");
               element.tabChange("demo", maId+"");
-              $("#add i").remove();
-          }
-      });*/
+              form1.render("select");
+          })
+          element.on('tabDelete(demo)', function(data){
+              var lis=$(".layui-tab-title li");
 
-      $("#add").mousedown(function(){
-          var maId=(Math.random()*1000|0);
-          $(this).before("<li lay-id='"+maId+"'>未命名</li>");
-          var cloneObj=$(".layui-tab-item").eq(0).clone();
-          cloneObj.attr("item-id",maId);
-          var trs=cloneObj.find(".addtr").prevAll();
-          cloneObj.find("input").val("");
-          cloneObj.find("select option").eq(0).attr("selected","selected");
-          if(trs.length>1){
-
-              for(var i=1;i<trs.length;i++){
-                  trs.eq(i).remove();
-              }
-          }
-          $("#add-item").before(cloneObj);
-          element.render("tab","demo");
-          element.tabChange("demo", maId+"");
-          form1.render("select");
-      })
-      element.on('tabDelete(demo)', function(data){
-          var lis=$(".layui-tab-title li");
-
-          element.tabChange("demo", lis.eq(0).attr("lay-id"));
+              element.tabChange("demo", lis.eq(0).attr("lay-id"));
 
 
-      })
+          })
 
 
-  });
+      });
+  }
+
   function inputBlur(obj){
       var itemId=$(obj).parents(".layui-tab-item").eq(0).attr("item-id");
       $("[lay-id='"+itemId+"']").html($(obj).val());

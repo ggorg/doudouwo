@@ -146,24 +146,27 @@
 </body>
 <script type="text/javascript">
   var form1;
-    initForm("do-save",".layui-form",function(f){
-        form1=f;
-       f.on('select(select)',function(data){
-           var selectObj=$(data.elem);
-           selectObj.parent().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcType"));
-           selectObj.parent().next().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcMoney"));
-           selectObj.parent().next().next().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcMinPrice"));
+  window.onload=function(){
+      initForm("do-save",".layui-form",function(f){
+          form1=f;
+          f.on('select(select)',function(data){
+              var selectObj=$(data.elem);
+              selectObj.parent().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcType"));
+              selectObj.parent().next().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcMoney"));
+              selectObj.parent().next().next().next().text(selectObj.find("[value='"+data.value+"']").attr("data-dcMinPrice"));
 
-       });
+          });
 
-        f.on('select(gradeSelect)', function(data){
-            if(data.value ==1){
-                $("#newCoupon").show();
-            }else{
-                $("#newCoupon").hide();
-            }
-        });
-    });
+          f.on('select(gradeSelect)', function(data){
+              if(data.value ==1){
+                  $("#newCoupon").show();
+              }else{
+                  $("#newCoupon").hide();
+              }
+          });
+      });
+
+  }
 
     function add(){
         var cloneObj=$("tbody tr").eq(0).clone();

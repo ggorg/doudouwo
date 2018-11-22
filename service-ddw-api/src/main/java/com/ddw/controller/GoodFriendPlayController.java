@@ -36,7 +36,7 @@ public class GoodFriendPlayController {
         }
     }
     @Token
-    @ApiOperation(value = "进入我的房间")
+    @ApiOperation(value = "获取我的房间号")
     @PostMapping("/room/myroom/{token}")
     public ResponseApiVO<GoodFriendPlayMyRoomVO> toMyRoom(@PathVariable String token){
         try {

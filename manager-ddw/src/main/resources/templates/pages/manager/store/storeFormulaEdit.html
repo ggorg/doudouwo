@@ -105,14 +105,17 @@
 </body>
 <script type="text/javascript">
   var form1;
-    initForm("do-save",".layui-form",function(f){
-        form1=f;
-       f.on('select(select)',function(data){
-           var selectObj=$(data.elem);
-           selectObj.parent().next().text(selectObj.find("[value='"+data.value+"']").attr("data-weight"));
+  window.onload=function(){
+      initForm("do-save",".layui-form",function(f){
+          form1=f;
+          f.on('select(select)',function(data){
+              var selectObj=$(data.elem);
+              selectObj.parent().next().text(selectObj.find("[value='"+data.value+"']").attr("data-weight"));
 
-       })
-    })
+          })
+      })
+  }
+
 
     function add(){
         var cloneObj=$("tbody tr").eq(0).clone();
