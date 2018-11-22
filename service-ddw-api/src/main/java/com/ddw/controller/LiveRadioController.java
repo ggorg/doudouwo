@@ -49,7 +49,6 @@ public class LiveRadioController {
     @Token
     @ApiOperation(value = "女神申请直播（带上传图片）")
     @PostMapping(value ="/applWithPic/{token}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE ,produces = MediaType.ALL_VALUE)
-    @ResponseBody
     @ApiResponses(value={
             @ApiResponse(code= 1,message="成功"),
             @ApiResponse(code= -1,message="系统异常"),
