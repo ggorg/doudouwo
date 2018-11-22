@@ -21,12 +21,10 @@
     <cache name="publicCache"  maxElementsInMemory="1000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
         <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
-
     </cache>
     <cache name="stores"  maxElementsInMemory="200" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
         <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
-
     </cache>
     <cache name="pay"  maxElementsInMemory="2000" timeToLiveSeconds="10800"  diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>

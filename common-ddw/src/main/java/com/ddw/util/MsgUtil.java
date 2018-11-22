@@ -139,5 +139,6 @@ public class MsgUtil {
         //sendVaildCode("13416605209");
         commonModel(paypwd_id,"13416605209","123456");
         System.out.println();
+
     }
 }
