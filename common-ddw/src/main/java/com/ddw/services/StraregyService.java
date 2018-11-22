@@ -32,10 +32,19 @@ public class StraregyService extends CommonService {
         return super.commonList("ddw_strategy_single","money desc",1,1,searchCondition);
     }
 
+    public Map queryFirstRechargeSingle()throws Exception{
+        return super.commonObjectBySingleParam("ddw_strategy_single","levelId",1);
+    }
+
     public List queryCumulation(int money)throws Exception{
         Map<String,Object> searchCondition = new HashMap<>();
         searchCondition.put("money,<=",money);
         return super.commonList("ddw_strategy_cumulation","money desc",1,1,searchCondition);
+    }
+
+    public List querySingleCoupon()throws Exception{
+        Map<String,Object> searchCondition = new HashMap<>();
+        return super.commonObjectsBySearchCondition("ddw_strategy_single_coupon",searchCondition);
     }
 
     public Map queryAccrualRecharge(int userId)throws Exception{
@@ -158,6 +167,7 @@ public class StraregyService extends CommonService {
             singleMap = (Map) strategySingleList.get(0);
             coinSingle = (int)singleMap.get("coin");
         }
+
         Map map = this.queryAccrualRecharge(userId);
         //查询累积充值策略
         Map cumulationMap = new HashMap<>();
@@ -175,6 +185,21 @@ public class StraregyService extends CommonService {
         }
 
         UserInfoPO userInfoPO = queryUser(userId);
+        //首次充值策略
+        if(userInfoPO.getFirstRechargeFlag() == 0){
+            Map firstRechargeSingleMap = this.queryFirstRechargeSingle();
+            if(firstRechargeSingleMap != null && firstRechargeSingleMap.containsKey("money")
+                && money >= (Integer) firstRechargeSingleMap.get("money")) {
+                //赠送新用户首充优惠券
+                List<Map> list = this.querySingleCoupon();
+                for (Map m : list) {
+                    this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), userId, -1);
+                }
+                //更新用户首充字段为1
+                userInfoPO.setFirstRechargeFlag(1);
+                this.update(userInfoPO);
+            }
+        }
         //会员等级
         List<Map> gradeList = new ArrayList<>();
         Object gradeObj = CacheUtil.get("publicCache","grade");

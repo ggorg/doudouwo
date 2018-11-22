@@ -39,9 +39,8 @@ public class StrategyOldBringingNewController {
     public String  toEdit(Integer idStr, Model model){
         try{
             model.addAttribute("gradePage",gradeService.findList(null));
-            model.addAttribute("strategy",this.strategyOldBringingNewService.getById(idStr));
             model.addAttribute("couponList",this.couponService.getHeadOffice());
-            model.addAttribute("gradeList",this.gradeService.getAll());
+            model.addAttribute("strategy",this.strategyOldBringingNewService.getById(idStr));
         }catch (Exception e){
             logger.error("StrategyOldBringingNewController->toEdit->系统异常");
         }

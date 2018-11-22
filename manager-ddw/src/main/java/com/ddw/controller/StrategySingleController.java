@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 import com.ddw.beans.StrategyDTO;
+import com.ddw.servies.CouponService;
 import com.ddw.servies.GradeService;
 import com.ddw.servies.StrategySingleService;
 import com.gen.common.vo.ResponseVO;
@@ -21,6 +22,8 @@ public class StrategySingleController {
     private StrategySingleService strategySingleService;
     @Autowired
     private GradeService gradeService;
+    @Autowired
+    private CouponService couponService;
 
 
     @GetMapping("list")
@@ -38,9 +41,8 @@ public class StrategySingleController {
     public String toEdtitPage(Integer id,Model model){
         try {
             model.addAttribute("gradePage",gradeService.findList(null));
-            if(id != null && id >0) {
-                model.addAttribute("strategy", strategySingleService.getById(id));
-            }
+            model.addAttribute("couponList",this.couponService.getHeadOffice());
+            model.addAttribute("strategy", strategySingleService.getById(id));
         }catch (Exception e){
             logger.error("StrategySingleController->toEdtitPage",e);
         }

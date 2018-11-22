@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,10 +29,6 @@ public class GradeService extends CommonService{
             condtion.put("gradeName",gradeName);
         }
         return super.commonPage("ddw_grade","sort",1,999,condtion);
-    }
-
-    public List getAll()throws Exception{
-        return this.commonList("ddw_grade","sort",null,null,new HashMap<>());
     }
 
     public GradePO selectById(String id){

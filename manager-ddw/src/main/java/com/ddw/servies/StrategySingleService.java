@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Jacky on 2018/5/29.
@@ -27,7 +25,20 @@ public class StrategySingleService extends CommonService {
     }
 
     public Map getById(Integer id)throws Exception{
-        return this.commonObjectBySingleParam("ddw_strategy_single","id",id);
+        if(id != null){
+            Map map= this.commonObjectBySingleParam("ddw_strategy_single","id",id);
+            if(map!=null){
+                map.put("child",getStrategySingleCouponOld(id));
+            }
+            return map;
+        }
+        Map map = new HashMap<>();
+        map.put("child",new ArrayList());
+        return map;
+    }
+
+    public List getStrategySingleCouponOld(Integer strategyId)throws Exception{
+        return this.commonObjectsBySingleParam("ddw_strategy_single_coupon","strategyId",strategyId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -38,11 +49,41 @@ public class StrategySingleService extends CommonService {
             PropertyUtils.copyProperties(strategyPO,this.getById(strategyDTO.getId()));
             strategyPO.setUpdateTime(new Date());
             Map updatePoMap= BeanToMapUtil.beanToMap(strategyPO);
-            return super.commonUpdateBySingleSearchParam("ddw_strategy_single",updatePoMap,"id",strategyPO.getId());
+            ResponseVO re = super.commonUpdateBySingleSearchParam("ddw_strategy_single",updatePoMap,"id",strategyPO.getId());
+            if(re.getReCode()==1){
+                //修改先删除再添加优惠券和会员关系
+                this.commonDelete("ddw_strategy_single_coupon","strategyId",strategyDTO.getId());
+                if(strategyDTO.getCouponId() != null){
+                    for(Integer couponId:strategyDTO.getCouponId()){
+                        Map map = new HashMap<>();
+                        map.put("strategyId",strategyDTO.getId());
+                        map.put("couponId",couponId);
+                        map.put("createTime",new Date());
+                        map.put("updateTime",new Date());
+                        this.commonInsertMap("ddw_strategy_single_coupon",map);
+                    }
+                }
+            }
+            return re;
         }else{
             strategyPO.setCreateTime(new Date());
             strategyPO.setUpdateTime(new Date());
-            return this.commonInsert("ddw_strategy_single",strategyPO);
+            ResponseVO re = this.commonInsert("ddw_strategy_single",strategyPO);
+            if(re.getReCode()==1){
+                //修改先删除再添加优惠券和会员关系
+                this.commonDelete("ddw_strategy_single_coupon","strategyId",strategyDTO.getId());
+                if(strategyDTO.getCouponId() != null){
+                    for(Integer couponId:strategyDTO.getCouponId()){
+                        Map map = new HashMap<>();
+                        map.put("strategyId",strategyDTO.getId());
+                        map.put("couponId",couponId);
+                        map.put("createTime",new Date());
+                        map.put("updateTime",new Date());
+                        this.commonInsertMap("ddw_strategy_single_coupon",map);
+                    }
+                }
+            }
+            return re;
         }
     }
 

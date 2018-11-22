@@ -10,6 +10,7 @@ public class StrategyDTO {
     private int money;
     private int coin;
     private String describe;
+    private Integer[]couponId;
 
     public int getId() {
         return id;
@@ -59,4 +60,11 @@ public class StrategyDTO {
         this.describe = describe;
     }
 
+    public Integer[] getCouponId() {
+        return couponId;
+    }
+
+    public void setCouponId(Integer[] couponId) {
+        this.couponId = couponId;
+    }
 }

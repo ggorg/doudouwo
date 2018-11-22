@@ -32,6 +32,7 @@ public class UserInfoPO {
     private String idcardOppositeUrl;
     private Integer goddessFlag;
     private Integer practiceFlag;
+    private Integer firstRechargeFlag;
     private Date createTime;
     private Date updateTime;
 
@@ -261,6 +262,14 @@ public class UserInfoPO {
 
     public Integer getPracticeFlag() {
         return practiceFlag;
+    }
+
+    public Integer getFirstRechargeFlag() {
+        return firstRechargeFlag;
+    }
+
+    public void setFirstRechargeFlag(Integer firstRechargeFlag) {
+        this.firstRechargeFlag = firstRechargeFlag;
     }
 
     public void setPracticeFlag(Integer practiceFlag) {

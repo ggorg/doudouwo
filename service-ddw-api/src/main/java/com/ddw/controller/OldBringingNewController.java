@@ -22,7 +22,7 @@ public class OldBringingNewController {
 
 
     @ApiOperation(value = "添加老带新",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/add")
+    @GetMapping("/add")
     @ResponseBody
     public ResponseVO add(@RequestBody @ApiParam(name="args",value="此接口用在微信网页授权事件获取到双方unionid后调用绑定",required=true)OldBringingNewDTO args){
         try {
