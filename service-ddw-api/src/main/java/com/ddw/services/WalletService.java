@@ -279,6 +279,7 @@ public class WalletService extends CommonService {
         CommonSearchBean csb=new CommonSearchBean("ddw_userinfo_coupon",null,"t1.id couponCode,ct0.dcName name,ct0.dcType type,ct0.dcMoney mop,ct0.dcStartTime startTime,ct0.dcEndTime endTime,ct0.dcDesc 'desc',ct1.dsName storeName,ct0.dcMinPrice minPrice,t1.used",null,null,csearch,
                 new CommonChildBean("ddw_coupon","id","couponId",null),
                 new CommonChildBean("ddw_store","id","storeId",null));
+        csb.setJointName("left");
         List couponlist=this.getCommonMapper().selectObjects(csb);
         List list=new ArrayList();
         Date now=new Date();
@@ -288,6 +289,9 @@ public class WalletService extends CommonService {
                 try {
 
                     PropertyUtils.copyProperties(vo,a);
+                    if(StringUtils.isNotBlank(vo.getStoreName())){
+                        vo.setStoreName("平台");
+                    }
                     if(vo.getEndTime().after(now)){
                         vo.setExpire(1);
                     }else{
