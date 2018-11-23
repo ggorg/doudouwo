@@ -39,7 +39,6 @@ public class RechargeService extends CommonService {
        Map costMap=new HashMap();
        costMap.put("discount",discount==null?price:discount);
        costMap.put("price",price);
-        map.clear();map=null;
         return costMap;
     }
    // @Cacheable(value ="publicCache",key="'recharge-all'" )
