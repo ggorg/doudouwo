@@ -259,14 +259,16 @@ public class StraregyService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     private void setOldBringingNewCoupon(UserInfoPO userInfoPO)throws Exception{
         OldBringingNewPO oldBringingNewPO = this.getOldBringingNewPO(userInfoPO.getOpenid());
-        UserInfoPO userInfoPO1 = this.queryUserByOpenid(oldBringingNewPO.getOldOpenid());
-        Map smap = this.queryStrategyOldBringingNew(userInfoPO.getGradeId());
-        if(smap != null && smap.containsKey("id")){
-            List couponList = this.queryCoupon((Integer) smap.get("id"));
-            for(int i=0;i<couponList.size();i++){
-                Map cmap = (Map)couponList.get(i);
-                //插入ddw_userinfo_coupon
-                this.insertCoupon(Integer.valueOf(cmap.get("couponId").toString()), userInfoPO1.getId(),-1);
+        if(oldBringingNewPO != null){
+            UserInfoPO userInfoPO1 = this.queryUserByOpenid(oldBringingNewPO.getOldOpenid());
+            Map smap = this.queryStrategyOldBringingNew(userInfoPO.getGradeId());
+            if(smap != null && smap.containsKey("id")){
+                List couponList = this.queryCoupon((Integer) smap.get("id"));
+                for(int i=0;i<couponList.size();i++){
+                    Map cmap = (Map)couponList.get(i);
+                    //插入ddw_userinfo_coupon
+                    this.insertCoupon(Integer.valueOf(cmap.get("couponId").toString()), userInfoPO1.getId(),-1);
+                }
             }
         }
     }
