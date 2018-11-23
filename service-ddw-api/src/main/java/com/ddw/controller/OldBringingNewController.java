@@ -1,7 +1,11 @@
 package com.ddw.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.OldBringingNewDTO;
 import com.ddw.services.OldBringingNewService;
+import com.ddw.token.Token;
+import com.ddw.token.TokenUtil;
+import com.ddw.util.CommonUtil;
 import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/ddwapp/oldBringingNew")
 public class OldBringingNewController {
     private final Logger logger = Logger.getLogger(OldBringingNewController.class);
+    private final String WXAPPID = "wx77fedfebe36bb337";
+    private final String OAUTHMAINURL = "http://doudouwo.cn/weixin/oauth";
 
     @Autowired
     private OldBringingNewService oldBringingNewService;
@@ -32,6 +38,22 @@ public class OldBringingNewController {
         }
         return new ResponseVO(-1,"失败",null);
 
+    }
+
+    @Token
+    @ApiOperation(value = "老带新分享链接")
+    @PostMapping("/shareUrl/{token}")
+    public ResponseVO shareUrl(@PathVariable String token){
+        try {
+            JSONObject json = new JSONObject();
+            String openid = TokenUtil.getUserObject(token).toString();
+            String shareUrl = CommonUtil.createOauthUrl(WXAPPID,OAUTHMAINURL,"obn",openid.substring(openid.length()-6,openid.length()));
+            json.put("shareUrl",shareUrl);
+            return new ResponseVO(1,"成功",json);
+        }catch (Exception e){
+            logger.error("OldBringingNewController->shareUrl",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
     }
 
 }
