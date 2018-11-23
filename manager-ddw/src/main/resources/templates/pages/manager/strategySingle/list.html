@@ -1,107 +1,85 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${strategyPage!=null?strategyPage.total:0}]]*/ );
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>会员单笔充值策略列表</h3>
 
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-       <div class="centercontent tables">
+    </div><!--contenttitle-->
 
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
+    <div class="tableoptions">
 
-       </div>--><!--pageheader-->
+        <form class="layui-form" >
+            <div class="layui-form-item2 layui-form-item">
+                <div class="float-left-div" >
 
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>会员单笔充值策略列表</h3>
-
-                </div><!--contenttitle-->
-
-                <div class="tableoptions">
-
-                    <form class="layui-form" >
-                        <div class="layui-form-item2 layui-form-item">
-                        <div class="float-left-div" >
-
-                            <label class="layui-form-label" >名称</label>
-                            <div class="layui-input-inline" >
-                                <input class="layui-input" name="gradeName" th:value="${#httpServletRequest.getParameter('gradeName')}"/>
-                            </div>
-                        </div>
-                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
-
+                    <label class="layui-form-label" >名称</label>
+                    <div class="layui-input-inline" >
+                        <input class="layui-input" name="gradeName" th:value="${#httpServletRequest.getParameter('gradeName')}"/>
                     </div>
-                    </form>
                 </div>
-                <div class="tableoptions">
+                <a href="javascript:void(0)"  onclick="ajaxPage(1,'search')" class="btn btn_search radius50"><span>Search</span></a>
 
-                    <button class="radius3" id="createBtn" onclick="openDialog('500px','620px','新增策略','to-edit')" title="table2">新增策略</button> &nbsp;
-
-                </div>
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <colgroup>
-                        <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th class="head0">名称</th>
-                        <th class="head1">会员等级</th>
-                        <th class="head0">金额（单位分）</th>
-                        <th class="head1">赠送逗币</th>
-                        <th class="head0">描述</th>
-                        <th class="head1">创建时间</th>
-                        <th class="head0">操作</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="obj:${strategyPage?.result}">
-                        <td th:text="${obj['name']}">Trident</td>
-                        <td th:text="${#TdTool.getGradeName(obj['levelId'],gradePage.result)}">Win 95+</td>
-                        <td th:text="${obj['money']}">Trident</td>
-                        <td th:text="${obj['coin']}">Trident</td>
-                        <td th:text="${obj['describe']}">Trident</td>
-                        <td th:text="${obj['createTime']!=null ? #dates.format(obj['createTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
-                        <td class="center">
-                            <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'580px\',\'修改策略\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
-                            <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-                <div id="pages"></div>
             </div>
-        </div>
+        </form>
+    </div>
+    <div class="tableoptions">
+
+        <button class="radius3" id="createBtn" onclick="openDialog('500px','620px','新增策略','to-edit')" title="table2">新增策略</button> &nbsp;
 
     </div>
-    <th:block  layout:fragment="myjs" >
-    <script type="text/javascript">
-        layui.use('form', function(){
-            var form = layui.form;
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
 
+        <colgroup >
+            <!--<col class="con0" style="width: 4%" />-->
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" />
+            <col class="con1" />
+            <col class="con0" />
+        </colgroup>
+        <thead >
+
+        <tr>
+
+            <th class="head0">名称</th>
+            <th class="head1">会员等级</th>
+            <th class="head0">金额（单位分）</th>
+            <th class="head1">赠送逗币</th>
+            <th class="head0">描述</th>
+            <th class="head1">创建时间</th>
+            <th class="head0">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${strategyPage!=null?strategyPage.total:0}">
+    <tr th:each="obj:${strategyPage?.result}">
+        <td th:text="${obj['name']}">Trident</td>
+        <td th:text="${#TdTool.getGradeName(obj['levelId'],gradePage.result)}">Win 95+</td>
+        <td th:text="${obj['money']}">Trident</td>
+        <td th:text="${obj['coin']}">Trident</td>
+        <td th:text="${obj['describe']}">Trident</td>
+        <td th:text="${obj['createTime']!=null ? #dates.format(obj['createTime'], 'yyyy-MM-dd HH:mm:ss'):''}">Win 95+</td>
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'500px\',\'580px\',\'修改策略\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'del(\''+${obj['id']}+'\')'" >删除</button>
+            </div>
+        </td>
+    </tr>
+
+    </tbody>
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${strategyPage!=null?strategyPage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
         });
 
         function del(obj) {
@@ -118,7 +96,8 @@
             });
         }
     </script>
-    </th:block>
-	</body>
+
+</th:block>
+
 
 </html>

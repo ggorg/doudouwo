@@ -10,3 +10,4 @@ span.style1{  width:25px;display: inline-block;text-align:center;  }
 .ml_div i,.mr_div i{font-size: 30px;color: white}
 .ma{font-size: 13px}
 .ma_fa { display: inline-block;  font: normal normal normal 14px/1 FontAwesome;  text-rendering: auto;  -webkit-font-smoothing: antialiased;  -moz-osx-font-smoothing: grayscale;  }
+.vStyle{ border-bottom:#cccccc 1px dashed; }

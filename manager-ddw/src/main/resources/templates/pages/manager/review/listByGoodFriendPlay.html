@@ -1,124 +1,105 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 
-	<head>
-        <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
-        <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
-        <script type="text/javascript"  th:inline="javascript">
-           initPage(/*[[${rPage!=null?rPage.total:0}]]*/ );
-        </script>
-	</head>
-    <body class="withvernav">
-    <div class="bodywrapper">
+<th:block   layout:fragment="options">
+    <div class="contenttitle2">
+        <h3>业务审批列表</h3>
 
-        <th:block th:include="pages/manager/common/header::sysheader"></th:block>
-        <th:block th:include="pages/manager/common/menus::sysmenus"></th:block>
-       <div class="centercontent tables">
+    </div><!--contenttitle-->
 
-           <!-- <div class="pageheader notab">
-           <h1 class="pagetitle">Tables</h1>
-           <span class="pagedesc">This is a sample description of a page</span>
+    <div class="tableoptions">
 
-       </div>--><!--pageheader-->
+        <form class="layui-form" >
+            <div class="layui-form-item2 layui-form-item">
+                <div class="float-left-div" >
 
-            <div id="contentwrapper" class="contentwrapper">
-                <div class="contenttitle2">
-                    <h3>业务审批列表</h3>
-
-                </div><!--contenttitle-->
-
-                <div class="tableoptions">
-
-                    <form class="layui-form" >
-                        <div class="layui-form-item2 layui-form-item">
-                        <div class="float-left-div" >
-
-                            <label class="layui-form-label" >名称</label>
-                            <div class="layui-input-inline" >
-                                <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
-                            </div>
-                        </div>
-                            <a href="javascript:void(0)" onclick="jQuery('.layui-form').submit()" class="btn btn_search radius50"><span>Search</span></a>
-
+                    <label class="layui-form-label" >名称</label>
+                    <div class="layui-input-inline" >
+                        <input class="layui-input" name="uName" th:value="${#httpServletRequest.getParameter('uName')}"/>
                     </div>
-                    </form>
-                    <!-- <select class="radius3">
-                         <option value="">Show All</option>
-                         <option value="">Rendering Engine</option>
-                         <option value="">Platform</option>
-                     </select> &nbsp;
-                     <button class="radius3">Apply Filter</button>
-                     <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
-                </div><!--tableoptions-->
+                </div>
+                <a href="javascript:void(0)" onclick="ajaxPage(1,'search')"  class="btn btn_search radius50"><span>Search</span></a>
 
-                <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
-                    <colgroup>
-                        <!--<col class="con0" style="width: 4%" />-->
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-                        <col class="con0" />
-
-                        <col class="con0" />
-                    </colgroup>
-                    <thead>
-
-                    <tr>
-                        <th class="head1">业务编号</th>
-                        <th class="head1">业务类型</th>
-                        <th class="head1">申请人名称</th>
-                        <th class="head1">申请时间</th>
-                        <th class="head1">房间状态</th>
-                        <th class="head1">审批人名称</th>
-                        <th class="head1">审批时间</th>
-                        <th class="head1">审批状态</th>
-                        <th class="head1">业务信息</th>
-
-                        <th class="head1">操作</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr th:each="obj:${rPage?.result}">
-                        <td th:text="${obj['drBusinessCode']}">Trident</td>
-                        <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessTypeEnum',obj['drBusinessType'])}"></td>
-                        <td th:text="${obj['drProposerName']}">Trident</td>
-                        <td th:text="${obj['createTime']==null?'':#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
-                        <td th:text="${#TdEnum.text('com.ddw.enums.GoodFriendPlayRoomStatusEnum',obj['roomStatus'])}"></td>
-                        <td th:text="${obj['drReviewerName']}">Trident</td>
-                        <td th:text="${obj['updateTime']==null?'':#dates.format(obj['updateTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
-                        <td th:text="${#TdEnum.text('com.ddw.enums.ReviewStatusEnum',obj['drReviewStatus'])}"></td>
-                        <td th:text="${obj['drExtend']}">Trident</td>
-
-
-                        <td class="center">
-                            <div class="layui-btn-group">
-                            <button class="layui-btn layui-btn-sm" th:onclick="'viewDialog(\'500px\',\'580px\',\'查看\',\'/manager/review/to-review-info-by-id-html?id='+${obj['id']}+'\')'"  >查 看</button>
-                                <th:block th:utext="${#toolsddw.commonReviewBtn(obj['id'],obj['drBusinessCode'],obj['drReviewStatus'])}"></th:block>
-                             <button  class="layui-btn layui-btn-sm layui-btn-danger" th:if="${obj['roomStatus']==1}" th:onclick="'confirmDisabled('+${obj['drBusinessCode']}+')'" >结束约玩</button>
-
-                            </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    </tbody>
-
-                </table>
-
-                <div id="pages"></div>
             </div>
-        </div>
-
+        </form>
+        <!-- <select class="radius3">
+             <option value="">Show All</option>
+             <option value="">Rendering Engine</option>
+             <option value="">Platform</option>
+         </select> &nbsp;
+         <button class="radius3">Apply Filter</button>
+         <input class="radius3" style="padding: 6px 5px 6px 5px;margin-left:10px;"/>-->
     </div>
-    <th:block  layout:fragment="myjs" >
-    <script type="text/javascript">
+</th:block>
+<table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
+    <th:block   layout:fragment="dataHead">
+
+        <colgroup >
+            <!--<col class="con0" style="width: 4%" />-->
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+            <col class="con0" />
+
+            <col class="con0" />
+        </colgroup>
+        <thead >
+
+        <tr>
+
+            <th class="head1">业务编号</th>
+            <th class="head1">业务类型</th>
+            <th class="head1">申请人名称</th>
+            <th class="head1">申请时间</th>
+            <th class="head1">房间状态</th>
+            <th class="head1">审批人名称</th>
+            <th class="head1">审批时间</th>
+            <th class="head1">审批状态</th>
+            <th class="head1">业务信息</th>
+
+            <th class="head1">操作</th>
+        </tr>
+        </thead>
+    </th:block>
+    <tbody layout:fragment="dataBody" th:attr="total=${rPage!=null?rPage.total:0}">
+    <tr th:each="obj:${rPage?.result}">
+        <td th:text="${obj['drBusinessCode']}">Trident</td>
+        <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessTypeEnum',obj['drBusinessType'])}"></td>
+        <td th:text="${obj['drProposerName']}">Trident</td>
+        <td th:text="${obj['createTime']==null?'':#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
+        <td th:text="${#TdEnum.text('com.ddw.enums.GoodFriendPlayRoomStatusEnum',obj['roomStatus'])}"></td>
+        <td th:text="${obj['drReviewerName']}">Trident</td>
+        <td th:text="${obj['updateTime']==null?'':#dates.format(obj['updateTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
+        <td th:text="${#TdEnum.text('com.ddw.enums.ReviewStatusEnum',obj['drReviewStatus'])}"></td>
+        <td th:text="${obj['drExtend']}">Trident</td>
+
+
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm" th:onclick="'viewDialog(\'500px\',\'580px\',\'查看\',\'/manager/review/to-review-info-by-id-html?id='+${obj['id']}+'\')'"  >查 看</button>
+                <th:block th:utext="${#toolsddw.commonReviewBtn(obj['id'],obj['drBusinessCode'],obj['drReviewStatus'])}"></th:block>
+                <button  class="layui-btn layui-btn-sm layui-btn-danger" th:if="${obj['roomStatus']==1}" th:onclick="'confirmDisabled('+${obj['drBusinessCode']}+')'" >结束约玩</button>
+
+            </div>
+            </div>
+        </td>
+    </tr>
+
+    </tbody>
+
+</table>
+<th:block  layout:fragment="myjs" >
+
+    <script type="text/javascript"  th:inline="javascript">
+        initPage(/*[[${rPage!=null?rPage.total:0}]]*/ ,function(curr){
+            ajaxPage(curr);
+        });
+
 
         function confirmDisabled(id){
             layer.confirm("是否结束？", {icon: 3, title:'提示'}, function(index){
@@ -129,16 +110,9 @@
                 //layer.close(index);
             });
         }
-        window.onload=function(){
-            layui.use('form', function(){
-                var form = layui.form;
-
-            })
-        }
-
-
     </script>
-    </th:block>
-	</body>
+
+</th:block>
+
 
 </html>
