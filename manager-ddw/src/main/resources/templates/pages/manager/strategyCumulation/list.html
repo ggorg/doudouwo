@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="pages/manager/common/layout" >
 	<head>
         <th:block th:include="pages/manager/common/cssResources::syscssresources"></th:block>
         <th:block th:include="pages/manager/common/jsResources::sysjsresources"></th:block>
@@ -95,6 +96,7 @@
         </div>
 
     </div>
+    <th:block  layout:fragment="myjs" >
     <script type="text/javascript">
         layui.use('form', function(){
             var form = layui.form;
@@ -115,6 +117,7 @@
             });
         }
     </script>
+    </th:block>
 	</body>
 
 </html>
