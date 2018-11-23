@@ -24,13 +24,14 @@
         </form>
     </div><!--tableoptions-->
     <div class="tableoptions">
-        <button class="radius3" id="createBtn" onclick="openDialog('850px','530px','新增商品','to-edit')" title="table2">新增banner</button> &nbsp;
+        <button class="radius3" id="createBtn" onclick="openDialog('850px','530px','新增banner','to-shop-banner-edit')" title="table2">新增banner</button> &nbsp;
     </div>
 </th:block>
 <table cellpadding="0" cellspacing="0" border="0" id="table2" class="stdtable stdtablecb">
     <th:block   layout:fragment="dataHead">
 
         <colgroup >
+            <col class="con0" />
             <col class="con0" />
             <col class="con0" />
             <col class="con0" />
@@ -46,6 +47,8 @@
             <th class="head1">审核状态</th>
             <th class="head1">备注</th>
             <th class="head1">创建时间</th>
+            <th class="head1">操作</th>
+
         </tr>
         </thead>
     </th:block>
@@ -61,6 +64,13 @@
         </td>
         <td th:text="${obj['bDescribe']}">Trident</td>
         <td th:text="${obj['createTime']==null?'':#dates.format(obj['createTime'],'yyyy-MM-dd HH:mm')}">Win 95+</td>
+        <td class="center">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\'650px\',\'530px\',\'修改\',\'to-shop-banner-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+
+                <button  th:class="'layui-btn layui-btn-sm '+${obj['enable']==0?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${obj['id']}+'\','+${obj['enable']==0?1:0}+',\''+${obj['enable']==0?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['enable']==0?'发 布':'撤回发布'}"></button>
+            </div>
+        </td>
     </tr>
 
     </tbody>
@@ -102,6 +112,15 @@
             });
 
         });
+        function confirmDisabled(id,status,msg){
+            layer.confirm(msg, {icon: 3, title:'提示'}, function(index){
+                if(index>0){
+                    jQueryCommonSubmit("do-update-banner-status",null,{id:id,status:status});
+
+                }
+                //layer.close(index);
+            });
+        }
     </script>
 
 </th:block>

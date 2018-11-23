@@ -1,6 +1,7 @@
 package com.ddw.services;
 
 import com.ddw.beans.vo.AppIndexBannerVO;
+import com.ddw.enums.BannerTypeEnum;
 import com.gen.common.services.CommonService;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,18 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class BannerService extends CommonService {
 
-    public List<AppIndexBannerVO> getBannerList(Integer storeId)throws Exception{
+    public List<AppIndexBannerVO> getBannerList(Integer storeId, BannerTypeEnum type)throws Exception{
         Map<String,Object> searchCondition = new HashMap<>();
-        searchCondition.put("storeId",storeId);
-        searchCondition.put("status",1);
+        if(storeId!=null){
+            searchCondition.put("storeId",storeId);
+        }else{
+            searchCondition.put("status",1);
+
+        }
         searchCondition.put("enable",1);
-        List<Map> list = this.commonObjectsBySearchCondition("ddw_review_banner",searchCondition);
+        searchCondition.put("bType",type.getCode());
+
+        List<Map> list = this.commonList("ddw_banner","createTime desc",1,4,searchCondition);
         List<AppIndexBannerVO> appIndexBannerList = new ArrayList<>();
         if (list != null) {
             for(Map map:list){

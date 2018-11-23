@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
-import com.ddw.enums.GoodsPageModelStatusEnum;
-import com.ddw.enums.GoodsPlatePosEnum;
-import com.ddw.enums.GoodsRecommendEnum;
-import com.ddw.enums.GoodsStatusEnum;
+import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
@@ -48,10 +45,10 @@ public class GoodsClientService extends CommonService {
        Map goddessIndex=new HashMap();
        goddessIndex.put("list",responseApiVO.getData().getList());
 
-       Object obBanner = CacheUtil.get("publicCache","appIndexBanner"+storeId);
+       Object obBanner = CacheUtil.get("publicCache","banner-shop-all-"+storeId);
        if(obBanner==null){
-           obBanner = bannerService.getBannerList(storeId);
-           CacheUtil.put("publicCache","appIndexButton"+storeId,obBanner);
+           obBanner = bannerService.getBannerList(storeId, BannerTypeEnum.type2);
+           CacheUtil.put("publicCache","banner-shop-all-"+storeId,obBanner);
        }
        goddessIndex.put("bannerList",obBanner);
        return new ResponseApiVO(1,"成功",goddessIndex);

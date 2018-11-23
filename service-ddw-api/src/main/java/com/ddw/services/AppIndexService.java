@@ -8,6 +8,7 @@ import com.ddw.beans.vo.AppIndexButtonVO;
 import com.ddw.beans.vo.AppIndexPracticeVO;
 import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.dao.GoddessMapper;
+import com.ddw.enums.BannerTypeEnum;
 import com.ddw.enums.LiveStatusEnum;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.Distance;
@@ -120,13 +121,13 @@ public class AppIndexService {
         }else{
             appIndexVO.setPracticeList((List<AppIndexPracticeVO>)CacheUtil.get("publicCache","appIndexPractice"+storeId));
         }
-        Object obBanner = CacheUtil.get("publicCache","appIndexBanner"+storeId);
+        Object obBanner = CacheUtil.get("publicCache","appIndexBanner");
         if(obBanner == null){
-            List<AppIndexBannerVO> appIndexBannerList = bannerService.getBannerList(storeId);
+            List<AppIndexBannerVO> appIndexBannerList = bannerService.getBannerList(null, BannerTypeEnum.type1);
             appIndexVO.setBannerList(appIndexBannerList);
-            CacheUtil.put("publicCache","appIndexBanner"+storeId,appIndexBannerList);
+            CacheUtil.put("publicCache","appIndexBanner",appIndexBannerList);
         }else{
-            appIndexVO.setBannerList((List<AppIndexBannerVO>)CacheUtil.get("publicCache","appIndexBanner"+storeId));
+            appIndexVO.setBannerList((List<AppIndexBannerVO>)CacheUtil.get("publicCache","appIndexBanner"));
         }
         Object obButton = CacheUtil.get("publicCache","appIndexButton");
         if(obButton == null){

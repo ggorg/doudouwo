@@ -87,7 +87,7 @@ public class AppOrderService extends CommonService {
                 }
                 orderViewVO.setOrderTypeName(OrderTypeEnum.getName(orderViewVO.getOrderType()));
                 orderViewVO.setPrice(orderIdMap.get(orderId));
-                //orderViewVO.setOrderNo(orderViewVO.getOrderNo().substring(16));
+                orderViewVO.setOrderNo(orderViewVO.getOrderNo().substring(16));
                 orderViewVO.setDesc(orderViewVO.getName()+" *"+orderViewVO.getNum());
                 handleMap.put(orderId,orderViewVO);
                 dataList.add(orderViewVO);

@@ -6,21 +6,23 @@ import java.util.Date;
  * Created by Jacky on 2018/6/14.
  */
 public class BannerPO {
-    private int id;
+    private Integer id;
     private String drBusinessCode;
     private String name;
-    private int storeId;
+    private Integer storeId;
     private String picUrl;
     private String url;
-    private int status;
-    private String describe;
+    private Integer status;
+    private String bDescribe;
     private Date createTime;
+    private Integer bType;
 
-    public int getId() {
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -40,11 +42,11 @@ public class BannerPO {
         this.name = name;
     }
 
-    public int getStoreId() {
+    public Integer getStoreId() {
         return storeId;
     }
 
-    public void setStoreId(int storeId) {
+    public void setStoreId(Integer storeId) {
         this.storeId = storeId;
     }
 
@@ -64,20 +66,20 @@ public class BannerPO {
         this.url = url;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public String getDescribe() {
-        return describe;
+    public String getbDescribe() {
+        return bDescribe;
     }
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
+    public void setbDescribe(String bDescribe) {
+        this.bDescribe = bDescribe;
     }
 
     public Date getCreateTime() {
@@ -86,5 +88,13 @@ public class BannerPO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getbType() {
+        return bType;
+    }
+
+    public void setbType(Integer bType) {
+        this.bType = bType;
     }
 }

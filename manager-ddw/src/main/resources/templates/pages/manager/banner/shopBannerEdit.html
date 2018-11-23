@@ -18,11 +18,12 @@
 </head>
 <body style="padding:10px 10px 10px 10px">
 <form class="layui-form">
+  <input th:if="${banner!=null and banner['id']!=null}" th:name="id" th:value="${banner['id']}" type="hidden"/>
   <div  class="layui-form-pane">
     <div class="layui-form-item">
       <label class="layui-form-label">名称</label>
       <div class="layui-input-block">
-        <input type="text" name="name" required="required" title="名称"  lay-verify="required|max20" placeholder="请输名称" autocomplete="off" class="layui-input" />
+        <input type="text" name="name" required="required" title="名称" th:value="${banner!=null? banner['name']:''}"  lay-verify="required|max20" placeholder="请输名称" autocomplete="off" class="layui-input" />
       </div>
     </div>
 
@@ -31,7 +32,7 @@
       <div class="layui-input-block">
         <button type="button" class="layui-btn myupload1"  style="width: 143.52px;height: 93.83px;" >
           <i class="layui-icon" style="font-size: 90px;">&#xe64a;</i>
-          <input type="hidden" name="file" value="dmImgFile"/>
+          <img th:if="${banner!=null and banner['picUrl']!=null}" th:src="${banner['picUrl']}" class="dmImg" />
         </button>
       </div>
     </div>
@@ -39,14 +40,14 @@
       <div class="layui-form-item">
           <label class="layui-form-label">跳转URL</label>
           <div class="layui-input-block">
-              <input type="text" name="url" required="required" title="跳转URL"   placeholder="请输跳转URL" autocomplete="off" class="layui-input" />
+              <input type="text" name="url" th:value="${banner!=null? banner['url']:''}"  required="required" title="跳转URL"   placeholder="请输跳转URL" autocomplete="off" class="layui-input" />
           </div>
       </div>
 
     <div class="layui-form-item">
       <label class="layui-form-label">备注</label>
       <div class="layui-input-block">
-        <textarea placeholder="请输入备注" name="bDescribe" class="layui-textarea"></textarea>
+        <textarea placeholder="请输入备注" th:value="${banner!=null? banner['bDescribe']:''}"   name="bDescribe" class="layui-textarea"></textarea>
       </div>
     </div>
 
@@ -99,7 +100,7 @@
     })
     $(".layui-form").submit(function(){
       window.setTimeout(function(){
-        $.ajax( commonAjaxFunction("do-save",new FormData($('form')[0]),true));
+        $.ajax( commonAjaxFunction("do-shop-banner-save",new FormData($('form')[0]),true));
       },300)
 
       //return  commonSubmit(url,formObject);

@@ -6,17 +6,17 @@ import org.springframework.web.multipart.MultipartFile;
  * Created by Jacky on 2018/6/14.
  */
 public class BannerDTO {
-    private int id;
+    private Integer id;
     private String name;
     private String url;
-    private String describe;
+    private String bDescribe;
     private MultipartFile file;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -36,12 +36,12 @@ public class BannerDTO {
         this.url = url;
     }
 
-    public String getDescribe() {
-        return describe;
+    public String getbDescribe() {
+        return bDescribe;
     }
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
+    public void setbDescribe(String bDescribe) {
+        this.bDescribe = bDescribe;
     }
 
     public MultipartFile getFile() {
