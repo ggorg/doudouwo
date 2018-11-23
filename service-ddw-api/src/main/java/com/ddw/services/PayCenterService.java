@@ -126,11 +126,7 @@ public class PayCenterService extends BaseOrderService {
                    return new ResponseApiVO(1,"支付成功",null);
 
                }else{
-                   ResponseApiVO res=this.exitOrder(Arrays.asList(OrderUtil.getOrderId(orderNo)));
-                   if(res.getReCode()==1){
-                       logger.info("退款："+res);
-                       CacheUtil.put("pay","order-"+orderNo,"refund");
-                   }
+                   handleReFund(orderNo);
                    return new ResponseApiVO(-2,"支付失败",null);
 
                }
@@ -141,6 +137,7 @@ public class PayCenterService extends BaseOrderService {
             return new ResponseApiVO(1,"支付成功",null);
 
         }else if("fail".equals(paystatus)){
+            handleReFund(orderNo);
             return new ResponseApiVO(-3,"支付失败",null);
 
         }else if("refund".equals(paystatus)){
@@ -149,6 +146,13 @@ public class PayCenterService extends BaseOrderService {
         }
         return new ResponseApiVO(-4,"支付处理中，请稍等",null);
 
+    }
+    private void handleReFund(String orderNo)throws Exception{
+        ResponseApiVO res=this.exitOrder(Arrays.asList(OrderUtil.getOrderId(orderNo)));
+        if(res.getReCode()==1){
+            logger.info("退款："+res);
+            CacheUtil.put("pay","order-"+orderNo,"refund");
+        }
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO doubiPayOnMarket(String token,DoubiPayMarketDTO dto )throws Exception{
