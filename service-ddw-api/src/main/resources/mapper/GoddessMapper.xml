@@ -107,7 +107,8 @@
             ct2.groupId,
             ct1.langlat,
             (case  when ct2.maxGroupNum is null then 0 else ct2.maxGroupNum end) as viewingNum,
-            (case  when ct2.liveStatus is null then 2 else ct2.liveStatus end) as liveRadioFlag
+            (case  when ct2.liveStatus is null then 2 else ct2.liveStatus end) as liveRadioFlag,
+            (case  when ct2.liveStatus=0 then 3 when ct2.liveStatus is null or ct2.liveStatus=2 then 4 else ct2.liveStatus end) as liveSort
         FROM
             ddw_userinfo t1
             LEFT JOIN ddw_my_attention ct0 ON ct0.goddessId = t1.id
@@ -126,7 +127,7 @@
         GROUP BY
             t1.id
         ORDER BY
-        liveRadioFlag Asc,a Desc
+        liveSort Asc,a Desc
         <if test="null!=startNum and null!=endNum" >
             limit #{startNum },#{endNum}
         </if>

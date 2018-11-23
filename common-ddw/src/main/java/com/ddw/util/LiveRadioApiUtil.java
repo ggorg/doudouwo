@@ -49,6 +49,7 @@ public class LiveRadioApiUtil {
                 String str=HttpUtil.doGet(builder.toString());
                 if(str!=null){
                     JSONObject json= JSONObject.parseObject(str);
+                    System.out.println(json.toString());
                     if(json.getInteger("ret")==0){
                         return true;
                     }
@@ -74,9 +75,10 @@ public class LiveRadioApiUtil {
         builder.append("t=").append(t).append("&");
         builder.append("sign=").append(DigestUtils.md5Hex(LiveRadioConstant.API_KEY+t));
         String str=HttpUtil.doGet(builder.toString());
+
         if(str!=null){
             JSONObject json= JSONObject.parseObject(str);
-
+            logger.info("房间状态："+json.toJSONString());
 
             if(json.getInteger("ret")==20601){
               return false;
@@ -97,6 +99,7 @@ public class LiveRadioApiUtil {
 
     public static void main(String[] args) {
        // System.out.println(        isActLiveRoom("23115_1_41_180529215021"));
-        System.out.println(        isActLiveRoom("23115_1_59_1805302218245"));
+        System.out.println(        isActLiveRoom("23115_1_152_181123103415"));
+        System.out.println(        closeLoveRadio("23115_1_152_181123103415"));
     }
 }

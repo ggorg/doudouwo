@@ -77,7 +77,9 @@ public class TimerTaskService extends CommonService {
                 if(num==null){
                     num=0;
                 }
-               if(!LiveRadioApiUtil.isActLiveRoom(streamId)){
+
+
+                if(!LiveRadioApiUtil.isActLiveRoom(streamId)){
                     if(num>=2){
                         logger.info("关闭直播间："+streamId);
                         try{

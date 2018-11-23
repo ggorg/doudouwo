@@ -135,6 +135,8 @@ public class CallBackController {
             String paystatus=(String)CacheUtil.get("pay","order-"+orderNo);
             if(StringUtils.isNotBlank(paystatus) && "success".equals(paystatus)){
                 return new WeiXinPayCallBackVO("SUCCESS","ok");
+            }else if("refund".equals(paystatus)){
+                return new WeiXinPayCallBackVO("SUCCESS","ok");
             }
             if(map!=null && "SUCCESS".equals(map.get("return_code"))&& "SUCCESS".equals(map.get("result_code")) ){
                if(StringUtils.isBlank(paySignClose) && !SignUtil.wxPaySign(map)){
@@ -236,6 +238,8 @@ public class CallBackController {
             orderNo=dto.get("out_trade_no");
             String paystatus=(String)CacheUtil.get("pay","order-"+orderNo);
             if(StringUtils.isNotBlank(paystatus) && "success".equals(paystatus)){
+                return "success";
+            }else if("refund".equals(paystatus)){
                 return "success";
             }
             if(dto!=null && ("TRADE_FINISHED".equals(dto.get("trade_status")) || "TRADE_SUCCESS".equals(dto.get("trade_status")))){

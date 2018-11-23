@@ -61,13 +61,15 @@ public class PayCenterService extends BaseOrderService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO searchPayStatus(String token,PayStatusDTO dto)throws Exception{
-        if(dto==null || StringUtils.isBlank(dto.getOrderNo())){
+        String orderNo=TokenUtil.getOrderNo(token);
+        if(dto==null || StringUtils.isBlank(orderNo)){
             return new ResponseApiVO(-2,"参数异常",null);
 
         }
+
         String paystatus=null;
         for(int i=1;i<=3;i++){
-            paystatus=(String)CacheUtil.get("pay","order-"+dto.getOrderNo());
+            paystatus=(String)CacheUtil.get("pay","order-"+orderNo);
             if(paystatus==null){
                 Thread.sleep(i*200);
                 continue;
@@ -77,12 +79,12 @@ public class PayCenterService extends BaseOrderService {
         }
         if(paystatus==null){
             Map map=new HashMap();
-            if(CacheUtil.get("pay","pre-pay-"+dto.getOrderNo()) ==null){
+            if(CacheUtil.get("pay","pre-pay-"+orderNo) ==null){
                 return new ResponseApiVO(-2,"抱歉，没有支付记录",null);
 
             }
             map.put("doCustomerUserId",TokenUtil.getUserId(token));
-            map.put("id",OrderUtil.getOrderId(dto.getOrderNo()));
+            map.put("id",OrderUtil.getOrderId(orderNo));
             Map voMap=this.commonObjectBySearchCondition("ddw_order",map);
             if(voMap==null || !voMap.containsKey("doPayStatus")){
                 return new ResponseApiVO(-2,"支付记录不存在",null);
@@ -101,20 +103,20 @@ public class PayCenterService extends BaseOrderService {
                boolean flag=false;
                if(PayTypeEnum.PayType1.getCode().equals(payType)){
                    logger.info("请求微信支付-》查看订单情况->"+dto);
-                   RequestWeiXinOrderVO res= PayApiUtil.weiXinOrderQuery(dto.getOrderNo());
+                   RequestWeiXinOrderVO res= PayApiUtil.weiXinOrderQuery(orderNo);
                    logger.info("微信支付响应-》查看订单情况->"+res);
                    flag=res!=null && "SUCCESS".equals(res.getReturn_code()) && "SUCCESS".equals(res.getResult_code()) && "SUCCESS".equals(res.getTrade_state());
 
                }else if(PayTypeEnum.PayType2.getCode().equals(payType)){
                    logger.info("请求阿里支付-》查看订单情况->"+dto);
-                   ResponseVO res= PayApiUtil.aliPayOrderQuery(dto.getOrderNo());
+                   ResponseVO res= PayApiUtil.aliPayOrderQuery(orderNo);
                    logger.info("阿里支付响应-》查看订单情况->"+res);
                    flag=res!=null && (res.getReCode()==1 || res.getReCode().equals(1));
                }
                if(flag){
                    Map param=new HashMap();
                    param.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
-                   ResponseVO orderRes=this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,dto.getOrderNo());
+                   ResponseVO orderRes=this.pulbicUpdateOrderPayStatus(PayStatusEnum.PayStatus1,orderNo);
                    if(orderRes.getReCode()!=1){
                        logger.info("更新订单表-》失败->"+orderRes);
                       // return new ResponseApiVO(-2,"支付失败",null);
@@ -124,6 +126,11 @@ public class PayCenterService extends BaseOrderService {
                    return new ResponseApiVO(1,"支付成功",null);
 
                }else{
+                   ResponseApiVO res=this.exitOrder(Arrays.asList(OrderUtil.getOrderId(orderNo)));
+                   if(res.getReCode()==1){
+                       logger.info("退款："+res);
+                       CacheUtil.put("pay","order-"+orderNo,"refund");
+                   }
                    return new ResponseApiVO(-2,"支付失败",null);
 
                }
@@ -135,6 +142,9 @@ public class PayCenterService extends BaseOrderService {
 
         }else if("fail".equals(paystatus)){
             return new ResponseApiVO(-3,"支付失败",null);
+
+        }else if("refund".equals(paystatus)){
+            return new ResponseApiVO(-5,"支付失败，稍会自动退款",null);
 
         }
         return new ResponseApiVO(-4,"支付处理中，请稍等",null);
@@ -807,6 +817,7 @@ public class PayCenterService extends BaseOrderService {
                         wxVo.setOrderNo(orderNo);
                         CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
                         CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
+                        TokenUtil.putOrderNo(token,orderNo);
                         return new ResponseApiVO(1,"成功",wxVo);
                     }else{
                         throw new GenException(-2,"调用微信支付接口失败",vo);
@@ -822,7 +833,7 @@ public class PayCenterService extends BaseOrderService {
                     PropertyUtils.copyProperties(alipayVo,rvo);
                     CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
                     CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
-
+                    TokenUtil.putOrderNo(token,orderNo);
                     return new ResponseApiVO(1,"成功",alipayVo);
                     // PayApiUtil.requestAliPayOrder("充值","微信充值-"+dcost+"元",orderNo,dcost,Tools.getIpAddr());
                 }else if(PayTypeEnum.PayType5.getCode().equals(payType)){

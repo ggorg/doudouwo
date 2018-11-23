@@ -183,6 +183,26 @@ public class TokenUtil {
             CacheUtil.put("tokenCache",base64Token,map);
         }
     }
+    public static void putOrderNo(String base64Token,String orderNo){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            if(orderNo==null){
+                map.remove("orderNo");
+            }else{
+                map.put("orderNo",orderNo);
+            }
+            CacheUtil.put("tokenCache",base64Token,map);
+        }
+    }
+    public static String getOrderNo(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (String) map.get("orderNo");
+        }
+        return null;
+    }
     public static Integer getUseGrade(String base64Token){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){
