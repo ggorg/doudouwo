@@ -49,7 +49,7 @@ public class LiveRadioApiUtil {
                 String str=HttpUtil.doGet(builder.toString());
                 if(str!=null){
                     JSONObject json= JSONObject.parseObject(str);
-                    System.out.println(json.toString());
+
                     if(json.getInteger("ret")==0){
                         return true;
                     }
