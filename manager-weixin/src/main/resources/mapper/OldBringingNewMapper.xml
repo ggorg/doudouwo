@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weixin.dao.EventKeyMapper">
+
+    <resultMap id="BaseResultMap" type="com.weixin.entity.OldBringingNew">
+        <id property="id" column="id"/>
+        <result property="oldOpenid" column="oldOpenid"/>
+        <result property="newOpenid" column="newOpenid"/>
+        <result property="create_date" column="create_date"/>
+        <result property="updateTime" column="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,oldOpenid,newOpenid,create_date,updateTime
+    </sql>
+
+
+    <insert id="insert" parameterType="com.weixin.entity.OldBringingNew">
+        insert into ddw_old_bringing_new
+        (oldOpenid,newOpenid,create_date,updateTime)
+        values(
+        #{oldOpenid, jdbcType=VARCHAR},
+        #{newOpenid, jdbcType=VARCHAR},
+        now(),now()
+        )
+    </insert>
+
+
+    <select id="findCount" resultType="int">
+        select
+        count(*)
+        from ddw_old_bringing_new
+        where newOpenid = #{newOpenid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getOpenid" resultType="string">
+        select
+        openid
+        from ddw_userinfo
+        where openid like concat('%',#{openid,jdbcType=VARCHAR}) limit 1
+    </select>
+
+</mapper>

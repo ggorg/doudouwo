@@ -1,12 +1,13 @@
 package com.weixin.controller;
 
 import com.alibaba.fastjson.JSONObject;
-
 import com.gen.common.services.CacheService;
 import com.gen.common.util.MyEncryptUtil;
 import com.weixin.config.WXGlobals;
 import com.weixin.core.pojo.AccessToken;
 import com.weixin.entity.Pubweixin;
+import com.weixin.entity.UserInfo;
+import com.weixin.services.OldBringingNewService;
 import com.weixin.services.PubWeixinService;
 import com.weixin.services.WeixinInterfaceService;
 import com.weixin.services.WeixinUserService;
@@ -23,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import com.weixin.entity.UserInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -50,6 +50,8 @@ public class WeixinOauthController {
     private CacheService cacheService;
     @Autowired
     private WeixinInterfaceService weixinInterfaceService;
+    @Autowired
+    private OldBringingNewService oldBringingNewService;
 
 
 
@@ -118,7 +120,14 @@ public class WeixinOauthController {
                     return InternalResourceViewResolver.REDIRECT_URL_PREFIX + "pages/manager/weixin/menu";
                 }
                 if("obn".equals(page)){
-                    //TODO 这里跳转老带新绑定接口URL
+                    //TODO 这里绑定老带新,然后跳转到下载APP页面
+                    if(json.containsKey("param")){
+                        String oldOpenid = oldBringingNewService.getOpenid(json.get("param").toString());
+                        if(StringUtils.isNotBlank(oldOpenid)){
+                            logger.info("绑定老带新oldOpenid:["+oldOpenid+"]openid:["+openid+"]");
+                            oldBringingNewService.save(oldOpenid,openid);
+                        }
+                    }
                 }
                 String jumpUrlValue= WXGlobals.getOauthJumUrlByKey(page);
                 if(StringUtils.isNotBlank(jumpUrlValue)){
@@ -162,7 +171,7 @@ public class WeixinOauthController {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("appid","wxac4072fc723524ff");
         jsonObject.put("page","obn");
-        jsonObject.put("param","m27123,m26102");
+        jsonObject.put("param","m27123");
 //        jsonObject.put("param","oNSHajg7OZ-K3yqzERRHOzudEm27123,oNSHajg7OZ-K3yqzERRHOzudEm26102");
 
         logger.info(abc);
