@@ -16,7 +16,8 @@
         SELECT
             t1.createTime,
             t1.doType type,
-            t1.doCost cost,
+        (case  when t1.doType=3 then t1.doOrigCost else t1.doCost end) as cost,
+
         (case  when t1.doType=3 then 4 else t1.doPayStatus end) as dealType
         FROM
             ddw_order t1

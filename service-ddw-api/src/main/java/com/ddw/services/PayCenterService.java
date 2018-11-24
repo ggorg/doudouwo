@@ -261,6 +261,7 @@ public class PayCenterService extends BaseOrderService {
             String strs[]=str.split("-");
             Integer earnest=Integer.parseInt(strs[0]);
             orderPO.setDoCost(earnest);
+            orderPO.setDoOrigCost(earnest);
 
        // 竞价金额
         }else if(OrderTypeEnum.OrderType5.getCode().equals(orderType)){
@@ -284,6 +285,7 @@ public class PayCenterService extends BaseOrderService {
             }
 
             orderPO.setDoCost(bidCost);
+            orderPO.setDoOrigCost(bidCost);
 
 
         }else if(OrderTypeEnum.OrderType9.getCode().equals(orderType)){
@@ -296,13 +298,14 @@ public class PayCenterService extends BaseOrderService {
             }
             Integer bidCost=(Integer) renewMap.get("price");
             orderPO.setDoCost(bidCost);
-
+            orderPO.setDoOrigCost(bidCost);
             //计算充值
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(-1);
             voData=rechargeService.getRechargeCost(codes[0]);
             orderPO.setDoCost((Integer) voData.get("discount"));
+            orderPO.setDoOrigCost((Integer) voData.get("price"));
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
             }
@@ -319,6 +322,7 @@ public class PayCenterService extends BaseOrderService {
             Integer discount=(Integer) map.get("discount");
             Integer recCost=discount==null?price:discount;
             orderPO.setDoCost(recCost);
+            orderPO.setDoOrigCost(price);
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
              }
@@ -344,6 +348,7 @@ public class PayCenterService extends BaseOrderService {
 
             Map dataMap=null;
             Integer countPrice=0;
+            Integer countOrigPrice=0;
             Map mVo=null;
             BigDecimal dicount=null;
             if(gradeId!=null){
@@ -354,6 +359,7 @@ public class PayCenterService extends BaseOrderService {
                 if(!handleMap.containsKey(code)){
                     return new ResponseApiVO(-2,handleMap.get(code).get("dghDesc")+"可能已下架",null);
                 }
+                countOrigPrice=countOrigPrice+(Integer)mVo.get("dghSalesPrice");
                 if(buyInProMap.containsKey(code)){
                     dataMap=buyInProMap.get(code);
                     Integer sale=(Integer) dataMap.get("productUnitPrice");
@@ -385,6 +391,7 @@ public class PayCenterService extends BaseOrderService {
                 return new ResponseApiVO(-2,"支付失败",null);
             }
             orderPO.setDoCost(countPrice);
+            orderPO.setDoOrigCost(countOrigPrice);
             if(couponCode==null && dicount!=null){
                 orderPO.setDoCost(dicount.multiply(BigDecimal.valueOf(countPrice)).intValue());
             }
@@ -437,6 +444,7 @@ public class PayCenterService extends BaseOrderService {
             final Map<Integer,Map> buyInGoiftMap=new HashMap();
             giftList.forEach(a-> buyInGoiftMap.put((Integer) a.get("id"),a));
             Integer coutCost=0;
+            Integer coutOrigCost=0;
             Integer actPrice=null;
             Integer price=null;
             Map insertM=null;
@@ -457,6 +465,7 @@ public class PayCenterService extends BaseOrderService {
                     insertM.replace("giftPrice",currentPrice+giftPrice);
                     insertM.replace("num",num+1);
                     coutCost=coutCost+giftPrice;
+                    coutOrigCost=coutOrigCost+price;
                 }else{
                     num=douBiMap!=null?douBiMap.get(code):1;
                     insertM=new HashMap();
@@ -470,6 +479,7 @@ public class PayCenterService extends BaseOrderService {
                     insertM.put("num",num);
                     buyInProMap.put(code,insertM);
                     coutCost=coutCost+(giftPrice*num);
+                    coutOrigCost=coutOrigCost+(price*num);
                 }
 
 
@@ -478,6 +488,7 @@ public class PayCenterService extends BaseOrderService {
                 return new ResponseApiVO(-2,"逗币不足，请充值",null);
             }
             orderPO.setDoCost(coutCost);
+            orderPO.setDoOrigCost(coutOrigCost);
             orderPO.setDoPayStatus(PayStatusEnum.PayStatus1.getCode());
             //buyInProMap=buyInGoiftMap;
         }else if(OrderTypeEnum.OrderType7.getCode().equals(orderType)){
@@ -500,12 +511,14 @@ public class PayCenterService extends BaseOrderService {
             Map orderTicket=null;
             Map ticketMap=null;
             Integer sumPrice=0;
+            Integer origPrice=0;
             Integer price=0;
             for(Integer id:codesList){
                 orderTicket=new HashMap();
                 ticketMap=buyInTicketMap.get(id);
                 price= ticketMap.get("dtActPrice")==null?(Integer)ticketMap.get("dtPrice"):(Integer)ticketMap.get("dtActPrice");
                 sumPrice=sumPrice+price;
+                origPrice=origPrice+(Integer)ticketMap.get("dtPrice");
                 orderTicket.put("ticketId",id);
                 orderTicket.put("storeId",TokenUtil.getStoreId(token));
                 orderTicket.put("ticketName",ticketMap.get("dtName")+"【"+ticketMap.get("dtActiveTime")+"】");
@@ -515,6 +528,7 @@ public class PayCenterService extends BaseOrderService {
                 insertList.add(orderTicket);
             }
             orderPO.setDoCost(sumPrice);
+            orderPO.setDoOrigCost(origPrice);
         }else if(OrderTypeEnum.OrderType10.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
             orderPO.setDoSellerId(TokenUtil.getStoreId(token));
@@ -534,6 +548,7 @@ public class PayCenterService extends BaseOrderService {
 
             }else{
                 orderPO.setDoCost(practiceOrderPO.getMoney());
+                orderPO.setDoOrigCost(practiceOrderPO.getMoney());
 
             }
         }

@@ -105,6 +105,11 @@ public class OrderPO implements Serializable {
     private Integer doStoreProportionCost;
     private Integer doStoreProportionCouponCost;
 
+    /**
+     * 原价
+     */
+    private Integer doOrigCost;
+
     public Integer getDoStoreProportionCouponCost() {
         return doStoreProportionCouponCost;
     }
@@ -202,6 +207,18 @@ public class OrderPO implements Serializable {
                 ", doSellerId=" + doSellerId +
                 ", doCouponNo='" + doCouponNo + '\'' +
                 ", doCustomerType=" + doCustomerType +
+                ", doCost=" + doCost +
+                ", creater='" + creater + '\'' +
+                ", doTrackingNumber='" + doTrackingNumber + '\'' +
+                ", doExitTrackingNumber='" + doExitTrackingNumber + '\'' +
+                ", doExpressName='" + doExpressName + '\'' +
+                ", doExitExpressName='" + doExitExpressName + '\'' +
+                ", doDicount=" + doDicount +
+                ", doExtendStr='" + doExtendStr + '\'' +
+                ", doStoreProportion=" + doStoreProportion +
+                ", doStoreProportionCost=" + doStoreProportionCost +
+                ", doStoreProportionCouponCost=" + doStoreProportionCouponCost +
+                ", doOrigCost=" + doOrigCost +
                 '}';
     }
 
@@ -323,5 +340,13 @@ public class OrderPO implements Serializable {
 
     public void setDoCustomerType(Integer doCustomerType) {
         this.doCustomerType = doCustomerType;
+    }
+
+    public Integer getDoOrigCost() {
+        return doOrigCost;
+    }
+
+    public void setDoOrigCost(Integer doOrigCost) {
+        this.doOrigCost = doOrigCost;
     }
 }
