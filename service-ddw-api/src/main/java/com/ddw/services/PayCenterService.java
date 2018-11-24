@@ -359,15 +359,17 @@ public class PayCenterService extends BaseOrderService {
                 if(!handleMap.containsKey(code)){
                     return new ResponseApiVO(-2,handleMap.get(code).get("dghDesc")+"可能已下架",null);
                 }
+                mVo=handleMap.get(code);
                 countOrigPrice=countOrigPrice+(Integer)mVo.get("dghSalesPrice");
                 if(buyInProMap.containsKey(code)){
                     dataMap=buyInProMap.get(code);
                     Integer sale=(Integer) dataMap.get("productUnitPrice");
                     countPrice=countPrice+sale;
+
                     dataMap.put("productCountPrice",(Integer)dataMap.get("productCountPrice")+sale);
                     dataMap.put("productBuyNumber",(Integer)dataMap.get("productBuyNumber")+1);
                 }else{
-                    mVo=handleMap.get(code);
+
                     dataMap=new HashMap();
                     dataMap.put("productId",code);
 
