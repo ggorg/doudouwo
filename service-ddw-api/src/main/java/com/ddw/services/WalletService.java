@@ -13,6 +13,7 @@ import com.ddw.util.CouponComparator;
 import com.ddw.util.MsgUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
+import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
@@ -196,30 +197,17 @@ public class WalletService extends CommonService {
     }
     public ResponseApiVO getGiftPackge(Integer userid){
         Map search=new HashMap();
-        search.put("used",0);
         search.put("userId",userid);
-        Map csearch=new HashMap();
-        csearch.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
-        CommonSearchBean csb=new CommonSearchBean("ddw_order_gift",null,"ct1.id giftCode,ct1.dgName name,ct1.dgImgPath imgUrl",null,null,search,
-                new CommonChildBean("ddw_order","id","orderId",csearch),
+
+
+        CommonSearchBean csb=new CommonSearchBean("ddw_packet_gift",null,"t1.currentNum num ,ct0.id giftCode,ct0.dgName name,ct0.dgImgPath imgUrl",null,null,search,
                 new CommonChildBean("ddw_gift","id","giftId",null));
         List<Map> giftPacketlist=this.getCommonMapper().selectObjects(csb);
         if(giftPacketlist==null){
             return new ResponseApiVO(2,"空背包",new ListVO(new ArrayList()));
         }
-        List list=new ArrayList();
-        Map<Integer,Map> m=new HashMap();
-        for(Map gm:giftPacketlist){
-            Integer gc=(Integer)gm.get("giftCode");
-            if(m.containsKey(gc)){
-                m.get(gc).replace("num",(Integer)m.get(gc).get("num")+1);
-            }else{
-                gm.put("num",1);
-                m.put(gc,gm);
-                list.add(gm);
-            }
-        }
-        return new ResponseApiVO(1,"成功",new ListVO(list));
+
+        return new ResponseApiVO(1,"成功",new ListVO(giftPacketlist));
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO useGiftOfPacket(String token,GiftUseDTO dto)throws Exception{
@@ -238,36 +226,42 @@ public class WalletService extends CommonService {
         Integer userId=TokenUtil.getUserId(token);
         Map search=new HashMap();
         search.put("userId",userId);
-        search.put("used",0);
-        search.put("giftId",dto.getCode());
-
-        List<Map> giftList=this.commonObjectsBySearchCondition("ddw_order_gift",search);
-        if(giftList==null || giftList.size()==0){
+        search.put("id",dto.getCode());
+        CommonSearchBean csb=new CommonSearchBean("ddw_packet_gift",null,"t1.*,ct0.dgPrice",null,null,search,
+                new CommonChildBean("ddw_gift","id","giftId",null));
+        List<Map> giftMapList=this.getCommonMapper().selectObjects(csb);
+        if(giftMapList==null || giftMapList.size()==0){
             return new ResponseApiVO(-2,"背包没购买此礼物",null);
 
         }
-        if(dto.getNum()>giftList.size()){
+        Map m=giftMapList.get(0);
+        Integer currentNum=(Integer)m.get("currentNum");
+        if(dto.getNum()>currentNum){
             return new ResponseApiVO(-2,"抱歉，背包礼物不足",null);
 
         }
-        List<Integer> gid=new ArrayList();
-        int n=1;
-        for(Map m:giftList){
-            if(n>dto.getNum()){
-                break;
-            }
-            this.incomeService.commonIncome(appectUserId,(Integer) m.get("giftPrice")*10,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,(String)m.get("orderNo"));
-            this.baseConsumeRankingListService.save(userId,appectUserId,(Integer) m.get("giftPrice")*10,IncomeTypeEnum.IncomeType1);
-           gid.add((Integer) m.get("id"));
-           n++;
-        }
-        Map updatePara=new HashMap();
-        updatePara.put("used",1);
-        updatePara.put("updateTime", new Date());
-        Map s=new HashMap();
+        ResponseVO res= this.incomeService.commonIncome(appectUserId,(Integer) m.get("dgPrice")*10*dto.getNum(),IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,(String)m.get("orderNo"));
 
-        s.put("id,in",gid.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
-        this.commonUpdateByParams("ddw_order_gift",updatePara,s);
+        this.baseConsumeRankingListService.save(userId,appectUserId,(Integer) m.get("dgPrice")*10*dto.getNum(),IncomeTypeEnum.IncomeType1);
+
+        Map giveGift=new HashMap();
+        giveGift.put("userId",userId);
+        giveGift.put("acceptUserId",appectUserId);
+        giveGift.put("num",dto.getNum());
+        giveGift.put("giftId",dto.getCode());
+        giveGift.put("incomeRecordId",res.getData());
+        giveGift.put("incomeType",IncomeTypeEnum.IncomeType1.getCode());
+        giveGift.put("createTime",new Date());
+        giveGift.put("updateTime",new Date());
+        this.commonInsertMap("ddw_give_gift_record",giveGift);
+
+        Map edit=new HashMap();
+        edit.put("currentNum",-dto.getNum());
+        edit.put("updateTime",new Date());
+        res=this.commonCalculateOptimisticLockUpdateByParam("ddw_packet_gift",edit,search,"version",new String[]{"currentNum"});
+        if(res.getReCode()!=1){
+            throw new GenException("失败");
+        }
         return new ResponseApiVO(1,"成功",null);
 
 

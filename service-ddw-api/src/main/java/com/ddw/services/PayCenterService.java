@@ -456,6 +456,7 @@ public class PayCenterService extends BaseOrderService {
                     num=(Integer) insertM.get("num");
                     insertM.replace("giftPrice",currentPrice+giftPrice);
                     insertM.replace("num",num+1);
+                    coutCost=coutCost+giftPrice;
                 }else{
                     num=douBiMap!=null?douBiMap.get(code):1;
                     insertM=new HashMap();
@@ -468,9 +469,10 @@ public class PayCenterService extends BaseOrderService {
                     insertM.put("userId",orderPO.getDoCustomerUserId());
                     insertM.put("num",num);
                     buyInProMap.put(code,insertM);
+                    coutCost=coutCost+(giftPrice*num);
                 }
 
-                coutCost=coutCost+giftPrice;
+
             }
             if(coutCost>walletVo.getCoin()){
                 return new ResponseApiVO(-2,"逗币不足，请充值",null);
@@ -694,6 +696,17 @@ public class PayCenterService extends BaseOrderService {
                 Set<Integer> keys=buyInProMap.keySet();
                 Integer num=0;
                 String giftImg=null;
+
+
+                Map searchGift=new HashMap();
+                searchGift.put("giftId,in",keys.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
+                searchGift.put("userId",userId);
+                List<Map> giftPackList=this.commonObjectsBySearchCondition("ddw_packet_gift",searchGift);
+                final Map<Integer,Map> giftPackMap=new HashMap();
+                if(giftPackList!=null){
+
+                    giftPackList.forEach(a->giftPackMap.put((Integer) a.get("giftId"),a));
+                }
                 for(Integer code:keys){
                     giftMap=buyInProMap.get(code);
 
@@ -708,23 +721,33 @@ public class PayCenterService extends BaseOrderService {
 
                     num=(Integer) giftMap.get("num");
                     giftImg=(String) giftMap.get("giftImg");
+                    if(StringUtils.isBlank(groupId)){
+                        Map edit=new HashMap();
+                        edit.put("currentNum",num);
+                        edit.put("accumNum",num);
+                        edit.put("updateTime",new Date());
+                        if(giftPackMap.containsKey(code)){
+                            Map giftpMap=giftPackMap.get(code);
+                            Map search=new HashMap();
+                            search.put("id",giftpMap.get("id"));
+                            resVo=this.commonCalculateOptimisticLockUpdateByParam("ddw_packet_gift",edit,search,"version",new String[]{"currentNum","accumNum"});
 
-                    for(int i=0;i<num;i++){
-                        if(StringUtils.isNotBlank(groupId)){
-                            giftMap.put("acceptUserId",goddessUserId);
-                            giftMap.put("used",1);
                         }else{
-                            giftMap.put("used",0);
+                            edit.put("createTime",new Date());
+                            edit.put("userId",userId);
+                            edit.put("giftId",code);
+                            resVo=this.commonInsertMap("ddw_packet_gift",edit);
                         }
-                        giftMap.put("num",1);
-                        giftMap.remove("giftImg");
-                        resVo=this.commonInsertMap("ddw_order_gift",giftMap);
                         if(resVo.getReCode()!=1){
                             throw new GenException("礼物支付失败");
-
                         }
-                    }
 
+                    }
+                    giftMap.remove("giftImg");
+                    resVo=this.commonInsertMap("ddw_order_gift",giftMap);
+                    if(resVo.getReCode()!=1){
+                        throw new GenException("礼物支付失败");
+                    }
                     OrderViewPO po=new OrderViewPO();
                     po.setCreateTime(new Date());
                     po.setName(giftMap.get("giftName").toString());
@@ -739,13 +762,27 @@ public class PayCenterService extends BaseOrderService {
                     po.setPayStatus(PayStatusEnum.PayStatus1.getCode());
                     po.setShipStatus(ShipStatusEnum.ShipStatus2.getCode());
                     po.setStoreId(orderPO.getDoSellerId());
-                    //super.orderViewService.
                     this.orderViewService.saveOrderView(po);
                     if(goddessUserId>-1){
-                        this.incomeService.commonIncome(goddessUserId,po.getPrice()*10,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,orderNo);
+                        //ddw_give_gift_record
+                        ResponseVO res=this.incomeService.commonIncome(goddessUserId,po.getPrice()*10,IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType6,orderNo);
+                        if(res.getReCode()==1){
+                            Map giveGift=new HashMap();
+                            giveGift.put("userId",userId);
+                            giveGift.put("acceptUserId",goddessUserId);
+                            giveGift.put("num",num);
+                            giveGift.put("giftId",code);
+                            giveGift.put("incomeRecordId",res.getData());
+                            giveGift.put("incomeType",IncomeTypeEnum.IncomeType1.getCode());
+                            giveGift.put("createTime",new Date());
+                            giveGift.put("updateTime",new Date());
+                            this.commonInsertMap("ddw_give_gift_record",giveGift);
+
+                        }
                         this.baseConsumeRankingListService.save(userId,goddessUserId,po.getPrice()*10,IncomeTypeEnum.IncomeType1);
                     }
                 }
+
                 Map setParams=new HashMap();
                 setParams.put("coin",-(orderPO.getDoCost()));
                 Map condition=new HashMap();

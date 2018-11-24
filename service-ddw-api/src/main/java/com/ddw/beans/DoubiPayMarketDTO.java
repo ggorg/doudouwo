@@ -9,7 +9,7 @@ import java.util.List;
 public class DoubiPayMarketDTO<DoubiPayMarketItemDTO> {
 
 
-    @ApiModelProperty(name="items",value="[{code=1,num=2},{code=2,num=2}]",example="[{code=1,num=2},{code=2,num=2}]")
+    @ApiModelProperty(name="items",value="[{\"code\":\"1\",\"num\":\"2\"}]",example="[{\"code\":\"1\",\"num\":\"2\"}]")
     private List<DoubiPayMarketItemDTO> items;
 
     public List<DoubiPayMarketItemDTO> getItems() {

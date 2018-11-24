@@ -47,7 +47,7 @@ public class RechargeService extends CommonService {
         if(list==null || list.isEmpty()){
             Map map=new HashMap<>();
             map.put("drDisabled", DisabledEnum.disabled0.getCode());
-            CommonSearchBean csb=new CommonSearchBean("ddw_recharge","drSort asc","t1.id,t1.drName 'name',t1.drDesc 'desc',t1.drDiscount discount,t1.drCost price",null,null,null);
+            CommonSearchBean csb=new CommonSearchBean("ddw_recharge","drSort asc","t1.id,t1.drName 'name',t1.drDesc 'desc',t1.drDiscount discount,t1.drCost price",null,null,map);
             list=this.getCommonMapper().selectObjects(csb);
             CacheUtil.put("publicCache","recharge-all",list);
         }

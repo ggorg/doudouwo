@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ddw.dao.BiddingCommonMapper">
+
+
+    <select id="getBiddingNoIncome" resultType="java.util.HashMap" >
+
+        SELECT
+        t1.orderNo,
+        t1.dorCost,
+        ct0.userId,
+        ct1.id incomeId,
+        ct0.endTime
+        FROM
+        ddw_order_bidding_pay t1
+        INNER JOIN ddw_goddess_bidding ct0 ON ct0.id = t1.biddingId
+        AND ct0.luckyDogUserId = t1.creater AND ct0.endTime is not null
+        <if test="bidId!=null">
+            AND ct0.id=#{bidId}
+        </if>
+        <if test="bidId==null">
+            AND ct0.endTime &lt;=now()
+        </if>
+        LEFT JOIN ddw_income_record ct1 ON ct1.orderId = t1.orderId
+    </select>
+
+</mapper>

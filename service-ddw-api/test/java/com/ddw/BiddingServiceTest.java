@@ -3,6 +3,7 @@ package com.ddw;
 import com.ApiApplication;
 import com.ddw.beans.BiddingDTO;
 import com.ddw.services.BiddingService;
+import com.ddw.services.IncomeService;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
 import org.junit.Test;
@@ -21,6 +22,8 @@ public class BiddingServiceTest {
 
     @Autowired
     private BiddingService biddingService;
+    @Autowired
+    private IncomeService incomeService;
 
     @Test
     public void testBidOrderInfo(){
@@ -52,5 +55,9 @@ public class BiddingServiceTest {
         dto.setPrice(10000);
         dto.setTime(60);
         System.out.println(this.biddingService.putPrice(token,dto));;
+    }
+    @Test
+    public void testIncomeService()throws Exception{
+        this.incomeService.handleGoddessIncome(1);
     }
 }

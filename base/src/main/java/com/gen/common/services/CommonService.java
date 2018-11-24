@@ -170,7 +170,7 @@ public abstract class CommonService {
                     if(i==5){
                         throw new GenException("更新失败");
                     }
-                    Thread.sleep(i * 200);
+                    Thread.sleep(i * 50);
                     continue;
                 }else{
 
@@ -216,7 +216,7 @@ public abstract class CommonService {
                     if(i==5){
                         throw new GenException("更新失败");
                     }
-                    Thread.sleep(i * 200);
+                    Thread.sleep(i * 50);
                     continue;
                 }else{
 

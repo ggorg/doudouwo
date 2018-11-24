@@ -53,6 +53,8 @@ public class TimerTaskService extends CommonService {
     @Autowired
     protected BaseConsumeRankingListService baseConsumeRankingListService;
 
+
+
     /**
      * 黑房间定时处理，每10分钟扫描一次
      */
@@ -127,17 +129,25 @@ public class TimerTaskService extends CommonService {
             if(map.containsKey(k)){
                 param.put("maxGroupNum",map.get(k));
             }
-            alist.forEach(a->{
-                Integer userid=Integer.parseInt(k.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2"));
-                if(a.getUserId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
-                    a.setViewingNum((Integer) map.get(k));
-                }
-            });
+            if(alist!=null){
+                alist.forEach(a->{
+                    Integer userid=Integer.parseInt(k.replaceAll("([0-9]+_)([0-9]+)(_[0-9]{12})","$2"));
+                    if(a.getUserId().equals(userid) && LiveStatusEnum.liveStatus1.getCode().equals(a.getLiveRadioFlag())){
+                        a.setViewingNum((Integer) map.get(k));
+                    }
+                });
+            }
+
             search.put("groupId",k);
             this.commonOptimisticLockUpdateByParam("ddw_live_radio_space",param,search,"version");
         }
         CacheUtil.put("publicCache", "appIndexGoddess",alist);
 
+    }
+    @Scheduled(cron = "0 0/30 * * * *")
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void handleIncome()throws Exception{
+        this.incomeService.handleGoddessIncome(null);
     }
     @Scheduled(cron = "0 0/30 * * * *")
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

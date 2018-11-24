@@ -1,5 +1,6 @@
 package com.ddw.services;
 
+import com.ddw.dao.BiddingCommonMapper;
 import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.enums.OrderTypeEnum;
 import com.gen.common.beans.CommonChildBean;
@@ -8,6 +9,8 @@ import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.vo.ResponseVO;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,18 +24,25 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class IncomeService extends CommonService{
 
+    @Autowired
+    private BiddingCommonMapper biddingCommonMapper;
+
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO handleGoddessIncome(Integer bidId)throws Exception{
-        Map godessBidMap=new HashMap();
-        godessBidMap.put("id",bidId);
-        CommonSearchBean csb=new CommonSearchBean("ddw_order_bidding_pay",null,"t1.orderNo,t1.dorCost,ct0.userId,ct1.id incomeId",null,null,new HashMap(),
-                new CommonChildBean("ddw_goddess_bidding","luckyDogUserId","creater",godessBidMap),
-                new CommonChildBean("ddw_income_record","orderId","orderId",null));
-        csb.setJointName("left");
-        List<Map> list=this.getCommonMapper().selectObjects(csb);
+
+        List<Map> list=this.biddingCommonMapper.getBiddingNoIncome(bidId);
         if(list!=null && list.size()>0){
+            Date endTime=null;
             for(Map m:list){
+
+
                 if(!m.containsKey("incomeId") && m.get("incomeId")==null){
+                    if(bidId!=null){
+                        endTime=(Date)m.get("endTime");
+                        if(endTime.before(new Date())){
+                            continue;
+                        }
+                    }
                     String orderNo=m.get("orderNo").toString();
                     this.commonIncome((Integer)m.get("userId"),(Integer) m.get("dorCost"),IncomeTypeEnum.IncomeType1,OrderTypeEnum.getOrderTypeEnum(OrderUtil.getOrderType(orderNo)),orderNo);
                 }
@@ -60,6 +70,7 @@ public class IncomeService extends CommonService{
            strs=new String[]{"practiceIncome"};
 
        }
+
        Map searchMap=new HashMap();
        searchMap.put("userId",goddessUserId);
         ResponseVO res=this.commonCalculateOptimisticLockUpdateByParam("ddw_my_wallet",setmap,searchMap,"version",strs);
@@ -72,15 +83,18 @@ public class IncomeService extends CommonService{
             insert.put("createTime", new Date());
             insert.put("userId", goddessUserId);
             insert.put("orderType", orderType.getCode());
-            insert.put("orderId", OrderUtil.getOrderId(orderNo));
-            insert.put("orderNo", orderNo);
+            if(StringUtils.isNotBlank(orderNo)){
+                insert.put("orderId", OrderUtil.getOrderId(orderNo));
+                insert.put("orderNo", orderNo);
+            }
+
             res = this.commonInsertMap("ddw_income_record", insert);
             if (res.getReCode() != 1) {
                 throw new GenException("更新收益钱包失败");
 
             }
         }
-        return new ResponseVO(1,"成功",null);
+        return new ResponseVO(1,"成功",res.getData());
     }
 
     public static void main(String[] args) {
