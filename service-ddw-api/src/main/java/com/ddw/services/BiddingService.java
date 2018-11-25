@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 竞价
@@ -719,7 +720,7 @@ public class BiddingService extends CommonService {
             if(dto.getPrice()<gpo.getBidPrice()){
                 return new ResponseApiVO(-2,"抱歉，竞价金额不能小于"+(double)gpo.getBidPrice()/100+"元",null);
             }else{
-                list=new ArrayList();
+                list=new CopyOnWriteArrayList();
                 vo=new BiddingVO();
                 vo.setPrice(dto.getPrice()+"");
                 vo.setOpenId(TokenUtil.getUserObject(token).toString());
@@ -727,6 +728,7 @@ public class BiddingService extends CommonService {
                 vo.setUserId(TokenUtil.getUserId(token));
                 vo.setTime(dto.getTime());
                 vo.setBidEndTime(DateFormatUtils.format(bidEndTime,"yyyy-MM-dd HH:mm:ss"));
+                handleBidList(list,vo.getOpenId());
                 list.add(vo);
                 CacheUtil.put("pay","groupId-"+bidId+"-"+groupId,list);
             }
@@ -739,14 +741,25 @@ public class BiddingService extends CommonService {
             vo.setUserId(TokenUtil.getUserId(token));
             vo.setTime(dto.getTime());
             vo.setBidEndTime(DateFormatUtils.format(bidEndTime,"yyyy-MM-dd HH:mm:ss"));
+            handleBidList(list,vo.getOpenId());
             list.add(vo);
             list.remove("handling");
-            CacheUtil.put("pay","groupId-"+bidId+"-"+groupId,list);
+
         }
        // IMApiUtil.sendGroupMsg(groupId,new ResponseVO(1,"成功",vo));
         //liveRadioService.getLiveRadioByIdAndStoreId(TokenUtil.getStoreId(token))
        // this.commonSingleFieldBySingleSearchParam()
           return new ResponseApiVO(1,"成功",null);
+    }
+    private void handleBidList(List<BiddingVO> list,String openId){
+        if(list!=null){
+            for(BiddingVO bv:list){
+                if(bv.getOpenId().equals(openId)){
+                    list.remove(bv);
+                }
+            }
+
+        }
     }
     public ResponseApiVO searchWaitPayByGoddess(String token,BiddingSearchWaitPayDTO dto)throws Exception{
         String streamId=TokenUtil.getStreamId(token);
