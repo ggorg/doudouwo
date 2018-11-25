@@ -25,6 +25,9 @@ public class OldBringingNewService {
      */
     public ResponseVO save(String oldOpenid,String openid){
         ResponseVO vo=new ResponseVO();
+        if(oldOpenid.equals(openid)){
+            return new ResponseVO(-2,"自己不允许绑定自己",null);
+        }
         int count = oldBringingNewMapper.findCount(openid);
         if(count > 0){
            return new ResponseVO(-1,"已被绑定,不允许重复绑定",null);
