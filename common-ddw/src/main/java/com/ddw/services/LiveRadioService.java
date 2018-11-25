@@ -252,7 +252,12 @@ public class LiveRadioService extends CommonService{
     }
 
 
-    public static void main(String[] args) {
-        System.out.println(Long.toHexString(Long.parseLong(DateFormatUtils.format(new Date(),"yyMMddHHmmss"))));
+    public static void main(String[] args) throws Exception{
+       // System.out.println(Long.toHexString(Long.parseLong(DateFormatUtils.format(new Date(),"yyMMddHHmmss"))));
+        Date date= new Date();
+        Date endDate=DateUtils.addHours(date,12);
+        LiveRadioUrlBean liveRadioUrlBean= LiveRadioApiUtil.createLiveUrl("1_2_3_4",endDate);
+        System.out.println(liveRadioUrlBean.getPullUrl());
+        System.out.println(liveRadioUrlBean.getPushUrl());
     }
 }

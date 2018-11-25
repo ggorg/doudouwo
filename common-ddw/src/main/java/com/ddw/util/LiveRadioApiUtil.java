@@ -21,10 +21,10 @@ public class LiveRadioApiUtil {
         LiveRadioUrlBean liveRadioUrlBean=new LiveRadioUrlBean();
         StringBuilder url=new StringBuilder();
         url.append("rtmp://");
-        url.append(LiveRadioConstant.BIZID);
-        url.append(".livepush.myqcloud.com/live/");
+        //url.append(LiveRadioConstant.BIZID);
+        url.append("push.doudouwo.cn/live/");
         url.append(streamid);
-        liveRadioUrlBean.setPullUrl(url.toString().replace("livepush","liveplay"));
+        liveRadioUrlBean.setPullUrl(url.toString().replace("push","play"));
 
         url.append("?bizid=").append(LiveRadioConstant.BIZID).append("&");
 
