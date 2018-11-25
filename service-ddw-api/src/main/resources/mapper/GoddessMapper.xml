@@ -99,6 +99,7 @@
             t1.userName,
             t1.openid,
           t1.headImgUrl,
+          t1.sex,
         t1.age,
         t1.label,
             t1.id userId,

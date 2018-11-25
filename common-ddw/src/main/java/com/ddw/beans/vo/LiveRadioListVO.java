@@ -46,6 +46,9 @@ public class LiveRadioListVO  implements Serializable {
     @ApiModelProperty(name="viewingNum",value="观看人数",example="1")
     private Integer viewingNum;
 
+    @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知")
+    private Integer sex;
+
     @ApiModelProperty(name="liveRadioFlag",value="直播标记，等待直播：0，直播中：1，离开：2",example="1")
     private Integer liveRadioFlag;
     @ApiModelProperty(name="id",value="女神ID",example="女神ID")
@@ -56,6 +59,15 @@ public class LiveRadioListVO  implements Serializable {
     private String groupId;
     @JsonIgnore
     private String langlat;
+
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
 
     public String getLanglat() {
         return langlat;
