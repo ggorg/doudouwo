@@ -15,11 +15,11 @@ public class CouponVO {
     @ApiModelProperty(name="mop",value="优惠幅度，折扣类型时候是0-100（0折-10折），其它类型是具体金额",example="优惠幅度，折扣类型时候是0-100（0折-10折），其它类型是具体金额(分)")
     private Integer mop;
 
-    @ApiModelProperty(name="startTime",value="开始时间",example="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(name="startTime",value="开始时间",example="yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date startTime;
-    @ApiModelProperty(name="endTime",value="结束时间",example="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(name="endTime",value="结束时间",example="yyyy-MM-dd")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date endTime;
     @ApiModelProperty(name="desc",value="描述",example="xxxx")
     private String desc;

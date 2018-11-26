@@ -491,11 +491,20 @@ public class Tools {
 		if(part>60){
 			BigDecimal hv= BigDecimal.valueOf(part).divide(BigDecimal.valueOf(60),2,BigDecimal.ROUND_DOWN);
 			long h=(long)hv.doubleValue();
-			builder.append(h).append("小时");
-			builder.append(hv.subtract(BigDecimal.valueOf(h)).multiply(BigDecimal.valueOf(60)).intValue()).append("分").append(point.intValue()).append("秒");
+			if(h>0){
+				builder.append(h).append("小时");
+			}
+			int m=hv.subtract(BigDecimal.valueOf(h)).multiply(BigDecimal.valueOf(60)).intValue();
+			if(m>0){
+				builder.append(m).append("分");
+			}
+			builder.append(point.intValue()).append("秒");
 
 		}else{
-			builder.append(part).append("分").append(point.intValue()).append("秒");
+			if(part>0){
+				builder.append(part).append("分");
+			}
+			builder.append(point.intValue()).append("秒");
 
 		}
 		return builder.toString();
