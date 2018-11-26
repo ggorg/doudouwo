@@ -1,6 +1,7 @@
 package com.weixin.services;
 
 
+import com.gen.common.services.CommonService;
 import com.gen.common.vo.ResponseVO;
 import com.weixin.dao.OldBringingNewMapper;
 import com.weixin.entity.OldBringingNew;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-public class OldBringingNewService {
+public class OldBringingNewService extends CommonService{
     @Autowired
     private OldBringingNewMapper oldBringingNewMapper;
 

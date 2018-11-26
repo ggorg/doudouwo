@@ -241,15 +241,9 @@ public class PracticeController {
     public ResponseVO evaluation(@PathVariable String token,
                                                 @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeEvaluationDetailDTO practiceEvaluationDetailDTO){
         try {
-            ResponseVO rv = reviewPracticeService.getPracticeOrder(practiceEvaluationDetailDTO.getOrderId());
-            if(rv.getData() !=null){
-                List<Map> list = (List<Map>) JSONObject.parseObject(rv.getData().toString()).get("list");
-                if(!list.isEmpty()){
-                    Integer evaluationStatus = (Integer) list.get(0).get("evaluationStatus");
-                    if(evaluationStatus.equals(1)){
-                        return new ResponseVO(-2,"抱歉，已评价过",null);
-                    }
-                }
+            long count = reviewPracticeService.countEvaluationDetai(TokenUtil.getUserId(token),practiceEvaluationDetailDTO.getOrderId());
+            if(count > 0){
+                return new ResponseVO(-2,"抱歉，已评价过",null);
             }
             PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrder(practiceEvaluationDetailDTO.getOrderId());
             //写入ddw_practice_evaluation_detail代练评分明细表,以及更新ddw_practice_evaluation代练平均评分表

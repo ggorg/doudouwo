@@ -257,6 +257,7 @@ public class ReviewPracticeService extends CommonService {
         setParams.put("evaluationStatus",1);//评价状态
         this.commonUpdateBySingleSearchParam("ddw_practice_order",setParams,"id",practiceEvaluationDetailDTO.getOrderId());
         PracticeEvaluationDetailPO practiceEvaluationDetailPO = new PracticeEvaluationDetailPO();
+        practiceEvaluationDetailPO.setOrderId(practiceEvaluationDetailDTO.getOrderId());
         practiceEvaluationDetailPO.setPracticeId(practiceOrderPO.getPracticeId());
         practiceEvaluationDetailPO.setGameId(practiceOrderPO.getGameId());
         practiceEvaluationDetailPO.setStar(practiceEvaluationDetailDTO.getStar());
@@ -325,6 +326,19 @@ public class ReviewPracticeService extends CommonService {
         return this.commonPage(practicePubTaskDTO.getPageNo(),10,csb).getResult();
     }
 
+    /**
+     * 查询是否已经评价
+     * @param userId
+     * @param orderId
+     * @return
+     * @throws Exception
+     */
+    public long countEvaluationDetai(Integer userId,Integer orderId)throws Exception{
+        Map searchCondition = new HashMap<>();
+        searchCondition.put("userId",userId);
+        searchCondition.put("orderId",orderId);
+        return this.commonCountBySearchCondition("ddw_practice_evaluation_detail",searchCondition);
+    }
     /**
      * 修改代练预约状态,1开启，2代练中，0关闭
      * @param gameId
@@ -414,7 +428,7 @@ public class ReviewPracticeService extends CommonService {
      * @throws Exception
      */
     public long getOrderCount(Integer id)throws Exception{
-        return super.commonCountBySingleParam("ddw_practice_order","id",id);
+        return super.commonCountBySingleParam("ddw_practice_order","practiceId",id);
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

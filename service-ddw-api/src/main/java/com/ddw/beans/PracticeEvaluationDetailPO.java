@@ -7,6 +7,7 @@ import java.util.Date;
  */
 public class PracticeEvaluationDetailPO {
     private int id;
+    private int orderId;
     private int gameId;
     private int userId;
     private int practiceId;
@@ -14,20 +15,20 @@ public class PracticeEvaluationDetailPO {
     private String describe;
     private Date createTime;
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public int getGameId() {
@@ -68,5 +69,13 @@ public class PracticeEvaluationDetailPO {
 
     public void setDescribe(String describe) {
         this.describe = describe;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }
