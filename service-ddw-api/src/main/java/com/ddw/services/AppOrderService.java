@@ -82,11 +82,12 @@ public class AppOrderService extends CommonService {
                     }else{
                         orderViewVO.setShipStatusName("已使用");
                     }
+                    orderViewVO.setPrice((Integer) m.get("price"));
                 }else{
                     orderViewVO.setShipStatusName(ClientShipStatusEnum.getName(orderViewVO.getShipStatus()));
+                    orderViewVO.setPrice(orderIdMap.get(orderId));
                 }
                 orderViewVO.setOrderTypeName(OrderTypeEnum.getName(orderViewVO.getOrderType()));
-                orderViewVO.setPrice(orderIdMap.get(orderId));
                 orderViewVO.setOrderNo(orderViewVO.getOrderNo().substring(16));
                 orderViewVO.setDesc(orderViewVO.getName()+" *"+orderViewVO.getNum());
                 handleMap.put(orderId,orderViewVO);
