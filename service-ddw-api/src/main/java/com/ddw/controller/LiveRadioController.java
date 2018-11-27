@@ -101,6 +101,19 @@ public class LiveRadioController {
         }
     }
     @Token
+    @ApiOperation(value = "获取申请直播状态",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/queryLiveReviewStatus/{token}")
+    @ResponseBody
+    public ResponseApiVO<LiveReviewStatusVO> queryLiveReviewStatus(@PathVariable String token){
+        try {
+            return this.reviewService.getLiveRadioReviewStatus(token);
+        }catch (Exception e){
+            logger.error("LiveRadioController->queryLiveReviewStatus",e);
+            return new ResponseApiVO(-1,"获取申请直播状态失败",null);
+        }
+    }
+
+    @Token
     @ApiOperation(value = "选择直播房间",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/selectLiveRadioRoom/{token}")
     @ResponseBody

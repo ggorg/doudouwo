@@ -67,7 +67,7 @@ public class ReviewService extends CommonService {
         return new ResponseApiVO(1,"未申请",null);
 
     }
-    public ResponseVO getLiveRadioReviewStatus(String token)throws Exception{
+    public ResponseApiVO getLiveRadioReviewStatus(String token)throws Exception{
         Map csbSea=new HashMap();
         csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
 
@@ -77,24 +77,31 @@ public class ReviewService extends CommonService {
                 new CommonChildBean("ddw_live_radio_space","userid","drProposer",childSearch).setJoinName("left"));
         List<Map> list=this.getCommonMapper().selectObjects(csb);
         if(list==null || list.isEmpty()){
-            return new ResponseVO(2,"未申请",0);
+            return new ResponseApiVO(2,"未申请",0);
         }
         Map m=list.get(0);
         Integer reviewStatus=(Integer) m.get("drReviewStatus");
         Integer liveStatus=(Integer) m.get("liveStatus");
+        LiveReviewStatusVO vo=new LiveReviewStatusVO();
         if(ReviewStatusEnum.ReviewStatus2.getCode().equals(reviewStatus)){
-            return new ResponseVO(2,"拒绝",3);
+            vo.setLiveRadioFlag(3);
+            vo.setLiveRadioFlagStr("拒绝");
         }
         if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
-            return new ResponseVO(2,"审核中",2);
+            vo.setLiveRadioFlag(2);
+            vo.setLiveRadioFlagStr("审核中");
         }
         if(LiveStatusEnum.liveStatus1.equals(liveStatus) || LiveStatusEnum.liveStatus0.equals(liveStatus)){
-            return new ResponseVO(2,"审核通过",1);
+            vo.setLiveRadioFlag(1);
+            vo.setLiveRadioFlagStr("审核通过");
 
         }else{
-            return new ResponseVO(2,"未申请",0);
+            vo.setLiveRadioFlag(0);
+            vo.setLiveRadioFlagStr("未申请");
+
 
         }
+        return new ResponseApiVO(1,"成功",vo);
     }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO applyWithPicLiveRadio(String token, LiveRadioApplWithPicDTO dto)throws Exception{

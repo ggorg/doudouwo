@@ -116,7 +116,6 @@ public class UserController {
             if (userVO == null) {
                 return new ResponseApiVO(-2,"账号不存在",null);
             }
-            userVO.setLiveRadioFlag((Integer) this.reviewService.getLiveRadioReviewStatus(token).getData());
             List<PhotographPO> photographList = userInfoService.queryPhotograph(userVO.getId());
             userVO.setPhotograph(photographList);
             userVO.setToken(token);
