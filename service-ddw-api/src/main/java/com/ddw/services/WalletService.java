@@ -581,8 +581,10 @@ public class WalletService extends CommonService {
 
         if(list!=null && list.size()>0){
             list.forEach(a->{
-                if(StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
+                if(PayStatusEnum.PayStatus1.getCode().equals(a.getDealType())){
                     a.setTitle(OrderTypeEnum.getName(a.getType()));
+                }if(PayStatusEnum.PayStatus2.getCode().equals(a.getDealType())){
+                    a.setTitle(OrderTypeEnum.getName(a.getType())+"（退款）");
                 }else if(a.getDealType()==4){
                     a.setTitle("充值");
                 }else{
@@ -596,8 +598,10 @@ public class WalletService extends CommonService {
             int income=0;
             int pay=0;
             for(WalletDealRecordVO a:l){
-                if(StringUtils.isNotBlank(PayStatusEnum.getName(a.getDealType()))){
+                if(PayStatusEnum.PayStatus1.getCode().equals(a.getDealType())){
                     pay=pay+a.getCost();
+                }if(PayStatusEnum.PayStatus2.getCode().equals(a.getDealType())){
+                    income=income+a.getCost();
                 }else{
                     income=income+a.getCost();
                 }
