@@ -502,6 +502,7 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb6=new CommonChildBean("ddw_store","id","storeId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct0.openid,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.rank AS realityRank,ct5.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5,cb6);
         JSONObject json = new JSONObject();
+        cb5.setJoinName("left");
         Page p = this.commonPage(page.getPageNo(),10,csb);
         json.put("list",p.getResult());
         return new ResponseVO(1,"成功",json);
@@ -526,6 +527,7 @@ public class ReviewPracticeService extends CommonService {
         CommonChildBean cb6=new CommonChildBean("ddw_store","id","storeId",null);
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct0.openid,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.rank AS realityRank,ct5.dsName AS storeName",null,null,condtion,cb1,cb2,cb3,cb4,cb5,cb6);
         JSONObject json = new JSONObject();
+        cb5.setJoinName("left");
         Page p = this.commonPage(page.getPageNo(),10,csb);
         json.put("list",p.getResult());
         return new ResponseVO(1,"成功",json);
