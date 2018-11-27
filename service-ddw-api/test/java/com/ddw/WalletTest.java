@@ -3,6 +3,7 @@ package com.ddw;
 import com.ApiApplication;
 import com.ddw.beans.CodeDTO;
 import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.WalletDealRecordDTO;
 import com.ddw.services.LiveRadioClientService;
 import com.ddw.services.WalletService;
 import com.ddw.token.TokenUtil;
@@ -43,5 +44,12 @@ public class WalletTest extends CommonService {
     @Test
     public void getCoinTest()throws Exception{
         this.walletService.getCoin(8);
+    }
+    @Test
+    public void getDealRecordTest()throws Exception{
+        String token= TokenUtil.createToken("openid");
+        TokenUtil.putUseridAndName(token,132,"test");
+        ResponseApiVO res=this.walletService.getDealRecord(token,new WalletDealRecordDTO());
+        System.out.println(res.getData());
     }
 }

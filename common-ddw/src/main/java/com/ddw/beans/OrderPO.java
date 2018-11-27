@@ -106,6 +106,32 @@ public class OrderPO implements Serializable {
     private Integer doStoreProportionCouponCost;
 
     /**
+     * 活动原价
+     */
+    private Integer doOrigActCost;
+
+    /**
+     * 优惠卷所优惠的价格
+     */
+    private Integer doCouponCost;
+
+    public Integer getDoOrigActCost() {
+        return doOrigActCost;
+    }
+
+    public void setDoOrigActCost(Integer doOrigActCost) {
+        this.doOrigActCost = doOrigActCost;
+    }
+
+    public Integer getDoCouponCost() {
+        return doCouponCost;
+    }
+
+    public void setDoCouponCost(Integer doCouponCost) {
+        this.doCouponCost = doCouponCost;
+    }
+
+    /**
      * 原价
      */
     private Integer doOrigCost;

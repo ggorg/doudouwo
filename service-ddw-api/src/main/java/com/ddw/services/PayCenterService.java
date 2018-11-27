@@ -262,6 +262,7 @@ public class PayCenterService extends BaseOrderService {
             Integer earnest=Integer.parseInt(strs[0]);
             orderPO.setDoCost(earnest);
             orderPO.setDoOrigCost(earnest);
+            orderPO.setDoOrigActCost(earnest);
 
        // 竞价金额
         }else if(OrderTypeEnum.OrderType5.getCode().equals(orderType)){
@@ -286,6 +287,7 @@ public class PayCenterService extends BaseOrderService {
 
             orderPO.setDoCost(bidCost);
             orderPO.setDoOrigCost(bidCost);
+            orderPO.setDoOrigActCost(bidCost);
 
 
         }else if(OrderTypeEnum.OrderType9.getCode().equals(orderType)){
@@ -299,6 +301,8 @@ public class PayCenterService extends BaseOrderService {
             Integer bidCost=(Integer) renewMap.get("price");
             orderPO.setDoCost(bidCost);
             orderPO.setDoOrigCost(bidCost);
+            orderPO.setDoOrigActCost(bidCost);
+
             //计算充值
         }else if(OrderTypeEnum.OrderType3.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
@@ -306,6 +310,7 @@ public class PayCenterService extends BaseOrderService {
             voData=rechargeService.getRechargeCost(codes[0]);
             orderPO.setDoCost((Integer) voData.get("discount"));
             orderPO.setDoOrigCost((Integer) voData.get("price"));
+            orderPO.setDoOrigActCost((Integer) voData.get("discount"));
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
             }
@@ -323,6 +328,7 @@ public class PayCenterService extends BaseOrderService {
             Integer recCost=discount==null?price:discount;
             orderPO.setDoCost(recCost);
             orderPO.setDoOrigCost(price);
+            orderPO.setDoOrigActCost(recCost);
             if(orderPO.getDoCost()==null){
                 return new ResponseApiVO(-2,"充值卷编号异常",null);
              }
@@ -349,6 +355,7 @@ public class PayCenterService extends BaseOrderService {
             Map dataMap=null;
             Integer countPrice=0;
             Integer countOrigPrice=0;
+            Integer countOrigActPrice=0;
             Map mVo=null;
             BigDecimal dicount=null;
             if(gradeId!=null){
@@ -393,6 +400,7 @@ public class PayCenterService extends BaseOrderService {
                 return new ResponseApiVO(-2,"支付失败",null);
             }
             orderPO.setDoCost(countPrice);
+            orderPO.setDoOrigActCost(countPrice);
             orderPO.setDoOrigCost(countOrigPrice);
             if(couponCode==null && dicount!=null){
                 orderPO.setDoCost(dicount.multiply(BigDecimal.valueOf(countPrice)).intValue());
@@ -490,6 +498,7 @@ public class PayCenterService extends BaseOrderService {
                 return new ResponseApiVO(-2,"逗币不足，请充值",null);
             }
             orderPO.setDoCost(coutCost);
+            orderPO.setDoOrigActCost(coutCost);
             orderPO.setDoOrigCost(coutOrigCost);
             orderPO.setDoPayStatus(PayStatusEnum.PayStatus1.getCode());
             //buyInProMap=buyInGoiftMap;
@@ -530,6 +539,7 @@ public class PayCenterService extends BaseOrderService {
                 insertList.add(orderTicket);
             }
             orderPO.setDoCost(sumPrice);
+            orderPO.setDoOrigActCost(sumPrice);
             orderPO.setDoOrigCost(origPrice);
         }else if(OrderTypeEnum.OrderType10.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
@@ -550,6 +560,7 @@ public class PayCenterService extends BaseOrderService {
 
             }else{
                 orderPO.setDoCost(practiceOrderPO.getMoney());
+                orderPO.setDoOrigActCost(practiceOrderPO.getMoney());
                 orderPO.setDoOrigCost(practiceOrderPO.getMoney());
 
             }
@@ -953,6 +964,7 @@ public class PayCenterService extends BaseOrderService {
                     po.setDoStoreProportion(data.get("proportion"));
                     po.setDoStoreProportionCost(data.get("proportionCost"));
                     po.setDoStoreProportionCouponCost(data.get("storeProportionCouponCost"));
+                    po.setDoCouponCost(data.get("doCouponCost"));
                 }
 
             }
@@ -980,18 +992,22 @@ public class PayCenterService extends BaseOrderService {
             return new ResponseVO(-2,"优惠卷消费额度不达标",null);
         }
         Integer newCost=0;
+        Map couponMap=new HashMap();
         if(CouponTypeEnum.CouponType2.getCode().equals(po.getDcType())){
             newCost=(int)(cost*((float)po.getDcMoney()/100));
+            couponMap.put("doCouponCost",cost-newCost);
         }else{
             newCost=cost-po.getDcMoney();
+            couponMap.put("doCouponCost",po.getDcMoney());
         }
-        Map couponMap=new HashMap();
+
         couponMap.put("cost",newCost);
         if(po.getStoreId()==-1 && po.getStoreProportion()!=null && po.getStoreProportion()>0){
             Integer storeProportionCouponCost=BigDecimal.valueOf(cost-newCost).multiply(BigDecimal.valueOf(po.getStoreProportion()).divide(BigDecimal.valueOf(100))).intValue();
             couponMap.put("proportion",po.getStoreProportion());
             couponMap.put("proportionCost",cost+storeProportionCouponCost);
             couponMap.put("storeProportionCouponCost",storeProportionCouponCost);
+
         }
 
         return new ResponseVO(1,"成功",couponMap);

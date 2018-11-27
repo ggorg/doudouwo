@@ -42,4 +42,13 @@ public class WalletDealVO<T> {
     public void setList(List<WalletDealRecordVO> list) {
         this.list = list;
     }
+
+    @Override
+    public String toString() {
+        return "WalletDealVO{" +
+                "pay=" + pay +
+                ", income=" + income +
+                ", list=" + list +
+                '}';
+    }
 }

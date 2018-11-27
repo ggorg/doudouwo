@@ -60,4 +60,15 @@ public class WalletDealRecordVO {
     public void setDealType(Integer dealType) {
         this.dealType = dealType;
     }
+
+    @Override
+    public String toString() {
+        return "WalletDealRecordVO{" +
+                "createTime='" + createTime + '\'' +
+                ", type=" + type +
+                ", title='" + title + '\'' +
+                ", cost=" + cost +
+                ", dealType=" + dealType +
+                '}';
+    }
 }
