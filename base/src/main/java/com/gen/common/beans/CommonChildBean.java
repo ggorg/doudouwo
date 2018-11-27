@@ -29,7 +29,17 @@ public class CommonChildBean {
 	 * 自定义条件
 	 */
 	private Map condition;
-	
+
+	private String joinName;
+
+	public String getJoinName() {
+		return joinName;
+	}
+
+	public CommonChildBean setJoinName(String joinName) {
+		this.joinName = joinName;
+		return this;
+	}
 
 	public String getChildTablename() {
 		return childTablename;

@@ -27,7 +27,15 @@
 		</choose>
 		<if test="null!=childConditions">
 			<foreach collection="childConditions" item="child"  index="key" >
-				${jointName} join ${child.childTablename} ct${key} on ct${key}.${child.keyname}=t1.${child.foreignKeyname}
+				<choose>
+					<when test="child.joinName!=null">
+						${child.joinName}
+					</when>
+					<otherwise>
+						${jointName}
+					</otherwise>
+				</choose>
+				 join ${child.childTablename} ct${key} on ct${key}.${child.keyname}=t1.${child.foreignKeyname}
 				<if test="null!=child.condition">
 				<foreach collection="child.condition" item="cvalue" index="ckey" >
 					<choose>
@@ -115,7 +123,15 @@
 		</choose> 
 		<if test="null!=childConditions">
 			<foreach collection="childConditions" item="child"  index="key" >
-				${jointName} join ${child.childTablename} ct${key} on ct${key}.${child.keyname}=t1.${child.foreignKeyname}
+				<choose>
+					<when test="child.joinName!=null">
+						${child.joinName}
+					</when>
+					<otherwise>
+						${jointName}
+					</otherwise>
+				</choose>
+				 join ${child.childTablename} ct${key} on ct${key}.${child.keyname}=t1.${child.foreignKeyname}
 				<if test="null!=child.condition">
 				<foreach collection="child.condition" item="cvalue" index="ckey" >
 					<choose>

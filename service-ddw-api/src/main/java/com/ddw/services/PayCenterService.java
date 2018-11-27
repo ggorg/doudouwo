@@ -1000,5 +1000,6 @@ public class PayCenterService extends BaseOrderService {
         Integer[] id={1,2,3,4};
         System.out.println(Arrays.asList(id).toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
         System.out.println();
+        new StringBuilder().append(1);
     }
 }
