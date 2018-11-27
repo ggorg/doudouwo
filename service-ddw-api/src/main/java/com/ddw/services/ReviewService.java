@@ -73,7 +73,7 @@ public class ReviewService extends CommonService {
         String openId=TokenUtil.getUserObject(token).toString();
         Integer userId=TokenUtil.getUserId(token);
         Integer storeId=TokenUtil.getStoreId(token);
-        if(!dto.getLiveHeadImg().isEmpty()){
+        if(dto.getLiveHeadImg()!=null && !dto.getLiveHeadImg().isEmpty()){
            userInfoService.uploadPhotograph(userId.toString(),new MultipartFile[]{dto.getLiveHeadImg()});
 
         }
