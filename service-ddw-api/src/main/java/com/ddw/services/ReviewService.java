@@ -60,14 +60,42 @@ public class ReviewService extends CommonService {
         boolean hasReview=this.hasLiveRadioReviewFromGoddess(userid,storeId);
         if(hasReview){
             //直播审核中
-            CacheUtil.put("review","liveRadio"+userid,2);
+
             return new ResponseApiVO(-2003,"正在审核中，请耐心等待",null);
 
         }
         return new ResponseApiVO(1,"未申请",null);
 
     }
+    public ResponseVO getLiveRadioReviewStatus(String token)throws Exception{
+        Map csbSea=new HashMap();
+        csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
 
+        Map childSearch=new HashMap();
+        childSearch.put("userid",TokenUtil.getUserId(token));
+        CommonSearchBean csb=new CommonSearchBean("ddw_review","t1.createTime desc","t1.drReviewStatus,ct0.liveStatus",0,1,csbSea,
+                new CommonChildBean("ddw_live_radio_space","userid","drProposer",childSearch).setJoinName("left"));
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
+        if(list==null || list.isEmpty()){
+            return new ResponseVO(2,"未申请",0);
+        }
+        Map m=list.get(0);
+        Integer reviewStatus=(Integer) m.get("drReviewStatus");
+        Integer liveStatus=(Integer) m.get("liveStatus");
+        if(ReviewStatusEnum.ReviewStatus2.getCode().equals(reviewStatus)){
+            return new ResponseVO(2,"拒绝",3);
+        }
+        if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
+            return new ResponseVO(2,"审核中",2);
+        }
+        if(LiveStatusEnum.liveStatus1.equals(liveStatus) || LiveStatusEnum.liveStatus0.equals(liveStatus)){
+            return new ResponseVO(2,"审核通过",1);
+
+        }else{
+            return new ResponseVO(2,"未申请",0);
+
+        }
+    }
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO applyWithPicLiveRadio(String token, LiveRadioApplWithPicDTO dto)throws Exception{
         String openId=TokenUtil.getUserObject(token).toString();

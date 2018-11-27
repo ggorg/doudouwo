@@ -6,6 +6,7 @@ import com.ddw.beans.ResponseApiVO;
 import com.ddw.services.BaseDynService;
 import com.ddw.services.LiveRadioClientService;
 import com.ddw.services.LiveRadioService;
+import com.ddw.services.ReviewService;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
 import org.apache.commons.lang3.time.DateUtils;
@@ -27,6 +28,8 @@ public class LiveRadioTest {
 
     @Autowired
     private BaseDynService liveRadioService;
+    @Autowired
+    private ReviewService reviewService;
 
     @Test
     public void selectLiveRadioTest()throws Exception{
@@ -51,5 +54,12 @@ public class LiveRadioTest {
         bidMap.put("luckyDogUserName","gen");
         bidMap.put("luckyDogUserId",26);
         liveRadioService.saveBideDyn(bidMap, DateUtils.parseDate("2018-07-20 21:05:16","yyyy-MM-dd HH:mm:ss"));
+    }
+    @Test
+    public void getLiveRadioReviewStatus()throws Exception{
+        String token=TokenUtil.createToken("openid");
+        TokenUtil.putStoreid(token,1);
+        TokenUtil.putUseridAndName(token,8,"test123");
+        System.out.println(reviewService.getLiveRadioReviewStatus(token));
     }
 }

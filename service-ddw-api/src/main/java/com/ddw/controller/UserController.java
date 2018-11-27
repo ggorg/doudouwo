@@ -4,6 +4,7 @@ package com.ddw.controller;
 import com.ddw.beans.*;
 import com.ddw.services.ConsumeRankingListService;
 import com.ddw.services.ReviewRealNameService;
+import com.ddw.services.ReviewService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
@@ -39,6 +40,9 @@ public class UserController {
 
     @Autowired
     private ConsumeRankingListService consumeRankingListService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @ApiOperation(value = "微信和QQ登录")
     @PostMapping("/loginPublic")
@@ -112,7 +116,7 @@ public class UserController {
             if (userVO == null) {
                 return new ResponseApiVO(-2,"账号不存在",null);
             }
-            userInfoService.setLiveRadioFlag(userVO,token);
+            userVO.setLiveRadioFlag((Integer) this.reviewService.getLiveRadioReviewStatus(token).getData());
             List<PhotographPO> photographList = userInfoService.queryPhotograph(userVO.getId());
             userVO.setPhotograph(photographList);
             userVO.setToken(token);

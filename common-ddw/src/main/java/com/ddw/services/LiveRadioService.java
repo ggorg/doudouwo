@@ -196,7 +196,7 @@ public class LiveRadioService extends CommonService{
             return new ResponseVO(1,"审批不通过",null);
         }
         //直播审核中
-        CacheUtil.put("review","liveRadio"+reviewPO.getDrProposer(),1);
+
         String streamIdExt=storeId+"_"+reviewPO.getDrProposer()+"_"+ DateFormatUtils.format(date,"yyMMddHHmmss");
         //创建推流拉流地址
         LiveRadioUrlBean liveRadioUrlBean= LiveRadioApiUtil.createLiveUrl(streamIdExt,endDate);
