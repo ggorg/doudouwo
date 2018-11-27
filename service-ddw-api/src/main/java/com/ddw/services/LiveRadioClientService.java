@@ -166,6 +166,7 @@ public class LiveRadioClientService  extends CommonService{
             madto.setGoddessId((Integer) po.get("userid"));
             SelectLiveRadioVO svo=new SelectLiveRadioVO();
             PropertyUtils.copyProperties(svo,po);
+            svo.setCode(dto.getCode());
             svo.setGoddessCode(madto.getGoddessId());
             MyAttentionPO mapo=this.myAttentionService.query(TokenUtil.getUserId(token),madto);
             if(mapo==null){

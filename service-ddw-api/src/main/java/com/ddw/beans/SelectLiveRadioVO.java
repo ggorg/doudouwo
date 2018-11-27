@@ -28,6 +28,17 @@ public class SelectLiveRadioVO {
     @ApiModelProperty(name="openId",value="openId",example="openId")
     private String openId;
 
+    @ApiModelProperty(name="code",value="房间ID",example="房间ID")
+    private Integer code;
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
     public String getOpenId() {
         return openId;
     }
