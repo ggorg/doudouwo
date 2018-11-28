@@ -120,7 +120,7 @@ public class WeixinOauthController {
                     return InternalResourceViewResolver.REDIRECT_URL_PREFIX + "pages/manager/weixin/menu";
                 }
                 if("obn".equals(page)){
-                    //TODO 这里绑定老带新,然后跳转到下载APP页面
+                    // 这里绑定老带新,然后跳转到下载APP页面
                     if(json.containsKey("param")){
                         String oldOpenid = oldBringingNewService.getOpenid(json.get("param").toString());
                         if(StringUtils.isNotBlank(oldOpenid)){
@@ -143,6 +143,7 @@ public class WeixinOauthController {
                    if(json.containsKey("param") && json.getString("param")!=null){
                        url.append("&").append("param=").append(json.getString("param"));
                    }
+                    logger.info("WeixinOauthController->oauth->跳转->url:",url.toString());
                    return url.toString();
 
                 }
