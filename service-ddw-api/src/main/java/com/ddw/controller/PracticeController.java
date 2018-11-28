@@ -169,11 +169,14 @@ public class PracticeController {
             }
             //判断代练是否开启预约,提交游戏编号,当前段位包含几星,目标段位包含几星,代练编号,写进订单,更新代练预约状态
             PracticeGamePO practiceGamePO = reviewPracticeService.getPracticeGamePO(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId());
+            if(!TokenUtil.getStoreId(token).equals(practiceGamePO.getStoreId())){
+                return new ResponseApiVO(-4,"预约的代练不在同一个门店",null);
+            }
             if (practiceGamePO != null && practiceGamePO.getAppointment() == 1) {
                 int payMoney = reviewPracticeService.payMoney(practiceGameApplyDTO.getGameId(),
                         practiceGameApplyDTO.getRankId(),practiceGameApplyDTO.getStar(),
                         practiceGameApplyDTO.getTargetRankId(),practiceGameApplyDTO.getTargetStar());
-                ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2);
+                ResponseVO rv = reviewPracticeService.updatePracticeGame(practiceGameApplyDTO.getPracticeId(),practiceGameApplyDTO.getGameId(),2,null);
                 if(rv.getReCode() > 0){
                     CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
                     ResponseVO rv2 = reviewPracticeService.insertPracticeOrder(TokenUtil.getUserId(token),TokenUtil.getStoreId(token), practiceGameApplyDTO,payMoney);
@@ -293,7 +296,7 @@ public class PracticeController {
 //                return new ResponseVO(-3,"请先结束订单再发布",null);
 //            }
             CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
-            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),1);
+            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),1,TokenUtil.getStoreId(token));
         }catch (Exception e){
             logger.error("PracticeController->release",e);
             return new ResponseVO(-1,"提交失败",null);
@@ -309,7 +312,7 @@ public class PracticeController {
             //判断无接单,可取消发布
 //            if (practiceOrderPO == null) {
             CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
-            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0);
+            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0,null);
 //            }else {
 //                return new ResponseVO(-2,"有正在进行的订单,不可取消,请先结算",null);
 //            }

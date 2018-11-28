@@ -345,9 +345,12 @@ public class ReviewPracticeService extends CommonService {
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    public ResponseVO updatePracticeGame(Integer practiceId,Integer gameId,int appointment){
+    public ResponseVO updatePracticeGame(Integer practiceId,Integer gameId,int appointment,Integer storeId){
         Map setParams = new HashMap<>();
         setParams.put("appointment",appointment);
+        if(storeId != null){
+            setParams.put("storeId",storeId);
+        }
         setParams.put("updateTime",new Date());
         Map searchCondition = new HashMap<>();
         searchCondition.put("userId",practiceId);
@@ -438,7 +441,7 @@ public class ReviewPracticeService extends CommonService {
         if(practiceOrderPO.getPayState() != 0){
             return new ResponseVO(-2,"只有未支付的订单才允许取消",null);
         }
-        this.updatePracticeGame(practiceOrderPO.getPracticeId(),practiceOrderPO.getGameId(),1);
+        this.updatePracticeGame(practiceOrderPO.getPracticeId(),practiceOrderPO.getGameId(),1,null);
         Map setParams = new HashMap<>();
         if(userId == practiceOrderPO.getUserId()){
             setParams.put("payState",3);
