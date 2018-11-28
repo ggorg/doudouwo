@@ -68,37 +68,78 @@ public class ReviewService extends CommonService {
 
     }
     public ResponseApiVO getLiveRadioReviewStatus(String token)throws Exception{
-        Map csbSea=new HashMap();
+        Integer userId=TokenUtil.getUserId(token);
+        LiveReviewStatusVO vo=new LiveReviewStatusVO();
+        Map userMap= this.commonObjectBySingleParam("ddw_userinfo","id",userId);
+        Map csbSea=null;
+        Integer reviewStatus=null;
+        if(userMap.containsKey("realName") && userMap.get("realName")!=null){
+            vo.setRealnameFlag(1);
+        }else{
+            csbSea=new HashMap();
+            csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType4.getCode());
+            csbSea.put("drProposer",userId);
+            List reveMap=this.commonList("ddw_review","createTime desc","t1.drReviewStatus",1,1,csbSea);
+            if(reveMap==null || reveMap.isEmpty()){
+                vo.setRealnameFlag(0);
+                return new ResponseApiVO(1,"成功",vo);
+            }
+            if(ReviewStatusEnum.ReviewStatus2.getCode().equals(reviewStatus)){
+                vo.setRealnameFlag(3);
+                return new ResponseApiVO(1,"成功",vo);
+            }else if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
+                vo.setRealnameFlag(2);
+                return new ResponseApiVO(1,"成功",vo);
+            }else {
+                vo.setRealnameFlag(1);
+            }
+        }
+        if(userMap.containsKey("goddessFlag") && (userMap.get("goddessFlag").equals(1))){
+            vo.setGoddessFlag(1);
+        }else{
+            csbSea=new HashMap();
+            csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType5.getCode());
+            csbSea.put("drProposer",userId);
+            List reveMap=this.commonList("ddw_review","createTime desc","t1.drReviewStatus",1,1,csbSea);
+            if(reveMap==null || reveMap.isEmpty()){
+                vo.setGoddessFlag(0);
+                return new ResponseApiVO(1,"成功",vo);
+            }
+            if(ReviewStatusEnum.ReviewStatus2.getCode().equals(reviewStatus)){
+                vo.setGoddessFlag(3);
+                return new ResponseApiVO(1,"成功",vo);
+            }else if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
+                vo.setGoddessFlag(2);
+                return new ResponseApiVO(1,"成功",vo);
+            }else {
+                vo.setGoddessFlag(1);
+            }
+        }
+        csbSea=new HashMap();
         csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
 
         Map childSearch=new HashMap();
-        childSearch.put("userid",TokenUtil.getUserId(token));
+        childSearch.put("userid",userId);
         CommonSearchBean csb=new CommonSearchBean("ddw_review","t1.createTime desc","t1.drReviewStatus,ct0.liveStatus",0,1,csbSea,
                 new CommonChildBean("ddw_live_radio_space","userid","drProposer",childSearch).setJoinName("left"));
         List<Map> list=this.getCommonMapper().selectObjects(csb);
         if(list==null || list.isEmpty()){
-            return new ResponseApiVO(2,"未申请",0);
+            vo.setLiveRadioFlag(0);
+            return new ResponseApiVO(1,"成功",vo);
         }
         Map m=list.get(0);
-        Integer reviewStatus=(Integer) m.get("drReviewStatus");
+        reviewStatus=(Integer) m.get("drReviewStatus");
         Integer liveStatus=(Integer) m.get("liveStatus");
-        LiveReviewStatusVO vo=new LiveReviewStatusVO();
+
         if(ReviewStatusEnum.ReviewStatus2.getCode().equals(reviewStatus)){
             vo.setLiveRadioFlag(3);
-            vo.setLiveRadioFlagStr("拒绝");
-        }
-        if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
+        }else if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
             vo.setLiveRadioFlag(2);
-            vo.setLiveRadioFlagStr("审核中");
-        }
-        if(LiveStatusEnum.liveStatus1.equals(liveStatus) || LiveStatusEnum.liveStatus0.equals(liveStatus)){
+        }else if(LiveStatusEnum.liveStatus1.equals(liveStatus) || LiveStatusEnum.liveStatus0.equals(liveStatus)){
             vo.setLiveRadioFlag(1);
-            vo.setLiveRadioFlagStr("审核通过");
 
         }else{
             vo.setLiveRadioFlag(0);
-            vo.setLiveRadioFlagStr("未申请");
-
 
         }
         return new ResponseApiVO(1,"成功",vo);
