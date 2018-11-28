@@ -3,10 +3,7 @@ package com.ddw.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
-import com.ddw.services.GameService;
-import com.ddw.services.MyAttentionService;
-import com.ddw.services.ReviewPracticeService;
-import com.ddw.services.UserInfoService;
+import com.ddw.services.*;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
@@ -17,6 +14,7 @@ import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +37,8 @@ public class PracticeController {
     private UserInfoService userInfoService;
     @Autowired
     private GameService gameService;
+    @Autowired
+    private ReviewService reviewService;
 
     @Token
     @ApiOperation(value = "代练认证申请用例")
@@ -394,6 +394,18 @@ public class PracticeController {
         }catch (Exception e){
             logger.error("PracticeController->refund",e);
             return new ResponseVO(-1,"提交失败",null);
+        }
+    }
+    @Token
+    @ApiOperation(value = "获取申请代练状态",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/queryReviewStatus/{token}")
+    @ResponseBody
+    public ResponseApiVO<PracticeReviewStatusVO> queryReviewStatus(@PathVariable String token){
+        try {
+            return this.reviewService.getPracticeReviewStatus(token);
+        }catch (Exception e){
+            logger.error("PracticeController->queryReviewStatus",e);
+            return new ResponseApiVO(-1,"提交失败",null);
         }
     }
 }

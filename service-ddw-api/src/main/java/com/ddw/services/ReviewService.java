@@ -67,41 +67,82 @@ public class ReviewService extends CommonService {
         return new ResponseApiVO(1,"未申请",null);
 
     }
+    private Integer commonReviewRealName(Map userMap,Integer userId){
+        if(userMap.containsKey("realName") && userMap.get("realName")!=null){
+            return 1;
+        }else{
+            Integer reviewStatus=getReviewStatus(userId,ReviewBusinessTypeEnum.ReviewBusinessType4);
+            if(reviewStatus==null){
+                return 0;
+
+            }
+            if(ReviewStatusEnum.ReviewStatus2.getCode().equals(reviewStatus)){
+                return 3;
+            }else if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
+                return 2;
+            }else {
+                return 1;
+            }
+        }
+    }
+    public Integer getReviewStatus(Integer userId,ReviewBusinessTypeEnum reviewBusinessTypeEnum){
+        Map csbSea=new HashMap();
+        csbSea.put("drBusinessType",reviewBusinessTypeEnum.getCode());
+        csbSea.put("drProposer",userId);
+        List<Map> reveMap=this.commonList("ddw_review","createTime desc","t1.drReviewStatus",1,1,csbSea);
+        if(reveMap==null || reveMap.isEmpty()){
+            return null;
+        }
+        return (Integer) reveMap.get(0).get("drReviewStatus");
+
+    }
+    public ResponseApiVO getPracticeReviewStatus(String token)throws Exception{
+        Integer userId=TokenUtil.getUserId(token);
+        PracticeReviewStatusVO vo=new PracticeReviewStatusVO();
+        Map userMap= this.commonObjectBySingleParam("ddw_userinfo","id",userId);
+
+        Integer reviewStatus=null;
+        vo.setRealnameFlag(this.commonReviewRealName(userMap,userId));
+        if(vo.getRealnameFlag()!=1){
+            return new ResponseApiVO(1,"成功",vo);
+
+        }
+        if(userMap.containsKey("practiceFlag") && (userMap.get("practiceFlag").equals(1))){
+            vo.setPracticeFlag(1);
+        }else{
+            reviewStatus=getReviewStatus(userId,ReviewBusinessTypeEnum.ReviewBusinessType6);
+            if(reviewStatus==null){
+                vo.setPracticeFlag(0);
+                return new ResponseApiVO(1,"成功",vo);
+            }
+            if(ReviewStatusEnum.ReviewStatus2.getCode().equals(reviewStatus)){
+                vo.setPracticeFlag(3);
+                return new ResponseApiVO(1,"成功",vo);
+            }else if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
+                vo.setPracticeFlag(2);
+                return new ResponseApiVO(1,"成功",vo);
+            }else {
+                vo.setPracticeFlag(1);
+            }
+        }
+        return new ResponseApiVO(1,"成功",vo);
+    }
     public ResponseApiVO getLiveRadioReviewStatus(String token)throws Exception{
         Integer userId=TokenUtil.getUserId(token);
         LiveReviewStatusVO vo=new LiveReviewStatusVO();
         Map userMap= this.commonObjectBySingleParam("ddw_userinfo","id",userId);
-        Map csbSea=null;
+
         Integer reviewStatus=null;
-        if(userMap.containsKey("realName") && userMap.get("realName")!=null){
-            vo.setRealnameFlag(1);
-        }else{
-            csbSea=new HashMap();
-            csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType4.getCode());
-            csbSea.put("drProposer",userId);
-            List reveMap=this.commonList("ddw_review","createTime desc","t1.drReviewStatus",1,1,csbSea);
-            if(reveMap==null || reveMap.isEmpty()){
-                vo.setRealnameFlag(0);
-                return new ResponseApiVO(1,"成功",vo);
-            }
-            if(ReviewStatusEnum.ReviewStatus2.getCode().equals(reviewStatus)){
-                vo.setRealnameFlag(3);
-                return new ResponseApiVO(1,"成功",vo);
-            }else if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
-                vo.setRealnameFlag(2);
-                return new ResponseApiVO(1,"成功",vo);
-            }else {
-                vo.setRealnameFlag(1);
-            }
+        vo.setRealnameFlag(this.commonReviewRealName(userMap,userId));
+        if(vo.getRealnameFlag()!=1){
+            return new ResponseApiVO(1,"成功",vo);
+
         }
         if(userMap.containsKey("goddessFlag") && (userMap.get("goddessFlag").equals(1))){
             vo.setGoddessFlag(1);
         }else{
-            csbSea=new HashMap();
-            csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType5.getCode());
-            csbSea.put("drProposer",userId);
-            List reveMap=this.commonList("ddw_review","createTime desc","t1.drReviewStatus",1,1,csbSea);
-            if(reveMap==null || reveMap.isEmpty()){
+            reviewStatus=getReviewStatus(userId,ReviewBusinessTypeEnum.ReviewBusinessType5);
+            if(reviewStatus==null){
                 vo.setGoddessFlag(0);
                 return new ResponseApiVO(1,"成功",vo);
             }
@@ -115,7 +156,7 @@ public class ReviewService extends CommonService {
                 vo.setGoddessFlag(1);
             }
         }
-        csbSea=new HashMap();
+        Map csbSea=new HashMap();
         csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
 
         Map childSearch=new HashMap();
