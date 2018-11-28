@@ -135,7 +135,7 @@ public class ReviewService extends CommonService {
             vo.setLiveRadioFlag(3);
         }else if(ReviewStatusEnum.ReviewStatus0.getCode().equals(reviewStatus)){
             vo.setLiveRadioFlag(2);
-        }else if(LiveStatusEnum.liveStatus1.equals(liveStatus) || LiveStatusEnum.liveStatus0.equals(liveStatus)){
+        }else if(LiveStatusEnum.liveStatus1.getCode().equals(liveStatus) || LiveStatusEnum.liveStatus0.getCode().equals(liveStatus)){
             vo.setLiveRadioFlag(1);
 
         }else{
