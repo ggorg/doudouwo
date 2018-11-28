@@ -121,7 +121,7 @@ public class ReviewService extends CommonService {
         Map childSearch=new HashMap();
         childSearch.put("userid",userId);
         CommonSearchBean csb=new CommonSearchBean("ddw_review","t1.createTime desc","t1.drReviewStatus,ct0.liveStatus",0,1,csbSea,
-                new CommonChildBean("ddw_live_radio_space","userid","drProposer",childSearch).setJoinName("left"));
+                new CommonChildBean("ddw_live_radio_space","businessCode","drBusinessCode",childSearch).setJoinName("left"));
         List<Map> list=this.getCommonMapper().selectObjects(csb);
         if(list==null || list.isEmpty()){
             vo.setLiveRadioFlag(0);
