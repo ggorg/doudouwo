@@ -7,6 +7,7 @@ import java.util.Date;
  */
 public class PracticeGamePO {
     private int id;
+    private Integer storeId;
     private int userId;
     private int gameId;
     private int rankId;
@@ -23,6 +24,14 @@ public class PracticeGamePO {
 
     public int getId() {
         return id;
+    }
+
+    public Integer getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(Integer storeId) {
+        this.storeId = storeId;
     }
 
     public void setId(int id) {
