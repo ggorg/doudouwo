@@ -133,6 +133,7 @@ public class WeixinOauthController {
                 if(StringUtils.isNotBlank(jumpUrlValue)){
 
                     AccessToken at=weixinInterfaceService.getTokenByAppid(appid);
+                    logger.info("WeixinOauthController->oauth->配置文件url->url:{}",jumpUrlValue);
                     WeiXinTools.initTicket(at.getTicket(),at.getAppid());
                     logger.info("WeixinOauthController->oauth->跳转->page:{},openid:{}",page,openid);
                     StringBuilder url=new StringBuilder();
@@ -143,7 +144,7 @@ public class WeixinOauthController {
                    if(json.containsKey("param") && json.getString("param")!=null){
                        url.append("&").append("param=").append(json.getString("param"));
                    }
-                    logger.info("WeixinOauthController->oauth->跳转->url:",url.toString());
+                    logger.info("WeixinOauthController->oauth->跳转->url:{}",url.toString());
                    return url.toString();
 
                 }
