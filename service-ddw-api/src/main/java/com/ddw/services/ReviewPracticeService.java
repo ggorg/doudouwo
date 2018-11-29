@@ -280,10 +280,10 @@ public class ReviewPracticeService extends CommonService {
         if (practiceEvaluationPO != null) {
             int allStar = practiceEvaluationPO.getAllStar();
             int countEvaluation = practiceEvaluationPO.getCountEvaluation();
-            Map params= BeanToMapUtil.beanToMap(practiceEvaluationPO);
+            Map params= new HashMap<>();
             params.put("countEvaluation",countEvaluation+1);
             params.put("allStar",allStar+practiceEvaluationDetailDTO.getStar());
-            params.put("star",Math.round(practiceEvaluationPO.getAllStar()/practiceEvaluationPO.getCountEvaluation()));
+            params.put("star",Math.round(allStar/countEvaluation));
             params.put("updateTime",new Date());
             Map searchCondition = new HashMap<>();
             searchCondition.put("practiceId",practiceId);
