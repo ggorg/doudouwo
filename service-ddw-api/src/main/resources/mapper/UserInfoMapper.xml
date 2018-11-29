@@ -40,6 +40,8 @@
         <result property="idcard" column="idcard"/>
         <result property="idcardFrontUrl" column="idcardFrontUrl"/>
         <result property="idcardOppositeUrl" column="idcardOppositeUrl"/>
+        <result property="firstRechargeFlag" column="firstRechargeFlag"/>
+        <result property="firstLoginFlag" column="firstLoginFlag"/>
         <result property="contributeNum" column="contributeNum"/>
     </resultMap>
 
@@ -82,6 +84,8 @@
         t1.gradeId,
         t1.goddessGradeId,
         t1.practiceGradeId,
+        t1.firstRechargeFlag,
+        t1.firstLoginFlag,
         t1.createTime,
         ct0.gradeName ugradeName,
         ct0.LEVEL ulevel,
@@ -121,6 +125,8 @@
         t1.gradeId,
         t1.goddessGradeId,
         t1.practiceGradeId,
+        t1.firstRechargeFlag,
+        t1.firstLoginFlag,
         t1.createTime,
         ct0.gradeName ugradeName,
         ct0.discount,

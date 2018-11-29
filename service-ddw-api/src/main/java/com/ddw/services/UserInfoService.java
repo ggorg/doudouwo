@@ -75,36 +75,51 @@ public class UserInfoService extends CommonService {
             if(!flag){
                 throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
             }
-            //查询老带新绑定关系是否存在,是则根据老带新策略查询赠送优惠券
-            Map map = this.commonObjectBySingleParam("ddw_old_bringing_new","newOpenid",userInfoDTO.getOpenid());
-            if(map != null && map.containsKey("oldOpenid")){
-                String oldOpenid = map.get("oldOpenid").toString();
-                Integer oldId = this.querySimpleByOpenid(oldOpenid).getId();
-                List<Map> list = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_new",new HashMap<>());
-                if(list != null && list.size()>0){
-                    for (Map m:list){
-                        if(m.containsKey("couponId")){
-                            //新用户赠送优惠券
-                            this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), (Integer) re.getData(),-1);
-                        }
+        }
+        return re;
+    }
+
+    /**
+     * 处理老带新赠送优惠券
+     * @param openid 新用户openid
+     * @param userId 新用户编号
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void dealOldBringingNew(String openid,Integer userId)throws Exception{
+        //查询老带新绑定关系是否存在,是则根据老带新策略查询赠送优惠券
+        Map map = this.commonObjectBySingleParam("ddw_old_bringing_new","newOpenid",openid);
+        if(map != null && map.containsKey("oldOpenid")){
+            String oldOpenid = map.get("oldOpenid").toString();
+            Integer oldId = this.querySimpleByOpenid(oldOpenid).getId();
+            List<Map> list = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_new",new HashMap<>());
+            if(list != null && list.size()>0){
+                for (Map m:list){
+                    if(m.containsKey("couponId")){
+                        //新用户赠送优惠券
+                        this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), userId,-1);
                     }
-                    //老用户赠送优惠券
-                    Map m = list.get(0);
-                    if(m != null && m.containsKey("strategyId")){
-                        Map<String,Object> searchCondition = new HashMap<>();
-                        searchCondition.put("strategyId",m.get("strategyId"));
-                        List<Map> Olist = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_old",new HashMap<>());
-                        for (Map om:Olist){
-                            if(om.containsKey("couponId")){
-                                //老用户赠送优惠券
-                                this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), oldId,-1);
-                            }
+                }
+                //老用户赠送优惠券
+                Map m = list.get(0);
+                if(m != null && m.containsKey("strategyId")){
+                    Map<String,Object> searchCondition = new HashMap<>();
+                    searchCondition.put("strategyId",m.get("strategyId"));
+                    List<Map> Olist = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_old",new HashMap<>());
+                    for (Map om:Olist){
+                        if(om.containsKey("couponId")){
+                            //老用户赠送优惠券
+                            this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), oldId,-1);
                         }
                     }
                 }
             }
+            //更新首登状态
+            Map setParams= new HashMap<>();
+            setParams.put("firstLoginFlag",1);
+            setParams.put("updateTime",new Date());
+            this.commonUpdateBySingleSearchParam("ddw_userinfo",setParams,"id",userId);
         }
-        return re;
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)

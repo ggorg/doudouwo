@@ -90,6 +90,10 @@ public class UserController {
                     userInfoService.setLiveRadioFlag(userVO,token);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUserInfo(token, userVO);
+                    // 这里需要判断是老带新带来的新用户登录,首次登录赠送新老用户优惠券,更新老带新状态
+                    if(userVO.getFirstLoginFlag().equals(0) || userVO.getFirstLoginFlag() == 0){
+                        userInfoService.dealOldBringingNew(userVO.getOpenid(),userVO.getId());
+                    }
                     return new ResponseApiVO(2, "账号已存在", userVO);
                 }
             }

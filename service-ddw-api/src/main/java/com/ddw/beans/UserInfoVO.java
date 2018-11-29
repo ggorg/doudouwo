@@ -79,6 +79,10 @@ public class UserInfoVO {
     private Integer practiceFlag;
     @ApiModelProperty(name="realnameFlag",value="实名认证标记，0未实名，1已认证,2审核中,3拒绝",example="1")
     private Integer realnameFlag;
+    @ApiModelProperty(name="firstRechargeFlag",value="首充标记，0未充值过，1非首充",example="1")
+    private Integer firstRechargeFlag;
+    @ApiModelProperty(name="firstLoginFlag",value="首登标记，0未登录过，1非首登",example="1")
+    private Integer firstLoginFlag;
     @ApiModelProperty(name="inviteCode",value="邀请码",example="aabbccddee")
     private String inviteCode;
     @ApiModelProperty(name="signature",value="个性签名",example="这个人很懒,什么都没有留下...")
@@ -374,6 +378,22 @@ public class UserInfoVO {
 
     public void setRealnameFlag(Integer realnameFlag) {
         this.realnameFlag = realnameFlag;
+    }
+
+    public Integer getFirstRechargeFlag() {
+        return firstRechargeFlag;
+    }
+
+    public void setFirstRechargeFlag(Integer firstRechargeFlag) {
+        this.firstRechargeFlag = firstRechargeFlag;
+    }
+
+    public Integer getFirstLoginFlag() {
+        return firstLoginFlag;
+    }
+
+    public void setFirstLoginFlag(Integer firstLoginFlag) {
+        this.firstLoginFlag = firstLoginFlag;
     }
 
     public String getInviteCode() {
