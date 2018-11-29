@@ -114,11 +114,16 @@ public class UserInfoService extends CommonService {
                     }
                 }
             }
-            //更新首登状态
+            //更新登录状态,用户分享页面查询已成功邀请的新用户
             Map setParams= new HashMap<>();
-            setParams.put("firstLoginFlag",1);
+            setParams.put("status",1);
             setParams.put("updateTime",new Date());
-            this.commonUpdateBySingleSearchParam("ddw_userinfo",setParams,"id",userId);
+            this.commonUpdateBySingleSearchParam("ddw_old_bringing_new",setParams,"newOpenid",openid);
+            //更新首登状态
+            Map setParams2= new HashMap<>();
+            setParams2.put("firstLoginFlag",1);
+            setParams2.put("updateTime",new Date());
+            this.commonUpdateBySingleSearchParam("ddw_userinfo",setParams2,"id",userId);
         }
     }
 
