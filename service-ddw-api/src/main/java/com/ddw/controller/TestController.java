@@ -2,6 +2,7 @@ package com.ddw.controller;
 
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.services.StraregyService;
+import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.gen.common.util.CacheUtil;
 import io.swagger.annotations.Api;
@@ -19,6 +20,8 @@ public class TestController {
 
     @Autowired
     private StraregyService straregyService;
+    @Autowired
+    private UserInfoService userInfoService;
 
     @PostMapping("/recharge/{token}")
     @ResponseBody
@@ -45,6 +48,20 @@ public class TestController {
             return new ResponseApiVO(1,"成功",null);
         }catch (Exception e){
             logger.error("TestController->cleanCache-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
+
+    @ApiOperation(value = "删用户")
+    @PostMapping("/deleteUser/{token}")
+    @ResponseBody
+    @Token
+    public ResponseApiVO deleteUser(@PathVariable String token,
+                                    @RequestParam(value = "userId") @ApiParam(name = "userId",defaultValue = "120",value="需要删除的会员编号", required = true) Integer userId){
+        try{
+            return userInfoService.deleteUser(userId);
+        }catch (Exception e){
+            logger.error("TestController->deleteUser-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
         }
     }

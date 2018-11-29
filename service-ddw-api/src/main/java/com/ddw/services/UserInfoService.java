@@ -101,7 +101,6 @@ public class UserInfoService extends CommonService {
                             }
                         }
                     }
-
                 }
             }
         }
@@ -449,6 +448,25 @@ public class UserInfoService extends CommonService {
     //根据用户id生成邀请码
     public String createInviteCode(Integer id){
         return RC4.encry_RC4_string(String.format("%07d",id), UUID.randomUUID().toString());
+    }
+
+    /**
+     * 供调试删账号用
+     * @param userId 用户编号
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO deleteUser(Integer userId)throws Exception{
+        this.commonDelete("ddw_userinfo","id",userId);
+        this.commonDelete("ddw_practice","userId",userId);
+        this.commonDelete("ddw_practice_game","userId",userId);
+        this.commonDelete("ddw_practice_evaluation","practiceId",userId);
+        this.commonDelete("ddw_practice_evaluation_detail","practiceId",userId);
+        this.commonDelete("ddw_my_attention","userId",userId);
+        this.commonDelete("ddw_my_attention","goddessId",userId);
+        this.commonDelete("ddw_my_attention","practiceId",userId);
+        return new ResponseApiVO(1,"成功",null);
     }
 
 }
