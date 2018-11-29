@@ -61,10 +61,11 @@ public class WXGlobals {
             mapOauthJumUrl=new HashMap();
             String[] jumpurls=oauthJumUrl.split(",");
             for(String j:jumpurls){
-                String[] kv=j.split(":");
-                mapOauthJumUrl.put(kv[0],kv[1]);
+                int index=j.indexOf(":");
+                mapOauthJumUrl.put(j.substring(0,index),j.substring(index+1,j.length()));
             }
         }
         return mapOauthJumUrl.get(key);
     }
+
 }
