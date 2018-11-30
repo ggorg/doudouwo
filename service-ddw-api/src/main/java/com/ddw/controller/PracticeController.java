@@ -4,6 +4,7 @@ package com.ddw.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.services.*;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
@@ -39,7 +40,7 @@ public class PracticeController {
     private GameService gameService;
     @Autowired
     private ReviewService reviewService;
-
+    @Idemp("applyPractice")
     @Token
     @ApiOperation(value = "代练认证申请用例")
     @PostMapping("/apply/{token}")
@@ -158,7 +159,7 @@ public class PracticeController {
             return new ResponseApiVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("gameApply")
     @ApiOperation(value = "约代练支付申请,返回订单编号和代练支付金额")
     @PostMapping("/gameApply/{token}")
     public ResponseApiVO<PracticeGameApplyVO> gameApply(@PathVariable String token,
@@ -199,7 +200,7 @@ public class PracticeController {
             return new ResponseApiVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("cancleOrder")
     @ApiOperation(value = "未付款,取消订单",notes="预约代练未支付,取消代练")
     @PostMapping("/cancleOrder/{token}")
     public ResponseVO cancleOrder(@PathVariable String token,
@@ -211,7 +212,7 @@ public class PracticeController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("settlement")
     @ApiOperation(value = "提交结算申请",notes="客户违约（用户先提出结束），按照下单时间来定，客户一小时内要走，就扣罚违约金（总金额*30%），代练掉星也不用赔偿，超过一小时，则客户提前走就不用罚违约金了，按照实际代练结果结算。代练未完成要线下双倍赔付，退全款，返回需要线下双倍退款金额。")
     @PostMapping("/settlement/{token}")
     public ResponseApiVO<PracticeSettlementVO> settlement(@PathVariable String token,
@@ -224,7 +225,7 @@ public class PracticeController {
             return new ResponseApiVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("endThePractice")
     @ApiOperation(value = "代练结束上传凭证,结束代练")
     @PostMapping("/endThePractice/{token}")
     public ResponseVO endThePractice(@PathVariable String token,
@@ -238,7 +239,7 @@ public class PracticeController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("evaluation")
     @ApiOperation(value = "评价")
     @PostMapping("/evaluation/{token}")
     public ResponseVO evaluation(@PathVariable String token,
@@ -275,7 +276,7 @@ public class PracticeController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("release")
     @ApiOperation(value = "发布代练,同时只允许发布一个")
     @PostMapping("/release/{token}")
     public ResponseVO release(@PathVariable String token,
@@ -302,7 +303,7 @@ public class PracticeController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("cancle")
     @ApiOperation(value = "取消发布代练")
     @PostMapping("/cancle/{token}")
     public ResponseVO cancle(@PathVariable String token,
@@ -368,7 +369,7 @@ public class PracticeController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("refundPractice")
     @Token
     @ApiOperation(value = "退款申请",notes = "订单24小时内可申请,退款通过后台审核发放退款,退款金额=约代练支付金额-结算金额")
     @PostMapping("/refund/{token}")
@@ -384,7 +385,7 @@ public class PracticeController {
             return new ResponseVO(-1,"提交失败",null);
         }
     }
-
+    @Idemp("refundReason")
     @Token
     @ApiOperation(value = "退款拒绝反馈")
     @PostMapping("/refundReason/{token}")

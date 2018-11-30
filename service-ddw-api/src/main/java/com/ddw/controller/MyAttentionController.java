@@ -6,6 +6,7 @@ import com.ddw.beans.MyAttentionPO;
 import com.ddw.beans.PageNoDTO;
 import com.ddw.services.MyAttentionService;
 import com.ddw.services.UserInfoService;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
@@ -29,6 +30,7 @@ public class MyAttentionController {
     @Autowired
     private UserInfoService userInfoService;
 
+    @Idemp("saveOrdelete")
     @Token
     @ApiOperation(value = "添加/取消关注")
     @PostMapping("/saveOrdelete/{token}")

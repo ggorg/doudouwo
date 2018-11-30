@@ -215,16 +215,9 @@ public class LiveRadioService extends CommonService{
         }else{
             spaceName= StringUtils.isBlank(upo.getNickName())?upo.getUserName():upo.getNickName()+"直播间";
         }
-        String callBack=IMApiUtil.createGroup(upo.getOpenid(),streamIdExt,spaceName);
-        JSONObject jsonObject=JSON.parseObject(callBack);
-        Integer errorCode=jsonObject.getInteger("ErrorCode");
-        String groupId=null;
-        if(errorCode.equals(0) || errorCode==0){
-            groupId=jsonObject.getString("GroupId");
 
-        }else{
-            return new ResponseVO(-2,"创建直播间失败",null);
-        }
+        String groupId=IMApiUtil.createGroup(upo.getOpenid(),streamIdExt,spaceName);
+
         LiveRadioPO liveRadioPO=new LiveRadioPO();
         PropertyUtils.copyProperties(liveRadioPO,liveRadioUrlBean);
         liveRadioPO.setCreateTime(new Date());

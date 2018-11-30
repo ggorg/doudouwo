@@ -29,7 +29,7 @@ public class IdempotentController {
     @ResponseBody
     public ResponseApiVO appl(@PathVariable String token){
         try {
-            TokenUtil.putIdempotent(token,"do");
+            TokenUtil.putIdempotent(token,"idemp","do");
             return new ResponseApiVO(1,"申请成功",null);
 
         }catch (Exception e){

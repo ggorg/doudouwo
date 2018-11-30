@@ -230,9 +230,8 @@ public class GoodFriendPlayService extends CommonService {
         map.put("status",GoodFriendPlayRoomStatusEnum.status0.getCode());
         map.put("roomOwner",TokenUtil.getUserId(token));
         map.put("roomOwnerOpenId",TokenUtil.getUserObject(token));
-        String groupId=storeId+"_"+TokenUtil.getUserId(token)+"_"+ RandomStringUtils.randomNumeric(10);
-        map.put("groupId",groupId);
-        IMApiUtil.createGroup((String)TokenUtil.getUserObject(token),groupId,dto.getName());
+        String groupId=storeId+"_"+TokenUtil.getUserId(token)+"_"+ RandomStringUtils.randomNumeric(5);
+        map.put("groupId",IMApiUtil.createGroup((String)TokenUtil.getUserObject(token),groupId,dto.getName()));
         ResponseVO vo=this.commonInsertMap("ddw_goodfriendplay_room",map);
         Map mapret=new HashMap();
         mapret.put("roomCode",vo.getData());

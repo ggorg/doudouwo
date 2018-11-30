@@ -7,6 +7,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +32,7 @@ public class TokenUtil {
         base64Token=base64Token.replace("+","-").replace("/","_");
         Map map=new HashMap();
         map.put("user",openId);
-        Cache cache=CacheUtil.createCache("tokenCache");
+        Cache cache=CacheUtil.createCache("publicCache");
         List<String> keys=cache.getKeys();
         if(keys!=null && !keys.isEmpty()){
             Map cacheMap=null;
@@ -45,20 +46,20 @@ public class TokenUtil {
                 }
             }
         }
-        CacheUtil.put("tokenCache",base64Token,map);
+        CacheUtil.put("publicCache",base64Token,map);
        // cs.set(base64Token,map);
         return base64Token;
     }
     public static void resetUserObject(String base64Token,Object userobj){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("user",userobj);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static Object getUserObject(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return map.get("user");
@@ -66,15 +67,15 @@ public class TokenUtil {
         return null;
     }
     public static void putStoreid(String base64Token,Integer storeId){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("storeId",storeId);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static String getStoreLongLat(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (String)map.get("longLat");
@@ -82,31 +83,31 @@ public class TokenUtil {
         return null;
     }
     public static void putStoreLongLat(String base64Token,String storeLongLat){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("longLat",storeLongLat);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static void putGroupId(String base64Token,String groupId){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("groupId",groupId);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static void putBidCode(String base64Token,Integer bidCode){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("bidCode",bidCode);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static Integer getBidCode(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (Integer)map.get("bidCode");
@@ -114,11 +115,11 @@ public class TokenUtil {
         return null;
     }
     public static void putStreamId(String base64Token,String streamId){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("streamId",streamId);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
 
@@ -128,21 +129,29 @@ public class TokenUtil {
      * @param payCode
      */
     public static void putPayCode(String base64Token,String payCode){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("payCode",payCode);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
 
-    public static void putIdempotent(String base64Token,String idemp){
-
-        CacheUtil.put("idemp",base64Token,idemp);
-
+    public static void putIdempotent(String base64Token,String idempName,String idempVal){
+        Object obj=CacheUtil.get("publicCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            if(StringUtils.isBlank(idempVal)){
+                map.remove(idempName);
+            }else{
+                map.put(idempName,idempVal);
+            }
+            CacheUtil.put("publicCache",base64Token,map);
+        }
     }
+
     public static void putUserInfo(String base64Token, UserInfoVO vo){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("userId",vo.getId());
@@ -151,28 +160,28 @@ public class TokenUtil {
                 map.put("gradeId",vo.getGradeId());
             }
 
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static void putUseridAndName(String base64Token,Integer userId,String name){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("userId",userId);
             map.put("name",name);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static void putUserGrade(String base64Token,Integer gradeId){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("gradeId",gradeId);
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static void putRoomId(String base64Token,Integer roomId){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             if(roomId==null){
@@ -180,11 +189,11 @@ public class TokenUtil {
             }else{
                 map.put("roomId",roomId);
             }
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static void putOrderNo(String base64Token,String orderNo){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             if(orderNo==null){
@@ -192,11 +201,11 @@ public class TokenUtil {
             }else{
                 map.put("orderNo",orderNo);
             }
-            CacheUtil.put("tokenCache",base64Token,map);
+            CacheUtil.put("publicCache",base64Token,map);
         }
     }
     public static String getOrderNo(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (String) map.get("orderNo");
@@ -204,7 +213,7 @@ public class TokenUtil {
         return null;
     }
     public static Integer getUseGrade(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (Integer) map.get("gradeId");
@@ -212,7 +221,7 @@ public class TokenUtil {
         return null;
     }
     public static String getUserName(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (String) map.get("name");
@@ -220,7 +229,7 @@ public class TokenUtil {
         return null;
     }
     public static String getStreamId(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (String) map.get("streamId");
@@ -228,22 +237,23 @@ public class TokenUtil {
         return null;
     }
     public static String getPayCode(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (String) map.get("payCode");
         }
         return null;
     }
-    public static String getIdemp(String base64Token){
-        Object obj=CacheUtil.get("idemp",base64Token);
+    public static String getIdemp(String base64Token,String idempName){
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
-            return (String) obj;
+            Map map=(Map)obj;
+            return (String) map.get(idempName);
         }
         return null;
     }
     public static Integer getStoreId(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (Integer) map.get("storeId");
@@ -251,7 +261,7 @@ public class TokenUtil {
         return null;
     }
     public static String getGroupId(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (String) map.get("groupId");
@@ -259,7 +269,7 @@ public class TokenUtil {
         return null;
     }
     public static Integer getUserId(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (Integer) map.get("userId");
@@ -267,7 +277,7 @@ public class TokenUtil {
         return null;
     }
     public static Integer getRoomId(String base64Token){
-        Object obj=CacheUtil.get("tokenCache",base64Token);
+        Object obj=CacheUtil.get("publicCache",base64Token);
         if(obj!=null){
             Map map=(Map)obj;
             return (Integer) map.get("roomId");
@@ -275,15 +285,15 @@ public class TokenUtil {
         return null;
     }
     public static void deleteToken(String token){
-        CacheUtil.delete("tokenCache",token);
+        CacheUtil.delete("publicCache",token);
 
     }
     public static void deletePayCode(String token){
-        Object obj=CacheUtil.get("tokenCache",token);
+        Object obj=CacheUtil.get("publicCache",token);
         if(obj!=null){
             Map map=(Map)obj;
             map.remove("payCode");
-            CacheUtil.put("tokenCache",token,map);
+            CacheUtil.put("publicCache",token,map);
         }
 
     }
@@ -300,7 +310,7 @@ public class TokenUtil {
     }
     public static boolean hasToken(String base64Token){
 
-        if(CacheUtil.get("tokenCache",base64Token)!=null){
+        if(CacheUtil.get("publicCache",base64Token)!=null){
             return true;
         }
         return false;

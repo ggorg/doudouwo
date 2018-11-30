@@ -13,10 +13,13 @@ import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
 public class IMApiUtil {
+    private static final Logger logger = Logger.getLogger(IMApiUtil.class);
+
     //private static String baseUri="https://console.tim.qq.com/v4/$servicename/$command?sdkappid=$sdkappid&identifier=$identifier&usersig=$usersig&random=99999999&contenttype=json";
     private static String baseUri="https://console.tim.qq.com/v4";
 
@@ -68,7 +71,16 @@ public class IMApiUtil {
         sb.append("/create_group");
 
         sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
-       return  HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(map));
+        String callStr=HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(map));
+        if(StringUtils.isBlank(callStr)){
+            throw new GenException("创建群失败:"+groupId);
+        }
+        JSONObject jsonObject=JSON.parseObject(callStr);
+        if(!jsonObject.containsKey("ActionStatus") || !"ok".equals(jsonObject.getString("ActionStatus")) || jsonObject.getInteger("ErrorCode")>0){
+            throw new GenException("创建群失败:"+groupId);
+        }
+
+       return  jsonObject.getString("GroupId");
 
     }
     public static String pushAll(String fromUser,String context)throws Exception{
@@ -161,6 +173,7 @@ public class IMApiUtil {
         sb.append(baseUri);
         sb.append("/group_open_http_svc/destroy_group");
         sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
+
         return for5Sends(sb,param);
     }
 
@@ -207,6 +220,7 @@ public class IMApiUtil {
         String callBack=null;
         for(int i=0;i<5;i++){
             callBack=HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(param));
+            logger.info("for5Sends->response->"+callBack+",request:"+sb.toString()+",param:"+param);
             if(StringUtils.isBlank(callBack)){
                 continue;
             }else{
@@ -261,7 +275,8 @@ public class IMApiUtil {
         userInfoPO.setHeadImgUrl("http://wx.qlogo.cn/mmopen/Q3auHgzwzM70nZPOZLa6PTYzFKZp4xm9KRQITutLibgqjUAesTBciaFCpSzUicPwHT7mKeYDHhGYJX1FJlAPphe3UWKKvOOYC8dGNbSuibz9MOI/132");
         System.out.println(importUser(userInfoPO,null));*/
         //System.out.println(IMApiUtil.pushAll("ddwGuanFang","下午茶到了"));
-        System.out.println(IMApiUtil.createGroup("ddwGuanFang","1_gf_0000000000","逗逗窝聊天室"));
+       // System.out.println(IMApiUtil.createGroup("ddwGuanFang","1_gf_0000000000","逗逗窝聊天室"));
+        System.out.println(IMApiUtil.destoryGroup("1_8_180504163053"));
        // System.out.println(IMApiUtil.pushSimpleChat("ddwTongZhi","omc2C0i1D7OCAOnts7XEpfnxGo30","jacky妹你个扑街"));
       // System.out.println(getMemberNum(Arrays.asList("1_8_180503191514","1_8_180504013649","1_59_180829224224","1_41_180829211729")));;
     }

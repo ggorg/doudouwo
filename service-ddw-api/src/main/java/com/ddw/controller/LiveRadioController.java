@@ -4,6 +4,7 @@ import com.ddw.beans.*;
 import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.services.LiveRadioClientService;
 import com.ddw.services.ReviewService;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import io.swagger.annotations.*;
@@ -24,6 +25,7 @@ public class LiveRadioController {
     @Autowired
     private LiveRadioClientService liveRadioClientService;
 
+    @Idemp("applLiveRadio")
     @Token
     @ApiOperation(value = "女神申请直播",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/appl/{token}")
@@ -46,6 +48,7 @@ public class LiveRadioController {
 
         }
     }
+    @Idemp("applWithPicLiveRadio")
     @Token
     @ApiOperation(value = "女神申请直播（带上传图片）")
     @PostMapping(value ="/applWithPic/{token}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE ,produces = {MediaType.APPLICATION_JSON_VALUE,MediaType.ALL_VALUE})

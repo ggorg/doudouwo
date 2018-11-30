@@ -2,7 +2,10 @@ package com.ddw.token;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.ResponseApiVO;
+import com.gen.common.util.Tools;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +19,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Map;
 
 @Configuration
@@ -44,8 +48,11 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                 if(method.hasMethodAnnotation(Token.class) && method.hasMethodAnnotation(Idemp.class)){
                     Map<String,String> map=(Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
                     String base64Token=map.get("token");
-                    TokenUtil.putIdempotent(base64Token,"");
+                    String name=method.getMethodAnnotation(Idemp.class).value();
+                    String idempName=StringUtils.isBlank(name)?"idemp":name;
+                    TokenUtil.putIdempotent(base64Token,idempName,null);
                 }
+
             }
 
         }
@@ -89,17 +96,37 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                         return false;
                     }
                     if(method.hasMethodAnnotation(Idemp.class)){
-                        String idempStr=TokenUtil.getIdemp(base64Token);
-                        if(StringUtils.isBlank(idempStr)){
-                            toWriteResponseVo(response,-20,"无效的操作");
-                            return false;
-                        }else if("do".equals(idempStr)){
-                            TokenUtil.putIdempotent(base64Token,"doing");
-                            return true;
-                        }else if("doing".equals(idempStr)){
-                            toWriteResponseVo(response,-21,"处理中，请耐性等待");
-                            return false;
+                        String name=method.getMethodAnnotation(Idemp.class).value();
+                        String idempName=StringUtils.isBlank(name)?"idemp":name;
+                        String idempStr=TokenUtil.getIdemp(base64Token,idempName);
+
+                        if(StringUtils.isBlank(name)){
+                            if(StringUtils.isBlank(idempStr)){
+                                toWriteResponseVo(response,-20,"无效的操作");
+                                return false;
+                            }else if("do".equals(idempStr)){
+                                TokenUtil.putIdempotent(base64Token,idempName,"doing");
+                                return true;
+                            }else if("doing".equals(idempStr)){
+                                toWriteResponseVo(response,-21,"处理中，请耐性等待");
+                                return false;
+                            }
+                        }else{
+                            if(StringUtils.isBlank(idempStr)){
+                                TokenUtil.putIdempotent(base64Token,idempName, DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+                                return true;
+                            }else{
+                                long v=System.currentTimeMillis()-DateUtils.parseDate(idempStr,"yyyy-MM-dd HH:mm:ss").getTime();
+                                if(v<30000){
+                                    toWriteResponseVo(response,-21,"处理中，请耐性等待");
+                                    return false;
+                                }else{
+                                    TokenUtil.putIdempotent(base64Token,idempName, DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
+                                    return true;
+                                }
+                            }
                         }
+
                     }
                     return true;
                 }

@@ -4,6 +4,7 @@ import com.ddw.beans.*;
 import com.ddw.beans.vo.GoodFriendPlayChatCenterVO;
 import com.ddw.beans.vo.GoodFriendPlayRoomListVO;
 import com.ddw.services.GoodFriendPlayService;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,12 +24,12 @@ public class GoodFriendPlayController {
     @Autowired
     private GoodFriendPlayService goodFriendPlayService;
 
+    @Idemp("toChatCenter")
     @Token
     @ApiOperation(value = "进入大聊天室")
     @PostMapping("/chatCenter/gointo/{token}")
     public ResponseApiVO<GoodFriendPlayChatCenterVO<GoodFriendPlayRoomListVO>> toChatCenter(@PathVariable String token){
         try {
-
             return this.goodFriendPlayService.getChatCenter(token);
         }catch (Exception e){
             logger.error("GoodFriendPlayController->toChatCenter",e);
@@ -95,6 +96,7 @@ public class GoodFriendPlayController {
             return new ResponseApiVO(-1,"进入小房间失败",null);
         }
     }
+    @Idemp("createOffLinePlay")
     @Token
     @ApiOperation(value = "约玩开桌")
     @PostMapping("/offlineplay/create/{token}")
@@ -107,6 +109,7 @@ public class GoodFriendPlayController {
             return new ResponseApiVO(-1,"约玩开桌失败",null);
         }
     }
+    @Idemp("joinOffLinePlay")
     @Token
     @ApiOperation(value = "加入约玩")
     @PostMapping("/offlineplay/join/{token}")
@@ -119,6 +122,7 @@ public class GoodFriendPlayController {
             return new ResponseApiVO(-1,"加入约玩失败",null);
         }
     }
+    @Idemp("leaveOffLinePlay")
     @Token
     @ApiOperation(value = "离开约玩（非房主）")
     @PostMapping("/offlineplay/leave/{token}")
@@ -131,6 +135,7 @@ public class GoodFriendPlayController {
             return new ResponseApiVO(-1,"离开约玩失败",null);
         }
     }
+    @Idemp("dismissRoom")
     @Token
     @ApiOperation(value = "解散房间(只能解散预约中和审核被拒绝的)")
     @PostMapping("/dismissRoom/room/{token}")
@@ -142,7 +147,9 @@ public class GoodFriendPlayController {
             logger.error("GoodFriendPlayController->dismissRoom",e);
             return new ResponseApiVO(-1,"解散房间失败",null);
         }
-    } @Token
+    }
+    @Idemp("outUserOffLinePlay")
+    @Token
     @ApiOperation(value = "踢除开桌里的用户")
     @PostMapping("/offlineplay/out/{token}")
     public ResponseApiVO outUserOffLinePlay(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)GoodFriendPlayOutUserDTO args){
@@ -154,6 +161,7 @@ public class GoodFriendPlayController {
             return new ResponseApiVO(-1,"约玩踢人失败",null);
         }
     }
+    @Idemp("disabledUserOffLinePlay")
     @Token
     @ApiOperation(value = "禁止某用户加入开桌")
     @PostMapping("/offlineplay/disabledjoin/{token}")
@@ -166,6 +174,7 @@ public class GoodFriendPlayController {
             return new ResponseApiVO(-1,"约玩踢人失败",null);
         }
     }
+    @Idemp("createRoom")
     @Token
     @ApiOperation(value = "创建房间")
     @PostMapping("/room/create/{token}")

@@ -2,6 +2,7 @@ package com.ddw.controller;
 
 import com.ddw.beans.*;
 import com.ddw.services.AppOrderEvaluationService;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,6 +20,8 @@ public class AppOrderEvaluationController {
 
     @Autowired
     private AppOrderEvaluationService appOrderEvaluationService;
+
+    @Idemp("doEvaluate")
     @Token
     @ApiOperation(value = "评价",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/doEvaluate/{token}")

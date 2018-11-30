@@ -20,7 +20,7 @@
    <cache name="orderInfo"  maxElementsInMemory="1000" timeToLiveSeconds="900" diskPersistent="true" maxElementsOnDisk="0" />
     <cache name="appShoppingCart"  maxElementsInMemory="1000" timeToLiveSeconds="7200" diskPersistent="true" />
     <cache name="imSign"  maxElementsInMemory="10" timeToLiveSeconds="86400" diskPersistent="true" />
-    <cache name="publicCache"  maxElementsInMemory="1000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
+    <cache name="publicCache"  maxElementsInMemory="5000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
         <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
     </cache>

@@ -7,6 +7,7 @@ import com.ddw.enums.DynamicsRoleTypeEnum;
 import com.ddw.services.MyAttentionService;
 import com.ddw.services.ReviewGoddessService;
 import com.ddw.services.UserInfoService;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.vo.ResponseVO;
@@ -33,6 +34,7 @@ public class GoddessController {
     @Autowired
     private MyAttentionService myAttentionService;
 
+    @Idemp("applyGoddess")
     @Token
     @ApiOperation(value = "申请成为女神")
     @PostMapping("/apply/{token}")
@@ -111,6 +113,7 @@ public class GoddessController {
         }
     }
 
+    @Idemp("evaluation")
     @ApiOperation(value = "评价")
     @PostMapping("/evaluation/{token}")
     public ResponseVO evaluation(@PathVariable String token,

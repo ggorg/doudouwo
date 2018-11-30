@@ -3,6 +3,7 @@ package com.ddw.controller;
 import com.ddw.beans.*;
 import com.ddw.beans.vo.BiddingVO;
 import com.ddw.services.BiddingService;
+import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.gen.common.exception.GenException;
 import io.swagger.annotations.Api;
@@ -44,6 +45,7 @@ public class BiddingController {
     }
 
 
+    @Idemp("submitPrice")
     @Token
     @ApiOperation(value = "提交竞价金额（普通用户）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/submit/price/{token}")
@@ -85,7 +87,7 @@ public class BiddingController {
         }
     }
 
-
+    @Idemp("doEnd")
     @Token
     @ApiOperation(value = "结束约玩（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/end/{token}")
@@ -101,6 +103,7 @@ public class BiddingController {
             return new ResponseApiVO(-1,"失败",null);
         }
     }
+    @Idemp("makeSure")
     @Token
     @ApiOperation(value = "确认完成（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/makesure/{token}")
@@ -116,7 +119,7 @@ public class BiddingController {
             return new ResponseApiVO(-1,"失败",null);
         }
     }
-
+    @Idemp("chooseBidding")
     @Token
     @ApiOperation(value = "选择某个用户的竞价（女神）",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/choose/bidding/{token}")
@@ -168,6 +171,7 @@ public class BiddingController {
             return new ResponseApiVO(-1,"失败",null);
         }
     }
+    @Idemp("cancelByUser")
     @Token
     @ApiOperation(value = "取消支付(普通用户)",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/cancel/pay/user/{token}")
@@ -183,6 +187,7 @@ public class BiddingController {
             return new ResponseApiVO(-1,"失败",null);
         }
     }
+    @Idemp("cancelByGoddess")
     @Token
     @ApiOperation(value = "取消支付(女神)",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/cancel/pay/goddess/{token}")
@@ -215,7 +220,7 @@ public class BiddingController {
             return new ResponseApiVO(-1,"失败",null);
         }
     }
-
+    @Idemp("makeSureRenew")
     @Token
     @ApiOperation(value = "确认续费(用户)",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/makesure/renew/{token}")

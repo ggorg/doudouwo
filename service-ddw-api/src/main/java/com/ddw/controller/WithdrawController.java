@@ -59,7 +59,7 @@ public class WithdrawController {
         return new ResponseApiVO(-1,"提现明细失败",null);
     }
 
-
+    @Idemp("unbindWithDraw")
     @Token
     @ApiOperation(value = "解除绑定",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/unbind/{token}")
@@ -90,7 +90,7 @@ public class WithdrawController {
         }
         return new ResponseApiVO(-1,"解除绑定",null);
     }
-
+    @Idemp("saveWithdraw")
     @Token
     @ApiOperation(value = "绑定转账账号",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/save/{token}")

@@ -165,6 +165,7 @@ public class WalletController {
         return new ResponseApiVO(-1,"查询失败",null);
 
     }
+    @Idemp("useGift")
     @Token
     @ApiOperation(value = "使用背包礼物",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/use/gift/{token}")
@@ -231,6 +232,7 @@ public class WalletController {
 
     }
 
+    @Idemp("updatePayPwd")
     @Token
     @ApiOperation(value = "修改钱包支付密码",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/updatePayPwd/{token}")
