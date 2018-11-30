@@ -76,6 +76,7 @@ public class MsgUtil {
      */
     public static boolean verifyCode(String telphone,String validCode){
         String string=(String)CacheUtil.get("validCodeCache","telphone-"+telphone);
+        logger.info("验证验证码->手机："+telphone+"，输入的验证码："+validCode+"，缓存验证码："+string);
         if(StringUtils.isBlank(string)){
             return false;
         }

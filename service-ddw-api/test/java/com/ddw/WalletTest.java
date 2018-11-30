@@ -3,8 +3,10 @@ package com.ddw;
 import com.ApiApplication;
 import com.ddw.beans.CodeDTO;
 import com.ddw.beans.ResponseApiVO;
+import com.ddw.beans.UserInfoPO;
 import com.ddw.beans.WalletDealRecordDTO;
 import com.ddw.services.LiveRadioClientService;
+import com.ddw.services.UserInfoService;
 import com.ddw.services.WalletService;
 import com.ddw.token.TokenUtil;
 import com.gen.common.services.CommonService;
@@ -25,6 +27,9 @@ public class WalletTest extends CommonService {
 
     @Autowired
     private WalletService walletService;
+
+    @Autowired
+    private UserInfoService userInfoService;
 
     @Test
     public void selectLiveRadioTest()throws Exception{
@@ -51,5 +56,10 @@ public class WalletTest extends CommonService {
         TokenUtil.putUseridAndName(token,132,"test");
         ResponseApiVO res=this.walletService.getDealRecord(token,new WalletDealRecordDTO());
         System.out.println(res.getData());
+    }
+    @Test
+    public void testUserInfo()throws Exception{
+        //UserInfoPO po=this.commonObjectBySingleParam("ddw_userinfo","id",8,UserInfoPO.class);
+        System.out.println(0==userInfoService(8).getFirstRechargeFlag());
     }
 }

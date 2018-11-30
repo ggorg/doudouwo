@@ -527,7 +527,7 @@ public class BaseOrderService extends CommonService {
         ExitOrderPO exitOrderPO=null;
         Map searchMap=new HashMap();
         searchMap.put("id,in",orderIds.toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
-        searchMap.put("doPayStatus",PayStatusEnum.PayStatus1.getCode());
+        searchMap.put("doPayStatus,<=",PayStatusEnum.PayStatus1.getCode());
         List<Map> orders=this.commonObjectsBySearchCondition("ddw_order",searchMap);
         Map<Integer,Integer> exitCostMap=null;
         if(exitOrderMaps!=null && exitOrderMaps.length>0){
