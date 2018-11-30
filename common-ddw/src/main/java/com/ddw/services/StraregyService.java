@@ -257,7 +257,7 @@ public class StraregyService extends CommonService {
      * @throws Exception
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
-    private void setOldBringingNewCoupon(UserInfoPO userInfoPO)throws Exception{
+    public void setOldBringingNewCoupon(UserInfoPO userInfoPO)throws Exception{
         OldBringingNewPO oldBringingNewPO = this.getOldBringingNewPO(userInfoPO.getOpenid());
         if(oldBringingNewPO != null){
             UserInfoPO userInfoPO1 = this.queryUserByOpenid(oldBringingNewPO.getOldOpenid());
