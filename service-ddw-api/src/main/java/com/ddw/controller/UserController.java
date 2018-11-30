@@ -11,6 +11,7 @@ import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.LoginAuthApiUtil;
 import com.ddw.util.MsgUtil;
+import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.vo.ResponseVO;
 import com.tls.sigcheck.tls_sigcheck;
 import io.swagger.annotations.Api;
@@ -51,6 +52,7 @@ public class UserController {
         try {
             ResponseApiVO<UserInfoDTO> res=LoginAuthApiUtil.oauth(dto);
             if(res.getReCode()==1 || res.getReCode().equals(1)){
+                logger.info("注册接口传的DTO:"+BeanToMapUtil.beanToMap(res.getData()));
                 return save(res.getData());
             }
         }catch (Exception e){
@@ -291,10 +293,10 @@ public class UserController {
         userValidPhoneDTO.setType(1);
         switch (userValidPhoneDTO.getType()){
             case 1:
-                System.out.println(1);;
+                System.out.println(1);
                 break;
             case 2:
-                System.out.println(2);;
+                System.out.println(2);
                 break;
         }
     }
