@@ -47,6 +47,7 @@ public class LoginAuthApiUtil {
                             userInfoDTO.setHeadImgUrl(json.getString("headimgurl"));
                             userInfoDTO.setPhone(json.containsKey("phone")?json.getString("phone"):"");
                             userInfoDTO.setRegisterType(1);
+                            logger.info("微信登录获取信息封装的userInfoDTO:"+BeanToMapUtil.beanToMap(userInfoDTO));
                             return new ResponseApiVO(1,"成功",userInfoDTO);
                         }
 
@@ -67,6 +68,7 @@ public class LoginAuthApiUtil {
                     userInfoDTO.setSex(json.getString("gender").equals("男")?1:2);
                     userInfoDTO.setHeadImgUrl(json.getString("figureurl_qq_1"));
                     userInfoDTO.setRegisterType(2);
+                    logger.info("QQ登录获取信息封装的userInfoDTO:"+BeanToMapUtil.beanToMap(userInfoDTO));
                     return new ResponseApiVO(1,"成功",userInfoDTO);
                 }
             }
