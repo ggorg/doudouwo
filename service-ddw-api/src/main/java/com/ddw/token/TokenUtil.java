@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TokenUtil {
     private static final Logger logger = Logger.getLogger(TokenUtil.class);
@@ -30,7 +31,7 @@ public class TokenUtil {
         String tokenStr= DateFormatUtils.format(new Date(),RandomStringUtils.randomNumeric(10)+"yyyyMMdd"+ RandomStringUtils.randomNumeric(10)+"HHmm");
         String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
         base64Token=base64Token.replace("+","-").replace("/","_");
-        Map map=new HashMap();
+        Map map=new ConcurrentHashMap();
         map.put("user",openId);
         Cache cache=CacheUtil.createCache("publicCache");
         List<String> keys=cache.getKeys();
