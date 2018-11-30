@@ -24,7 +24,7 @@ public class OldBringingNewService extends CommonService{
      * @param openid
      * @return
      */
-    public ResponseVO save(String oldOpenid,String openid){
+    public ResponseVO save(String oldOpenid,String openid,String newNickName,String newHeadImgUrl){
         ResponseVO vo=new ResponseVO();
         if(oldOpenid.equals(openid)){
             return new ResponseVO(-2,"自己不允许绑定自己",null);
@@ -36,6 +36,8 @@ public class OldBringingNewService extends CommonService{
             OldBringingNew oldBringingNew = new OldBringingNew();
             oldBringingNew.setOldOpenid(oldOpenid);
             oldBringingNew.setNewOpenid(openid);
+            oldBringingNew.setNewNickName(newNickName);
+            oldBringingNew.setNewHeadImgUrl(newHeadImgUrl);
             oldBringingNewMapper.insert(oldBringingNew);
             return new ResponseVO(1,"绑定成功",null);
         }

@@ -7,10 +7,8 @@ import com.weixin.config.WXGlobals;
 import com.weixin.core.pojo.AccessToken;
 import com.weixin.entity.Pubweixin;
 import com.weixin.entity.UserInfo;
-import com.weixin.services.OldBringingNewService;
-import com.weixin.services.PubWeixinService;
-import com.weixin.services.WeixinInterfaceService;
-import com.weixin.services.WeixinUserService;
+import com.weixin.entity.UserInfoDTO;
+import com.weixin.services.*;
 import com.weixin.util.CommonUtil;
 import com.weixin.util.WeiXinTools;
 import com.weixin.util.WeixinUtil;
@@ -52,6 +50,8 @@ public class WeixinOauthController {
     private WeixinInterfaceService weixinInterfaceService;
     @Autowired
     private OldBringingNewService oldBringingNewService;
+    @Autowired
+    private UserInfoService userInfoService;
 
 
 
@@ -80,6 +80,7 @@ public class WeixinOauthController {
             Pubweixin pubweixin = pubWeixinService.selectByAppid(appid);
 
             String openid=null;
+            UserInfo ui = new UserInfo();
             if (pubweixin != null) {
                 String requestUrl = ACCESS_TOKEN.replace("APPID", pubweixin.getAppid()).replace("SECRET", pubweixin.getAppsecret()).replace("CODE", code);
 
@@ -94,7 +95,7 @@ public class WeixinOauthController {
                     int subscribe = -1;
                     /*用户openid */
                     openid = jsonObject.get("openid").toString();
-                    UserInfo ui = weixinUserService.selectByopenid(openid);
+                    ui = weixinUserService.selectByopenid(openid);
                     if (ui == null) {
                         subscribe = -1;
                     } else {
@@ -125,7 +126,23 @@ public class WeixinOauthController {
                         String oldOpenid = oldBringingNewService.getOpenid(json.get("param").toString());
                         if(StringUtils.isNotBlank(oldOpenid)){
                             logger.info("绑定老带新oldOpenid:["+oldOpenid+"]openid:["+openid+"]");
-                            oldBringingNewService.save(oldOpenid,openid);
+                            oldBringingNewService.save(oldOpenid,openid,ui.getNickname(),ui.getHeadimgurl());
+                            //注册账号
+                            UserInfoDTO userInfoDTO = new UserInfoDTO();
+                            userInfoDTO.setHeadImgUrl(ui.getHeadimgurl());
+                            userInfoDTO.setNickName(ui.getNickname());
+                            userInfoDTO.setOpenid(ui.getUnionid());
+                            userInfoDTO.setRealOpenid(openid);
+                            userInfoDTO.setUnionID(ui.getUnionid());
+                            userInfoDTO.setUserName(ui.getNickname());
+                            userInfoDTO.setSex(Integer.valueOf(ui.getSex()));
+                            userInfoDTO.setRegisterType(1);
+                            try {
+                                userInfoService.save(userInfoDTO);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                logger.error("WeixinOauthController->oauth->老带新注册新用户",e);
+                            }
                         }
                     }
                 }

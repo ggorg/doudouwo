@@ -8,21 +8,26 @@
         <id property="id" column="id"/>
         <result property="oldOpenid" column="oldOpenid"/>
         <result property="newOpenid" column="newOpenid"/>
+        <result property="newNickName" column="newNickName"/>
+        <result property="newHeadImgUrl" column="newHeadImgUrl"/>
         <result property="createTime" column="createTime"/>
         <result property="updateTime" column="updateTime"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,oldOpenid,newOpenid,createTime,updateTime
+        id,oldOpenid,newOpenid,newNickName,newHeadImgUrl,createTime,updateTime
     </sql>
 
 
     <insert id="insert" parameterType="com.weixin.entity.OldBringingNew">
         insert into ddw_old_bringing_new
-        (oldOpenid,newOpenid,createTime,updateTime)
+        (oldOpenid,newOpenid,newNickName,newHeadImgUrl,status,createTime,updateTime)
         values(
         #{oldOpenid, jdbcType=VARCHAR},
         #{newOpenid, jdbcType=VARCHAR},
+        #{newNickName, jdbcType=VARCHAR},
+        #{newHeadImgUrl, jdbcType=VARCHAR},
+        0,
         now(),now()
         )
     </insert>

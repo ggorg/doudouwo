@@ -9,6 +9,8 @@ public class OldBringingNewPO {
     private Integer id;
     private String oldOpenid;
     private String newOpenid;
+    private String newNickName;
+    private String newHeadImgUrl;
     private Date createTime;
     private Date updateTime;
 
@@ -34,6 +36,22 @@ public class OldBringingNewPO {
 
     public void setNewOpenid(String newOpenid) {
         this.newOpenid = newOpenid;
+    }
+
+    public String getNewNickName() {
+        return newNickName;
+    }
+
+    public void setNewNickName(String newNickName) {
+        this.newNickName = newNickName;
+    }
+
+    public String getNewHeadImgUrl() {
+        return newHeadImgUrl;
+    }
+
+    public void setNewHeadImgUrl(String newHeadImgUrl) {
+        this.newHeadImgUrl = newHeadImgUrl;
     }
 
     public Date getCreateTime() {

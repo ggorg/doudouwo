@@ -75,37 +75,56 @@ public class UserInfoService extends CommonService {
             if(!flag){
                 throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
             }
-            //查询老带新绑定关系是否存在,是则根据老带新策略查询赠送优惠券
-            Map map = this.commonObjectBySingleParam("ddw_old_bringing_new","newOpenid",userInfoDTO.getOpenid());
-            if(map != null && map.containsKey("oldOpenid")){
-                String oldOpenid = map.get("oldOpenid").toString();
-                Integer oldId = this.querySimpleByOpenid(oldOpenid).getId();
-                List<Map> list = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_new",new HashMap<>());
-                if(list != null && list.size()>0){
-                    for (Map m:list){
-                        if(m.containsKey("couponId")){
-                            //新用户赠送优惠券
-                            this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), (Integer) re.getData(),-1);
-                        }
-                    }
-                    //老用户赠送优惠券
-                    Map m = list.get(0);
-                    if(m != null && m.containsKey("strategyId")){
-                        Map<String,Object> searchCondition = new HashMap<>();
-                        searchCondition.put("strategyId",m.get("strategyId"));
-                        List<Map> Olist = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_old",new HashMap<>());
-                        for (Map om:Olist){
-                            if(om.containsKey("couponId")){
-                                //老用户赠送优惠券
-                                this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), oldId,-1);
-                            }
-                        }
-                    }
-
-                }
-            }
         }
         return re;
+    }
+
+    /**
+     * 处理老带新赠送优惠券
+     * @param openid 新用户openid
+     * @param userId 新用户编号
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void dealOldBringingNew(String openid,Integer userId)throws Exception{
+        //查询老带新绑定关系是否存在,是则根据老带新策略查询赠送优惠券
+        Map map = this.commonObjectBySingleParam("ddw_old_bringing_new","newOpenid",openid);
+        if(map != null && map.containsKey("oldOpenid")){
+            String oldOpenid = map.get("oldOpenid").toString();
+            Integer oldId = this.querySimpleByOpenid(oldOpenid).getId();
+            List<Map> list = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_new",new HashMap<>());
+            if(list != null && list.size()>0){
+                for (Map m:list){
+                    if(m.containsKey("couponId")){
+                        //新用户赠送优惠券
+                        this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), userId,-1);
+                    }
+                }
+                //老用户赠送优惠券
+                Map m = list.get(0);
+                if(m != null && m.containsKey("strategyId")){
+                    Map<String,Object> searchCondition = new HashMap<>();
+                    searchCondition.put("strategyId",m.get("strategyId"));
+                    List<Map> Olist = this.commonObjectsBySearchCondition("ddw_strategy_old_bringing_new_coupon_old",new HashMap<>());
+                    for (Map om:Olist){
+                        if(om.containsKey("couponId")){
+                            //老用户赠送优惠券
+                            this.insertCoupon(Integer.valueOf(m.get("couponId").toString()), oldId,-1);
+                        }
+                    }
+                }
+            }
+            //更新登录状态,用户分享页面查询已成功邀请的新用户
+            Map setParams= new HashMap<>();
+            setParams.put("status",1);
+            setParams.put("updateTime",new Date());
+            this.commonUpdateBySingleSearchParam("ddw_old_bringing_new",setParams,"newOpenid",openid);
+            //更新首登状态
+            Map setParams2= new HashMap<>();
+            setParams2.put("firstLoginFlag",1);
+            setParams2.put("updateTime",new Date());
+            this.commonUpdateBySingleSearchParam("ddw_userinfo",setParams2,"id",userId);
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
@@ -449,6 +468,25 @@ public class UserInfoService extends CommonService {
     //根据用户id生成邀请码
     public String createInviteCode(Integer id){
         return RC4.encry_RC4_string(String.format("%07d",id), UUID.randomUUID().toString());
+    }
+
+    /**
+     * 供调试删账号用
+     * @param userId 用户编号
+     * @return
+     * @throws Exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseApiVO deleteUser(Integer userId)throws Exception{
+        this.commonDelete("ddw_userinfo","id",userId);
+        this.commonDelete("ddw_practice","userId",userId);
+        this.commonDelete("ddw_practice_game","userId",userId);
+        this.commonDelete("ddw_practice_evaluation","practiceId",userId);
+        this.commonDelete("ddw_practice_evaluation_detail","practiceId",userId);
+        this.commonDelete("ddw_my_attention","userId",userId);
+        this.commonDelete("ddw_my_attention","goddessId",userId);
+        this.commonDelete("ddw_my_attention","practiceId",userId);
+        return new ResponseApiVO(1,"成功",null);
     }
 
 }

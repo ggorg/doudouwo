@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ddw.services.OldBringingNewService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.ddw.util.CommonUtil;
@@ -8,6 +9,7 @@ import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,9 @@ public class OldBringingNewController {
     private final Logger logger = Logger.getLogger(OldBringingNewController.class);
     private final String WXAPPID = "wx77fedfebe36bb337";
     private final String OAUTHMAINURL = "http://doudouwo.cn/weixin/oauth";
-//
-//    @Autowired
-//    private OldBringingNewService oldBringingNewService;
+
+    @Autowired
+    private OldBringingNewService oldBringingNewService;
 //
 
 //    @ApiOperation(value = "添加老带新",produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,4 +56,18 @@ public class OldBringingNewController {
         }
     }
 
+    @Token
+    @ApiOperation(value = "老带新成功邀请列表")
+    @PostMapping("/inviteList/{token}")
+    public ResponseVO inviteList(@PathVariable String token){
+        try {
+            JSONObject json = new JSONObject();
+            String openid = TokenUtil.getUserObject(token).toString();
+            json.put("list",oldBringingNewService.inviteList(openid));
+            return new ResponseVO(1,"成功",json);
+        }catch (Exception e){
+            logger.error("OldBringingNewController->inviteList",e);
+            return new ResponseVO(-1,"提交失败",null);
+        }
+    }
 }

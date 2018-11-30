@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jacky on 2018/10/29.
@@ -41,13 +44,16 @@ public class OldBringingNewService extends CommonService {
     }
 
     /**
-     * 根据新用户查询老用户
-     * @param newOpenid
+     * 查询老用户成功邀请新用户列表
+     * @param oldOpenid
      * @return
      */
-    public OldBringingNewPO getOldBringingNewPO(String newOpenid){
+    public List inviteList(String oldOpenid){
         try {
-            return this.commonObjectBySingleParam("ddw_old_bringing_new","newOpenid",newOpenid,OldBringingNewPO.class);
+            Map<String,Object> searchCondition = new HashMap<>();
+            searchCondition.put("oldOpenid",oldOpenid);
+            searchCondition.put("status",1);
+            return this.commonObjectsBySearchCondition("ddw_old_bringing_new",searchCondition);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
