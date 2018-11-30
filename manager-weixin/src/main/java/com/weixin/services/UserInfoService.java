@@ -32,6 +32,8 @@ public class UserInfoService extends CommonService {
         userInfoPO.setPracticeGradeId(1);
         userInfoPO.setGoddessFlag(0);
         userInfoPO.setPracticeFlag(0);
+        userInfoPO.setFirstLoginFlag(0);
+        userInfoPO.setFirstRechargeFlag(0);
         userInfoPO.setCreateTime(new Date());
         userInfoPO.setUpdateTime(new Date());
         ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
