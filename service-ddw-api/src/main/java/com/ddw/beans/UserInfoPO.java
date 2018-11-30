@@ -34,6 +34,7 @@ public class UserInfoPO {
     private Integer goddessFlag;
     private Integer practiceFlag;
     private Integer firstRechargeFlag;
+    private Integer firstLoginFlag;
     private Date createTime;
     private Date updateTime;
 
@@ -283,6 +284,14 @@ public class UserInfoPO {
 
     public void setFirstRechargeFlag(Integer firstRechargeFlag) {
         this.firstRechargeFlag = firstRechargeFlag;
+    }
+
+    public Integer getFirstLoginFlag() {
+        return firstLoginFlag;
+    }
+
+    public void setFirstLoginFlag(Integer firstLoginFlag) {
+        this.firstLoginFlag = firstLoginFlag;
     }
 
     public Date getCreateTime() {
