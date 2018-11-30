@@ -52,6 +52,10 @@ public class BaseOrderService extends CommonService {
     @Value("${bidding.makeSureEndTime.minute:30}")
     private Integer makeSureEndTime;
 
+
+    @Value("${rechargePic.url}")
+    private String rechargePic;
+
     public OrderPO getCacheOrder(String orderNo)throws Exception{
         String objStr=(String) CacheUtil.get("pay","orderObject-"+orderNo);
         if(objStr!=null){
@@ -107,8 +111,10 @@ public class BaseOrderService extends CommonService {
                 straregyService.recharge(dorCost,userid);
                 OrderViewPO po=new OrderViewPO();
                 po.setCreateTime(new Date());
-                po.setName(OrderTypeEnum.OrderType3.getName());
-                po.setHeadImg(null);
+                StringBuilder builder=new StringBuilder();
+                builder.append(OrderTypeEnum.OrderType3.getName()).append("【").append((int)(dorCost/100)).append("元】");
+                po.setName(builder.toString());
+                po.setHeadImg(this.rechargePic);
                 po.setNum(1);
                 po.setOrderType(OrderTypeEnum.OrderType3.getCode());
                 po.setOrderId(OrderUtil.getOrderId(orderNo));
