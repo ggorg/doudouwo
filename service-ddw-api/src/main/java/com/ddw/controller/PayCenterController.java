@@ -33,6 +33,7 @@ public class PayCenterController {
     @Autowired
     private WithdrawService withdrawService;
 
+    @Idemp("searchPayStatus")
     @Token
     @ApiOperation(value = "查询支付状态",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/query/paystatus/{token}")
