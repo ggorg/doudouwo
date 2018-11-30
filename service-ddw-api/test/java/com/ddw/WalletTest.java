@@ -60,6 +60,6 @@ public class WalletTest extends CommonService {
     @Test
     public void testUserInfo()throws Exception{
         //UserInfoPO po=this.commonObjectBySingleParam("ddw_userinfo","id",8,UserInfoPO.class);
-        System.out.println(0==userInfoService(8).getFirstRechargeFlag());
+       // System.out.println(0==userInfoService(8).getFirstRechargeFlag());
     }
 }

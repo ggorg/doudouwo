@@ -2,6 +2,7 @@ package com.ddw.controller;
 
 
 import com.ddw.beans.*;
+import com.ddw.enums.SendVaildTypeEnum;
 import com.ddw.services.ConsumeRankingListService;
 import com.ddw.services.ReviewRealNameService;
 import com.ddw.services.ReviewService;
@@ -214,8 +215,9 @@ public class UserController {
     @PostMapping("/sendVaildCode/{token}")
     public ResponseVO sendVaildCode(@PathVariable String token,@RequestBody @ApiParam(name="args",value="传入json格式",required=true)UserValidPhoneDTO userValidPhoneDTO){
         try {
-            if(userValidPhoneDTO.getType() == null){
-                return new ResponseVO(-3,"发送验证码类型不能为空",null);
+            logger.info("sendVaildCode->request->"+userValidPhoneDTO);
+            if(StringUtils.isBlank(SendVaildTypeEnum.getName(userValidPhoneDTO.getType()))){
+                return new ResponseVO(-3,"验证码类型异常",null);
             }
             String res= "";
             //发送验证码类型,1实名验证,2找回支付密码
@@ -281,6 +283,19 @@ public class UserController {
         }catch (Exception e){
             logger.error("UserController->queryCons",e);
             return new ResponseApiVO(-1,"查询用户的贡献值失败",null);
+        }
+    }
+
+    public static void main(String[] args) {
+        UserValidPhoneDTO userValidPhoneDTO=new UserValidPhoneDTO();
+        userValidPhoneDTO.setType(1);
+        switch (userValidPhoneDTO.getType()){
+            case 1:
+                System.out.println(1);;
+                break;
+            case 2:
+                System.out.println(2);;
+                break;
         }
     }
 }
