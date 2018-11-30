@@ -228,6 +228,9 @@ public class UserController {
                 case 2:
                     res=MsgUtil.sendPayPwdMsg(userValidPhoneDTO.getTelphone());
                     break;
+                default:
+                    res=MsgUtil.sendOtherVaildCode(userValidPhoneDTO.getTelphone());
+                break;
             }
             if(res.equals("-1")){
                 return new ResponseVO(-2,"抱歉，操作过于频繁",null);
@@ -286,16 +289,4 @@ public class UserController {
         }
     }
 
-    public static void main(String[] args) {
-        UserValidPhoneDTO userValidPhoneDTO=new UserValidPhoneDTO();
-        userValidPhoneDTO.setType(1);
-        switch (userValidPhoneDTO.getType()){
-            case 1:
-                System.out.println(1);;
-                break;
-            case 2:
-                System.out.println(2);;
-                break;
-        }
-    }
 }

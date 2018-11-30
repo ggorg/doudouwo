@@ -25,6 +25,8 @@ public class MsgUtil {
     private final static Integer cert_id=175991;
     //找回支付密码
     private final static Integer paypwd_id=189074;
+    //通用验证码模版
+    private final static Integer commonVaildCode_id=238997;
 
     private final static boolean isMsg=true;
 
@@ -48,6 +50,23 @@ public class MsgUtil {
      * @throws Exception
      */
     public static String sendVaildCode(String telphone)throws Exception{
+        String random= commonSendVaildCode(telphone,cert_id);
+        logger.info(telphone+"实名认证验证码："+random);
+        return random;
+    }
+
+    /**
+     * 您在逗逗窝请求的验证码是：{1}
+     * @param telphone
+     * @return
+     * @throws Exception
+     */
+    public static String sendOtherVaildCode(String telphone)throws Exception{
+        String random= commonSendVaildCode(telphone,commonVaildCode_id);
+        logger.info(telphone+"请求验证码："+random);
+        return random;
+    }
+    public static String commonSendVaildCode(String telphone,Integer templateId)throws Exception{
         String string=(String)CacheUtil.get("validCodeCache","telphone-"+telphone);
         if(StringUtils.isNotBlank(string)){
             return "-1";
@@ -62,12 +81,10 @@ public class MsgUtil {
             return string;
         }
         String random= RandomStringUtils.randomNumeric(6);
-        commonModel(cert_id,telphone,random);
-        logger.info("实名验证验证码："+random);
+        commonModel(templateId,telphone,random);
         CacheUtil.put("validCodeCache","telphone-"+telphone,random);
         return random;
     }
-
     /**
      * 校验验证码
      * @param telphone
@@ -109,23 +126,10 @@ public class MsgUtil {
      * @throws Exception
      */
     public static String  sendPayPwdMsg(String telphone)throws Exception{
-        String string=(String)CacheUtil.get("validCodeCache","telphone-"+telphone);
-        if(StringUtils.isNotBlank(string)){
-            return "-1";
-        }
-        if(!isMsg){
-            CacheUtil.put("validCodeCache","telphone-"+telphone,"123456");
-            return "123456";
-        }
-        string=sendMsgTimes(telphone);
-        if(string.equals("-2")){
-            return string;
-        }
-        String random= RandomStringUtils.randomNumeric(6);
-        commonModel(paypwd_id,telphone,random);
-        logger.info("忘记密码");
-        CacheUtil.put("validCodeCache","telphone-"+telphone,"true");
-        return string;
+        String random= commonSendVaildCode(telphone,paypwd_id);
+
+        logger.info(telphone+"忘记密码："+random);
+        return random;
     }
 
     public static void commonModel(Integer templateId,String telphone,String content)throws Exception{
