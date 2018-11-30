@@ -58,7 +58,7 @@ public class ReviewPracticeService extends CommonService {
     public ResponseVO updatePractice(Integer practiceId,Integer storeId)throws Exception{
         Map setParams = new HashMap<>();
         setParams.put("storeId",storeId);
-        return this.commonUpdateBySingleSearchParam("ddw_practice",setParams,"practiceId",practiceId);
+        return this.commonUpdateBySingleSearchParam("ddw_practice",setParams,"userId",practiceId);
     }
 
     /**
