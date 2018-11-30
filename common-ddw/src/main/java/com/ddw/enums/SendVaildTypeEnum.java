@@ -7,7 +7,9 @@ import com.gen.common.dict.Dictionary;
  */
 public enum SendVaildTypeEnum implements Dictionary {
     typ1("实名验证",1),
-    typ2("找回支付密码",2);
+    typ2("找回支付密码",2),
+    typ3("绑定手机号",3),
+    typ4("验证码",4);
 
 
     private String name;
