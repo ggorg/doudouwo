@@ -228,9 +228,6 @@ public class UserController {
                 case 2:
                     res=MsgUtil.sendPayPwdMsg(userValidPhoneDTO.getTelphone());
                     break;
-                default:
-                    res=MsgUtil.sendOtherVaildCode(userValidPhoneDTO.getTelphone());
-                break;
             }
             if(res.equals("-1")){
                 return new ResponseVO(-2,"抱歉，操作过于频繁",null);
