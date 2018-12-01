@@ -27,6 +27,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -42,6 +43,7 @@ import java.util.*;
 @Service
 @Transactional(readOnly = true)
 public class UserInfoService extends CommonService {
+    private static final Logger logger = Logger.getLogger(UserInfoService.class);
     @Autowired
     private FileService fileService;
     @Autowired
@@ -58,7 +60,9 @@ public class UserInfoService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(UserInfoDTO userInfoDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
+        logger.info("UserInfoService注册的userInfoDTO:"+BeanToMapUtil.beanToMap(userInfoDTO));
         PropertyUtils.copyProperties(userInfoPO,userInfoDTO);
+        logger.info("UserInfoService注册copyProperties的userInfoPO:"+BeanToMapUtil.beanToMap(userInfoPO));
         userInfoPO.setId(null);
         userInfoPO.setGradeId(1);
         userInfoPO.setUserName(userInfoDTO.getNickName());
