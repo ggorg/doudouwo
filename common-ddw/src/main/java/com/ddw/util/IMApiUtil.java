@@ -76,8 +76,8 @@ public class IMApiUtil {
             throw new GenException("创建群失败:"+groupId);
         }
         JSONObject jsonObject=JSON.parseObject(callStr);
-        if(!jsonObject.containsKey("ActionStatus") || !"ok".equals(jsonObject.getString("ActionStatus")) || jsonObject.getInteger("ErrorCode")>0){
-            throw new GenException("创建群失败:"+groupId);
+        if(!jsonObject.containsKey("ActionStatus") || !"OK".equals(jsonObject.getString("ActionStatus")) || jsonObject.getInteger("ErrorCode")>0){
+            throw new GenException("创建群失败:"+groupId+",ret:"+jsonObject.toJSONString());
         }
 
        return  jsonObject.getString("GroupId");
@@ -276,7 +276,8 @@ public class IMApiUtil {
         System.out.println(importUser(userInfoPO,null));*/
         //System.out.println(IMApiUtil.pushAll("ddwGuanFang","下午茶到了"));
        // System.out.println(IMApiUtil.createGroup("ddwGuanFang","1_gf_0000000000","逗逗窝聊天室"));
-        System.out.println(IMApiUtil.destoryGroup("1_8_180504163053"));
+        System.out.println(IMApiUtil.destoryGroup("1_8_180504165555"));
+        //System.out.println(IMApiUtil.createGroup("346FE76B9D0682916ED2299E8579CBDB","1_8_180504165555","test"));
        // System.out.println(IMApiUtil.pushSimpleChat("ddwTongZhi","omc2C0i1D7OCAOnts7XEpfnxGo30","jacky妹你个扑街"));
       // System.out.println(getMemberNum(Arrays.asList("1_8_180503191514","1_8_180504013649","1_59_180829224224","1_41_180829211729")));;
     }
