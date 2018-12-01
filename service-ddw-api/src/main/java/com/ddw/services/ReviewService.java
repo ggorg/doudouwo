@@ -158,11 +158,11 @@ public class ReviewService extends CommonService {
         }
         Map csbSea=new HashMap();
         csbSea.put("drBusinessType",ReviewBusinessTypeEnum.ReviewBusinessType3.getCode());
+        csbSea.put("drProposer",userId);
 
-        Map childSearch=new HashMap();
-        childSearch.put("userid",userId);
+
         CommonSearchBean csb=new CommonSearchBean("ddw_review","t1.createTime desc","t1.drReviewStatus,ct0.liveStatus",0,1,csbSea,
-                new CommonChildBean("ddw_live_radio_space","businessCode","drBusinessCode",childSearch).setJoinName("left"));
+                new CommonChildBean("ddw_live_radio_space","businessCode","drBusinessCode",null).setJoinName("left"));
         List<Map> list=this.getCommonMapper().selectObjects(csb);
         if(list==null || list.isEmpty()){
             vo.setLiveRadioFlag(0);
