@@ -159,6 +159,14 @@ public class ReviewPracticeService extends CommonService {
             List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,null,weekList);
             appIndexPractice1.addAll(appIndexPractice2);
         }
+        //TODO 根据订单数量倒序
+//        List<Map> practiceList = practiceMapper.getListByOrder(storeId,start,end,weekList);
+//        if(practiceList !=null && practiceList.size()>0){
+//            for(Map m:practiceList){
+//                AppIndexPracticeVO appIndexPracticeVO = new AppIndexPracticeVO();
+//            }
+//        }
+
 //        if(pageSize-appIndexPractice1.size()>0){
 //            end = pageSize-appIndexPractice1.size();
 //            userIdList.clear();
@@ -450,7 +458,14 @@ public class ReviewPracticeService extends CommonService {
         }
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",practiceOrderDTO.getId());
-        return super.commonUpdateByParams("ddw_practice_order",setParams,searchCondition);
+        super.commonUpdateByParams("ddw_practice_order",setParams,searchCondition);
+        //取消后,修改代练状态为关闭
+        Map setP = new HashMap<>();
+        setP.put("appointment",0);
+        Map search = new HashMap<>();
+        search.put("userId",practiceOrderPO.getPracticeId());
+        search.put("gameId",practiceOrderPO.getGameId());
+        return super.commonUpdateByParams("ddw_practice_game",setP,search);
     }
     /**
      * 插入代练订单
@@ -595,7 +610,9 @@ public class ReviewPracticeService extends CommonService {
     public ResponseApiVO<PracticeSettlementVO> settlement(Integer userId,PracticeSettlementDTO practiceSettlementDTO)throws Exception{
         // 查询订单信息,查询段位信息,根据段位和星计算金额
         PracticeOrderPO practiceOrderPO = this.getOrder(practiceSettlementDTO.getOrderId());
-
+        if(practiceOrderPO.getPayState() !=0){
+            return new ResponseApiVO(-2,"该订单已关闭",null);
+        }
         int payMoney = 0;//支付金额,单位分
         int gameId = practiceOrderPO.getGameId();
         int rankId = practiceOrderPO.getRankId();//原段位

@@ -30,7 +30,7 @@ public class GameService extends CommonService{
                 PropertyUtils.copyProperties(gameVO,gameMap);
                 Map searchCondition = new HashMap<>();
                 searchCondition.put("gameId",gameMap.get("id"));
-                List<Map> rankList = super.commonObjectsBySearchCondition("ddw_rank",searchCondition);
+                List<Map> rankList = super.commonList("ddw_rank","sort",1,9999,searchCondition);
                 List<RankPO> rankPOList = new ArrayList<>();
                 for (Map rankMap:rankList) {
                     RankPO rankPO = new RankPO();

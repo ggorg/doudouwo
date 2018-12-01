@@ -37,6 +37,19 @@
         limit #{start},#{end}
     </select>
 
+    <select id="getListByOrder" parameterType="int" resultType="java.util.HashMap">
+      SELECT practiceId,count(practiceId)
+      from ddw_practice_order
+      WHERE
+        storeId=#{storeId}
+        <if test="weekList != null and weekList == 1">
+            and YEARWEEK(date_format(createTime,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
+        </if>
+      group by practiceId
+      ORDER BY count(practiceId) desc
+      limit #{start},#{end}
+    </select>
+
     <select id="getPracticeHaveOrderListByNoInIds" parameterType="int" resultMap="BaseResultMap">
         select t1.userId,t1.gameId,t1.rankId,t3.nickName,t3.headImgUrl,t3.label,
         t4.gradeName pgradeName,count(t2.practiceId) AS ordersCount,t6.gameName,t7.rank,IFNULL(t8.star,0)star
