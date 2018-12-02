@@ -33,9 +33,13 @@ public class GameService extends CommonService{
                 List<Map> rankList = super.commonList("ddw_rank","sort",1,9999,searchCondition);
                 List<RankPO> rankPOList = new ArrayList<>();
                 for (Map rankMap:rankList) {
-                    RankPO rankPO = new RankPO();
-                    PropertyUtils.copyProperties(rankPO,rankMap);
-                    rankPOList.add(rankPO);
+                    int star = Integer.valueOf(rankMap.get("star").toString());
+                    for(int i=1;i<star+1;i++){
+                        RankPO rankPO = new RankPO();
+                        PropertyUtils.copyProperties(rankPO,rankMap);
+                        rankPO.setStar(i);
+                        rankPOList.add(rankPO);
+                    }
                 }
                 gameVO.setRankList(rankPOList);
                 gameVOList.add(gameVO);
