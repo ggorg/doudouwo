@@ -507,7 +507,13 @@ public class ReviewPracticeService extends CommonService {
         JSONObject json = new JSONObject();
         cb5.setJoinName("left");
         Page p = this.commonPage(page.getPageNo(),10,csb);
-        json.put("list",p.getResult());
+        List<Map> list=p.getResult();
+        if(list==null || list.isEmpty()){
+            list=new ArrayList();
+        }else{
+            list.forEach(a->a.replace("orderNo",a.get("orderNo").toString().substring(16)));
+        }
+        json.put("list",list);
         return new ResponseVO(1,"成功",json);
     }
 
@@ -548,7 +554,13 @@ public class ReviewPracticeService extends CommonService {
         CommonSearchBean csb=new CommonSearchBean("ddw_practice_order","updateTime desc","t1.*,ct0.nickName,ct0.headImgUrl,ct1.gameName,ct2.rank,ct3.rank AS targetRank,ct4.dsName AS storeName,ct5.nickName pnickName,ct5.headImgUrl pheadImgUrl",null,null,condtion,cb1,cb2,cb3,cb4,cb5,cb6);
         JSONObject json = new JSONObject();
         Page p = this.commonPage(1,10,csb);
-        json.put("list",p.getResult());
+        List<Map> list=p.getResult();
+        if(list==null || list.isEmpty()){
+            list=new ArrayList();
+        }else{
+            list.forEach(a->a.replace("orderNo",a.get("orderNo").toString().substring(16)));
+        }
+        json.put("list",list);
         return new ResponseVO(1,"成功",json);
     }
 
