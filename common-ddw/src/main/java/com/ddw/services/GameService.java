@@ -37,6 +37,7 @@ public class GameService extends CommonService{
                     for(int i=1;i<star+1;i++){
                         RankPO rankPO = new RankPO();
                         PropertyUtils.copyProperties(rankPO,rankMap);
+                        rankPO.setRank(rankPO.getRank()+" "+ i+"星");
                         rankPO.setStar(i);
                         rankPOList.add(rankPO);
                     }
