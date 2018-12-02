@@ -45,6 +45,7 @@ public class TestController {
         try{
             CacheUtil.delete("publicCache","appIndexPractice"+storeId);
             CacheUtil.delete("publicCache", "appIndexGoddess");
+            CacheUtil.delete("publicCache", "gameList");
             return new ResponseApiVO(1,"成功",null);
         }catch (Exception e){
             logger.error("TestController->cleanCache-》系统异常",e);
