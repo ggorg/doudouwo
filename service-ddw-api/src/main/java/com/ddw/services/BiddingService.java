@@ -483,12 +483,15 @@ public class BiddingService extends CommonService {
             List<BiddingVO> list=(List)CacheUtil.get("pay","groupId-"+bidCode+"-"+groupId);
             if(list!=null && !list.isEmpty()){
                 list.remove("handling");
-                Map map=new HashMap();
-                map.put("bidEndTime",list.get(0).getBidEndTime());
-                map.put("status",1);
-                map.put("statusMsg","竞价中");
-                map.put("list",list);
-                return new ResponseApiVO(1,"成功",map);
+                if(list.size()>0){
+                    Map map=new HashMap();
+                    map.put("bidEndTime",list.get(0).getBidEndTime());
+                    map.put("status",1);
+                    map.put("statusMsg","竞价中");
+                    map.put("list",list);
+                    return new ResponseApiVO(1,"成功",map);
+                }
+
             }
         }
         // BiddingVO vo=new BiddingVO();
@@ -695,7 +698,7 @@ public class BiddingService extends CommonService {
         List list=null;
         for(int i=1;i<=5;i++){
             list=(List)CacheUtil.get("pay","groupId-"+bidId+"-"+groupId);
-            if(list==null){
+            if(list==null || list.isEmpty()){
                 break;
             }
             if(list.contains("handling")){
@@ -744,6 +747,7 @@ public class BiddingService extends CommonService {
             handleBidList(list,vo.getOpenId());
             list.add(vo);
             list.remove("handling");
+            CacheUtil.put("pay","groupId-"+bidId+"-"+groupId,list);
 
         }
        // IMApiUtil.sendGroupMsg(groupId,new ResponseVO(1,"成功",vo));
@@ -751,12 +755,17 @@ public class BiddingService extends CommonService {
        // this.commonSingleFieldBySingleSearchParam()
           return new ResponseApiVO(1,"成功",null);
     }
-    private void handleBidList(List<BiddingVO> list,String openId){
+    private void handleBidList(List list,String openId){
         if(list!=null){
-            for(BiddingVO bv:list){
-                if(bv.getOpenId().equals(openId)){
-                    list.remove(bv);
+            BiddingVO bv=null;
+            for(Object o:list){
+                if(o instanceof  BiddingVO){
+                    bv=(BiddingVO) o;
+                    if(bv.getOpenId().equals(openId)){
+                        list.remove(bv);
+                    }
                 }
+
             }
 
         }
