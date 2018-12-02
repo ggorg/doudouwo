@@ -622,8 +622,8 @@ public class ReviewPracticeService extends CommonService {
     public ResponseApiVO<PracticeSettlementVO> settlement(Integer userId,PracticeSettlementDTO practiceSettlementDTO)throws Exception{
         // 查询订单信息,查询段位信息,根据段位和星计算金额
         PracticeOrderPO practiceOrderPO = this.getOrder(practiceSettlementDTO.getOrderId());
-        if(practiceOrderPO.getPayState() !=0){
-            return new ResponseApiVO(-2,"该订单已关闭",null);
+        if(practiceOrderPO.getPayState() !=1){
+            return new ResponseApiVO(-2,"未支付不允许结算",null);
         }
         int payMoney = 0;//支付金额,单位分
         int gameId = practiceOrderPO.getGameId();
