@@ -46,6 +46,8 @@ public class BiddingService extends CommonService {
 
     @Autowired
     private LiveRadioService liveRadioService;
+    @Autowired
+    private LiveRadioClientService liveRadioClientService;
 
     @Autowired
     private BaseDynService baseDynService;
@@ -602,6 +604,10 @@ public class BiddingService extends CommonService {
         if(GoddessAppointmentEnum.status0.getCode().equals(gpo.getAppointment())){
             return new ResponseApiVO(-3,"抱歉约玩已被关闭，没法竞价",null);
 
+        }
+        boolean liveFlag=this.liveRadioClientService.getCurrentLiveRadioFlagByGroupId(groupId);
+        if(!liveFlag){
+            return new ResponseApiVO(-10,"当前直播状态没法竞价",null);
         }
 
       //  Map searchMap=new HashMap();

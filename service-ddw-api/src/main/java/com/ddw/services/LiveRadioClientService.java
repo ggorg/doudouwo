@@ -45,6 +45,30 @@ public class LiveRadioClientService  extends CommonService{
     @Autowired
     private GoddessMapper goddessMapper;
 
+    public boolean getCurrentLiveRadioFlagByGroupId(String groupId){
+        List<LiveRadioListVO> lists=(List<LiveRadioListVO>)CacheUtil.get("publicCache","appIndexGoddess");
+        if(lists==null){
+            Map search=new HashMap();
+            search.put("groupId",groupId);
+            List<Map> list=this.commonList("ddw_live_radio_space","createTime desc",1,1,search);
+            if(list!=null && !list.isEmpty()){
+                Map data=list.get(0);
+                if(LiveStatusEnum.liveStatus1.getCode().equals(data.get("liveStatus"))){
+                    return true;
+                }
+            }
+        }else{
+            List<LiveRadioListVO> newList=lists.stream().filter(a->!groupId.equals(a.getGroupId())).collect(Collectors.toList());
+            if(newList!=null && !newList.isEmpty()){
+                LiveRadioListVO vo= newList.get(0);
+                if(vo.getLiveRadioFlag()==1 || vo.getLiveRadioFlag().equals(1)){
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
 
     public ResponseApiVO toLiveRadio(String token)throws Exception{
         Integer storeId=TokenUtil.getStoreId(token);

@@ -62,4 +62,8 @@ public class LiveRadioTest {
         TokenUtil.putUseridAndName(token,8,"test123");
         System.out.println(reviewService.getLiveRadioReviewStatus(token));
     }
+    @Test
+    public void getLiveRadioFlag()throws Exception{
+        System.out.println(this.liveRadioClientService.getCurrentLiveRadioFlagByGroupId("1_8_180830214823"));
+    }
 }

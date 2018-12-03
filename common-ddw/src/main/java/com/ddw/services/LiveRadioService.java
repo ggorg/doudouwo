@@ -235,6 +235,7 @@ public class LiveRadioService extends CommonService{
         if(res.getReCode()==1){
             Map update=new HashMap();
             update.put("liveId",res.getData());
+
             this.commonUpdateBySingleSearchParam("ddw_goddess",update,"userId",liveRadioPO.getUserid());
             res.setReMsg("创建直播成功");
         }else{

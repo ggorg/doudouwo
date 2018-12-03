@@ -91,6 +91,8 @@ public class DouBiService extends CouponService{
         map.put("updateTime",new Date());
         if(StringUtils.isNotBlank(DisountEnum.getName(dto.getDrDiscountCode()))){
             map.put("drDiscount", BigDecimal.valueOf(dto.getDrCost()).multiply(BigDecimal.valueOf(dto.getDrDiscountCode()).divide(BigDecimal.valueOf(100))).intValue());
+        }else{
+            map.put("drDiscount",null);
         }
         if(dto.getId()==null){
             map.put("createTime",new Date());
