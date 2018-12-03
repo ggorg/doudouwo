@@ -152,6 +152,7 @@ public class BannerService extends CommonReviewService {
         PropertyUtils.copyProperties(bannerPO,bannerDTO);
         bannerPO.setCreateTime(new Date());
         bannerPO.setStoreId(storeId);
+        bannerPO.setStatus(0);
         bannerPO.setPicUrl(mainGlobals.getServiceUrl() + fileInfoVo.getUrlPath());
         bannerPO.setbType(BannerTypeEnum.type1.getCode());
         Map conditionMap = new HashMap<>();

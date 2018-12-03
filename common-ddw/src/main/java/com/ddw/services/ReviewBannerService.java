@@ -62,7 +62,6 @@ public class ReviewBannerService extends CommonService {
     public ResponseVO updateReviewBanner(ReviewCallBackBean rb)throws Exception{
         //根据审核结果处理
         if(rb.getReviewPO().getDrReviewStatus() == 1) {
-            BannerPO bannerPO = this.getReviewBannerByCode(rb.getBusinessCode());
             CacheUtil.delete("publicCache", "appIndexBanner");
             Map setParams = new HashMap();
             setParams.put("status", 1);
@@ -71,8 +70,13 @@ public class ReviewBannerService extends CommonService {
             searchCondition.put("drBusinessCode", rb.getBusinessCode());
             searchCondition.put("status", 0);//未审核
             return this.commonUpdateByParams("ddw_banner", setParams, searchCondition);
+        }else{
+            Map setParams = new HashMap();
+            setParams.put("status", 2);
+            Map searchCondition = new HashMap();
+            searchCondition.put("drBusinessCode", rb.getBusinessCode());
+            return this.commonUpdateByParams("ddw_banner", setParams, searchCondition);
         }
-        return new ResponseVO(1,"成功",null);
     }
 
 }
