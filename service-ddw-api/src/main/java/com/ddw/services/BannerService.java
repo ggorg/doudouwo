@@ -30,7 +30,7 @@ public class BannerService extends CommonService {
         searchCondition.put("enable",1);
         searchCondition.put("bType",type.getCode());
 
-        List<Map> list = this.commonList("ddw_banner","createTime desc",1,4,searchCondition);
+        List<Map> list = this.commonList("ddw_banner","createTime desc",1,10,searchCondition);
         List<AppIndexBannerVO> appIndexBannerList = new ArrayList<>();
         if (list != null) {
             for(Map map:list){
