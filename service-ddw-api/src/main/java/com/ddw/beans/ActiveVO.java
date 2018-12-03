@@ -24,15 +24,15 @@ public class ActiveVO<T> {
 
     @ApiModelProperty(name="jumpUrl",value="跳转地址",example="跳转地址")
     private String jumpUrl;
-    @ApiModelProperty(name="desc",value="描述",example="描述")
-    private String desc;
+    @ApiModelProperty(name="dtDesc",value="描述",example="描述")
+    private String dtDesc;
 
-    public String getDesc() {
-        return desc;
+    public String getDtDesc() {
+        return dtDesc;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDtDesc(String dtDesc) {
+        this.dtDesc = dtDesc;
     }
 
     public String getCreateTime() {
