@@ -39,6 +39,13 @@
 
     </div>
   </div>
+  <div class="layui-form-item ">
+    <label class="layui-form-label">描述</label>
+    <div class="layui-input-block">
+
+      <textarea name="dtDesc"  th:text="${ds!=null? ds['dtDesc']:''}"   lay-verify="max200"  class="layui-textarea"></textarea>
+    </div>
+  </div>
   <div class="layui-form-item">
     <label class="layui-form-label">上传页面</label>
     <div class="layui-input-block">

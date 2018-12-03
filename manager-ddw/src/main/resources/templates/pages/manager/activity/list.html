@@ -32,9 +32,9 @@
     </div><!--tableoptions-->
     <div class="tableoptions">
 
-        <button class="radius3"  onclick="openDialog('650px','450px','新增外部链接活动','to-edit?dtType=1')" title="table2">新增外部链接活动</button> &nbsp;
-        <button class="radius3" onclick="openDialog('650px','450px','新增内部链接活动','to-edit?dtType=2')" title="table2">新增内部链接活动</button> &nbsp;
-        <button class="radius3" onclick="openDialog('869px','510px','新增本文内容活动','to-edit?dtType=3')" title="table2">新增本文内容活动</button> &nbsp;
+        <button class="radius3"  onclick="openDialog('700px','550px','新增外部链接活动','to-edit?dtType=1')" title="table2">新增外部链接活动</button> &nbsp;
+        <button class="radius3" onclick="openDialog('700px','550px','新增内部链接活动','to-edit?dtType=2')" title="table2">新增内部链接活动</button> &nbsp;
+        <button class="radius3" onclick="openDialog('869px','610px','新增本文内容活动','to-edit?dtType=3')" title="table2">新增本文内容活动</button> &nbsp;
 
     </div>
 </th:block>
@@ -71,7 +71,7 @@
 
         <td class="center">
             <div class="layui-btn-group">
-                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\''+${obj['dtType']==3?'869px':'650px'}+'\',\''+${obj['dtType']==3?'510px':'450px'}+'\',\'修改\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
+                <button class="layui-btn layui-btn-sm" th:onclick="'openDialog(\''+${obj['dtType']==3?'869px':'750px'}+'\',\''+${obj['dtType']==3?'610px':'550px'}+'\',\'修改\',\'to-edit?id='+${obj['id']}+'\')'"  >修 改</button>
 
                 <button  th:class="'layui-btn layui-btn-sm '+${obj['dtDisabled']==1?'':'layui-btn-danger'}" th:onclick="'confirmDisabled(\''+${obj['id']}+'\','+${obj['dtDisabled']==1?0:1}+',\''+${obj['dtDisabled']==1?'是否发布':'是否撤回发布'}+'\')'" th:text="${obj['dtDisabled']==1?'发 布':'撤回发布'}"></button>
                 <button  class="layui-btn layui-btn-sm layui-btn-danger" th:onclick="'confirmDelete('+${obj['id']}+')'" >删 除</button>

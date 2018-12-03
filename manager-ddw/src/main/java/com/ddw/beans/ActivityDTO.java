@@ -7,6 +7,7 @@ public class ActivityDTO {
     private String dtTitle;
     private String dtContent;
     private String dtTargetPath;
+    private String dtDesc;
 
     /**
      * 引用连接的：1，本地地址的：2，使用文本内容的：3
@@ -15,6 +16,14 @@ public class ActivityDTO {
     private String activeTime;
     private MultipartFile dtImgFile;
     private MultipartFile zipFile;
+
+    public String getDtDesc() {
+        return dtDesc;
+    }
+
+    public void setDtDesc(String dtDesc) {
+        this.dtDesc = dtDesc;
+    }
 
     public MultipartFile getZipFile() {
         return zipFile;
