@@ -3,6 +3,8 @@ package com.ddw.services;
 import com.ddw.beans.BannerPO;
 import com.ddw.beans.ReviewCallBackBean;
 import com.ddw.beans.ReviewPO;
+import com.ddw.enums.BannerEnableEnum;
+import com.ddw.enums.BannerTypeEnum;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
 import com.gen.common.beans.CommonChildBean;
@@ -52,6 +54,17 @@ public class ReviewBannerService extends CommonService {
         CacheUtil.delete("publicCache","appIndexBanner");
         Map setParams=new HashMap();
         setParams.put("enable",enable);
+
+        if(BannerEnableEnum.type1.getCode().equals(enable)){
+            Map countMap=new HashMap();
+            countMap.put("enable",BannerEnableEnum.type1.getCode());
+            countMap.put("bType", BannerTypeEnum.type1.getCode());
+            countMap.put("status", 1);
+            long c=this.commonCountBySearchCondition("ddw_banner",countMap);
+            if(c>=10){
+                return new ResponseVO(-2,"抱歉，发布数量不能超过10个",null);
+            }
+        }
         Map searchCondition=new HashMap();
         searchCondition.put("drBusinessCode",drBusinessCode);
         searchCondition.put("status",1);//已审核
@@ -62,6 +75,14 @@ public class ReviewBannerService extends CommonService {
     public ResponseVO updateReviewBanner(ReviewCallBackBean rb)throws Exception{
         //根据审核结果处理
         if(rb.getReviewPO().getDrReviewStatus() == 1) {
+            Map countMap=new HashMap();
+            countMap.put("enable",BannerEnableEnum.type1.getCode());
+            countMap.put("bType", BannerTypeEnum.type1.getCode());
+            countMap.put("status", 1);
+            long c=this.commonCountBySearchCondition("ddw_banner",countMap);
+            if(c>=10){
+                return new ResponseVO(-2,"抱歉，发布数量不能超过10个",null);
+            }
             CacheUtil.delete("publicCache", "appIndexBanner");
             Map setParams = new HashMap();
             setParams.put("status", 1);

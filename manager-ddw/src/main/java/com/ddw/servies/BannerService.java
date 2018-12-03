@@ -62,9 +62,10 @@ public class BannerService extends CommonReviewService {
         if(BannerEnableEnum.type1.getCode().equals(status)){
             Map countMap=new HashMap();
             countMap.put("enable",BannerEnableEnum.type1.getCode());
+            countMap.put("bType",BannerTypeEnum.type2.getCode());
             countMap.put("storeId",storeId);
             long c=this.commonCountBySearchCondition("ddw_banner",countMap);
-            if(c>10){
+            if(c>=10){
                 return new ResponseVO(-2,"抱歉，发布数量不能超过10个",null);
             }
         }
