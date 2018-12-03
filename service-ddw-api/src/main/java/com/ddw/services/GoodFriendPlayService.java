@@ -575,14 +575,7 @@ public class GoodFriendPlayService extends CommonService {
 
         Integer userId=TokenUtil.getUserId(token);
 
-        Map map=new HashMap();
-        map.put("userId",userId);
-        Map chid=new HashMap();
-        chid.put("disabled",DisabledEnum.disabled0.getCode());
-        chid.put("status,<=",GoodFriendPlayRoomStatusEnum.status20.getCode());
-        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room_member",null,"ct0.disabled memDisabled,t1.id,t1.roomOwner",null,null,map,
-                new CommonChildBean("ddw_goodfriendplay_room","id","roomId",chid));
-        List<Map> list=this.getCommonMapper().selectObjects(csb);
+        List<Map> list=this.goodFriendPlayMapper.selectIsCanCreateRoom(userId);
         if(list!=null && !list.isEmpty()){
             for(Map m:list){
                 if(DisabledEnum.disabled0.getCode().equals(m.get("memDisabled"))){

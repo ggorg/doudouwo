@@ -77,4 +77,30 @@
             limit #{startNum },#{endNum}
         </if>
     </select>
+
+    <select id="selectIsCanCreateRoom" resultType="java.util.HashMap" >
+        SELECT
+        ct0.disabled memDisabled,
+        t1.id,
+        t1.roomOwner,
+        t1.roomId
+        FROM
+        ddw_goodfriendplay_room_member t1
+        INNER JOIN ddw_goodfriendplay_room ct0 ON ct0.id = t1.roomId
+        AND ct0.disabled = 0
+        AND ct0.STATUS &lt;= 20
+        WHERE
+        t1.`userId` =  #{userId} UNION ALL
+        SELECT
+        t1.disabled memDisabled,
+        1,
+        t1.roomOwner,
+        t1.id roomId
+        FROM
+        ddw_goodfriendplay_room t1
+        WHERE
+        t1.roomOwner = #{userId}
+        AND t1.disabled = 0
+        AND t1.STATUS &lt;= 20
+    </select>
 </mapper>
