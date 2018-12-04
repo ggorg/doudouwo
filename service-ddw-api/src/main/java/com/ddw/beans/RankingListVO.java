@@ -16,6 +16,26 @@ public class RankingListVO implements Serializable {
 
     @ApiModelProperty(name="headImgUrl",value="头像url",example="http://xxxx")
     private String headImgUrl;
+    @ApiModelProperty(name="level",value="级别",example="级别")
+    private String level;
+    @ApiModelProperty(name="gradeName",value="级别名称",example="级别名称")
+    private String gradeName;
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getGradeName() {
+        return gradeName;
+    }
+
+    public void setGradeName(String gradeName) {
+        this.gradeName = gradeName;
+    }
 
     public String getNickName() {
         return nickName;

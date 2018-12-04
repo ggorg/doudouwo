@@ -106,16 +106,13 @@ public class LiveRadioClientService  extends CommonService{
 
         }
 
-        String[] lls=null;
-        if(StringUtils.isBlank(dto.getLanglat())){
-            return new ResponseApiVO(-2,"坐标不能为空",null);
-
-        }else{
-             lls=dto.getLanglat().split(",");
+        if(StringUtils.isNotBlank(dto.getLanglat())){
+            String[] lls=dto.getLanglat().split(",");
             if(lls.length!=2 || !dto.getLanglat().matches("^[0-9]+[.][^,]+,[0-9]+[.][0-9]+$")){
                 return new ResponseApiVO(-2,"坐标格式有误",null);
 
             }
+
         }
         List<Map> obj=(List)CacheUtil.get("stores","store");
         if(obj==null || obj.isEmpty()){

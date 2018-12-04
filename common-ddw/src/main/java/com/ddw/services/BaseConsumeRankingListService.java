@@ -59,8 +59,12 @@ public class BaseConsumeRankingListService extends CommonService {
         searchMap.put("type",incomeTypeEnum.getCode());
 
         Page page=new Page(1,10);
-        CommonSearchBean csb=new CommonSearchBean("ddw_consume_ranking_list","consumePrice desc","t1.consumePrice,ct0.nickName,ct0.headImgUrl",page.getStartRow(),page.getEndRow(),searchMap,
+/*        CommonSearchBean csb=new CommonSearchBean("ddw_consume_ranking_list","consumePrice desc","t1.consumePrice,ct0.nickName,ct0.headImgUrl",page.getStartRow(),page.getEndRow(),searchMap,
                 new CommonChildBean("ddw_userinfo","id","consumeUserId",null)
+        );*/
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo","consumePrice desc","ct0.consumePrice,t1.nickName,t1.headImgUrl,ct1.level,ct1.gradeName ",page.getStartRow(),page.getEndRow(),searchMap,
+                new CommonChildBean("ddw_consume_ranking_list","consumeUserId","id",null),
+                new CommonChildBean("ddw_grade","id","gradeId",null)
         );
         List voList=this.getCommonMapper().selectObjects(csb);
         if(voList!=null){

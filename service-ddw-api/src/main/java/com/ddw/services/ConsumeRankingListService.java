@@ -34,8 +34,6 @@ public class ConsumeRankingListService extends BaseConsumeRankingListService {
             useridStr="-1";
         }
 
-
-
         List list=(List)CacheUtil.get("publicCache","ranking-list-"+incomeTypeEnum.getCode()+"-"+useridStr);
         if(list!=null){
             return new ResponseApiVO(1,"成功",list);
