@@ -200,7 +200,7 @@ public class WalletService extends CommonService {
         search.put("userId",userid);
 
 
-        CommonSearchBean csb=new CommonSearchBean("ddw_packet_gift",null,"t1.currentNum num ,ct0.id giftCode,ct0.dgName name,ct0.dgImgPath imgUrl",null,null,search,
+        CommonSearchBean csb=new CommonSearchBean("ddw_packet_gift",null,"t1.currentNum num ,t1.id giftCode,ct0.dgName name,ct0.dgImgPath imgUrl",null,null,search,
                 new CommonChildBean("ddw_gift","id","giftId",null));
         List<Map> giftPacketlist=this.getCommonMapper().selectObjects(csb);
         if(giftPacketlist==null){

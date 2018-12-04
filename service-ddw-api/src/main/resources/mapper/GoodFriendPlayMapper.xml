@@ -16,6 +16,7 @@
         t1.type,
         t1.createTime createDate,
         t1.startTime,
+        (case  when t1.STATUS=22 then -1 else t1.STATUS end) as statusSort,
         (case  when t1.endTime is null then now() else t1.endTime end) as endDate,
         (case  when t1.chatRoomEndTime is null then now() else t1.chatRoomEndTime end) as chatRoomEndTime,
         count( ct0.id ) peopleNum
@@ -46,7 +47,7 @@
         GROUP BY
         t1.id
         ORDER BY
-        t1.status Desc,t1.updateTime Desc,peopleNum Desc
+        statusSort Desc,t1.updateTime Desc,peopleNum Desc
         <if test="null!=startNum and null!=endNum" >
             limit #{startNum },#{endNum}
         </if>
