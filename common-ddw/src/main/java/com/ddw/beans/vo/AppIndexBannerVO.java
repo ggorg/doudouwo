@@ -1,6 +1,7 @@
 package com.ddw.beans.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -20,8 +21,16 @@ public class AppIndexBannerVO implements Serializable{
     @ApiModelProperty(name="url",value="跳转URL",example="http://doudouwo.cn/")
     private String url;
     @ApiModelProperty(name="describe",value="描述",example="这是一只可爱的猫咪")
-    private String describe;
+    @JsonProperty("describe")
+    private String bDescribe;
 
+    public String getbDescribe() {
+        return bDescribe;
+    }
+
+    public void setbDescribe(String bDescribe) {
+        this.bDescribe = bDescribe;
+    }
     public String getName() {
         return name;
     }
@@ -46,11 +55,5 @@ public class AppIndexBannerVO implements Serializable{
         this.url = url;
     }
 
-    public String getDescribe() {
-        return describe;
-    }
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
-    }
 }
