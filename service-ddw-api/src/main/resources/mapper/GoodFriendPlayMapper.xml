@@ -4,6 +4,49 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ddw.dao.GoodFriendPlayMapper">
 
+    <select id="getIndexRoomList" resultType="com.ddw.beans.vo.GoodFriendPlayRoomListVO">
+        SELECT
+        t1.id CODE,
+        t1.roomImgIcon,
+        t1.NAME,
+        t1.STATUS,
+        t1.peopleMaxNum,
+        t1.type,
+        t1.startTime,
+        (case  when t1.STATUS=22 then -1 else t1.STATUS end) as statusSort,
+        ct1.headImgs,
+        ct1.peopleNum
+        FROM
+        ddw_goodfriendplay_room t1
+        Left JOIN (SELECT
+        t1.roomId,
+        count( t1.id ) peopleNum,
+        GROUP_CONCAT( ct0.headImgUrl ) headImgs
+        FROM
+        ddw_goodfriendplay_room_member t1
+        INNER JOIN ddw_userinfo ct0 ON ct0.id = t1.userId
+        GROUP BY
+        t1.roomId
+        ORDER BY
+        t1.createTime DESC) ct1 on ct1.roomId=t1.id
+
+        <where>
+            <if test="null!=centerId">
+                and t1.centerId=#{centerId}
+            </if>
+            <if test="null!=disabled">
+                and t1.disabled=#{disabled}
+            </if>
+
+        </where>
+        GROUP BY
+        t1.id
+        ORDER BY
+        statusSort Desc,t1.updateTime Desc,peopleNum Desc
+        <if test="null!=startNum and null!=endNum" >
+            limit #{startNum },#{endNum}
+        </if>
+    </select>
 
     <select id="getRoomList" resultType="com.ddw.beans.vo.GoodFriendPlayRoomListVO">
         SELECT

@@ -10,6 +10,7 @@ import java.util.List;
  */
 public interface GoodFriendPlayMapper {
     List<GoodFriendPlayRoomListVO> getRoomList(@Param("centerId") Integer centerId, @Param("disabled") Integer disabled, @Param("type") Integer type, @Param("status") String status, @Param("roomOwner") Integer roomOwner, @Param("startNum") Integer startNum, @Param("endNum") Integer endNum);
+    List<GoodFriendPlayRoomListVO> getIndexRoomList(@Param("centerId") Integer centerId, @Param("disabled") Integer disabled, @Param("startNum") Integer startNum, @Param("endNum") Integer endNum);
     List selectIsCanCreateRoom(@Param("userId") Integer userId);
     List selecrHistoryFriend(@Param("roomId") Integer roomId,@Param("userId") Integer userId, @Param("startNum") Integer startNum, @Param("endNum") Integer endNum);
 }

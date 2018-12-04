@@ -44,6 +44,9 @@ public class GoodFriendPlayRoomListVO implements Serializable {
 
     @ApiModelProperty(name = "chatRoomUseTime", value = "聊天房间用时", example = "聊天房间用时")
     private String chatRoomUseTime;
+    @ApiModelProperty(name = "headImgs", value = "http://xxxx,http://xxxx（逗号隔开）", example = "http://xxxx,http://xxxx（逗号隔开）")
+    private String headImgs="";
+
 
 
 
@@ -56,6 +59,14 @@ public class GoodFriendPlayRoomListVO implements Serializable {
     @JsonIgnore
     private Date startTime;
 
+
+    public String getHeadImgs() {
+        return headImgs;
+    }
+
+    public void setHeadImgs(String headImgs) {
+        this.headImgs = headImgs;
+    }
     public String getPlayUseTime() {
         return playUseTime;
     }

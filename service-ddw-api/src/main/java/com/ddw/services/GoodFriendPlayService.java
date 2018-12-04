@@ -126,10 +126,11 @@ public class GoodFriendPlayService extends CommonService {
         Integer storeId= TokenUtil.getStoreId(token);
         GoodFriendPlayChatCenterVO gfp=this.getChatCenterBean(storeId);
         if(gfp==null)return new ArrayList<>();
-        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,null,null,page.getStartRow(),page.getEndRow());
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getIndexRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),page.getStartRow(),page.getEndRow());
         if(offlist==null || offlist.isEmpty()){
             new ArrayList<>();
         }
+
         return offlist;
     }
     public ResponseApiVO getRoomRecord(String token,PageNoDTO dto)throws Exception{
