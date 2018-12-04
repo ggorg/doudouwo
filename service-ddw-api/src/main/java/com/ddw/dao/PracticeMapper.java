@@ -4,7 +4,6 @@ import com.ddw.beans.vo.AppIndexPracticeVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Jacky on 2018/6/3.
@@ -20,5 +19,5 @@ public interface PracticeMapper {
 
     List getReviewPracticeList(@Param("practiceId") Integer practiceId, @Param("storeId") Integer storeId);
 
-    List<Map> getListByOrder(@Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end,@Param("weekList") Integer weekList);
+    List<AppIndexPracticeVO> getListByOrder( @Param("storeId") Integer storeId, @Param("start") Integer start, @Param("end") Integer end,@Param("weekList") Integer weekList);
 }

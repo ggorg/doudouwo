@@ -37,18 +37,35 @@
         limit #{start},#{end}
     </select>
 
-    <select id="getListByOrder" parameterType="int" resultType="java.util.HashMap">
-      SELECT practiceId,count(practiceId)
-      from ddw_practice_order
-      WHERE
+    <select id="getListByOrder" parameterType="int" resultMap="BaseResultMap">
+        SELECT practiceId,count(practiceId) AS ordersCount,a.*
+        from ddw_practice_order t1,(select t1.userId,t1.gameId,t1.rankId,t3.nickName,t3.headImgUrl,t3.label,
+        t4.gradeName pgradeName,t6.gameName,t7.rank,IFNULL(t8.star,0)star
+        from ddw_practice_game t1
+        left join ddw_userinfo t3 on t1.userId = t3.id
+        left join ddw_practice_grade t4 on t4.id=t3.practiceGradeId
+        left join ddw_practice t5 on t5.userId=t1.userId and t5.storeId=#{storeId}
+        left join ddw_game t6 on t6.id=t1.gameId
+        left join ddw_rank t7 on t7.id=t1.rankId
+        left join ddw_practice_evaluation t8 on t8.practiceId=t1.userId
+        where t1.userId in (SELECT practiceId
+        from ddw_practice_order
+        WHERE
         storeId=#{storeId}
         <if test="weekList != null and weekList == 1">
             and YEARWEEK(date_format(createTime,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
         </if>
-      group by practiceId
-      ORDER BY count(practiceId) desc
-      limit #{start},#{end}
+        group by practiceId
+        ORDER BY count(practiceId) desc
+        )
+        group  by t1.userId)a
+        WHERE
+        t1.practiceId = a.userId
+        group by t1.practiceId
+        ORDER BY count(t1.practiceId) desc
+        limit #{start},#{end}
     </select>
+
 
     <select id="getPracticeHaveOrderListByNoInIds" parameterType="int" resultMap="BaseResultMap">
         select t1.userId,t1.gameId,t1.rankId,t3.nickName,t3.headImgUrl,t3.label,
