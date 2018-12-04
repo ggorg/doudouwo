@@ -43,8 +43,8 @@ public class BaseConsumeRankingListService extends CommonService {
             if(res.getReCode()!=1){
                 throw new GenException("保存排行榜失败");
             }
-            CacheUtil.delete("publicCache","ranking-list-"+incomeType.getCode()+"-"+incomeUserId);
-            CacheUtil.delete("publicCache","ranking-list-"+incomeType.getCode()+"--1");
+            CacheUtil.delete("publicCacheTimer","ranking-list-"+incomeType.getCode()+"-"+incomeUserId);
+            CacheUtil.delete("publicCacheTimer","ranking-list-"+incomeType.getCode()+"--1");
 
         }
     }
@@ -62,13 +62,13 @@ public class BaseConsumeRankingListService extends CommonService {
 /*        CommonSearchBean csb=new CommonSearchBean("ddw_consume_ranking_list","consumePrice desc","t1.consumePrice,ct0.nickName,ct0.headImgUrl",page.getStartRow(),page.getEndRow(),searchMap,
                 new CommonChildBean("ddw_userinfo","id","consumeUserId",null)
         );*/
-        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo","consumePrice desc","ct0.consumePrice,t1.nickName,t1.headImgUrl,ct1.level,ct1.gradeName ",page.getStartRow(),page.getEndRow(),searchMap,
-                new CommonChildBean("ddw_consume_ranking_list","consumeUserId","id",null),
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo","consumePrice desc","ct0.consumePrice,t1.nickName,t1.headImgUrl,ct1.level,ct1.gradeName ",page.getStartRow(),page.getEndRow(),null,
+                new CommonChildBean("ddw_consume_ranking_list","consumeUserId","id",searchMap),
                 new CommonChildBean("ddw_grade","id","gradeId",null)
         );
         List voList=this.getCommonMapper().selectObjects(csb);
         if(voList!=null){
-            CacheUtil.put("publicCache","ranking-list-"+incomeTypeEnum.getCode()+"-"+userId,voList);
+            CacheUtil.put("publicCacheTimer","ranking-list-"+incomeTypeEnum.getCode()+"-"+userId,voList);
         }else{
             voList=new ArrayList();
         }
