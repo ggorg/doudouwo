@@ -553,7 +553,18 @@ public class ReviewPracticeService extends CommonService {
         JSONObject json = new JSONObject();
         cb5.setJoinName("left");
         Page p = this.commonPage(page.getPageNo(),10,csb);
-        json.put("list",p.getResult());
+        List<Map> list=p.getResult();
+        if(list==null || list.isEmpty()){
+            list=new ArrayList();
+        }else{
+            list.forEach(a->{
+                if(a.containsKey("orderNo") && a.get("orderNo").toString().length()>16){
+                    a.replace("orderNo",a.get("orderNo").toString().substring(16));
+                }
+
+            });
+        }
+        json.put("list",list);
         return new ResponseVO(1,"成功",json);
     }
 
@@ -573,7 +584,12 @@ public class ReviewPracticeService extends CommonService {
         if(list==null || list.isEmpty()){
             list=new ArrayList();
         }else{
-            list.forEach(a->a.replace("orderNo",a.get("orderNo").toString().substring(16)));
+            list.forEach(a->{
+                if(a.containsKey("orderNo") && a.get("orderNo").toString().length()>16){
+                    a.replace("orderNo",a.get("orderNo").toString().substring(16));
+                }
+
+            });
         }
         json.put("list",list);
         return new ResponseVO(1,"成功",json);
