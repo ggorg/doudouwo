@@ -162,8 +162,18 @@ public class ReviewPracticeService extends CommonService {
         //TODO 根据订单数量倒序
 //        List<Map> practiceList = practiceMapper.getListByOrder(storeId,start,end,weekList);
 //        if(practiceList !=null && practiceList.size()>0){
+//            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeOrderListInIds(userIdList,storeId,start,end,weekList);
 //            for(Map m:practiceList){
-//                AppIndexPracticeVO appIndexPracticeVO = new AppIndexPracticeVO();
+//                Integer pid = Integer.valueOf(m.get("practiceId").toString());
+//                Integer oc = Integer.valueOf(m.get("ordersCount").toString());
+//                ListIterator<AppIndexPracticeVO> appIndexPractice2Iterator = appIndexPractice2.listIterator();
+//                while (appIndexPractice2Iterator.hasNext()){
+//                    AppIndexPracticeVO appIndexPracticeVO = appIndexPractice2Iterator.next();
+//                    if(appIndexPracticeVO.getUserId().equals(pid)){
+//                        appIndexPracticeVO.setOrdersCount(oc);
+//                    }
+//                }
+//                appIndexPractice1.addAll(appIndexPractice2);
 //            }
 //        }
 
@@ -526,7 +536,11 @@ public class ReviewPracticeService extends CommonService {
         if(list==null || list.isEmpty()){
             list=new ArrayList();
         }else{
-            list.forEach(a->a.replace("orderNo",a.get("orderNo").toString().substring(16)));
+            list.forEach(a->{
+                if(a.get("orderNo")!=null){
+                    a.replace("orderNo",a.get("orderNo").toString().substring(16));
+                }
+            });
         }
         json.put("list",list);
         return new ResponseVO(1,"成功",json);
