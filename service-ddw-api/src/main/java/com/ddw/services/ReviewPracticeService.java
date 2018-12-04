@@ -156,26 +156,9 @@ public class ReviewPracticeService extends CommonService {
         //取按订单排序
         if(pageSize-appIndexPractice1.size()>0){
             end = pageSize-appIndexPractice1.size();
-            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeHaveOrderListByNoInIds(userIdList,storeId,start,end,null,weekList);
+            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getListByOrder(storeId,start,end,weekList);
             appIndexPractice1.addAll(appIndexPractice2);
         }
-        //TODO 根据订单数量倒序
-//        List<Map> practiceList = practiceMapper.getListByOrder(storeId,start,end,weekList);
-//        if(practiceList !=null && practiceList.size()>0){
-//            List<AppIndexPracticeVO> appIndexPractice2 = practiceMapper.getPracticeOrderListInIds(userIdList,storeId,start,end,weekList);
-//            for(Map m:practiceList){
-//                Integer pid = Integer.valueOf(m.get("practiceId").toString());
-//                Integer oc = Integer.valueOf(m.get("ordersCount").toString());
-//                ListIterator<AppIndexPracticeVO> appIndexPractice2Iterator = appIndexPractice2.listIterator();
-//                while (appIndexPractice2Iterator.hasNext()){
-//                    AppIndexPracticeVO appIndexPracticeVO = appIndexPractice2Iterator.next();
-//                    if(appIndexPracticeVO.getUserId().equals(pid)){
-//                        appIndexPracticeVO.setOrdersCount(oc);
-//                    }
-//                }
-//                appIndexPractice1.addAll(appIndexPractice2);
-//            }
-//        }
 
 //        if(pageSize-appIndexPractice1.size()>0){
 //            end = pageSize-appIndexPractice1.size();
