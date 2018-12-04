@@ -208,6 +208,7 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"当前桌号已被使用",null);
 
         }
+
         ResponseVO res=this.isOkCreateRoom(token);
         if(res.getReCode()!=1){
             return new ResponseApiVO(-2,res.getReMsg(),null);
@@ -234,6 +235,16 @@ public class GoodFriendPlayService extends CommonService {
         String groupId=storeId+"_"+TokenUtil.getUserId(token)+"_"+ RandomStringUtils.randomNumeric(5);
         map.put("groupId",IMApiUtil.createGroup((String)TokenUtil.getUserObject(token),groupId,dto.getName()));
         ResponseVO vo=this.commonInsertMap("ddw_goodfriendplay_room",map);
+        Map paramMap=new HashMap();
+        paramMap.put("userId",TokenUtil.getUserId(token));
+        paramMap.put("roomId",vo.getData());
+        paramMap.put("disabled",DisabledEnum.disabled0.getCode());
+        paramMap.put("createTime",new Date());
+        paramMap.put("updateTime",new Date());
+        paramMap.put("roomOwner",TokenUtil.getUserId(token));
+        paramMap.put("joinOffLine",JoinOffLineStatusEnum.Status1.getCode());
+        paramMap.put("openId",TokenUtil.getUserObject(token));
+        this.commonInsertMap("ddw_goodfriendplay_room_member",paramMap);
         Map mapret=new HashMap();
         mapret.put("roomCode",vo.getData());
         mapret.put("groupId",groupId);
@@ -263,9 +274,7 @@ public class GoodFriendPlayService extends CommonService {
         }
         Integer status=(Integer) callMap.get("status");
         //Integer roomId=TokenUtil.getRoomId(token);
-        if(checkRoomMember(token)){
-            return new ResponseApiVO(-2,"请离开别的开桌再申请",null);
-        }
+
         if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(status)){
             return new ResponseApiVO(-2,"已经约玩开桌中",null);
         }else if(GoodFriendPlayRoomStatusEnum.status20.getCode().equals(status)){
@@ -307,16 +316,7 @@ public class GoodFriendPlayService extends CommonService {
             updateMap.put("peopleMaxNum",dto.getPeopleMaxNum());
         }
         this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",updateMap,"id",(Integer)callMap.get("id"));
-        Map paramMap=new HashMap();
-        paramMap.put("userId",TokenUtil.getUserId(token));
-        paramMap.put("roomId",(Integer)callMap.get("id"));
-        paramMap.put("disabled",DisabledEnum.disabled0.getCode());
-        paramMap.put("createTime",new Date());
-        paramMap.put("updateTime",new Date());
-        paramMap.put("roomOwner",TokenUtil.getUserId(token));
-        paramMap.put("joinOffLine",JoinOffLineStatusEnum.Status1.getCode());
-        paramMap.put("openId",TokenUtil.getUserObject(token));
-        this.commonInsertMap("ddw_goodfriendplay_room_member",paramMap);
+
         TokenUtil.putRoomId(token,(Integer)callMap.get("id"));
         return new ResponseApiVO(1,"成功",null);
     }
