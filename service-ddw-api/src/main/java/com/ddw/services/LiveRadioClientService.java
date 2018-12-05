@@ -58,7 +58,7 @@ public class LiveRadioClientService  extends CommonService{
                 }
             }
         }else{
-            List<LiveRadioListVO> newList=lists.stream().filter(a->!groupId.equals(a.getGroupId())).collect(Collectors.toList());
+            List<LiveRadioListVO> newList=lists.stream().filter(a->groupId.equals(a.getGroupId())).collect(Collectors.toList());
             if(newList!=null && !newList.isEmpty()){
                 LiveRadioListVO vo= newList.get(0);
                 if(vo.getLiveRadioFlag()==1 || vo.getLiveRadioFlag().equals(1)){

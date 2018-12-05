@@ -2,8 +2,10 @@ package com.ddw;
 
 import com.ApiApplication;
 import com.ddw.beans.BiddingDTO;
+import com.ddw.dao.GoddessMapper;
 import com.ddw.services.BiddingService;
 import com.ddw.services.IncomeService;
+import com.ddw.services.LiveRadioClientService;
 import com.ddw.token.TokenUtil;
 import com.gen.common.util.CacheUtil;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,6 +28,11 @@ public class BiddingServiceTest {
     @Autowired
     private IncomeService incomeService;
 
+    @Autowired
+    private LiveRadioClientService liveRadioClientService;
+
+    @Autowired
+    private GoddessMapper goddessMapper;
     @Test
     public void testBidOrderInfo(){
         String token= TokenUtil.createToken("openid");
@@ -59,5 +67,13 @@ public class BiddingServiceTest {
     @Test
     public void testIncomeService()throws Exception{
         this.incomeService.handleGoddessIncome(1);
+    }
+    @Test
+    public void testliveRadioClientService()throws Exception{
+
+        List list=goddessMapper.liveGoddess(null,null,null,null);
+        CacheUtil.put("publicCache", "appIndexGoddess", list);
+        boolean flag=this.liveRadioClientService.getCurrentLiveRadioFlagByGroupId("1_8_180830214823");
+        System.out.println(flag);
     }
 }
