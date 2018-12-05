@@ -33,7 +33,7 @@ jQuery(document).ready(function(){
 	
 	
 	///// SHOW/HIDE NOTIFICATION /////
-	
+	/*
 	jQuery('.notification a').click(function(){
 		var t = jQuery(this);
 		var url = t.attr('href');
@@ -49,14 +49,14 @@ jQuery(document).ready(function(){
 			jQuery('.noticontent').hide();
 		}
 		return false;
-	});
+	});*/
 	
 	
 	
 	///// SHOW/HIDE BOTH NOTIFICATION & USERINFO WHEN CLICKED OUTSIDE OF THIS ELEMENT /////
 
 
-	jQuery(document).click(function(event) {
+	/*jQuery(document).click(function(event) {
 		var ud = jQuery('.userinfodrop');
 		var nb = jQuery('.noticontent');
 		
@@ -73,12 +73,12 @@ jQuery(document).ready(function(){
 			nb.remove();
 			jQuery('.notification').removeClass('active');
 		}
-	});
+	});*/
 	
 	
 	///// NOTIFICATION CONTENT /////
 	
-	jQuery('.notitab a').live('click', function(){
+	/*jQuery('.notitab a').live('click', function(){
 		var id = jQuery(this).attr('href');
 		jQuery('.notitab li').removeClass('current'); //reset current 
 		jQuery(this).parent().addClass('current');
@@ -89,33 +89,33 @@ jQuery(document).ready(function(){
 			
 		jQuery(id).show();
 		return false;
-	});
+	});*/
 
 
     handleMenu(jQuery(".togglemenu")[0],jQuery.cookie("menuAction")==null)
 	///// SHOW/HIDE VERTICAL SUB MENU /////	
-	
-	jQuery('.vernav > ul li a, .vernav2 > ul li a').each(function(){
-		var url = jQuery(this).attr('href');
-		jQuery(this).click(function(){
+/*
+    jQuery('.vernav > ul li a, .vernav2 > ul li a').each(function(){
+        var url = jQuery(this).attr('href');
+        jQuery(this).click(function(){
 
-			if(jQuery(url).length > 0) {
-				if(jQuery(url).is(':visible')) {
-					if(!jQuery(this).parents('div').hasClass('menucoll') &&
-					   !jQuery(this).parents('div').hasClass('menucoll2'))
-							jQuery(url).slideUp();
-				} else {
-					jQuery('.vernav ul ul, .vernav2 ul ul').each(function(){
-							jQuery(this).slideUp();
-					});
-					if(!jQuery(this).parents('div').hasClass('menucoll') &&
-					   !jQuery(this).parents('div').hasClass('menucoll2'))
-							jQuery(url).slideDown();
-				}
-				return false;	
-			}
-		});
-	});
+            if(jQuery(url).length > 0) {
+                if(jQuery(url).is(':visible')) {
+                    if(!jQuery(this).parents('div').hasClass('menucoll') &&
+                        !jQuery(this).parents('div').hasClass('menucoll2'))
+                        jQuery(url).slideUp();
+                } else {
+                    jQuery('.vernav ul ul, .vernav2 ul ul').each(function(){
+                        jQuery(this).slideUp();
+                    });
+                    if(!jQuery(this).parents('div').hasClass('menucoll') &&
+                        !jQuery(this).parents('div').hasClass('menucoll2'))
+                        jQuery(url).slideDown();
+                }
+                return false;
+            }
+        });
+    });*/
 	
 	
 	///// SHOW/HIDE SUB MENU WHEN MENU COLLAPSED /////
