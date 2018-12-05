@@ -198,6 +198,7 @@ public class WalletService extends CommonService {
     public ResponseApiVO getGiftPackge(Integer userid){
         Map search=new HashMap();
         search.put("userId",userid);
+        search.put("currentNum,>",0);
 
 
         CommonSearchBean csb=new CommonSearchBean("ddw_packet_gift",null,"t1.currentNum num ,t1.id giftCode,ct0.dgName name,ct0.dgImgPath imgUrl",null,null,search,
