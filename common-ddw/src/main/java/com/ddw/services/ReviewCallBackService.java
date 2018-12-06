@@ -73,7 +73,8 @@ public class ReviewCallBackService extends CommonService {
             Map roomUpdate=new HashMap();
             roomUpdate.put("status",GoodFriendPlayRoomStatusEnum.status21.getCode());
             roomUpdate.put("updateTime",new Date());
-            roomUpdate.put("disabled",DisabledEnum.disabled0.getCode());
+            roomUpdate.put("endTime",new Date());
+            roomUpdate.put("disabled",DisabledEnum.disabled1.getCode());
             this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",roomUpdate,"id",Integer.parseInt(rb.getBusinessCode()));
             return new ResponseVO(1,"成功",null);
 
