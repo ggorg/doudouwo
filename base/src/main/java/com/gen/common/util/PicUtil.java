@@ -16,10 +16,11 @@ import java.util.Set;
 
 public class PicUtil {
     public static String merge(Set<String> imgsSet, String targetFilePath)throws Exception{
-        BufferedImage image=new BufferedImage(110,110,BufferedImage.TYPE_3BYTE_BGR);
-        int baseN=52;
-        int baseN_34=34;
-        int mainN=110;
+        int baseN=52*2;
+        int baseN_34=34*2;
+        int mainN=213;
+        BufferedImage image=new BufferedImage(mainN,mainN,BufferedImage.TYPE_3BYTE_BGR);
+
         int n=0;
 
         Graphics2D g=image.createGraphics();
@@ -125,10 +126,10 @@ public class PicUtil {
         List l=new ArrayList();
         l.add("D:\\data\\rs\\1513962411683.jpg");
         l.add("D:\\data\\rs\\1514029004171.jpg");
-        l.add("D:\\data\\rs\\20181014154530938.jpg");
-        l.add("D:\\data\\rs\\20181114004128754.jpg");
-        l.add("D:\\data\\rs\\20181104201309066.jpg");
-        l.add("D:\\data\\rs\\20180415013050610-ico.jpg");
+       // l.add("D:\\data\\rs\\20181014154530938.jpg");
+      //  l.add("D:\\data\\rs\\20181114004128754.jpg");
+       // l.add("D:\\data\\rs\\20181104201309066.jpg");
+       // l.add("D:\\data\\rs\\20180415013050610-ico.jpg");
 
 
 
