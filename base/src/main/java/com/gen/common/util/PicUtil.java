@@ -76,7 +76,21 @@ public class PicUtil {
                         centerImage.flush();
                     }
 
-                }else if(size>5 && i<9){
+                }else if(size==6){
+                    if(n>2){
+                        n=0;
+                    }
+                    if(i<=2){
+                        g.drawImage(img, n*baseN_34+(n+1)*2, mainN/3-baseN_34/2, baseN_34, baseN_34, null);
+
+                    }else{
+
+                        g.drawImage(img, n*baseN_34+(n+1)*2, mainN/3-baseN_34/2+baseN_34+2, baseN_34, baseN_34, null);
+
+                    }
+                    img.flush();
+                    n++;
+                }else if(size>6 && i<9){
                     int y=0;
                     if(i<=2){
                         y=2;
@@ -109,11 +123,13 @@ public class PicUtil {
     public static void main(String[] args)throws Exception {
         //"C:\\Users\\Administrator\\Desktop\\ad7c096f7c3735784bb2809d82d24a09.jpg"
         List l=new ArrayList();
-        l.add("C:\\Users\\Administrator\\Desktop\\ad7c096f7c3735784bb2809d82d24a09.jpg");
-        l.add("C:\\Users\\Administrator\\Desktop\\ad7c096f7c3735784bb2809d82d24a09.jpg");
-        l.add("C:\\Users\\Administrator\\Desktop\\ad7c096f7c3735784bb2809d82d24a09.jpg");
-        l.add("C:\\Users\\Administrator\\Desktop\\222.jpg");
-        l.add("C:\\Users\\Administrator\\Desktop\\222.jpg");
+        l.add("D:\\data\\rs\\1513962411683.jpg");
+        l.add("D:\\data\\rs\\1514029004171.jpg");
+        l.add("D:\\data\\rs\\20181014154530938.jpg");
+        l.add("D:\\data\\rs\\20181114004128754.jpg");
+        l.add("D:\\data\\rs\\20181104201309066.jpg");
+        l.add("D:\\data\\rs\\20180415013050610-ico.jpg");
+
 
 
         PicUtil.merge(new HashSet<>(l),"D:\\test.jpg");
