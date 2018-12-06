@@ -115,6 +115,24 @@ public class OrderPO implements Serializable {
      */
     private Integer doCouponCost;
 
+    /**
+     * 原价
+     */
+    private Integer doOrigCost;
+
+    /**
+     * 合成图片路径
+     */
+    private String doMergePicPath;
+
+    public String getDoMergePicPath() {
+        return doMergePicPath;
+    }
+
+    public void setDoMergePicPath(String doMergePicPath) {
+        this.doMergePicPath = doMergePicPath;
+    }
+
     public Integer getDoOrigActCost() {
         return doOrigActCost;
     }
@@ -131,10 +149,6 @@ public class OrderPO implements Serializable {
         this.doCouponCost = doCouponCost;
     }
 
-    /**
-     * 原价
-     */
-    private Integer doOrigCost;
 
     public Integer getDoStoreProportionCouponCost() {
         return doStoreProportionCouponCost;

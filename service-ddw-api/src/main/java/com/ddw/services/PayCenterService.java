@@ -9,7 +9,9 @@ import com.ddw.util.PayApiConstant;
 import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
+import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
+import com.gen.common.services.FileService;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.OrderUtil;
 import com.gen.common.util.Tools;
@@ -55,9 +57,14 @@ public class PayCenterService extends BaseOrderService {
     @Autowired
     private UserGradeService userGradeService;
 
+    @Autowired
+    private FileService fileService;
 
     @Autowired
     private DDWGlobals ddwGlobals;
+
+    @Autowired
+    private MainGlobals mainGlobals;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO searchPayStatus(String token,PayStatusDTO dto)throws Exception{
@@ -246,6 +253,7 @@ public class PayCenterService extends BaseOrderService {
         List<Map> insertList=null;
         PracticeOrderPO practiceOrderPO=null;
         Integer currentOrderId=null;
+        Set<String> imgs=null;
         //定金
         if(OrderTypeEnum.OrderType4.getCode().equals(orderType)){
             orderPO.setDoShipStatus(ShipStatusEnum.ShipStatus5.getCode());
@@ -347,7 +355,7 @@ public class PayCenterService extends BaseOrderService {
             List<Map> goodsPruductList=this.getCommonMapper().selectObjects(csb);
            // List<Map> goodsPruductList= this.commonObjectsBySearchCondition("ddw_goods_product",search);
             if(goodsPruductList==null || goodsPruductList.isEmpty()){
-                return new ResponseApiVO(-2,"货品不存在",null);
+                return new ResponseApiVO(-2,"商品不存在",null);
             }
             Map<Integer,Map> handleMap=new HashMap();
             goodsPruductList.forEach(a->{handleMap.put((Integer) a.get("id"),a);});
@@ -361,6 +369,9 @@ public class PayCenterService extends BaseOrderService {
             if(gradeId!=null){
                 dicount=this.userGradeService.getDiscount(gradeId);
                 orderPO.setDoDicount(dicount);
+            }
+            if(codesList.size()>1){
+                imgs=new HashSet<>();
             }
             for(Integer code:codesList){
                 if(!handleMap.containsKey(code)){
@@ -392,6 +403,7 @@ public class PayCenterService extends BaseOrderService {
                     dataMap.put("headImg",mVo.get("headImg"));
                     dataMap.put("gid",mVo.get("gId"));
                     dataMap.put("currentUpdateTime",(Date)mVo.get("updateTime"));
+                    if(imgs!=null)imgs.add(mVo.get("headImg").toString().replaceAll("(.*/rs/)(.*)",mainGlobals.getRsDir()+"$2"));
                     buyInProMap.put(code,dataMap);
                 }
 
@@ -460,6 +472,9 @@ public class PayCenterService extends BaseOrderService {
             Map insertM=null;
             Integer giftPrice=0;
             Integer num=null;
+            if(codesList.size()>1){
+                imgs=new HashSet<>();
+            }
             for(Integer code:codesList){
                 if(!buyInGoiftMap.containsKey(code)){
                     return new ResponseApiVO(-2,buyInGoiftMap.get(code).get("dgName")+"可能已下架",null);
@@ -490,6 +505,9 @@ public class PayCenterService extends BaseOrderService {
                     buyInProMap.put(code,insertM);
                     coutCost=coutCost+(giftPrice*num);
                     coutOrigCost=coutOrigCost+(price*num);
+                    if(imgs!=null){
+                        imgs.add(insertM.get("giftImg").toString().replaceAll("(.*/rs/)(.*)",mainGlobals.getRsDir()+"$2"));
+                    }
                 }
 
 
@@ -576,6 +594,12 @@ public class PayCenterService extends BaseOrderService {
         if(currentOrderId==null){
             if(orderPO.getDoCost()==null || orderPO.getDoCost()<=0){
                 return new ResponseApiVO(-2,"支付金额异常",null);
+            }
+            if(imgs!=null && imgs.size()>1){
+                StringBuilder imgBuiler=new StringBuilder();
+                imgBuiler.append(mainGlobals.getRsDir()).append("order/").append(orderPO.getDoOrderDate()).append(".jpg");
+                fileService.mergeImages(imgs,imgBuiler.toString());
+                orderPO.setDoMergePicPath(imgBuiler.toString().replaceAll("(.*)(/rs/.*)",ddwGlobals.getCallBackHost()+"$2"));
             }
             insertResponseVO=this.commonInsert("ddw_order",orderPO);
         }else{
@@ -1011,6 +1035,40 @@ public class PayCenterService extends BaseOrderService {
         }
 
         return new ResponseVO(1,"成功",couponMap);
+    }
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public void handleOrderImg()throws Exception{
+
+        StringBuilder imgBuiler=null;
+        Map searchMap=new HashMap();
+        searchMap.put("doType,in","(1,6)");
+
+       List<Map> list=this.commonObjectsBySearchCondition("ddw_order",searchMap);
+       if(list!=null){
+           Set<String> s=null;
+           for(Map orderM:list){
+               List<Map> orderV=this.commonObjectsBySingleParam("ddw_order_view","orderId",orderM.get("id"));
+               if(orderV!=null){
+                   s=new HashSet<>();
+                   imgBuiler=new StringBuilder();
+                   for(Map vm:orderV){
+                       if(vm.containsKey("headImg")){
+
+                           s.add(vm.get("headImg").toString().replaceAll("(.*/rs/)(.*)",mainGlobals.getRsDir()+"$2"));
+                       }
+                   }
+                   if(s!=null && s.size()>1){
+                       imgBuiler.append(mainGlobals.getRsDir()).append("order/").append(orderM.get("doOrderDate")).append(".jpg");
+                       System.out.println(s);
+                       fileService.mergeImages(s,imgBuiler.toString());
+                       Map upda=new HashMap();
+                       upda.put("doMergePicPath",imgBuiler.toString().replaceAll("(.*)(/rs/.*)",ddwGlobals.getCallBackHost()+"$2"));
+                       this.commonUpdateBySingleSearchParam("ddw_order",upda,"id",orderM.get("id"));
+                   }
+               }
+           }
+       }
+
     }
     public static void main(String[] args) {
         Integer[] id={1,2,3,4};

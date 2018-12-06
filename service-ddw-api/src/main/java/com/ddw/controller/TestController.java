@@ -1,6 +1,7 @@
 package com.ddw.controller;
 
 import com.ddw.beans.ResponseApiVO;
+import com.ddw.services.PayCenterService;
 import com.ddw.services.StraregyService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
@@ -22,6 +23,9 @@ public class TestController {
     private StraregyService straregyService;
     @Autowired
     private UserInfoService userInfoService;
+
+    @Autowired
+    private PayCenterService  payCenterService;
 
     @PostMapping("/recharge/{token}")
     @ResponseBody
@@ -67,4 +71,21 @@ public class TestController {
         }
     }
 
+    @ApiOperation(value = "订单生成合并图片")
+    @PostMapping("/mergeOrderImg/{token}")
+    @ResponseBody
+    @Token
+    public ResponseApiVO mergeOrderImg(@PathVariable String token,
+                                    @RequestParam(value = "cmd") String cmd){
+        try{
+            if("84837891".equals(cmd)){
+                payCenterService.handleOrderImg();
+            }
+            return new ResponseApiVO(1,"成功",null);
+
+        }catch (Exception e){
+            logger.error("TestController->mergeOrderImg-》系统异常",e);
+            return new ResponseApiVO(-1,"失败",null);
+        }
+    }
 }

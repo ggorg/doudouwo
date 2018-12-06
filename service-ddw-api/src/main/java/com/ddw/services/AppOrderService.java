@@ -55,8 +55,8 @@ public class AppOrderService extends CommonService {
         if(omainrderList==null || omainrderList.isEmpty()){
             return new ResponseApiVO(2,"没有订单数据",new ListVO(new ArrayList()));
         }
-        final Map<Integer,Integer> orderIdMap=new HashMap();
-        omainrderList.forEach(a->orderIdMap.put((Integer)a.get("id"),(Integer)a.get("doCost")));
+        final Map<Integer,Map> orderIdMap=new HashMap();
+        omainrderList.forEach(a->orderIdMap.put((Integer)a.get("id"),a));
         map=new HashMap();
         map.put("orderId,in",orderIdMap.keySet().toString().replaceFirst("(\\[)(.+)(\\])","($2)"));
         List<Map> orderList=this.commonList("ddw_order_view","createTime desc",null,null,map);
@@ -64,6 +64,7 @@ public class AppOrderService extends CommonService {
         List dataList=new ArrayList();
         Map<Integer,OrderViewVO> handleMap=new HashMap();
         Integer orderId=null;
+        String doMergePicPath=null;
         for(Map m:orderList){
             orderId=(Integer)m.get("orderId");
             if(!OrderTypeEnum.OrderType7.getCode().equals(m.get("orderType")) && handleMap.containsKey(orderId)){
@@ -71,6 +72,13 @@ public class AppOrderService extends CommonService {
                 ov.setName(ov.getName()+" "+m.get("name"));
                 ov.setDesc(ov.getDesc()+" "+m.get("name")+" *"+m.get("num"));
                 //ov.setPrice(orderIdMap.get(orderId));
+                if( orderIdMap.get(orderId).containsKey("doMergePicPath")){
+                    doMergePicPath=(String) orderIdMap.get(orderId) .get("doMergePicPath");
+                    if(StringUtils.isNotBlank(doMergePicPath)){
+                        ov.setHeadImg(doMergePicPath);
+                    }
+                }
+
                 ov.setType(1);
                 ov.setId(-orderId);
             }else{
@@ -85,7 +93,7 @@ public class AppOrderService extends CommonService {
                     orderViewVO.setPrice((Integer) m.get("price"));
                 }else{
                     orderViewVO.setShipStatusName(ClientShipStatusEnum.getName(orderViewVO.getShipStatus()));
-                    orderViewVO.setPrice(orderIdMap.get(orderId));
+                    orderViewVO.setPrice((Integer) orderIdMap.get(orderId).get("doCost"));
                 }
                 orderViewVO.setOrderTypeName(OrderTypeEnum.getName(orderViewVO.getOrderType()));
                 orderViewVO.setOrderNo(orderViewVO.getOrderNo().substring(16));
