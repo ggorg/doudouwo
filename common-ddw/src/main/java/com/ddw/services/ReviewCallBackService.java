@@ -49,7 +49,8 @@ public class ReviewCallBackService extends CommonService {
             Integer roomId=Integer.parseInt(rb.getBusinessCode());
             Map search=new HashMap();
             search.put("id",roomId);
-            CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room",null,"ct0.id,ct0.tableNumber,ct0.status",null,null,new HashMap(),new CommonChildBean("ddw_goodfriendplay_tables","id","tableCode",null));
+            CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room",null,"ct0.id,ct0.tableNumber,ct0.status",null,null,search,
+                    new CommonChildBean("ddw_goodfriendplay_tables","id","tableCode",null));
             List<Map> data=this.getCommonMapper().selectObjects(csb);
             if(data==null || data.isEmpty()){
                 return new ResponseVO(-2,"业务参数异常",null);
@@ -72,6 +73,7 @@ public class ReviewCallBackService extends CommonService {
             Map roomUpdate=new HashMap();
             roomUpdate.put("status",GoodFriendPlayRoomStatusEnum.status21.getCode());
             roomUpdate.put("updateTime",new Date());
+            roomUpdate.put("disabled",DisabledEnum.disabled0.getCode());
             this.commonUpdateBySingleSearchParam("ddw_goodfriendplay_room",roomUpdate,"id",Integer.parseInt(rb.getBusinessCode()));
             return new ResponseVO(1,"成功",null);
 

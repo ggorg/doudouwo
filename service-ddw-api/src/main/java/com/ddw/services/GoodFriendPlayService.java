@@ -69,7 +69,7 @@ public class GoodFriendPlayService extends CommonService {
         }else{
             gfp.setOnLineList(onlist);
         }*/
-        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,"!="+GoodFriendPlayRoomStatusEnum.status22.getCode(),null,page.getStartRow(),page.getEndRow());
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),null,"<"+GoodFriendPlayRoomStatusEnum.status21.getCode(),null,page.getStartRow(),page.getEndRow());
         if(offlist==null || offlist.isEmpty()){
             gfp.setRoomList(new ArrayList());
         }else{
@@ -136,7 +136,7 @@ public class GoodFriendPlayService extends CommonService {
     public ResponseApiVO getRoomRecord(String token,PageNoDTO dto)throws Exception{
         Page page=new Page(dto.getPageNo()==null?1:dto.getPageNo(),10);
 
-        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(null,DisabledEnum.disabled0.getCode(),null,null,TokenUtil.getUserId(token),page.getStartRow(),page.getEndRow());
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(null,null,null,null,TokenUtil.getUserId(token),page.getStartRow(),page.getEndRow());
 
         if(offlist==null || offlist.isEmpty()){
             return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
@@ -160,7 +160,7 @@ public class GoodFriendPlayService extends CommonService {
         Integer storeId= TokenUtil.getStoreId(token);
         GoodFriendPlayChatCenterVO gfp=this.getChatCenterBean(storeId);
 
-        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),dto.getType(),dto.getStatus()==null?"!="+GoodFriendPlayRoomStatusEnum.status22.getCode():"= "+dto.getStatus(),null,page.getStartRow(),page.getEndRow());
+        List<GoodFriendPlayRoomListVO> offlist=this.goodFriendPlayMapper.getRoomList(gfp.getId(),DisabledEnum.disabled0.getCode(),dto.getType(),dto.getStatus()==null?"<"+GoodFriendPlayRoomStatusEnum.status21.getCode():"= "+dto.getStatus(),null,page.getStartRow(),page.getEndRow());
         if(offlist==null || offlist.isEmpty()){
             return new ResponseApiVO(1,"成功",new ListVO<>(new ArrayList<>()));
         }
