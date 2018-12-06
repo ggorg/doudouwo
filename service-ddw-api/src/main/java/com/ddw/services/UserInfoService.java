@@ -62,7 +62,6 @@ public class UserInfoService extends CommonService {
         UserInfoPO userInfoPO = new UserInfoPO();
         logger.info("UserInfoService注册的userInfoDTO:"+BeanToMapUtil.beanToMap(userInfoDTO));
         PropertyUtils.copyProperties(userInfoPO,userInfoDTO);
-        logger.info("UserInfoService注册copyProperties的userInfoPO:"+BeanToMapUtil.beanToMap(userInfoPO));
         userInfoPO.setId(null);
         userInfoPO.setGradeId(1);
         userInfoPO.setUserName(userInfoDTO.getNickName());
@@ -74,6 +73,7 @@ public class UserInfoService extends CommonService {
         userInfoPO.setFirstLoginFlag(0);
         userInfoPO.setCreateTime(new Date());
         userInfoPO.setUpdateTime(new Date());
+        logger.info("UserInfoService注册的userInfoPO:"+BeanToMapUtil.beanToMap(userInfoPO));
         ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
         if(re.getReCode()==1){
             walletService.createWallet((Integer) re.getData());
