@@ -57,4 +57,8 @@ public class UserInfoService extends CommonService {
         return this.commonInsertMap("ddw_my_wallet",wallet);
     }
 
+    public long countUser(String openid)throws Exception{
+        return super.commonCountBySingleParam("ddw_userinfo","openid",openid);
+    }
+
 }
