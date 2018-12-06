@@ -125,20 +125,22 @@ public class WeixinOauthController {
                     if(json.containsKey("param")){
                         String oldOpenid = oldBringingNewService.getOpenid(json.get("param").toString());
                         if(StringUtils.isNotBlank(oldOpenid)){
-                            logger.info("绑定老带新oldOpenid:["+oldOpenid+"]openid:["+openid+"]");
-                            oldBringingNewService.save(oldOpenid,openid,ui.getNickname(),ui.getHeadimgurl());
-                            //注册账号
-                            UserInfoDTO userInfoDTO = new UserInfoDTO();
-                            userInfoDTO.setHeadImgUrl(ui.getHeadimgurl());
-                            userInfoDTO.setNickName(ui.getNickname());
-                            userInfoDTO.setOpenid(ui.getUnionid());
-                            userInfoDTO.setRealOpenid(openid);
-                            userInfoDTO.setUnionID(ui.getUnionid());
-                            userInfoDTO.setUserName(ui.getNickname());
-                            userInfoDTO.setSex(Integer.valueOf(ui.getSex()));
-                            userInfoDTO.setRegisterType(1);
                             try {
-                                userInfoService.save(userInfoDTO);
+                                if (userInfoService.countUser(ui.getUnionid())==0){
+                                    logger.info("绑定老带新oldOpenid:["+oldOpenid+"]openid:["+openid+"]");
+                                    oldBringingNewService.save(oldOpenid,openid,ui.getNickname(),ui.getHeadimgurl());
+                                    //注册账号
+                                    UserInfoDTO userInfoDTO = new UserInfoDTO();
+                                    userInfoDTO.setHeadImgUrl(ui.getHeadimgurl());
+                                    userInfoDTO.setNickName(ui.getNickname());
+                                    userInfoDTO.setOpenid(ui.getUnionid());
+                                    userInfoDTO.setRealOpenid(openid);
+                                    userInfoDTO.setUnionID(ui.getUnionid());
+                                    userInfoDTO.setUserName(ui.getNickname());
+                                    userInfoDTO.setSex(Integer.valueOf(ui.getSex()));
+                                    userInfoDTO.setRegisterType(1);
+                                    userInfoService.save(userInfoDTO);
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 logger.error("WeixinOauthController->oauth->老带新注册新用户",e);
