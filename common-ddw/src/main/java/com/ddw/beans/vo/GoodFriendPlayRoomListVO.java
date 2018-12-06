@@ -31,7 +31,7 @@ public class GoodFriendPlayRoomListVO implements Serializable {
     @ApiModelProperty(name = "peopleMaxNum", value = "人数上限", example = "人数上限")
     private Integer peopleMaxNum;
 
-    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1，等待开桌：20,审批不通过：21，约玩结束：22", example = "预约中：0，约战中：1，等待开桌：20,审批不通过：21,约玩结束：22")
+    @ApiModelProperty(name = "status", value = "预约中：0，约战中：1，等待开桌：20,审批不通过：21，约玩结束：22,房间已解散：23", example = "预约中：0，约战中：1，等待开桌：20,审批不通过：21,约玩结束：22,房间已解散：23")
     private Integer status;
     @ApiModelProperty(name = "type", value = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100", example = "王者荣耀：1，刺激战场：2，全军出击：3，炉石传说：4,狼人杀:5,其它:100")
     private Integer type;
@@ -58,7 +58,16 @@ public class GoodFriendPlayRoomListVO implements Serializable {
     private Date chatRoomEndTime;
     @JsonIgnore
     private Date startTime;
+    @JsonIgnore
+    private Integer disabled;
 
+    public Integer getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Integer disabled) {
+        this.disabled = disabled;
+    }
 
     public String getHeadImgs() {
         return headImgs;

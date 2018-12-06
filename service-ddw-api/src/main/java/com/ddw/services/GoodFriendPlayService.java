@@ -151,6 +151,9 @@ public class GoodFriendPlayService extends CommonService {
                 }else{
                     a.setPlayUseTime("未开始");
                 }
+                if(DisabledEnum.disabled1.getCode().equals(a.getDisabled()) && !GoodFriendPlayRoomStatusEnum.status21.getCode().equals(a.getStatus())){
+                    a.setStatus(23);
+                }
             });
         }
         return new ResponseApiVO(1,"成功",new ListVO<>(offlist));

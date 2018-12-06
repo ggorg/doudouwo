@@ -12,6 +12,7 @@
         t1.STATUS,
         t1.peopleMaxNum,
         t1.type,
+        t1.disabled,
         t1.startTime,
         (case  when t1.STATUS=22 then -1 else t1.STATUS end) as statusSort,
         ct1.headImgs,
