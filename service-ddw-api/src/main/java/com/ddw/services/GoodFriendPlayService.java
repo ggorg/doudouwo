@@ -237,7 +237,7 @@ public class GoodFriendPlayService extends CommonService {
         map.put("roomOwnerOpenId",TokenUtil.getUserObject(token));
         String groupId=storeId+"_"+TokenUtil.getUserId(token)+"_"+ RandomStringUtils.randomNumeric(5);
         map.put("groupId",IMApiUtil.createGroup((String)TokenUtil.getUserObject(token),groupId,dto.getName()));
-        ResponseVO vo=this.commonInsertMap("ddw_goodfriendplay_room",map);
+        ResponseVO<Integer> vo=this.commonInsertMap("ddw_goodfriendplay_room",map);
         Map paramMap=new HashMap();
         paramMap.put("userId",TokenUtil.getUserId(token));
         paramMap.put("roomId",vo.getData());
@@ -251,7 +251,7 @@ public class GoodFriendPlayService extends CommonService {
         Map mapret=new HashMap();
         mapret.put("roomCode",vo.getData());
         mapret.put("groupId",groupId);
-
+        TokenUtil.putRoomId(token,vo.getData());
         return new ResponseApiVO(1,"成功",mapret);
     }
     public ResponseApiVO goIntoMyRoom(String token){
