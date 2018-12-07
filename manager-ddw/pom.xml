@@ -13,12 +13,7 @@
     <artifactId>manager-ddw</artifactId>
     <version>1.0-SNAPSHOT</version>
     <dependencies>
-        <dependency>
-            <groupId>gen</groupId>
-            <artifactId>base</artifactId>
-            <version>1.0-SNAPSHOT</version>
 
-        </dependency>
         <dependency>
             <groupId>gen</groupId>
             <artifactId>common-ddw</artifactId>
