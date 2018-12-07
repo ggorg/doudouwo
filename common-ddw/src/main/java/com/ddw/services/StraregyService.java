@@ -225,7 +225,7 @@ public class StraregyService extends CommonService {
             }
         }
 
-        if(gradeSinglePO.getSort() > gradePO.getSort()){
+        if(gradeSinglePO.getSort() > gradePO.getSort() || gradeCumulationPO.getSort() > gradePO.getSort()){
             if(gradeSinglePO.getSort() > gradeCumulationPO.getSort()){
                 userInfoPO.setGradeId(gradeSinglePO.getId());
             }else{
@@ -234,15 +234,6 @@ public class StraregyService extends CommonService {
             //更新会员等级
             this.update(userInfoPO);
             //根据升级对应等级,赠送老会员优惠券
-            this.setOldBringingNewCoupon(userInfoPO);
-        }else if(gradeCumulationPO.getSort() > gradePO.getSort()){
-            if(gradeSinglePO.getSort() > gradeCumulationPO.getSort()){
-                userInfoPO.setGradeId(gradeSinglePO.getId());
-            }else{
-                userInfoPO.setGradeId(gradeCumulationPO.getId());
-            }
-            //根据升级对应等级,赠送老会员优惠券
-            this.update(userInfoPO);
             this.setOldBringingNewCoupon(userInfoPO);
         }
         //更新赠送逗币

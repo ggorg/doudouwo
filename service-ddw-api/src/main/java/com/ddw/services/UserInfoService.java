@@ -60,7 +60,6 @@ public class UserInfoService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO save(UserInfoDTO userInfoDTO)throws Exception{
         UserInfoPO userInfoPO = new UserInfoPO();
-        logger.info("UserInfoService注册的userInfoDTO:"+BeanToMapUtil.beanToMap(userInfoDTO));
         PropertyUtils.copyProperties(userInfoPO,userInfoDTO);
         userInfoPO.setId(null);
         userInfoPO.setGradeId(1);
@@ -73,7 +72,8 @@ public class UserInfoService extends CommonService {
         userInfoPO.setFirstLoginFlag(0);
         userInfoPO.setCreateTime(new Date());
         userInfoPO.setUpdateTime(new Date());
-        logger.info("UserInfoService注册的userInfoPO:"+BeanToMapUtil.beanToMap(userInfoPO));
+        userInfoPO.setUnionID(userInfoDTO.getUnionID());
+        userInfoPO.setRealOpenid(userInfoDTO.getRealOpenid());
         ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
         if(re.getReCode()==1){
             walletService.createWallet((Integer) re.getData());
@@ -469,6 +469,14 @@ public class UserInfoService extends CommonService {
         userInfoPO.setUpdateTime(new Date());
         Map updatePoMap= BeanToMapUtil.beanToMap(userInfoPO);
         return this.commonUpdateBySingleSearchParam("ddw_userinfo",updatePoMap,"id",userInfoPO.getId());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
+    public ResponseVO updateInviteCode(UserInfoVO userInfoVO)throws Exception{
+        Map updatePoMap= new HashMap<>();
+        updatePoMap.put("inviteCode",userInfoVO.getInviteCode());
+        updatePoMap.put("updateTime",new Date());
+        return this.commonUpdateBySingleSearchParam("ddw_userinfo",updatePoMap,"openid",userInfoVO.getOpenid());
     }
 
     //根据用户id生成邀请码
