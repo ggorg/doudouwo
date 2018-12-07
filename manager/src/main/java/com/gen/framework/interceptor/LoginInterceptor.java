@@ -6,6 +6,7 @@ import com.gen.framework.util.ToolsExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,9 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     @Value("${gen.framework.manager.url.prefix:}")
     private String managerPrefixUrls;
+
+    @Value("${manager.v:1}")
+    private String v;
    // private List managerPrefixUrlsList;
     @Autowired
     private SysManagerService sysManagerService;
@@ -74,17 +78,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 
         return true;
     }
-    /*public void postHandle(
+    public void postHandle(
             HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
             throws Exception {
         if(modelAndView!=null){
-            System.out.println(modelAndView.getViewName());
-
-
-            modelAndView.setView(null);
-           // modelAndView.setViewName("pages/manager/common/404");
+            modelAndView.addObject("v",v);
         }
-        //System.out.println(modelAndView.getView().getContentType());
-       // modelAndView.set
-    }*/
+
+    }
 }
