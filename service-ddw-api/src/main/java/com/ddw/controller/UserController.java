@@ -81,7 +81,7 @@ public class UserController {
                     userVO.setLiveRadioFlag(0);
                     userVO.setUserSign(ts.createSign(userVO.getOpenid()));
                     TokenUtil.putUserInfo(token, userVO);
-                    userInfoService.update(userVO);//更新邀请码
+                    userInfoService.updateInviteCode(userVO);//更新邀请码
                     return new ResponseApiVO(1, "注册成功", userVO);
                 } else {
                     List<PhotographPO> photographList = userInfoService.queryPhotograph(userVO.getId());
