@@ -17,6 +17,7 @@ public class UserInfoPO {
     private String label;
     private String interest;
     private String job;
+    private Integer age;
     private String starSign;
     private String signature;
     private String province;
@@ -33,6 +34,7 @@ public class UserInfoPO {
     private Integer goddessFlag;
     private Integer practiceFlag;
     private Integer firstRechargeFlag;
+    private Integer firstLoginFlag;
     private Date createTime;
     private Date updateTime;
 
@@ -146,6 +148,14 @@ public class UserInfoPO {
 
     public void setJob(String job) {
         this.job = job;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getStarSign() {
@@ -264,6 +274,10 @@ public class UserInfoPO {
         return practiceFlag;
     }
 
+    public void setPracticeFlag(Integer practiceFlag) {
+        this.practiceFlag = practiceFlag;
+    }
+
     public Integer getFirstRechargeFlag() {
         return firstRechargeFlag;
     }
@@ -272,8 +286,12 @@ public class UserInfoPO {
         this.firstRechargeFlag = firstRechargeFlag;
     }
 
-    public void setPracticeFlag(Integer practiceFlag) {
-        this.practiceFlag = practiceFlag;
+    public Integer getFirstLoginFlag() {
+        return firstLoginFlag;
+    }
+
+    public void setFirstLoginFlag(Integer firstLoginFlag) {
+        this.firstLoginFlag = firstLoginFlag;
     }
 
     public Date getCreateTime() {

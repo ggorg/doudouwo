@@ -3,7 +3,6 @@ package com.ddw;
 import com.ApiApplication;
 import com.ddw.beans.CodeDTO;
 import com.ddw.beans.ResponseApiVO;
-import com.ddw.beans.UserInfoPO;
 import com.ddw.beans.WalletDealRecordDTO;
 import com.ddw.services.LiveRadioClientService;
 import com.ddw.services.UserInfoService;

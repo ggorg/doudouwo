@@ -1,9 +1,9 @@
 package com.weixin.services;
 
+import com.ddw.beans.UserInfoPO;
 import com.gen.common.services.CommonService;
 import com.gen.common.vo.ResponseVO;
 import com.weixin.entity.UserInfoDTO;
-import com.weixin.entity.UserInfoPO;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
