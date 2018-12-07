@@ -214,7 +214,54 @@ public class IMApiUtil {
 
        return for5Sends(sb,param);
 
+    }
+    public static String getUserGrade(List accounts,List tagList)throws Exception{
+        StringBuilder sb=new StringBuilder();
+        sb.append(baseUri);
+        sb.append("/profile/portrait_get");
+        sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
 
+
+        Map baseMap=new HashMap();
+        baseMap.put("To_Account",accounts);
+        baseMap.put("TagList",tagList);
+        String callStr=HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(baseMap));
+        if(StringUtils.isBlank(callStr)){
+            throw new GenException("接取用户信息失败::"+accounts+","+tagList);
+        }
+        JSONObject jsonObject=JSON.parseObject(callStr);
+        if(!jsonObject.containsKey("ActionStatus") || !"OK".equals(jsonObject.getString("ActionStatus")) || jsonObject.getInteger("ErrorCode")>0){
+            throw new GenException("接取用户信息失败::"+accounts+","+tagList+",ret:"+jsonObject.toJSONString());
+        }
+        return  HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(baseMap));
+    }
+    public static boolean putUserGrade(String account,Map tagValue)throws Exception{
+        StringBuilder sb=new StringBuilder();
+        sb.append(baseUri);
+        sb.append("/profile/portrait_set");
+        sb.append(createSignParams(LiveRadioConstant.ADMIN_ACCOUNT));
+
+        List tagList=new ArrayList();
+        Set<String> k=tagValue.keySet();
+        Map tag=null;
+        for(String kstr:k){
+            tag=new HashMap();
+            tag.put("Tag",kstr);
+            tag.put("Value",tagValue.get(kstr));
+            tagList.add(tag);
+        }
+        Map baseMap=new HashMap();
+        baseMap.put("From_Account",account);
+        baseMap.put("ProfileItem",tagList);
+        String callStr=HttpUtil.sendHtpps(sb.toString(), JSON.toJSONString(baseMap));
+        if(StringUtils.isBlank(callStr)){
+            throw new GenException("设置用户信息失败:"+account+","+tagList);
+        }
+        JSONObject jsonObject=JSON.parseObject(callStr);
+        if(!jsonObject.containsKey("ActionStatus") || !"OK".equals(jsonObject.getString("ActionStatus")) || jsonObject.getInteger("ErrorCode")>0){
+            throw new GenException("设置用户信息失败"+account+","+tagList+",ret:"+jsonObject.toJSONString());
+        }
+        return true;
     }
     private static boolean  for5Sends(StringBuilder sb,Map param){
         String callBack=null;
@@ -269,14 +316,20 @@ public class IMApiUtil {
         ts.setDdwGlobals(ddwGlobals);
         setDdwGlobals(ddwGlobals);
 
-       /* UserInfoPO userInfoPO=new UserInfoPO();
-        userInfoPO.setOpenid("gen");
-        userInfoPO.setNickName("我是测试的");
-        userInfoPO.setHeadImgUrl("http://wx.qlogo.cn/mmopen/Q3auHgzwzM70nZPOZLa6PTYzFKZp4xm9KRQITutLibgqjUAesTBciaFCpSzUicPwHT7mKeYDHhGYJX1FJlAPphe3UWKKvOOYC8dGNbSuibz9MOI/132");
-        System.out.println(importUser(userInfoPO,null));*/
+       UserInfoPO userInfoPO=new UserInfoPO();
+        userInfoPO.setOpenid("o_W_K0W8g7LF3U1FL6WcfoODrmoI");
+        userInfoPO.setNickName("很酸的猫");
+        userInfoPO.setHeadImgUrl("http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJ5V4oboyzbjOjTH3Ch5tR9ScWoO8ic3aJzznCBiagjTSb7NxtWRJXJbSTZXbhBEhN1L9zFIteAFbPg/132");
+        //System.out.println(importUser(userInfoPO,null)); /**/
         //System.out.println(IMApiUtil.pushAll("ddwGuanFang","下午茶到了"));
        // System.out.println(IMApiUtil.createGroup("ddwGuanFang","1_gf_0000000000","逗逗窝聊天室"));
-        System.out.println(IMApiUtil.destoryGroup("1_8_180504165555"));
+        Map m=new HashMap();
+       // m.put("Tag_Profile_IM_Level","vip01");
+        m.put("Tag_Profile_Custom_grade","青铜");
+        m.put("Tag_Profile_Custom_gCode","vip01");
+        System.out.println(IMApiUtil.putUserGrade("o_W_K0W8g7LF3U1FL6WcfoODrmoI",m));
+        System.out.println(IMApiUtil.getUserGrade(Arrays.asList("o_W_K0YW7k91pdxAy1UWDq402b38"),Arrays.asList("Tag_Profile_Custom_grade","Tag_Profile_Custom_gCode")));
+       // System.out.println(IMApiUtil.destoryGroup("1_8_180504165555"));
         //System.out.println(IMApiUtil.createGroup("346FE76B9D0682916ED2299E8579CBDB","1_8_180504165555","test"));
        // System.out.println(IMApiUtil.pushSimpleChat("ddwTongZhi","omc2C0i1D7OCAOnts7XEpfnxGo30","jacky妹你个扑街"));
       // System.out.println(getMemberNum(Arrays.asList("1_8_180503191514","1_8_180504013649","1_59_180829224224","1_41_180829211729")));;

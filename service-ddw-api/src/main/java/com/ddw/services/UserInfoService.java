@@ -11,6 +11,7 @@ import com.ddw.token.TokenUtil;
 import com.ddw.util.IMApiUtil;
 import com.ddw.util.RC4;
 import com.gen.common.beans.CommonBeanFiles;
+import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.exception.GenException;
@@ -81,6 +82,10 @@ public class UserInfoService extends CommonService {
             if(!flag){
                 throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
             }
+            Map imTag=new HashMap();
+            imTag.put("Tag_Profile_Custom_grade","青铜");
+            imTag.put("Tag_Profile_Custom_gCode","VIP0");
+            IMApiUtil.putUserGrade(userInfoPO.getOpenid(),imTag);
         }
         return re;
     }
@@ -494,6 +499,26 @@ public class UserInfoService extends CommonService {
         this.commonDelete("ddw_my_attention","practiceId",userId);
         this.commonDelete("ddw_review_practice","userId",userId);
         return new ResponseApiVO(1,"成功",null);
+    }
+    public void handleImUserGrade(String openId)throws Exception{
+        Map m=new HashMap();
+        if(StringUtils.isNotBlank(openId)){
+            m.put("openId",openId);
+        }
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.headImgUrl,t1.openid,ct0.level,ct0.gradeName",null,null,m,
+                new CommonChildBean("ddw_grade","id","gradeId",null));
+        List<Map> list=this.getCommonMapper().selectObjects(csb);
+        if(list!=null && list.size()>0){
+            for(Map o:list){
+                if(o.containsKey("headImgUrl") && o.get("headImgUrl")!=null){
+                    Map imTag=new HashMap();
+                    imTag.put("Tag_Profile_Custom_grade",o.get("gradeName").toString());
+                    imTag.put("Tag_Profile_Custom_gCode",o.get("level").toString());
+                    IMApiUtil.putUserGrade(o.get("openid").toString(),imTag);
+                }
+
+            }
+        }
     }
 
 }

@@ -426,6 +426,7 @@ public class GoodFriendPlayService extends CommonService {
         if(map==null ||  map.isEmpty()){
             return new ResponseApiVO(-2,"小房间不存在",null);
         }
+        if(true)return null;
         Integer status=(Integer) map.get("status");
         Integer disabled=(Integer) map.get("disabled");
         Integer memDisabled=(Integer) map.get("memDisabled");

@@ -38,6 +38,7 @@ public class UserInfoPO {
     private Date createTime;
     private Date updateTime;
 
+
     public Integer getId() {
         return id;
     }

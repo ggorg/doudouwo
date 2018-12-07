@@ -4,6 +4,7 @@ import com.ddw.beans.GradePO;
 import com.ddw.beans.OldBringingNewPO;
 import com.ddw.beans.UserInfoPO;
 import com.ddw.enums.DoubiRecordTypeEnum;
+import com.ddw.util.IMApiUtil;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
@@ -224,27 +225,48 @@ public class StraregyService extends CommonService {
                 PropertyUtils.copyProperties(gradePO,gradeMap);
             }
         }
-
+        Map imTag=new HashMap();
+        String tag_Profile_Custom_grade=null;
+        String tag_Profile_Custom_gCode=null;
         if(gradeSinglePO.getSort() > gradePO.getSort()){
             if(gradeSinglePO.getSort() > gradeCumulationPO.getSort()){
                 userInfoPO.setGradeId(gradeSinglePO.getId());
+                tag_Profile_Custom_grade=gradeSinglePO.getGradeName();
+                tag_Profile_Custom_gCode=gradeSinglePO.getLevel();
+
+
             }else{
                 userInfoPO.setGradeId(gradeCumulationPO.getId());
+                tag_Profile_Custom_grade=gradeCumulationPO.getGradeName();
+                tag_Profile_Custom_gCode=gradeCumulationPO.getLevel();
             }
+
             //更新会员等级
             this.update(userInfoPO);
             //根据升级对应等级,赠送老会员优惠券
             this.setOldBringingNewCoupon(userInfoPO);
+
+
         }else if(gradeCumulationPO.getSort() > gradePO.getSort()){
             if(gradeSinglePO.getSort() > gradeCumulationPO.getSort()){
                 userInfoPO.setGradeId(gradeSinglePO.getId());
+                tag_Profile_Custom_grade=gradeSinglePO.getGradeName();
+                tag_Profile_Custom_gCode=gradeSinglePO.getLevel();
             }else{
                 userInfoPO.setGradeId(gradeCumulationPO.getId());
+                tag_Profile_Custom_grade=gradeCumulationPO.getGradeName();
+                tag_Profile_Custom_gCode=gradeCumulationPO.getLevel();
             }
             //根据升级对应等级,赠送老会员优惠券
             this.update(userInfoPO);
             this.setOldBringingNewCoupon(userInfoPO);
         }
+        if(tag_Profile_Custom_grade!=null && tag_Profile_Custom_gCode!=null){
+            imTag.put("Tag_Profile_Custom_grade",tag_Profile_Custom_grade);
+            imTag.put("Tag_Profile_Custom_gCode",tag_Profile_Custom_gCode);
+            IMApiUtil.putUserGrade(userInfoPO.getOpenid(),imTag);
+        }
+
         //更新赠送逗币
         if(coinSingle > 0 || coinCumulation > 0){
             this.updateMyWallet((coinSingle>0 && coinCumulation>0)?coinSingle+coinCumulation:(coinSingle>0)?coinSingle:coinCumulation,userId);

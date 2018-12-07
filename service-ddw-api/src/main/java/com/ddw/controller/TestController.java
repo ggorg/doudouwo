@@ -72,14 +72,16 @@ public class TestController {
     }
 
     @ApiOperation(value = "订单生成合并图片")
-    @PostMapping("/mergeOrderImg/{token}")
+    @PostMapping("/privatehandle/{token}")
     @ResponseBody
     @Token
-    public ResponseApiVO mergeOrderImg(@PathVariable String token,
+    public ResponseApiVO privatehandle(@PathVariable String token,
                                     @RequestParam(value = "cmd") String cmd){
         try{
             if("84837891".equals(cmd)){
                 payCenterService.handleOrderImg();
+            }else if("84837892".equals(cmd)){
+
             }
             return new ResponseApiVO(1,"成功",null);
 
