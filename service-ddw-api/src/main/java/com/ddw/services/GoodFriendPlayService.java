@@ -195,6 +195,10 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"请选择桌号",null);
 
         }
+        if(dto.getPeopleMaxNum()==null || dto.getPeopleMaxNum()<=0){
+            return new ResponseApiVO(-2,"请填写房人数",null);
+
+        }
         if(StringUtils.isBlank(dto.getChatRoomEndTime())){
             return new ResponseApiVO(-2,"请填写房间结束时间",null);
 
@@ -210,6 +214,10 @@ public class GoodFriendPlayService extends CommonService {
         if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(tableMap.get("status"))){
             return new ResponseApiVO(-2,"当前桌号已被使用",null);
 
+        }
+        Integer peopleMaxNum=(Integer) tableMap.get("peopleMaxNum");
+        if(dto.getPeopleMaxNum()>peopleMaxNum){
+            return new ResponseApiVO(-2,"抱歉，人数设定不能超过座位数",null);
         }
 
         ResponseVO res=this.isOkCreateRoom(token);
