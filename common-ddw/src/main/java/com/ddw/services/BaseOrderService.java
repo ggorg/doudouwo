@@ -177,6 +177,7 @@ public class BaseOrderService extends CommonService {
                 po.setCreateTime(new Date());
                 po.setName(OrderTypeEnum.OrderType4.getName());
                 po.setHeadImg(headImgUrl);
+                po.setBusId(Integer.parseInt(ub.split("-")[1]));
                 po.setNum(1);
                 po.setOrderId(OrderUtil.getOrderId(orderNo));
                 po.setOrderNo(orderNo);
@@ -225,6 +226,9 @@ public class BaseOrderService extends CommonService {
                     timer.schedule(new BiddingTimer(this.baseBiddingService,ub),makeSureEndTime);
                     m.put(ub,DateFormatUtils.format(makeSureEndTime,"yyyy-MM-dd HH:mm:ss"));
                     gid=(Integer) payMap.get("goddessUserId");
+                    if(gid==null){
+                        throw new GenException("更新竞价金额支付状态失败");
+                    }
                     headImgUrl=this.commonSingleFieldBySingleSearchParam("ddw_userinfo","id",gid,"headImgUrl",String.class);
 
                     bid_goddessid.add(payMap.get("code").toString()+"-"+gid);
@@ -234,7 +238,7 @@ public class BaseOrderService extends CommonService {
 
 
                     po=new OrderViewPO();
-                    po.setBusId(gid);
+                    po.setBusId((Integer) payMap.get("code"));
                     po.setCreateTime(new Date());
                     po.setName(OrderTypeEnum.OrderType5.getName());
                     po.setHeadImg(headImgUrl);

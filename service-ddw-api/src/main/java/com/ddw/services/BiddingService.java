@@ -143,7 +143,7 @@ public class BiddingService extends CommonService {
             Map payMap=new HashMap();
             payMap.put(bv.getUserId(),payVO);*/
 
-            CacheUtil.put("pay","bidding-pay-"+bv.getUserId()+"-"+map.get("id"),m);
+            CacheUtil.put("pay","bidding-pay-"+bv.getUserId()+"-"+map.get("id"),retMap);
             CacheUtil.put("pay","bidding-success-"+map.get("id")+"-"+groupId,bv.getUserId()+"-"+map.get("id"));
            // CacheUtil.delete("pay","groupId-"+groupId);
 
@@ -892,6 +892,7 @@ public class BiddingService extends CommonService {
                     a.put("status",BiddingStatusEnum.Status10.getCode());
                     a.put("statusMsg",BiddingStatusEnum.Status10.getName());
                 }else{
+
                     String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+bidCode+"-"+goddessUserId);
                     if(StringUtils.isNotBlank(retStr)){
                         a.put("status",BiddingStatusEnum.Status7.getCode());
@@ -1082,6 +1083,7 @@ public class BiddingService extends CommonService {
 
         }
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null);
+        //CommonChildBean cb=new CommonChildBean("ddw_order_view,"id",childKeyName,null);
         CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.groupId,t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime,DATE_FORMAT(t1.startTime,'%Y-%m-%d %H:%i:%S') startTime,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime,DATE_FORMAT(t1.makeSureEndTime,'%Y-%m-%d %H:%i:%S') makeSureEndTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId",0,1,searchMap,cb);
 
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
