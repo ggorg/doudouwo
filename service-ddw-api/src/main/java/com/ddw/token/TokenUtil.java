@@ -42,11 +42,13 @@ public class TokenUtil {
                 element=cache.getQuiet(key);
                 cacheMap=(Map) element.getObjectValue();
                 if(openId.equals(cacheMap.get("user"))){
+                    map=new ConcurrentHashMap(cacheMap);
                     cache.remove(key);
                     break;
                 }
             }
         }
+
         CacheUtil.put("tokenCache",base64Token,map);
        // cs.set(base64Token,map);
         return base64Token;

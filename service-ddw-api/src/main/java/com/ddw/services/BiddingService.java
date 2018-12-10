@@ -143,7 +143,7 @@ public class BiddingService extends CommonService {
             Map payMap=new HashMap();
             payMap.put(bv.getUserId(),payVO);*/
 
-            CacheUtil.put("pay","bidding-pay-"+bv.getUserId()+"-"+map.get("id"),retMap);
+            CacheUtil.put("pay","bidding-pay-"+bv.getUserId()+"-"+map.get("id"),m);
             CacheUtil.put("pay","bidding-success-"+map.get("id")+"-"+groupId,bv.getUserId()+"-"+map.get("id"));
            // CacheUtil.delete("pay","groupId-"+groupId);
 

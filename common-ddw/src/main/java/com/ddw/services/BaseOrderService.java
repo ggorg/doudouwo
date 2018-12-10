@@ -226,6 +226,7 @@ public class BaseOrderService extends CommonService {
                     timer.schedule(new BiddingTimer(this.baseBiddingService,ub),makeSureEndTime);
                     m.put(ub,DateFormatUtils.format(makeSureEndTime,"yyyy-MM-dd HH:mm:ss"));
                     gid=(Integer) payMap.get("goddessUserId");
+                    logger.info("payMap:"+payMap);
                     if(gid==null){
                         throw new GenException("更新竞价金额支付状态失败");
                     }

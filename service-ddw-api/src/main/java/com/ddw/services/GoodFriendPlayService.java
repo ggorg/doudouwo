@@ -399,17 +399,19 @@ public class GoodFriendPlayService extends CommonService {
         }
 
 
-        Integer roomId=TokenUtil.getRoomId(token);
+        Integer userId=TokenUtil.getUserId(token);
         Map map=null;
-        Map searchRoom=new HashMap();
-        if(roomId==null){
+
+        /*if(roomId==null){
             searchRoom.put("id",dto.getCode());
 
         }else{
             searchRoom.put("id,in","("+dto.getCode()+","+roomId+")");
-        }
+        }*/
+        Map searchRoom=new HashMap();
+        searchRoom.put("status,in","(1,20)");
         Map userMap=new HashMap();
-        userMap.put("userId",TokenUtil.getUserId(token));
+        userMap.put("userId",userId);
         CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room",null,"t1.*,ct0.userId,ct0.disabled memDisabled",null,null,searchRoom,
                 new CommonChildBean("ddw_goodfriendplay_room_member","roomId","id",userMap));
         csb.setJointName("left");
@@ -422,7 +424,7 @@ public class GoodFriendPlayService extends CommonService {
         for(Map m:list){
             if(m.get("id").equals(dto.getCode())){
                 map=m;
-            }else if(m.get("id").equals(roomId)){
+            }else if(m.containsKey("userId") && userId.equals(m.get("userId"))){
                 oldRoom=m;
             }
         }
@@ -528,7 +530,7 @@ public class GoodFriendPlayService extends CommonService {
         }
         Integer status=(Integer) map.get("status");
         if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(status) || GoodFriendPlayRoomStatusEnum.status22.getCode().equals(status)){
-            return new ResponseApiVO(-2,"抱歉，约战过的房间没法离开",null);
+            return new ResponseApiVO(-2,"抱歉，约战过的开桌没法离开",null);
 
         }
         Map search=new HashMap();
@@ -538,7 +540,7 @@ public class GoodFriendPlayService extends CommonService {
         search.put("roomOwner,!=",userId);
         ResponseVO res=this.commonDeleteByParams("ddw_goodfriendplay_room_member",search);
         if(res.getReCode()!=1){
-            return new ResponseApiVO(-2,"离开房间失败",null);
+            return new ResponseApiVO(-2,"离开开桌失败",null);
         }
         TokenUtil.putRoomId(token,null);
         return new ResponseApiVO(1,"成功",null);

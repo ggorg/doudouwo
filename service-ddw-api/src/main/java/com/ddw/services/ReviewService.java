@@ -12,6 +12,8 @@ import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -291,16 +293,51 @@ public class ReviewService extends CommonService {
 
         }
         Integer userId= TokenUtil.getUserId(token);
+        Integer goddessIn=null;
+        Integer practiceIn=null;
         if(IncomeTypeEnum.IncomeType1.getCode().equals(dto.getIncomeType())){
             WalletGoddessInVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userId, WalletGoddessInVO.class);
            if( balanceVO.getGoddessIncome()==null || dto.getMoney()>balanceVO.getGoddessIncome()){
                return new ResponseApiVO(-2,"女神收益金额不足",null);
            }
+            goddessIn=balanceVO.getGoddessIncome();
 
         }else{
             WalletPracticeInVO balanceVO=this.commonObjectBySingleParam("ddw_my_wallet","userId",userId, WalletPracticeInVO.class);
             if( balanceVO.getPracticeIncome()==null || dto.getMoney()>balanceVO.getPracticeIncome()){
                 return new ResponseApiVO(-2,"代练收益金额不足",null);
+            }
+            practiceIn=balanceVO.getPracticeIncome();
+        }
+        Map searchWr=new HashMap();
+        searchWr.put("userId",userId);
+        searchWr.put("incomeType",dto.getIncomeType());
+        searchWr.put("status",WithdrawStatusEnum.withdrawStatus0.getCode());
+        List<Map> wrList=this.commonObjectsBySearchCondition("ddw_withdraw_record",searchWr);
+        if(wrList!=null && wrList.size()>0){
+            String currentDay= DateFormatUtils.format(new Date(),"yyyy-MM-dd");
+            int times=0;
+            int countMoney=0;
+            for(Map m:wrList){
+                if(DateFormatUtils.format((Date)m.get("createTime"),"yyyy-MM-dd HH").startsWith(currentDay)){
+                    if(times>=1){
+                        return new ResponseApiVO(-2,"抱歉，一天只能申请提现两次",null);
+                    }
+                    times++;
+                }
+                countMoney=countMoney+(Integer)m.get("money");
+            }
+
+            if(IncomeTypeEnum.IncomeType1.getCode().equals(dto.getIncomeType())){
+                if((countMoney+dto.getMoney())>goddessIn){
+                    return new ResponseApiVO(-2,"抱歉，您申请提现的直播收益总额超过当前收益金额",null);
+
+                }
+            }else  if(IncomeTypeEnum.IncomeType2.getCode().equals(dto.getIncomeType())){
+                if((countMoney+dto.getMoney())>practiceIn){
+                    return new ResponseApiVO(-2,"抱歉，您申请提现的代练收益总额超过当前收益金额",null);
+
+                }
             }
         }
         Map searchMap=new HashMap();
