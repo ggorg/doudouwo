@@ -3,6 +3,8 @@ package com.ddw.services;
 import com.ddw.enums.BiddingStatusEnum;
 import com.ddw.enums.IncomeTypeEnum;
 import com.ddw.enums.OrderTypeEnum;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.CacheUtil;
 import org.apache.commons.lang3.time.DateUtils;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -101,6 +104,25 @@ public class BaseBiddingService extends CommonService {
         CacheUtil.delete("pay","bidding-success-"+bidCode+"-"+groupId);
         CacheUtil.delete("pay","bidding-pay-"+ub);
         CacheUtil.delete("pay","bidding-earnest-pay-"+ub);
+
+    }
+    public Map getBiddingPay(Integer userId,Integer bidId){
+        Map bidMap=(Map)CacheUtil.get("pay","bidding-pay-"+userId+"-"+bidId);
+        if(bidMap==null || bidMap.isEmpty()){
+            Map searchBid=new HashMap();
+            searchBid.put("id",bidId);
+            Map searchBidOrder=new HashMap();
+            searchBidOrder.put("orderType",OrderTypeEnum.OrderType4.getCode());
+            searchBidOrder.put("userId",userId);
+            CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding",null,"t1.userId goddessUserId,(t1.price-ct0.price) needPayPrice,t1.times time,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime",null,null,searchBid,
+                    new CommonChildBean("ddw_order_view","busId","id",searchBidOrder));
+            List<Map> list=this.getCommonMapper().selectObjects(csb);
+            if(list==null || list.isEmpty()){
+                return null;
+            }
+            return list.get(0);
+        }
+        return bidMap;
 
     }
     public void removeBiddingTimer(String ub){

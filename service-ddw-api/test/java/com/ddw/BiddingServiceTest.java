@@ -3,6 +3,7 @@ package com.ddw;
 import com.ApiApplication;
 import com.ddw.beans.BiddingDTO;
 import com.ddw.dao.GoddessMapper;
+import com.ddw.services.BaseBiddingService;
 import com.ddw.services.BiddingService;
 import com.ddw.services.IncomeService;
 import com.ddw.services.LiveRadioClientService;
@@ -25,6 +26,8 @@ public class BiddingServiceTest {
 
     @Autowired
     private BiddingService biddingService;
+    @Autowired
+    private BaseBiddingService baseBiddingService;
     @Autowired
     private IncomeService incomeService;
 
@@ -75,5 +78,9 @@ public class BiddingServiceTest {
         CacheUtil.put("publicCache", "appIndexGoddess", list);
         boolean flag=this.liveRadioClientService.getCurrentLiveRadioFlagByGroupId("1_8_180830214823");
         System.out.println(flag);
+    }
+    @Test
+    public void testGetBiddingPay()throws Exception{
+        System.out.println(baseBiddingService.getBiddingPay(26,60)+"----");
     }
 }

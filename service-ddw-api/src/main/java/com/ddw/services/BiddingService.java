@@ -67,8 +67,7 @@ public class BiddingService extends CommonService {
     @Autowired
     private ConsumeRankingListService consumeRankingListService;
 
-    @Autowired
-    private BaseBiddingService baseBiddingService;
+
     private String getSurplusTimeStr(Date date){
 
         long l=date.getTime()-System.currentTimeMillis();
@@ -876,6 +875,7 @@ public class BiddingService extends CommonService {
             Integer goddessUserId=(Integer) a.get("userId");
             Integer status=(Integer) a.get("bidStatus");
             String groupId=(String) a.get("groupId");
+            Integer ovId=(Integer) a.get("ovId");
             if(bidUserId==null){
                 if(endTime==null){
                     if(DateUtils.addMinutes(bidEndTime,30).before(new Date())){
@@ -894,7 +894,7 @@ public class BiddingService extends CommonService {
                 }else{
 
                     String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+bidCode+"-"+goddessUserId);
-                    if(StringUtils.isNotBlank(retStr)){
+                    if(StringUtils.isNotBlank(retStr) || ovId!=null){
                         a.put("status",BiddingStatusEnum.Status7.getCode());
                         a.put("statusMsg",BiddingStatusEnum.Status7.getName());
                     }else{
@@ -1082,9 +1082,11 @@ public class BiddingService extends CommonService {
             childKeyName="userId";
 
         }
-        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null);
-        //CommonChildBean cb=new CommonChildBean("ddw_order_view,"id",childKeyName,null);
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.groupId,t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime,DATE_FORMAT(t1.startTime,'%Y-%m-%d %H:%i:%S') startTime,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime,DATE_FORMAT(t1.makeSureEndTime,'%Y-%m-%d %H:%i:%S') makeSureEndTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId",0,1,searchMap,cb);
+        Map searchOV=new HashMap();
+        searchOV.put("orderType",OrderTypeEnum.OrderType4.getCode());
+        CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null).setJoinName("left");
+        CommonChildBean cb1=new CommonChildBean("ddw_order_view","busId","id",searchOV).setJoinName("left");
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.groupId,t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime,DATE_FORMAT(t1.startTime,'%Y-%m-%d %H:%i:%S') startTime,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime,DATE_FORMAT(t1.makeSureEndTime,'%Y-%m-%d %H:%i:%S') makeSureEndTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId,ct1.id ovId",0,1,searchMap,cb,cb1);
 
         List<Map> bidList=this.getCommonMapper().selectObjects(csb);
         if(bidList==null || bidList.isEmpty()){

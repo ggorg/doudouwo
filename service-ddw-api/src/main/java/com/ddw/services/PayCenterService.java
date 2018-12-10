@@ -36,8 +36,6 @@ import java.util.*;
 public class PayCenterService extends BaseOrderService {
     private final Logger logger = Logger.getLogger(PayCenterService.class);
 
-    @Autowired
-    private BiddingService biddingService;
 
 
     @Autowired
@@ -65,6 +63,8 @@ public class PayCenterService extends BaseOrderService {
 
     @Autowired
     private MainGlobals mainGlobals;
+    @Autowired
+    private BaseBiddingService baseBiddingService;
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO searchPayStatus(String token,PayStatusDTO dto)throws Exception{
@@ -280,8 +280,7 @@ public class PayCenterService extends BaseOrderService {
             Map bidMap=null;
 
             for(Integer code:codes){
-                bidMap=(Map)CacheUtil.get("pay","bidding-pay-"+userId+"-"+code);
-
+                bidMap=this.baseBiddingService.getBiddingPay(userId,code);
                 if(bidMap==null){
                     return new ResponseApiVO(-2,"竞价金额支付失败",null);
 
