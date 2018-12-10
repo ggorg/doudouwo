@@ -1083,7 +1083,7 @@ public class BiddingService extends CommonService {
 
         }
         Map searchOV=new HashMap();
-        searchOV.put("orderType",OrderTypeEnum.OrderType4.getCode());
+        searchOV.put("orderType",OrderTypeEnum.OrderType5.getCode());
         CommonChildBean cb=new CommonChildBean("ddw_userinfo","id",childKeyName,null).setJoinName("left");
         CommonChildBean cb1=new CommonChildBean("ddw_order_view","busId","id",searchOV).setJoinName("left");
         CommonSearchBean csb=new CommonSearchBean("ddw_goddess_bidding","createTime desc","t1.groupId,t1.status bidStatus,t1.createTime,t1.bidEndTime,t1.price,t1.endTime,DATE_FORMAT(t1.startTime,'%Y-%m-%d %H:%i:%S') startTime,DATE_FORMAT(t1.payEndTime,'%Y-%m-%d %H:%i:%S') payEndTime,DATE_FORMAT(t1.makeSureEndTime,'%Y-%m-%d %H:%i:%S') makeSureEndTime,t1.luckyDogUserId luckyUserId,t1.times time,t1.id bidCode,ct0.headImgUrl,ct0.nickName,t1.userId,ct1.id ovId",0,1,searchMap,cb,cb1);
