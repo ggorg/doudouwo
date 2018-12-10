@@ -1,6 +1,8 @@
 package com.weixin.services;
 
 import com.ddw.beans.UserInfoPO;
+import com.ddw.util.IMApiUtil;
+import com.gen.common.exception.GenException;
 import com.gen.common.services.CommonService;
 import com.gen.common.vo.ResponseVO;
 import com.weixin.entity.UserInfoDTO;
@@ -39,6 +41,14 @@ public class UserInfoService extends CommonService {
         ResponseVO re=this.commonInsert("ddw_userinfo",userInfoPO);
         if(re.getReCode()==1){
             this.createWallet((Integer) re.getData());
+            boolean flag= IMApiUtil.importUser(userInfoPO,0);
+            if(!flag){
+                throw new GenException("IM导入账号openid"+userInfoPO.getOpenid()+"失败");
+            }
+            Map imTag=new HashMap();
+            imTag.put("Tag_Profile_Custom_grade","青铜");
+            imTag.put("Tag_Profile_Custom_gCode","VIP0");
+            IMApiUtil.putUserGrade(userInfoPO.getOpenid(),imTag);
         }
         return re;
     }
