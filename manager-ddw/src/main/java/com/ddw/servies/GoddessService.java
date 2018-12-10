@@ -6,7 +6,6 @@ import com.ddw.beans.GoddessVO;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
-import com.gen.common.util.BeanToMapUtil;
 import com.gen.common.util.CacheUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
@@ -30,8 +29,8 @@ public class GoddessService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("storeId",storeId);
         Map conditon=new HashMap();
-        CommonSearchBean csb=new CommonSearchBean("ddw_goddess","createTime desc","t1.id,t1.userId,t1.storeId," +
-                "t1.appointment,t1.tableNo,t1.bidPrice,t1.earnest,t1.createTime,t1.updateTime,ct0.userName,ct0.nickName,ct0.idcardFrontUrl ",0,99999,searchCondition,new CommonChildBean("ddw_userinfo","id","userId",conditon));
+        CommonSearchBean csb=new CommonSearchBean("ddw_goddess","t1.createTime desc","t1.id,t1.userId,t1.storeId," +
+                "t1.appointment,t1.tableNo,t1.bidPrice,t1.earnest,t1.createTime,t1.updateTime,ct0.userName,ct0.nickName,ct0.idcardFrontUrl ",null,null,searchCondition,new CommonChildBean("ddw_userinfo","id","userId",conditon));
         Page page = this.commonPage(pageNo,10,csb);
         return page;
     }
@@ -52,18 +51,18 @@ public class GoddessService extends CommonService {
 
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO saveOrUpdate(GoddessDTO goddessDTO)throws Exception{
-        GoddessPO goddessPO = new GoddessPO();
         if(goddessDTO.getId() > 0){
             GoddessVO oldGoddessVo=this.getById(goddessDTO.getId());
-            PropertyUtils.copyProperties(goddessPO,oldGoddessVo);
-            PropertyUtils.copyProperties(goddessPO,goddessDTO);
-            goddessPO.setUpdateTime(new Date());
-            Map updatePoMap= BeanToMapUtil.beanToMap(goddessPO);
-
+            Map updatePoMap= new HashMap<>();
+            updatePoMap.put("earnest",goddessDTO.getEarnest());
+            updatePoMap.put("bidPrice",goddessDTO.getBidPrice());
+            updatePoMap.put("appointment",goddessDTO.getAppointment());
+            updatePoMap.put("tableNo",goddessDTO.getTableNo());
+            updatePoMap.put("updateTime",new Date());
             CacheUtil.delete("publicCache","goddess-"+oldGoddessVo.getStoreId()+"-"+oldGoddessVo.getUserId());
-
-            return super.commonUpdateBySingleSearchParam("ddw_goddess",updatePoMap,"id",goddessPO.getId());
+            return super.commonUpdateBySingleSearchParam("ddw_goddess",updatePoMap,"id",goddessDTO.getId());
         }else{
+            GoddessPO goddessPO = new GoddessPO();
             goddessPO.setCreateTime(new Date());
             goddessPO.setUpdateTime(new Date());
             return this.commonInsert("ddw_goddess",goddessPO);
