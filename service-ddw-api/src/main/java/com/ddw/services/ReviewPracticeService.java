@@ -160,15 +160,15 @@ public class ReviewPracticeService extends CommonService {
             appIndexPractice1.addAll(appIndexPractice2);
         }
 
-//        if(pageSize-appIndexPractice1.size()>0){
-//            end = pageSize-appIndexPractice1.size();
-//            userIdList.clear();
-//            for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
-//                userIdList.add(appIndexPracticeVO.getUserId());
-//            }
-//            List<AppIndexPracticeVO> appIndexPractice3 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,null);
-//            appIndexPractice1.addAll(appIndexPractice3);
-//        }
+        if(pageSize-appIndexPractice1.size()>0){
+            end = pageSize-appIndexPractice1.size();
+            userIdList.clear();
+            for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
+                userIdList.add(appIndexPracticeVO.getUserId());
+            }
+            List<AppIndexPracticeVO> appIndexPractice3 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,null);
+            appIndexPractice1.addAll(appIndexPractice3);
+        }
 
         //设置关注状态
         ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPractice1.listIterator();
