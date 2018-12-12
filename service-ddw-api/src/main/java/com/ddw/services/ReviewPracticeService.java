@@ -160,15 +160,15 @@ public class ReviewPracticeService extends CommonService {
             appIndexPractice1.addAll(appIndexPractice2);
         }
 
-//        if(pageSize-appIndexPractice1.size()>0){
-//            end = pageSize-appIndexPractice1.size();
-//            userIdList.clear();
-//            for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
-//                userIdList.add(appIndexPracticeVO.getUserId());
-//            }
-//            List<AppIndexPracticeVO> appIndexPractice3 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,null);
-//            appIndexPractice1.addAll(appIndexPractice3);
-//        }
+        if(pageSize-appIndexPractice1.size()>0){
+            end = pageSize-appIndexPractice1.size();
+            userIdList.clear();
+            for(AppIndexPracticeVO appIndexPracticeVO:appIndexPractice1){
+                userIdList.add(appIndexPracticeVO.getUserId());
+            }
+            List<AppIndexPracticeVO> appIndexPractice3 = practiceMapper.getPracticeListByNotInIds(userIdList,storeId,start,end,null);
+            appIndexPractice1.addAll(appIndexPractice3);
+        }
 
         //设置关注状态
         ListIterator<AppIndexPracticeVO> appIndexPracticeIterator = appIndexPractice1.listIterator();
@@ -815,7 +815,7 @@ public class ReviewPracticeService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",practiceId);
         Map conditon=new HashMap();
-        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.nickName,t1.headImgUrl,t1.starSign,t1.interest,t1.label,t1.age,t1.openid,ct0.gradeName pgradeName ",null,null,searchCondition,
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.nickName,t1.headImgUrl,t1.starSign,t1.interest,t1.label,t1.age,t1.openid,t1.sex,ct0.gradeName pgradeName ",null,null,searchCondition,
                 new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
         List list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && list.size()>0){

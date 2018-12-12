@@ -52,15 +52,15 @@
         from ddw_practice_order
         WHERE
         storeId=#{storeId}
-        <if test="weekList != null and weekList == 1">
-            and YEARWEEK(date_format(createTime,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
-        </if>
         group by practiceId
         ORDER BY count(practiceId) desc
         )
         group  by t1.userId)a
         WHERE
         t1.practiceId = a.userId
+        <if test="weekList != null and weekList == 1">
+            and YEARWEEK(date_format(createTime,'%Y-%m-%d'),1) = YEARWEEK(now(),1)
+        </if>
         group by t1.practiceId
         ORDER BY count(t1.practiceId) desc
         limit #{start},#{end}

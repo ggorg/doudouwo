@@ -28,6 +28,8 @@ public class PracticeVO {
     private int star = 1;
     @ApiModelProperty(name="age",value="年龄",example="22")
     private int age = 0;
+    @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
+    private Integer sex = 0;
     @ApiModelProperty(name="focus",value="是否关注,关注true,未关注false",example="true")
     private boolean focus;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
@@ -119,6 +121,14 @@ public class PracticeVO {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
     }
 
     public boolean isFocus() {
