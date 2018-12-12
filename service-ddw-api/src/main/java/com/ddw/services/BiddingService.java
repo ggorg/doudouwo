@@ -27,6 +27,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -91,6 +94,14 @@ public class BiddingService extends CommonService {
         insertMap.put("bidEndTime",bidTime);
         return this.commonInsertMap("ddw_goddess_bidding",insertMap);
     }
+
+    /**
+     * 选择竞价者
+     * @param groupId
+     * @param bv
+     * @return
+     * @throws Exception
+     */
     public ResponseApiVO  biddingSuccess(String groupId,BiddingVO bv)throws Exception{
         Map searchMap=new HashMap();
         searchMap.put("groupId",groupId);
@@ -153,6 +164,14 @@ public class BiddingService extends CommonService {
         }
 
     }
+
+    /**
+     * 退款
+     * @param groupId
+     * @param filterUserId
+     * @return
+     * @throws Exception
+     */
     public ResponseApiVO refundBidding(String groupId,Integer filterUserId)throws Exception{
         Map searchMap=new HashMap();
         searchMap.put("groupId",groupId);
@@ -170,6 +189,13 @@ public class BiddingService extends CommonService {
        // apiVo.setData(filterUserMap);
         return apiVo;
     }
+
+    /**
+     * 女神取消竞价支付
+     * @param token
+     * @return
+     * @throws Exception
+     */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO cancelBidPayByGoddess(String token)throws Exception{
         /*String streamId=TokenUtil.getStreamId(token);
@@ -229,6 +255,14 @@ public class BiddingService extends CommonService {
 
     }
 
+    /**
+     * 用户取消支付
+     * @param token
+     * @param dto
+     * @param isUser
+     * @return
+     * @throws Exception
+     */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO cancelBidPayByUserId(String token,BiddingUserCancelPayDTO dto,boolean isUser)throws Exception{
         String groupId=TokenUtil.getGroupId(token);
@@ -269,6 +303,13 @@ public class BiddingService extends CommonService {
         CacheUtil.put("pay","bidding-cancel-"+bidCode+"-"+groupId,"true");
         return new ResponseApiVO(1,"成功",null);
     }
+
+    /**
+     * 女神确认完成支付
+     * @param token
+     * @return
+     * @throws Exception
+     */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO makeSureFinishPay(String token)throws Exception{
 
@@ -331,6 +372,14 @@ public class BiddingService extends CommonService {
        return new ResponseApiVO(1,"成功",null);
 
     }
+
+    /**
+     * 选择竞价者并退款其他人的定金
+     * @param openId
+     * @param token
+     * @return
+     * @throws Exception
+     */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO chooseBidding(String openId,String token)throws Exception{
        // GoddessPO  gpo=this.goddessService.getAppointment(TokenUtil.getGroupId(token));
@@ -369,7 +418,8 @@ public class BiddingService extends CommonService {
         String groupId=(String) bidMap.get("groupId");
         String ub=(String)CacheUtil.get("pay","bidding-success-"+bidCode+"-"+groupId);
         if(ub!=null){
-            Map m=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
+            Map m=new HashMap((Map)CacheUtil.get("pay","bidding-pay-"+ub));
+
             m.remove("goddessUserId");
             return new ResponseApiVO(1,"成功",m);
 
@@ -586,6 +636,14 @@ public class BiddingService extends CommonService {
         }
         return null;
     }
+
+    /**
+     * 提交竞价和返回定金金额
+     * @param token
+     * @param dto
+     * @return
+     * @throws Exception
+     */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO putPrice(String token,BiddingDTO dto)throws Exception{
         String groupId=TokenUtil.getGroupId(token);
@@ -775,6 +833,14 @@ public class BiddingService extends CommonService {
 
         }
     }
+
+    /**
+     * 查询需要支付的用户
+     * @param token
+     * @param dto
+     * @return
+     * @throws Exception
+     */
     public ResponseApiVO searchWaitPayByGoddess(String token,BiddingSearchWaitPayDTO dto)throws Exception{
         String streamId=TokenUtil.getStreamId(token);
         String groupId=null;
@@ -828,8 +894,9 @@ public class BiddingService extends CommonService {
                 return new ResponseApiVO(-2,"用户已取消支付",m);
 
             }
-            map.remove("goddessUserId");
-            return new ResponseApiVO(1,"成功",map);
+            Map newMap=new HashMap(map);
+            newMap.remove("goddessUserId");
+            return new ResponseApiVO(1,"成功",newMap);
 
         }
     }
@@ -838,6 +905,12 @@ public class BiddingService extends CommonService {
       return commmonSearchWaiyPay(token,TokenUtil.getGroupId(token),dto,false);
     }
 
+    /**
+     * 结束约玩
+     * @param token
+     * @return
+     * @throws Exception
+     */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO  doEndPlay(String token)throws Exception{
 
@@ -865,6 +938,11 @@ public class BiddingService extends CommonService {
 
     }
 
+    /**
+     * 处理订单列表的状态
+     * @param bidList
+     * @return
+     */
     private List commonHandleBidOrder(List<Map> bidList){
         Date currentDate=new Date();
         bidList.forEach(a->{
@@ -1212,6 +1290,7 @@ public class BiddingService extends CommonService {
         System.out.println(new ArrayList().remove("125"));
         String useridStr="1_41_180606213932".replaceAll("^([0-9]+_)(.*)(_[0-9]+)$","$2");
         System.out.println(useridStr);
+
 
     }
 }

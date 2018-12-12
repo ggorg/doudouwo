@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=750px, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>餐饮shop</title>
+    <link type="text/css" rel="stylesheet" href="/layui/css/layui.mobile.css"/>
+    <script type="text/javascript" src="/layui/layui.js"></script>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="data.js"></script>
+
+    <script type="text/javascript">
+        var layer;
+
+        $(function(){
+            layui.use(['layer','form'],function(){
+                layer=layui.layer;
+            })
+           // alert( window.screen.height+","+$("html").height());
+            $(".shop_body_style,.body_left,.body_right").css("height",$("html").height()-401-120);
+            handleImg("topImg");
+            handleImg("headImg");
+        })
+        function handleData(json){
+            if(json.reCode==1){
+
+            }else{
+                layer.msg(data.reMsg);
+            }
+        }
+        function handleImg(imgObj){
+            var img=document.getElementById(imgObj);
+            var logDivW=$(img.parentNode).width();
+            var logDivh=$(img.parentNode).height();
+            var realWidth  = img.width;//获取图片实际宽度
+            var realHeight  = img.height;//获取图片实际高度
+            if(realWidth>logDivW*2){
+                realWidth=realWidth/2;
+                img.width=realWidth;
+            }
+            if(realHeight>logDivh*2){
+                realHeight=realHeight/2;
+                img.height=realHeight;
+            }
+            //让img的宽高相当于图片实际宽高的等比缩放，然后再偏移
+
+            img.style.marginLeft = '-' + (realWidth-logDivW)/2 + 'px';
+            img.style.marginTop = '-' + (realHeight-logDivh)/2 + 'px';
+
+
+        }
+    </script>
+    <style type="text/css">
+
+        html, body,.shop_main{ margin:0; height:100%;font-family: 'Arial Negreta', 'Arial Normal', 'Arial'; overflow: hidden}
+       .shop_head_style,.shop_foot_style,.shop_body_style, .shop_head_style .head_top,.shop_head_style .head_bottom{
+            width:100%;
+        }
+        .shop_head_style{
+            height: 401px;
+            overflow:hidden;
+
+        }
+        .shop_head_style .head_top{
+            height: 331px;
+            width: 100%;
+            border-bottom: 1px solid #D0D0D0;
+            overflow: hidden;
+
+        }
+        .shop_head_style .head_top img{
+
+            z-index: -100;
+        }
+        .shop_head_style .head_bottom{
+            height:70px;
+            font-size: 30px;
+            color:#ff4927;
+            font-weight: bold;
+            line-height: 70px;
+            padding-left: 260px;
+            z-index: 1;
+        }
+
+        .shop_foot_style{
+            background:firebrick;
+            height: 120px;
+            position:absolute ;
+            bottom: 0;
+        }
+        .shop_body_style{
+            height: 100%;
+            overflow:hidden;
+        }
+        .body_left{
+            width:25%;
+
+            background: #F3F3F3;
+            overflow-y: auto;
+            float: left;
+            -webkit-overflow-scrolling : touch;
+        }
+        .body_left li{
+            font-size: 32px;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+            color:rgba(60,63,65,0.65);
+        }
+       .body_right{
+           width: 75%;
+           overflow-y: auto;
+           float: left;
+
+           -webkit-overflow-scrolling : touch;
+
+
+       }
+        .head_store_logo{
+            border-radius:20px ;
+            border:1px solid white;
+            position:absolute;
+            left:40px;
+            top:160px;
+            width: 210px;
+            height: 210px;
+            overflow: hidden;
+            z-index: 10;
+        }
+        .head_store_logo img{
+
+
+        }
+        .head_store_info{
+            position: absolute;
+            top:180px;
+            left:270px;
+
+        }
+        .head_store_info p{
+            font-size: 30px;
+            margin-top: 50px;
+            color:white;
+            font-weight: bold;
+        }
+        .head_store_info h1{
+            font-size: 40px;
+            color:white;
+        }
+        .right_item{
+
+            padding-left: 20px;
+        }
+        .right_item .item_content{
+            margin-top: 20px;
+        }
+        .right_item .content_left{
+            border-radius:20px ;
+            border:1px solid black;
+            width: 170px;
+            height: 170px;
+            float: left;
+        }
+        .content_mid{
+            float: left;
+        }
+        .content_right{
+            float: right;
+        }
+        .right_item .item_title{
+            font-size: 30px;
+            border-bottom: 1px solid rgba(60,63,65,0.65);
+
+        }
+    </style>
+</head>
+<body>
+<div class="shop_main">
+    <div class="shop_head_style">
+        <div class="head_top">
+            <img id="topImg" src="http://www.doudouwo.cn/rs/20181121171734100.jpeg?v=1"/>
+        </div>
+        <div class="head_bottom">
+            欢迎光临，很高兴为您服务
+        </div>
+        <div class="head_store_logo">
+            <img id="headImg" src="http://www.doudouwo.cn/rs/20181121161126771.jpeg?v=1"/>
+        </div>
+        <div class="head_store_info">
+            <h1>天府广场店</h1>
+            <p>成都天府广场负一层</p>
+        </div>
+    </div>
+    <div class="shop_body_style">
+        <div class="body_left" >
+            <ul>
+                <li>限时折扣</li>
+                <li>热销</li>
+                <li>饮品</li>
+                <li>轻食</li>
+                <li>主食</li>
+                <li>套餐</li>
+                <li>套餐</li>
+                <li>套餐</li>
+                <li>套餐</li>
+                <li>套餐</li>
+                <li>套餐</li>
+                <li>套餐</li>
+                <li>套餐</li>
+
+
+            </ul>
+        </div>
+        <div class="body_right">
+            <div class="right_item">
+                <div class="item_title">
+                    限时折扣
+                </div>
+                <div class="item_content">
+                    <div class="content_left">
+                        <img>
+                    </div>
+                    <div class="content_mid">
+                        <p>水果拼盘</p>
+                        <p>销量：124</p>
+                        <p>0.02元</p>
+                    </div>
+                    <div class="content_right">
+                        <a href="123">-</a>
+                        <span>12</span>
+                        <a href="123">+</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="shop_foot_style">
+
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -660,7 +660,7 @@ public class PayCenterService extends BaseOrderService {
                 String ub=null;
                 for(Integer code:codes){
                     ub=userId+"-"+code;
-                    payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
+                    payMap=this.baseBiddingService.getBiddingPay(userId,code);
                     if(payMap==null){
                         throw new GenException("竞价金额支付超时");
                     }

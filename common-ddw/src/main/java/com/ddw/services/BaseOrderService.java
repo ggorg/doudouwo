@@ -211,9 +211,10 @@ public class BaseOrderService extends CommonService {
                     m=new HashMap();
                 }
                 String headImgUrl=null;
+                String[] ubStr=null;
                 for(String ub:ubs){
-
-                    payMap=(Map)CacheUtil.get("pay","bidding-pay-"+ub);
+                    ubStr=ub.split("-");
+                    payMap=this.baseBiddingService.getBiddingPay(Integer.parseInt(ubStr[0]),Integer.parseInt(ubStr[1]));
                     if(payMap==null){
                         throw new GenException("更新竞价金额支付状态失败");
                     }
