@@ -438,11 +438,11 @@
 <div class="shop_main" id="shop_main">
     <div class="shop_head_style">
         <div class="head_top">
-            <img id="topImg" src="http://www.doudouwo.cn/rs/20181121171734100.jpeg?v=1"/>
+            <img id="topImg" v-bind:src="data.bannerUrl"/>
         </div>
 
         <div class="head_store_logo">
-            <img id="headImg" src="http://www.doudouwo.cn/rs/20181121161126771.jpeg?v=1"/>
+            <img id="headImg" v-bind:src="data.headUrl"/>
         </div>
         <div class="head_store_info">
             <h1>{{data.name}}</h1>
