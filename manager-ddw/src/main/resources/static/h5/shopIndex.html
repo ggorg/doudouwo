@@ -6,24 +6,153 @@
     <meta name="viewport" content="target-densitydpi=device-dpi, width=750px, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>餐饮shop</title>
-    <link type="text/css" rel="stylesheet" href="/layui/css/layui.mobile.css"/>
+    <link type="text/css" rel="stylesheet" href="/layui/css/layui.css"/>
     <script type="text/javascript" src="/layui/layui.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="data.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
 
     <script type="text/javascript">
         var layer;
-
+        var o=[];
+        var t=[];
+        var flag=true;
         $(function(){
             layui.use(['layer','form'],function(){
-                layer=layui.layer;
+                //layer=layui.layer;
             })
            // alert( window.screen.height+","+$("html").height());
             $(".shop_body_style,.body_left,.body_right").css("height",$("html").height()-401-120);
-            handleImg("topImg");
-            handleImg("headImg");
+            $.post("/ddwapp/goods/h5shoplist",{storeId:1},function(callBackData){
+                handleData(callBackData);
+            },"JSON")
+
+           // handleImg("topImg");
+            $("img").on("load",function(){
+                handleImg(this);
+            })
+            $(".right_end").on("click",function(){
+                var ds=JSON.parse($(this).attr("datas"));
+                var num=0;
+                var carObj=$("#car_show_num");
+                var priceObj=$("#foot_style_price");
+                if(ds.length==1){
+                    var p=$(this).parent();
+                    var rm=p.find(".right_mid");
+
+                    var tmText=rm.text()==""?0:parseInt(rm.text());
+
+                    var dsObj=ds[0];
+                    var price=dsObj.actPrice!=undefined && dsObj.actPrice!=null?dsObj.actPrice:dsObj.price;
+
+                    rm.text(tmText+1);
+
+
+                    rm.show();
+                    p.find(".right_start").show();
+                    carObj.show();
+                    priceObj.show();
+                    var carText=carObj.text()==""?0:parseInt(carObj.text());
+                    carObj.text(carText+1);
+                    var money=parseInt(priceObj.attr("money"));
+                    priceObj.text("￥"+(money+price)/100);
+                    priceObj.attr("money",money+price)
+                }
+
+
+            })
+            $(".right_start").on("click",function(){
+                var p=$(this).parent();
+                var rm=p.find(".right_mid");
+                var re=p.find(".right_end");
+                var carObj=$("#car_show_num");
+                var priceObj=$("#foot_style_price");
+                var ds=JSON.parse(re.attr("datas"));
+                var dsObj=ds[0];
+                var price=dsObj.actPrice!=undefined && dsObj.actPrice!=null?dsObj.actPrice:dsObj.price;
+                if(rm.text()==1){
+                    p.find(".right_start").hide();
+                    rm.hide();
+
+                }
+                if(carObj.text()==1){
+                    carObj.hide();
+                    priceObj.hide();
+                }
+                rm.text(rm.text()-1);
+                var carText=carObj.text()==""?0:parseInt(carObj.text());
+                carObj.text(carText-1);
+                var money=parseInt(priceObj.attr("money"));
+
+                priceObj.text("￥"+(money-price)/100);
+                priceObj.attr("money",money-price)
+
+            })
+
+            handleOffset();
+
+            $(".body_left li").click(function(){
+                flag=false;
+                var leftIdName=this.id;
+                var n=leftIdName.match(/[0-9]/g);
+                if($(this).hasClass("white_style"))return;
+                $(".white_style").removeClass("white_style");
+                $(this).addClass("white_style");
+                if(n!=null){
+                    $(".body_right").animate({scrollTop:o["right_item_"+n]+"px"},function(){
+                        flag=true;
+                    })
+                    //alert($(".body_right").offset().top+","+$("#right_item_"+n).offset().top);
+                }
+
+            })
+            $(".body_right").scroll(function(){
+                if(flag){
+                    var brTop=$(this).scrollTop();
+                    window.setTimeout(function(){
+                        handleLeftOffset(brTop);
+
+                    },10);
+
+                }
+            })
         })
+        function handleLeftOffset(offsetScrollN){
+            //alert(offsetScrollN);
+            var ris=$(".right_item");
+
+            for(var i=0;i<ris.length;i++){
+                var ro=ris.get(i);
+                var n=ro.id.match(/[0-9]/g);
+                var lo=$("#left_item_"+n);
+                var dstart=lo.attr("data-start");
+                var dend=lo.attr("data-end");
+                if(offsetScrollN>=dstart && offsetScrollN<=dend){
+                    $(".white_style").removeClass("white_style");
+                    lo.addClass("white_style");
+                    return ;
+                }
+            }
+        }
+        function handleOffset(){
+            var br=$(".body_right");
+            var brTop=br.offset().top;
+            $(".right_item").each(function(){
+                o[this.id]=$(this).offset().top-brTop;
+                var n=this.id.match(/[0-9]/g);
+                var scrollTopNum=$(this).offset().top-brTop;
+                t[scrollTopNum]="#left_item_"+n;
+                $("#left_item_"+n).attr("data-start",scrollTopNum);
+                $("#left_item_"+n).attr("data-end",scrollTopNum+$(this).height());
+              //  t[$(this).offset().top-brTop+$(this).height()]="#left_item_"+n;
+
+            })
+        }
         function handleData(json){
+            var vm = new Vue({
+                el:"#shop_main",
+                data:json
+            })
             if(json.reCode==1){
 
             }else{
@@ -31,7 +160,8 @@
             }
         }
         function handleImg(imgObj){
-            var img=document.getElementById(imgObj);
+           // var imgs=document.getElementsByTagName("img");
+            var img=imgObj;
             var logDivW=$(img.parentNode).width();
             var logDivh=$(img.parentNode).height();
             var realWidth  = img.width;//获取图片实际宽度
@@ -39,15 +169,32 @@
             if(realWidth>logDivW*2){
                 realWidth=realWidth/2;
                 img.width=realWidth;
+                img.height=realHeight;
             }
             if(realHeight>logDivh*2){
                 realHeight=realHeight/2;
                 img.height=realHeight;
+                img.width=realWidth;
             }
             //让img的宽高相当于图片实际宽高的等比缩放，然后再偏移
 
-            img.style.marginLeft = '-' + (realWidth-logDivW)/2 + 'px';
-            img.style.marginTop = '-' + (realHeight-logDivh)/2 + 'px';
+
+            if(logDivW>realWidth){
+                img.style.width=logDivW+"px";
+            }else{
+                img.style.marginLeft = '-' + (realWidth-logDivW)/2 + 'px';
+            }
+
+            if(logDivh>realHeight){
+                console.log(logDivh+","+realHeight+","+img.src)
+                img.style.height=logDivh+"px";
+            }else{
+                img.style.marginTop = '-' + (realHeight-logDivh)/2 + 'px';
+            }
+            img.style.visibility="visible";
+
+
+
 
 
         }
@@ -55,6 +202,7 @@
     <style type="text/css">
 
         html, body,.shop_main{ margin:0; height:100%;font-family: 'Arial Negreta', 'Arial Normal', 'Arial'; overflow: hidden}
+        img{visibility: hidden}
        .shop_head_style,.shop_foot_style,.shop_body_style, .shop_head_style .head_top,.shop_head_style .head_bottom{
             width:100%;
         }
@@ -85,10 +233,54 @@
         }
 
         .shop_foot_style{
-            background:firebrick;
+            background:white;
             height: 120px;
             position:absolute ;
             bottom: 0;
+            border-top:1px solid #EEEEEE;
+        }
+        .shop_foot_style .foot_style_price{
+            float: left;
+            color: #ff4927;
+            font-size: 50px;
+            height: 100%;
+            margin-left: 150px;
+            line-height: 120px;
+        }
+        .shop_foot_style .foot_style_pay{
+            float: right;
+            height: 100%;
+
+            background:  -webkit-gradient(linear, 0 0, 0 90%, from(#76EDE9), to(#2EC1FC));
+            padding-left: 40px;
+            padding-right:30px;
+            line-height: 120px;
+         }
+        .shop_foot_style .foot_style_pay .layui-icon{
+            font-size: 110px;
+            color: white;
+            float: left;
+        }
+        .shop_foot_style .foot_style_pay .pay_name{
+            color: white;
+            float: left;
+            font-size: 30px;
+        }
+        .shop_car{
+            position:absolute ;
+            bottom: 30px;
+            left:30px;
+            border: 1px #53CDFC;
+            width:120px;
+            height: 120px;
+            border-radius:120px ;
+            line-height: 120px;
+            text-align: center;
+            background: #53CDFC;
+        }
+        .shop_car i{
+            font-size: 80px;
+            color: white;
         }
         .shop_body_style{
             height: 100%;
@@ -108,6 +300,7 @@
             line-height: 100px;
             text-align: center;
             color:rgba(60,63,65,0.65);
+            border-bottom: 1px solid #E3E3E3;
         }
        .body_right{
            width: 75%;
@@ -153,8 +346,13 @@
 
             padding-left: 20px;
         }
+        .right_item .item_title{
+            color:#2F2F2F;
+            margin-bottom:20px
+        }
         .right_item .item_content{
-            margin-top: 20px;
+            margin-bottom: 20px;
+            height:172px
         }
         .right_item .content_left{
             border-radius:20px ;
@@ -162,84 +360,145 @@
             width: 170px;
             height: 170px;
             float: left;
+            overflow: hidden;
         }
         .content_mid{
             float: left;
+            margin-left: 30px;
+        }
+        .content_mid .mid_title{
+            font-size: 28px;
+            color:#2F2F2F
+        }
+        .content_mid .mid_sale{
+            margin-top: 10px;
+            font-size: 20px;
+            color:rgba(60,63,65,0.65);
+
+        }
+        .content_mid .mid_price{
+            font-size: 28px;
+            color: #ff4927;
+            margin-top: 55px;
         }
         .content_right{
             float: right;
+            padding-top:120px;
+            margin-right:20px;
+        }
+        .content_right div{
+            float: left;
+
+
+        }
+        .content_right .right_mid{
+            font-size: 30px;
+            color: #ff4927;
+            text-align: center;
+            margin-left: 10px;
+            margin-right: 10px;
+            height: 50px;
+            line-height: 50px;
+
+        }
+        .content_right .right_start, .content_right .right_end{
+            font-size: 50px;
+            border-radius:30px ;
+            border:2px solid #D8D8D8;
+            width:50px;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            color:#D8D8D8
+
+        }
+        .right_start,.right_mid{
+            display: none;
         }
         .right_item .item_title{
             font-size: 30px;
-            border-bottom: 1px solid rgba(60,63,65,0.65);
+            border-bottom: 1px dashed rgba(0,0,0,0.33);
+
+        }
+        .car_show_num{
+            position: absolute;top:-5px;right: 0px;color: white;width: 40px;height:40px;font-size: 20px;
+
+            border-radius:40px ;
+            background: #ff4927;
+            line-height: 40px;
+            display: none;
+        }
+        .white_style{
+            background: white;
 
         }
     </style>
 </head>
 <body>
-<div class="shop_main">
+<div class="shop_main" id="shop_main">
     <div class="shop_head_style">
         <div class="head_top">
             <img id="topImg" src="http://www.doudouwo.cn/rs/20181121171734100.jpeg?v=1"/>
         </div>
-        <div class="head_bottom">
-            欢迎光临，很高兴为您服务
-        </div>
+
         <div class="head_store_logo">
             <img id="headImg" src="http://www.doudouwo.cn/rs/20181121161126771.jpeg?v=1"/>
         </div>
         <div class="head_store_info">
-            <h1>天府广场店</h1>
-            <p>成都天府广场负一层</p>
+            <h1>{{data.name}}</h1>
+            <p>{{data.address}}</p>
+        </div>
+        <div class="head_bottom">
+            {{data.desc}}
         </div>
     </div>
     <div class="shop_body_style">
         <div class="body_left" >
             <ul>
-                <li>限时折扣</li>
-                <li>热销</li>
-                <li>饮品</li>
-                <li>轻食</li>
-                <li>主食</li>
-                <li>套餐</li>
-                <li>套餐</li>
-                <li>套餐</li>
-                <li>套餐</li>
-                <li>套餐</li>
-                <li>套餐</li>
-                <li>套餐</li>
-                <li>套餐</li>
-
+                <li v-for="(item,index) in data.list"  v-bind:id="'left_item_'+index">{{item.name}}</li>
 
             </ul>
         </div>
-        <div class="body_right">
-            <div class="right_item">
-                <div class="item_title">
-                    限时折扣
+        <div class="body_right" >
+            <div class="right_item" v-for="(item,index) in data.list"  v-bind:id="'right_item_'+index">
+                <div class="item_title" >
+                    {{item.name}}
                 </div>
-                <div class="item_content">
+                <div class="item_content" v-for="obj in item.list">
                     <div class="content_left">
-                        <img>
+                        <img v-bind:src="obj.imgUrl">
                     </div>
                     <div class="content_mid">
-                        <p>水果拼盘</p>
-                        <p>销量：124</p>
-                        <p>0.02元</p>
+                        <p class="mid_title">{{obj.name}}</p>
+                        <p class="mid_sale">销量：{{obj.monthSales}}</p>
+                        <p class="mid_price" >{{obj.products[0].price/100}}元{{obj.products.length>1?"起":""}}</p>
                     </div>
                     <div class="content_right">
-                        <a href="123">-</a>
-                        <span>12</span>
-                        <a href="123">+</a>
+                        <div class="right_start">-</div>
+                        <div class="right_mid"></div>
+                        <div class="right_end" v-bind:datas="JSON.stringify(obj.products)">+</div>
                     </div>
                 </div>
+
             </div>
+
         </div>
 
     </div>
     <div class="shop_foot_style">
 
+        <div class="foot_style_price" id="foot_style_price" money="0"></div>
+        <div class="foot_style_pay">
+            <i class="layui-icon" >&#xe63c;</i>
+            <div class="pay_name">结算</div>
 
+        </div>
+
+
+    </div>
+    <div class="shop_car">
+        <div id="car_show_num" class="car_show_num" ></div>
+        <i class="layui-icon" >&#xe657;</i>
     </div>
 </div>
 

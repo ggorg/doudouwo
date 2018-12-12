@@ -22,6 +22,6 @@ public class GoodsClientServiceTest {
         String token= TokenUtil.createToken("openid");
         TokenUtil.putStoreid(token,2);
         TokenUtil.putUseridAndName(token,26,"test123");
-        this.goodsClientService.goodsIndex(token, GoodsPlatePosEnum.GoodsPlatePos1);
+        this.goodsClientService.goodsIndex(2, GoodsPlatePosEnum.GoodsPlatePos1);
     }
 }

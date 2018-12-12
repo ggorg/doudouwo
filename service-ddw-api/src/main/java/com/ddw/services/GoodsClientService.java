@@ -35,12 +35,12 @@ public class GoodsClientService extends CommonService {
     private UserGradeService userGradeService;
 
    public ResponseApiVO appIndex(String token)throws Exception{
-
-       ResponseApiVO<GoodsListVO> responseApiVO=goodsIndex(token,GoodsPlatePosEnum.GoodsPlatePos1);
+       Integer storeId=TokenUtil.getStoreId(token);
+       ResponseApiVO<GoodsListVO> responseApiVO=goodsIndex(storeId,GoodsPlatePosEnum.GoodsPlatePos1);
        if(responseApiVO.getReCode()!=1){
            return responseApiVO;
        }
-      Integer storeId=TokenUtil.getStoreId(token);
+
 
        Map goddessIndex=new HashMap();
        goddessIndex.put("list",responseApiVO.getData().getList());
@@ -56,8 +56,8 @@ public class GoodsClientService extends CommonService {
    }
 
 
-    public ResponseApiVO goodsIndex(String token,GoodsPlatePosEnum platePosEnum)throws Exception{
-        Integer storeId= TokenUtil.getStoreId(token);
+    public ResponseApiVO goodsIndex(Integer storeId,GoodsPlatePosEnum platePosEnum)throws Exception{
+
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择门店",null);
         }

@@ -5,6 +5,7 @@ import com.ddw.enums.GoodsPlatePosEnum;
 import com.ddw.enums.GoodsTypeEnum;
 import com.ddw.services.GoodsClientService;
 import com.ddw.token.Token;
+import com.ddw.token.TokenUtil;
 import com.gen.common.dict.DictionaryUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,12 +34,23 @@ public class GoodsContoller {
         }
         return new ResponseApiVO(-1,"失败",null);
     }
-    @Token
+
     @ApiOperation(value = "商品列表")
     @PostMapping("/list/{token}")
     public ResponseApiVO<GoodsListVO> toGoodsList(@PathVariable String token){
         try {
-            return this.goodsClientService.goodsIndex(token, GoodsPlatePosEnum.GoodsPlatePos2);
+            return this.goodsClientService.goodsIndex(TokenUtil.getStoreId(token), GoodsPlatePosEnum.GoodsPlatePos2);
+        }catch (Exception e){
+            logger.error("GoodsContoller->toGoodsList-商列表-》异常",e);
+        }
+        return new ResponseApiVO(-1,"失败",null);
+    }
+
+    @ApiOperation(value = "商品列表(h5)")
+    @PostMapping("/h5shoplist")
+    public ResponseApiVO<GoodsListVO> toGoodsH5List(@RequestParam(value = "storeId") @ApiParam(name = "storeId",value="门店ID", required = false) Integer storeId){
+        try {
+            return this.goodsClientService.goodsIndex(storeId, GoodsPlatePosEnum.GoodsPlatePos2);
         }catch (Exception e){
             logger.error("GoodsContoller->toGoodsList-商列表-》异常",e);
         }
