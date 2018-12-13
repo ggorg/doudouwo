@@ -309,14 +309,14 @@ public class PracticeController {
     public ResponseVO cancle(@PathVariable String token,
                              @RequestBody @ApiParam(name = "args",value="传入json格式", required = false) PracticeReleaseDTO practiceReleaseDTO){
         try {
-            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrderInProgress(TokenUtil.getUserId(token));
+            PracticeOrderPO practiceOrderPO = reviewPracticeService.getOrderInProgress(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId());
             //判断无接单,可取消发布
-//            if (practiceOrderPO == null) {
-            CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
-            return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0,null);
-//            }else {
-//                return new ResponseVO(-2,"有正在进行的订单,不可取消,请先结算",null);
-//            }
+            if (practiceOrderPO == null) {
+                CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));
+                return reviewPracticeService.updatePracticeGame(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId(),0,null);
+            }else {
+                return new ResponseVO(-2,"有正在进行的订单,不可取消,请先结算",null);
+            }
         }catch (Exception e){
             logger.error("PracticeController->cancle",e);
             return new ResponseVO(-1,"提交失败",null);

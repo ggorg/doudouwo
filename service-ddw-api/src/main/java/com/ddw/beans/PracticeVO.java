@@ -30,6 +30,10 @@ public class PracticeVO {
     private int age = 0;
     @ApiModelProperty(name="sex",value="用户的性别，值为1时是男性，值为2时是女性，值为0时是未知",example="1")
     private Integer sex = 0;
+    @ApiModelProperty(name="job",value="职业",example="文化/广告/传媒")
+    private String job = "";
+    @ApiModelProperty(name="city",value="用户所在城市",example="广州市")
+    private String city = "";
     @ApiModelProperty(name="focus",value="是否关注,关注true,未关注false",example="true")
     private boolean focus;
     @ApiModelProperty(name="fans",value="粉丝数",example="16253")
@@ -129,6 +133,22 @@ public class PracticeVO {
 
     public void setSex(Integer sex) {
         this.sex = sex;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public boolean isFocus() {
