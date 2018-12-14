@@ -101,7 +101,7 @@
 
                 <div  v-bind:class="item.actPrice==null?'content_option_right2':'content_option_right'">
                     <p v-if="item.actPrice!=null" class="underline">{{item.price/100+"元"}}</p>
-                    <p>{{(item.actPrice==null?item.price:item.actPrice)/100+"元"}}</p>
+                    <p class="price_style_p">{{(item.actPrice==null?item.price:item.actPrice)/100+"元"}}</p>
                 </div>
             </div>
             <div class="content_option_num">
@@ -119,6 +119,25 @@
             <div class="sure_mid"></div>
             <div class="sure_end" onclick="popAdd(this)">+</div>
         </div>
+    </div>
+
+</div>
+<div class="show_car_list" id="show_car_list">
+    <div class="car_list_clear">
+        <span >清空购物车</span>
+    </div>
+    <div class="car_list_main">
+        <div class="car_list_tr" v-for="item in list">
+            <div class="list_one" >{{item.name}}</div>
+            <div class="list_two">{{item.money/100}}元</div>
+            <div class="list_three">
+                <div class="car_end" >+</div>
+                <div class="car_mid" >{{item.num}}</div>
+
+                <div class="car_start">-</div>
+            </div>
+        </div>
+
     </div>
 </div>
 </body>

@@ -12,6 +12,7 @@ img{visibility: hidden}
     height: 401px;
     overflow:hidden;
 
+
 }
 .shop_head_style .head_top{
     height: 331px;
@@ -40,6 +41,7 @@ img{visibility: hidden}
     position:absolute ;
     bottom: 0;
     border-top:1px solid #EEEEEE;
+    z-index: 300;
 }
 .shop_foot_style .foot_style_price{
     float: left;
@@ -79,6 +81,7 @@ img{visibility: hidden}
     line-height: 120px;
     text-align: center;
     background: #53CDFC;
+    z-index: 305;
 }
 .shop_car i{
     font-size: 80px;
@@ -342,9 +345,11 @@ img{visibility: hidden}
     padding: 0px;
     color: #E08031
 }
+
 .underline{
     text-decoration:line-through;
     font-size:1.5rem;
+    color:#BFC0C0;
 }
 
 .content_option_white{
@@ -414,5 +419,66 @@ img{visibility: hidden}
     line-height: 70px;
     color: #ff4927;
     text-align: center;
+}
+.show_car_list{
+    width: 100%;
+    padding-top:20px;
+    display: none;
+
+}
+.show_car_list .car_list_clear{
+    width: 100%;
+    height: 50px;
+}
+.show_car_list .car_list_clear span{
+    float: right;
+    font-size: 1.7rem;
+    margin-right: 20px;
+}
+.show_car_list .car_list_main{
+    padding: 0px 20px 0px 20px;
+    max-height: 500px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling : touch;
+}
+.car_list_tr{
+    width:100%;
+    height: 50px;
+    font-size: 1.7rem;
+    line-height: 50px;
+    margin-bottom: 30px;
+
+}
+.list_one,.list_two,.list_three{
+    float:left;
+}
+.list_one{
+    width: 40%;
+}
+.list_two{
+    width: 30%;
+    text-align: right;
+    color: #FF470F;
+}
+.list_three{
+    width: 30%;
+}
+.list_three div{
+    float: right;
+}
+.list_three .car_mid{
+    width:70px;
+    color: #FF470F;
+    text-align: center;
+}
+.list_three .car_start,.list_three .car_end{
+    font-size: 50px;
+    border-radius: 30px;
+    border: 2px solid #D8D8D8;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    color: #D8D8D8;
 }
 

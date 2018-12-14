@@ -3,6 +3,7 @@ var o=[];
 var t=[];
 var flag=true;
 var vm_spec_pop;
+var vm_car;
 layui.use(['layer','form'],function(){
     layer=layui.layer;
 
@@ -47,10 +48,14 @@ function requestDataHandle(){
                     area: ["90%","450px"],
                     title:false,
                     closeBtn:false,
+                    shadeClose:true,
                     content:$("#spec_pop") //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
 
                 });
-                $(".layui-layer").css({"border-radius":"30px"})
+                layer.style(lo, {
+                    "border-radius": '30px',
+                });
+
                 if(vm_spec_pop==null){
                     vm_spec_pop = new Vue({
                         el:"#spec_pop",
@@ -71,7 +76,7 @@ function requestDataHandle(){
                 $(".content_option").each(function(){
                     var co=$(this);
                     var code=co.attr("code");
-                    var n=getPriceByCookie(code);
+                    var n=getNumByCookie(code);
                     if(n>0){
                         co.next().show().text(n);
                     }else{
@@ -122,8 +127,47 @@ function requestDataHandle(){
 
             }
         })
+        $(".shop_car").click(function(){
+            //
+            var lo=layer.open({
+                id:"mycarlist",
+                type: 1,
+                area: "100%",
+                title:false,
+                closeBtn:false,
+                shadeClose:true,
+                offset: 'b',
+                zIndex:91,
+                anim:2,
+                content:$("#show_car_list") //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+
+            });
+           // border-top-left-radius: 30px;
+          //  border-top-right-radius: 30px;
+            layer.style(lo, {
+                "border-top-left-radius":"30px",
+                "border-top-right-radius":"30px",
+                top:"auto",
+                bottom:"120px"
+            });
+            if(vm_car==null){
+                vm_car = new Vue({
+                    el:"#show_car_list",
+                    data:{
+                        list:JSON.parse($.cookie("shopCar"))
+                    }
+                })
+            }else{
+                vm_car.list=JSON.parse($.cookie("shopCar"));
+            }
+
+
+            $("#show_car_list").show();
+            $(".layui-layer-shade").css("z-index","90");
+        })
         handleGcodeNum();
         $("#shop_main").css("visibility","visible");
+
         layer.close(indexLoad)
     },"JSON")
 }
@@ -167,6 +211,7 @@ function handleCooke(code,num,money,name,gcode){
             gcode:gcode
         }
     }
+    console.log(JSON.stringify(shopCar));
     $.cookie("shopCar",shopCar.length>0?JSON.stringify(shopCar):null,{path:"/"});
 }
 function joinShopCar(obj){
@@ -211,6 +256,7 @@ function handleGcodeNum(gcode){
                 obj.text(t+parseInt(shopCar[s].num));
                 countNum+=parseInt(shopCar[s].num);
                 countPrice+=parseInt(shopCar[s].money);
+                console.log(shopCar[s].money+",");
             }
             $("#car_show_num").show().text(countNum);
             $("#foot_style_price").text("￥"+countPrice/100);
@@ -218,13 +264,25 @@ function handleGcodeNum(gcode){
         }
     }
 }
-function getPriceByCookie(code){
+function getNumByCookie(code){
     var shopCar=$.cookie("shopCar");
     if(shopCar!=null){
         shopCar=JSON.parse(shopCar);
         for(var s=0;s<shopCar.length;s++){
             if(shopCar[s].code==code){
                 return shopCar[s].num;
+            }
+        }
+    }
+    return 0;
+}
+function getPriceByCookie(code){
+    var shopCar=$.cookie("shopCar");
+    if(shopCar!=null){
+        shopCar=JSON.parse(shopCar);
+        for(var s=0;s<shopCar.length;s++){
+            if(shopCar[s].code==code){
+                return shopCar[s].money;
             }
         }
     }
@@ -246,8 +304,11 @@ function getNumByGcode(gcode){
 }
 function popAdd(obj){
     var bo=$(".content_option_blue");
-    var n=commonMidAdd(JSON.parse(bo.attr("datas")),$(".sure_mid"),bo.attr("title"),bo.attr("gcode"));
-    bo.next().show().text(n);
+    var nstr=commonMidAdd(JSON.parse(bo.attr("datas")),bo.next(),bo.attr("title"),bo.attr("gcode"),true);
+    var ns=nstr.split("-");
+    //alert(parseInt(ns[1])*parseInt(ns[0])/100);
+    bo.next().show();
+    $(".sure_mid").text("￥"+parseInt(ns[1])*parseInt(ns[0])/100);
     handleGcodeNum(bo.attr("gcode"));
 }
 function commonMidSub(dsObj,midObj){
@@ -265,37 +326,42 @@ function commonMidSub(dsObj,midObj){
     var money=parseInt(priceObj.attr("money"));
     priceObj.text("￥"+(money-price)/100);
     priceObj.attr("money",money-price)
-    handleCooke(dsObj.code,midObj.text(),money-price);
-    return midObj.text()
+    handleCooke(dsObj.code,midObj.text(),parseInt(midObj.text())*price);
+    return midObj.text()+"-"+price;
 }
-function commonMidAdd(dsObj,midObj,title,gcode){
+function commonMidAdd(dsObj,midObj,title,gcode,flag){
     var carObj=$("#car_show_num");
     var priceObj=$("#foot_style_price");
     var price=dsObj.actPrice!=undefined && dsObj.actPrice!=null?dsObj.actPrice:dsObj.price;
     var sm_text=midObj.text();
     sm_text=sm_text==""?0:parseInt(sm_text);
+
     midObj.text(sm_text+1);
+
     var carText=carObj.text()==""?0:parseInt(carObj.text());
     carObj.text(carText+1);
     var money=parseInt(priceObj.attr("money"));
     priceObj.text("￥"+(money+price)/100);
     priceObj.attr("money",money+price);
-    handleCooke(dsObj.code,midObj.text(),money+price,title+"-"+dsObj.name,gcode);
+    handleCooke(dsObj.code,midObj.text(),parseInt(midObj.text())*price,title+"-"+dsObj.name,gcode);
     carObj.show();
     priceObj.show();
-    return midObj.text();
+    return midObj.text()+"-"+price;
 
 }
 function popSubs(obj){
     var bo=$(".content_option_blue");
     var sm=$(".sure_mid");
-    if(sm.text()==1){
+    var bn=bo.next();
+    if(bn.text()==1){
         $(".foot_sure").removeClass("displayStyle");
         $(".foot_btn").addClass("displayStyle");
-        bo.next().hide();
+        bn.hide();
     }
-    var n=commonMidSub(JSON.parse(bo.attr("datas")),sm);
-    bo.next().text(n);
+    var nstr=commonMidSub(JSON.parse(bo.attr("datas")),bn);
+    var ns=nstr.split("-");
+    $(".sure_mid").text("￥"+parseInt(ns[1])*parseInt(ns[0])/100);
+
     handleGcodeNum(bo.attr("gcode"));
 
 }
@@ -306,7 +372,7 @@ function optionClickHandle(obj){
     var n=getPriceByCookie(jsonData.code);
     if(n>0){
         $(".foot_sure").addClass("displayStyle");
-        $(".foot_btn").removeClass("displayStyle").find(".sure_mid").text(n);
+        $(".foot_btn").removeClass("displayStyle").find(".sure_mid").text("￥"+n/100);
     }else{
         $(".foot_sure").removeClass("displayStyle");
         $(".foot_btn").addClass("displayStyle").find(".sure_mid").text("");
