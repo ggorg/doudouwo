@@ -47,7 +47,7 @@ public class ReviewPracticeRefundController {
             ReviewPO reviewPO = this.reviewPracticeRefundService.getReviewById(id);
             model.addAttribute("review",reviewPO);
             if (reviewPO != null) {
-                model.addAttribute("reviewPracticeRefund",this.reviewPracticeRefundService.getReviewRefundByCode(reviewPO.getDrBusinessCode()));
+                model.addAttribute("reviewPracticeRefund",this.reviewPracticeRefundService.getReviewRefundByCodeMap(reviewPO.getDrBusinessCode()));
             }
             return "pages/manager/reviewPracticeRefund/reviewInfo";
 

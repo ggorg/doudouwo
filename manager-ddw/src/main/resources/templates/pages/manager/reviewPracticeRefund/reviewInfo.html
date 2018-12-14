@@ -43,6 +43,22 @@
               <td th:text="${#TdEnum.text('com.ddw.enums.ReviewBusinessTypeEnum',review?.drBusinessType)}">Trident</td>
             </tr>
             <tr >
+              <td >游戏</td>
+              <td th:text="${reviewPracticeRefund?.gameName}"></td>
+            </tr>
+            <tr >
+              <td >原等级</td>
+              <td th:text="${reviewPracticeRefund?.rank}"></td>
+            </tr>
+            <tr >
+              <td >目标等级</td>
+              <td th:text="${reviewPracticeRefund?.targetRank}"></td>
+            </tr>
+            <tr >
+              <td >实际等级</td>
+              <td th:text="${reviewPracticeRefund?.realityRank}"></td>
+            </tr>
+            <tr >
                 <td >退款原因</td>
                 <td th:text="${reviewPracticeRefund?.reason}"></td>
             </tr>
