@@ -7,435 +7,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>餐饮shop</title>
     <link type="text/css" rel="stylesheet" href="/layui/css/layui.css"/>
+    <link type="text/css" rel="stylesheet" href="shopIndex.css"/>
     <script type="text/javascript" src="/layui/layui.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
-    <script type="text/javascript" src="data.js"></script>
+    <script type="text/javascript" src="/sysframe2/js/plugins/jquery.cookie.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
+    <script type="text/javascript" src="shopIndex.js"></script>
 
-    <script type="text/javascript">
-        var layer;
-        var o=[];
-        var t=[];
-        var flag=true;
-        $(function(){
-            layui.use(['layer','form'],function(){
-                //layer=layui.layer;
-            })
-           // alert( window.screen.height+","+$("html").height());
-            $(".shop_body_style,.body_left,.body_right").css("height",$("html").height()-401-120);
-            $.post("/ddwapp/goods/h5shoplist",{storeId:1},function(callBackData){
-                handleData(callBackData);
-            },"JSON")
-
-           // handleImg("topImg");
-            $("img").on("load",function(){
-                handleImg(this);
-            })
-            $(".right_end").on("click",function(){
-                var ds=JSON.parse($(this).attr("datas"));
-                var num=0;
-                var carObj=$("#car_show_num");
-                var priceObj=$("#foot_style_price");
-                if(ds.length==1){
-                    var p=$(this).parent();
-                    var rm=p.find(".right_mid");
-
-                    var tmText=rm.text()==""?0:parseInt(rm.text());
-
-                    var dsObj=ds[0];
-                    var price=dsObj.actPrice!=undefined && dsObj.actPrice!=null?dsObj.actPrice:dsObj.price;
-
-                    rm.text(tmText+1);
-
-
-                    rm.show();
-                    p.find(".right_start").show();
-                    carObj.show();
-                    priceObj.show();
-                    var carText=carObj.text()==""?0:parseInt(carObj.text());
-                    carObj.text(carText+1);
-                    var money=parseInt(priceObj.attr("money"));
-                    priceObj.text("￥"+(money+price)/100);
-                    priceObj.attr("money",money+price)
-                }
-
-
-            })
-            $(".right_start").on("click",function(){
-                var p=$(this).parent();
-                var rm=p.find(".right_mid");
-                var re=p.find(".right_end");
-                var carObj=$("#car_show_num");
-                var priceObj=$("#foot_style_price");
-                var ds=JSON.parse(re.attr("datas"));
-                var dsObj=ds[0];
-                var price=dsObj.actPrice!=undefined && dsObj.actPrice!=null?dsObj.actPrice:dsObj.price;
-                if(rm.text()==1){
-                    p.find(".right_start").hide();
-                    rm.hide();
-
-                }
-                if(carObj.text()==1){
-                    carObj.hide();
-                    priceObj.hide();
-                }
-                rm.text(rm.text()-1);
-                var carText=carObj.text()==""?0:parseInt(carObj.text());
-                carObj.text(carText-1);
-                var money=parseInt(priceObj.attr("money"));
-
-                priceObj.text("￥"+(money-price)/100);
-                priceObj.attr("money",money-price)
-
-            })
-
-            handleOffset();
-
-            $(".body_left li").click(function(){
-                flag=false;
-                var leftIdName=this.id;
-                var n=leftIdName.match(/[0-9]/g);
-                if($(this).hasClass("white_style"))return;
-                $(".white_style").removeClass("white_style");
-                $(this).addClass("white_style");
-                if(n!=null){
-                    $(".body_right").animate({scrollTop:o["right_item_"+n]+"px"},function(){
-                        flag=true;
-                    })
-                    //alert($(".body_right").offset().top+","+$("#right_item_"+n).offset().top);
-                }
-
-            })
-            $(".body_right").scroll(function(){
-                if(flag){
-                    var brTop=$(this).scrollTop();
-                    window.setTimeout(function(){
-                        handleLeftOffset(brTop);
-
-                    },10);
-
-                }
-            })
-        })
-        function handleLeftOffset(offsetScrollN){
-            //alert(offsetScrollN);
-            var ris=$(".right_item");
-
-            for(var i=0;i<ris.length;i++){
-                var ro=ris.get(i);
-                var n=ro.id.match(/[0-9]/g);
-                var lo=$("#left_item_"+n);
-                var dstart=lo.attr("data-start");
-                var dend=lo.attr("data-end");
-                if(offsetScrollN>=dstart && offsetScrollN<=dend){
-                    $(".white_style").removeClass("white_style");
-                    lo.addClass("white_style");
-                    return ;
-                }
-            }
-        }
-        function handleOffset(){
-            var br=$(".body_right");
-            var brTop=br.offset().top;
-            $(".right_item").each(function(){
-                o[this.id]=$(this).offset().top-brTop;
-                var n=this.id.match(/[0-9]/g);
-                var scrollTopNum=$(this).offset().top-brTop;
-                t[scrollTopNum]="#left_item_"+n;
-                $("#left_item_"+n).attr("data-start",scrollTopNum);
-                $("#left_item_"+n).attr("data-end",scrollTopNum+$(this).height());
-              //  t[$(this).offset().top-brTop+$(this).height()]="#left_item_"+n;
-
-            })
-        }
-        function handleData(json){
-            var vm = new Vue({
-                el:"#shop_main",
-                data:json
-            })
-            if(json.reCode==1){
-
-            }else{
-                layer.msg(data.reMsg);
-            }
-        }
-        function handleImg(imgObj){
-           // var imgs=document.getElementsByTagName("img");
-            var img=imgObj;
-            var logDivW=$(img.parentNode).width();
-            var logDivh=$(img.parentNode).height();
-            var realWidth  = img.width;//获取图片实际宽度
-            var realHeight  = img.height;//获取图片实际高度
-            if(realWidth>logDivW*2){
-                realWidth=realWidth/2;
-                img.width=realWidth;
-                img.height=realHeight;
-            }
-            if(realHeight>logDivh*2){
-                realHeight=realHeight/2;
-                img.height=realHeight;
-                img.width=realWidth;
-            }
-            //让img的宽高相当于图片实际宽高的等比缩放，然后再偏移
-
-
-            if(logDivW>realWidth){
-                img.style.width=logDivW+"px";
-            }else{
-                img.style.marginLeft = '-' + (realWidth-logDivW)/2 + 'px';
-            }
-
-            if(logDivh>realHeight){
-                console.log(logDivh+","+realHeight+","+img.src)
-                img.style.height=logDivh+"px";
-            }else{
-                img.style.marginTop = '-' + (realHeight-logDivh)/2 + 'px';
-            }
-            img.style.visibility="visible";
-
-
-
-
-
-        }
-    </script>
-    <style type="text/css">
-
-        html, body,.shop_main{ margin:0; height:100%;font-family: 'Arial Negreta', 'Arial Normal', 'Arial'; overflow: hidden}
-        img{visibility: hidden}
-       .shop_head_style,.shop_foot_style,.shop_body_style, .shop_head_style .head_top,.shop_head_style .head_bottom{
-            width:100%;
-        }
-        .shop_head_style{
-            height: 401px;
-            overflow:hidden;
-
-        }
-        .shop_head_style .head_top{
-            height: 331px;
-            width: 100%;
-            border-bottom: 1px solid #D0D0D0;
-            overflow: hidden;
-
-        }
-        .shop_head_style .head_top img{
-
-            z-index: -100;
-        }
-        .shop_head_style .head_bottom{
-            height:70px;
-            font-size: 30px;
-            color:#ff4927;
-            font-weight: bold;
-            line-height: 70px;
-            padding-left: 260px;
-            z-index: 1;
-        }
-
-        .shop_foot_style{
-            background:white;
-            height: 120px;
-            position:absolute ;
-            bottom: 0;
-            border-top:1px solid #EEEEEE;
-        }
-        .shop_foot_style .foot_style_price{
-            float: left;
-            color: #ff4927;
-            font-size: 50px;
-            height: 100%;
-            margin-left: 150px;
-            line-height: 120px;
-        }
-        .shop_foot_style .foot_style_pay{
-            float: right;
-            height: 100%;
-
-            background:  -webkit-gradient(linear, 0 0, 0 90%, from(#76EDE9), to(#2EC1FC));
-            padding-left: 40px;
-            padding-right:30px;
-            line-height: 120px;
-         }
-        .shop_foot_style .foot_style_pay .layui-icon{
-            font-size: 110px;
-            color: white;
-            float: left;
-        }
-        .shop_foot_style .foot_style_pay .pay_name{
-            color: white;
-            float: left;
-            font-size: 30px;
-        }
-        .shop_car{
-            position:absolute ;
-            bottom: 30px;
-            left:30px;
-            border: 1px #53CDFC;
-            width:120px;
-            height: 120px;
-            border-radius:120px ;
-            line-height: 120px;
-            text-align: center;
-            background: #53CDFC;
-        }
-        .shop_car i{
-            font-size: 80px;
-            color: white;
-        }
-        .shop_body_style{
-            height: 100%;
-            overflow:hidden;
-        }
-        .body_left{
-            width:25%;
-
-            background: #F3F3F3;
-            overflow-y: auto;
-            float: left;
-            -webkit-overflow-scrolling : touch;
-        }
-        .body_left li{
-            font-size: 32px;
-            height: 100px;
-            line-height: 100px;
-            text-align: center;
-            color:rgba(60,63,65,0.65);
-            border-bottom: 1px solid #E3E3E3;
-        }
-       .body_right{
-           width: 75%;
-           overflow-y: auto;
-           float: left;
-
-           -webkit-overflow-scrolling : touch;
-
-
-       }
-        .head_store_logo{
-            border-radius:20px ;
-            border:1px solid white;
-            position:absolute;
-            left:40px;
-            top:160px;
-            width: 210px;
-            height: 210px;
-            overflow: hidden;
-            z-index: 10;
-        }
-        .head_store_logo img{
-
-
-        }
-        .head_store_info{
-            position: absolute;
-            top:180px;
-            left:270px;
-
-        }
-        .head_store_info p{
-            font-size: 30px;
-            margin-top: 50px;
-            color:white;
-            font-weight: bold;
-        }
-        .head_store_info h1{
-            font-size: 40px;
-            color:white;
-        }
-        .right_item{
-
-            padding-left: 20px;
-        }
-        .right_item .item_title{
-            color:#2F2F2F;
-            margin-bottom:20px
-        }
-        .right_item .item_content{
-            margin-bottom: 20px;
-            height:172px
-        }
-        .right_item .content_left{
-            border-radius:20px ;
-            border:1px solid black;
-            width: 170px;
-            height: 170px;
-            float: left;
-            overflow: hidden;
-        }
-        .content_mid{
-            float: left;
-            margin-left: 30px;
-        }
-        .content_mid .mid_title{
-            font-size: 28px;
-            color:#2F2F2F
-        }
-        .content_mid .mid_sale{
-            margin-top: 10px;
-            font-size: 20px;
-            color:rgba(60,63,65,0.65);
-
-        }
-        .content_mid .mid_price{
-            font-size: 28px;
-            color: #ff4927;
-            margin-top: 55px;
-        }
-        .content_right{
-            float: right;
-            padding-top:120px;
-            margin-right:20px;
-        }
-        .content_right div{
-            float: left;
-
-
-        }
-        .content_right .right_mid{
-            font-size: 30px;
-            color: #ff4927;
-            text-align: center;
-            margin-left: 10px;
-            margin-right: 10px;
-            height: 50px;
-            line-height: 50px;
-
-        }
-        .content_right .right_start, .content_right .right_end{
-            font-size: 50px;
-            border-radius:30px ;
-            border:2px solid #D8D8D8;
-            width:50px;
-            height: 50px;
-            text-align: center;
-            line-height: 50px;
-            color:#D8D8D8
-
-        }
-        .right_start,.right_mid{
-            display: none;
-        }
-        .right_item .item_title{
-            font-size: 30px;
-            border-bottom: 1px dashed rgba(0,0,0,0.33);
-
-        }
-        .car_show_num{
-            position: absolute;top:-5px;right: 0px;color: white;width: 40px;height:40px;font-size: 20px;
-
-            border-radius:40px ;
-            background: #ff4927;
-            line-height: 40px;
-            display: none;
-        }
-        .white_style{
-            background: white;
-
-        }
-    </style>
 </head>
 <body>
-<div class="shop_main" id="shop_main">
+
+<div class="shop_main" id="shop_main" >
     <div class="shop_head_style">
         <div class="head_top">
             <img id="topImg" v-bind:src="data.bannerUrl"/>
@@ -455,7 +37,7 @@
     <div class="shop_body_style">
         <div class="body_left" >
             <ul>
-                <li v-for="(item,index) in data.list"  v-bind:id="'left_item_'+index">{{item.name}}</li>
+                <li v-for="(item,index) in data.list"  v-bind:id="'left_item_'+index" v-bind:class="index==0?'white_style':''">{{item.name}}</li>
 
             </ul>
         </div>
@@ -471,12 +53,19 @@
                     <div class="content_mid">
                         <p class="mid_title">{{obj.name}}</p>
                         <p class="mid_sale">销量：{{obj.monthSales}}</p>
-                        <p class="mid_price" >{{obj.products[0].price/100}}元{{obj.products.length>1?"起":""}}</p>
+                        <p class="mid_price" >{{(obj.products[0].actPrice==null?obj.products[0].price:obj.products[0].actPrice)/100}}元{{obj.products.length>1?"起":""}}</p>
                     </div>
-                    <div class="content_right">
+                    <div class="content_right" v-if="obj.products.length>1">
+
+                        <div class="right_spec" v-bind:datas="JSON.stringify(obj.products)" v-bind:title="obj.name" v-bind:gcode="obj.code">选择规格</div>
+                        <div class="right_spec_num" v-bind:cacheSpecGcode="obj.code">
+
+                        </div>
+                    </div>
+                    <div class="content_right" v-else >
                         <div class="right_start">-</div>
-                        <div class="right_mid"></div>
-                        <div class="right_end" v-bind:datas="JSON.stringify(obj.products)">+</div>
+                        <div class="right_mid" v-bind:cacheMidGcode="obj.code"></div>
+                        <div class="right_end" v-bind:datas="JSON.stringify(obj.products)" v-bind:title="obj.name" v-bind:gcode="obj.code">+</div>
                     </div>
                 </div>
 
@@ -501,6 +90,36 @@
         <i class="layui-icon" >&#xe657;</i>
     </div>
 </div>
+<div class="spec_pop" id="spec_pop">
+    <div class="pop_title">{{title}}</div>
+    <div class="pop_mid">规格</div>
+    <div class="pop_content">
 
+        <div  v-for="(item,index) in list"  class="content_option_main">
+            <div class="content_option" onclick="optionClickHandle(this)" v-bind:title="title" v-bind:code="item.code" v-bind:gcode="gcode" v-bind:datas="JSON.stringify(item)">
+                <div class="content_option_left">{{item.name}}-</div>
+
+                <div  v-bind:class="item.actPrice==null?'content_option_right2':'content_option_right'">
+                    <p v-if="item.actPrice!=null" class="underline">{{item.price/100+"元"}}</p>
+                    <p>{{(item.actPrice==null?item.price:item.actPrice)/100+"元"}}</p>
+                </div>
+            </div>
+            <div class="content_option_num">
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="pop_foot">
+        <div class="foot_cancel">取消</div>
+        <div class="foot_sure " onclick="joinShopCar(this)">加入购物车</div>
+        <div class="foot_btn displayStyle ">
+            <div class="sure_start" onclick="popSubs(this)">-</div>
+            <div class="sure_mid"></div>
+            <div class="sure_end" onclick="popAdd(this)">+</div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

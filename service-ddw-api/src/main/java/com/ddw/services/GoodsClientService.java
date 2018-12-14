@@ -86,6 +86,7 @@ public class GoodsClientService extends CommonService {
         gsearch=new HashMap();
         gsearch.put("dghGoodsId,in","("+gids+")");
         gsearch.put("dghStatus",GoodsStatusEnum.goodsStatus1.getCode());
+        gsearch.put("disabled",DisabledEnum.disabled0.getCode());
         List<Map> pList=this.commonList("ddw_goods_product","dghSalesPrice asc,dghActivityPrice asc",null,null,gsearch);
         JSONArray ja=JSON.parseArray(pm.get("jsonStr").toString());
         JSONArray gidJa=null;
