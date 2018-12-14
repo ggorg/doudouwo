@@ -406,9 +406,10 @@ public class ReviewPracticeService extends CommonService {
      * @return
      * @throws Exception
      */
-    public PracticeOrderPO getOrderInProgress(Integer practiceId)throws Exception{
+    public PracticeOrderPO getOrderInProgress(Integer practiceId,Integer gameId)throws Exception{
         Map searchCondition = new HashMap<>();
         searchCondition.put("practiceId",practiceId);
+        searchCondition.put("gameId",gameId);
         searchCondition.put("status",1);
         return super.commonObjectBySearchCondition("ddw_practice_order",searchCondition,PracticeOrderPO.class);
     }
@@ -815,7 +816,7 @@ public class ReviewPracticeService extends CommonService {
         Map searchCondition = new HashMap<>();
         searchCondition.put("id",practiceId);
         Map conditon=new HashMap();
-        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.nickName,t1.headImgUrl,t1.starSign,t1.interest,t1.label,t1.age,t1.openid,t1.sex,ct0.gradeName pgradeName ",null,null,searchCondition,
+        CommonSearchBean csb=new CommonSearchBean("ddw_userinfo",null,"t1.nickName,t1.headImgUrl,t1.starSign,t1.interest,t1.label,t1.age,t1.openid,t1.sex,t1.job,t1.city,ct0.gradeName pgradeName ",null,null,searchCondition,
                 new CommonChildBean("ddw_practice_grade","id","practiceGradeId",conditon));
         List list=this.getCommonMapper().selectObjects(csb);
         if(list!=null && list.size()>0){
