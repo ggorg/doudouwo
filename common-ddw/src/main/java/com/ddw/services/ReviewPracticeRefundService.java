@@ -7,6 +7,8 @@ import com.ddw.beans.ReviewPO;
 import com.ddw.enums.PracticeOrderStatusEnum;
 import com.ddw.enums.ReviewBusinessTypeEnum;
 import com.ddw.enums.ReviewReviewerTypeEnum;
+import com.gen.common.beans.CommonChildBean;
+import com.gen.common.beans.CommonSearchBean;
 import com.gen.common.services.CommonService;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,6 +55,24 @@ public class ReviewPracticeRefundService extends CommonService {
 
     public PracticeRefundPO getReviewRefundByCode(String drBusinessCode)throws Exception{
         return this.commonObjectBySingleParam("ddw_practice_refund","drBusinessCode",drBusinessCode,PracticeRefundPO.class);
+    }
+
+    public Map getReviewRefundByCodeMap(String drBusinessCode)throws Exception{
+        Map condtion = new HashMap<>();
+        condtion.put("drBusinessCode",drBusinessCode);
+        CommonChildBean cb1=new CommonChildBean("ddw_practice_refund","orderId","id",condtion);
+        CommonChildBean cb2=new CommonChildBean("ddw_game","id","gameId",null);
+        CommonChildBean cb3=new CommonChildBean("ddw_rank","id","rankId",null);
+        CommonChildBean cb4=new CommonChildBean("ddw_rank","id","targetRankId",null);
+        CommonChildBean cb5=new CommonChildBean("ddw_rank","id","realityRankId",null);
+        CommonSearchBean csb=new CommonSearchBean("ddw_practice_order",null,"t1.practiceId,ct0.reason,ct0.describe,ct0.picUrl,ct1.gameName,ct2.rank,ct3.rank as targetRank,ct4.rank as realityRank",null,null,null,cb1,cb2,cb3,cb4,cb5);
+        Page p = this.commonPage(1,1,csb);
+        List<Map> list = p.getResult();
+        Map map = new HashMap<>();
+        if(list !=null && list.size()>0){
+            map = list.get(0);
+        }
+        return map;
     }
 
     public PracticeOrderPO getPracticeOrder(Integer id)throws Exception{

@@ -1,7 +1,6 @@
 package com.ddw.servies;
 
 import com.ddw.beans.PracticeGamePO;
-import com.ddw.beans.vo.AppIndexGoddessVO;
 import com.ddw.beans.vo.LiveRadioListVO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.*;
@@ -301,6 +300,7 @@ public class TimerTaskService extends CommonService {
         Map<String,Object> searchCondition = new HashMap<>();
         searchCondition.put("payState",1);//已支付
         searchCondition.put("incomeState",0);//未计算收益
+        searchCondition.put("realityRankId,!=",0);//排除未填写实际段位的
         searchCondition.put("updateTime,<",new Date(new Date().getTime() - 24*60*60*1000));
         try {
             List<Map> list = this.commonObjectsBySearchCondition("ddw_practice_order",searchCondition);
