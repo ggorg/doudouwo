@@ -157,7 +157,9 @@ img{visibility: hidden}
 }
 .right_item .item_content{
     margin-bottom: 20px;
-    height:172px
+    height:172px;
+    position: relative;
+
 }
 .right_item .content_left{
     border-radius:20px ;
@@ -191,10 +193,11 @@ img{visibility: hidden}
     white-space :  nowrap;
 }
 .content_right{
-    float: right;
-    padding-top:120px;
+
+    right: 0px;
     margin-right:20px;
-    position: relative;
+    position: absolute;
+    bottom: 0px;
 }
 .content_right div{
     float: left;
