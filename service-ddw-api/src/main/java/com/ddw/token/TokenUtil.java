@@ -27,7 +27,6 @@ public class TokenUtil {
     private static final Logger logger = Logger.getLogger(TokenUtil.class);
 
     public static String createToken(String openId){
-        CacheService cs=getCacheService();
         String tokenStr= DateFormatUtils.format(new Date(),RandomStringUtils.randomNumeric(10)+"yyyyMMdd"+ RandomStringUtils.randomNumeric(10)+"HHmm");
         String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
         base64Token=base64Token.replace("+","-").replace("/","_");

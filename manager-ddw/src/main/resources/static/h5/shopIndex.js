@@ -4,6 +4,7 @@ var t=[];
 var flag=true;
 var vm_spec_pop;
 var vm_car;
+var lo;
 layui.use(['layer','form'],function(){
     layer=layui.layer;
 
@@ -129,7 +130,7 @@ function requestDataHandle(){
         })
         $(".shop_car").click(function(){
             //
-            var lo=layer.open({
+            lo=layer.open({
                 id:"mycarlist",
                 type: 1,
                 area: "100%",
@@ -147,6 +148,7 @@ function requestDataHandle(){
             layer.style(lo, {
                 "border-top-left-radius":"30px",
                 "border-top-right-radius":"30px",
+                position:"absolute",
                 top:"auto",
                 bottom:"120px"
             });
@@ -275,6 +277,17 @@ function getNumByCookie(code){
         }
     }
     return 0;
+}
+function clearShopCar(){
+    $.cookie("shopCar",null,{path:"/"});
+    $(".right_spec_num").hide().text("");
+    $(".right_mid").hide().text("");
+    $(".right_mid").hide().text("");
+    $(".car_show_num").hide().text("");
+    $(".foot_style_price").attr("money",0).text("");
+    $(".right_start").hide();
+    layer.close(lo);
+
 }
 function getPriceByCookie(code){
     var shopCar=$.cookie("shopCar");
