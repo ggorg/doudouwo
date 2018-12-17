@@ -116,4 +116,23 @@ public class Pubweixin{
 	public void setDel_flag(String del_flag) {
 		this.del_flag = del_flag;
 	}
+
+	@Override
+	public String toString() {
+		return "Pubweixin{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", appid='" + appid + '\'' +
+				", appsecret='" + appsecret + '\'' +
+				", token='" + token + '\'' +
+				", openid='" + openid + '\'' +
+				", usable='" + usable + '\'' +
+				", create_by='" + create_by + '\'' +
+				", create_date=" + create_date +
+				", update_by='" + update_by + '\'' +
+				", update_date=" + update_date +
+				", remarks='" + remarks + '\'' +
+				", del_flag='" + del_flag + '\'' +
+				'}';
+	}
 }

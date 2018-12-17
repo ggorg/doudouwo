@@ -75,6 +75,7 @@ public class WeixinOauthController {
     @RequestMapping(value = "oauth")
     public String oauth(String code, String state, HttpServletRequest request, RedirectAttributes attributes,HttpSession session,Model model) {
         // 判断用户是否授权
+        logger.info("WeixinOauthController->oauth->code:{},{}",code,state);
         if (code != null && code.length() > 0) {
             // 解析经过Base32编码后传递过来的json参数,state长度最长为128
             //{"appid":"wx695033b74d733b6f","page":"redpack"}  Base32编码 PMRGC4DQNFSCEORCO54DMOJVGAZTGYRXGRSDOMZTMI3GMIRMEJYGCZ3FEI5CE4TFMRYGCY3LEJ6Q
@@ -83,7 +84,7 @@ public class WeixinOauthController {
             // 根据传递过来的appid匹配数据库中公众号
             //Pubweixin pubweixin = pubWeixinService.selectByAppid(json.get("appid").toString());
             Pubweixin pubweixin = pubWeixinService.selectByAppid(appid);
-
+            logger.info("pubweixin:"+pubweixin);
             String openid=null;
             UserInfo ui = new UserInfo();
             if (pubweixin != null) {
@@ -152,8 +153,8 @@ public class WeixinOauthController {
                         }
                     }
                 }else if("shop".equals(page)){
+                    logger.info("h5商城{}",page);
                     try {
-
                         if (userInfoService.countUser(ui.getUnionid())==0){
                             //注册账号
                             UserInfoDTO userInfoDTO = new UserInfoDTO();
@@ -167,6 +168,7 @@ public class WeixinOauthController {
                             userInfoDTO.setRegisterType(1);
                             userInfoService.save(userInfoDTO);
                         }
+
                         String[] params=json.getString("param").split("_");
                         Map cookieM=new HashMap();
                         cookieM.put("storeId",Integer.parseInt(params[0]));
