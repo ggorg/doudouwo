@@ -14,9 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 
+@Controller
 @RequestMapping("/ddwapp/page")
 @Api(description="页面",tags = "页面")
 public class PageController {
@@ -26,7 +28,7 @@ public class PageController {
     @Value("{wx.oauth.redirectUri}")
     private String authUrl;
 
-    @ApiOperation(value = "商城页面",produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "商城页面")
     @GetMapping("/shop")
     public String toShopPage (String DDW){
         try {
