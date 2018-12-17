@@ -190,9 +190,9 @@ public class WeixinOauthController {
                     url.append(jumpUrlValue);
                     //url.append("?token=");
                    // url.append(MyEncryptUtil.encry(StringUtils.isBlank(this.WXGlobals.getTestOpenid())?openid:this.WXGlobals.getTestOpenid()));
-                   if(json.containsKey("param") && json.getString("param")!=null){
+                   /*if(json.containsKey("param") && json.getString("param")!=null){
                        url.append("&").append("param=").append(json.getString("param"));
-                   }
+                   }*/
                     logger.info("WeixinOauthController->oauth->跳转->url:{}",url.toString());
                    return url.toString();
 
