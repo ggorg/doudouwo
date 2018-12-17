@@ -12,7 +12,9 @@ layui.use(['layer','form'],function(){
 })
 
 function requestDataHandle(){
-
+   if(window.location.search.match(/^[?]param[=]/)!=null){
+       $.cookie("shopToken",window.location.search.replace(/(.*param[=])([^&]+)(.*)/g,"$2"),{path:"/"});
+   }
 
     var indexLoad=layer.load();
     // alert( window.screen.height+","+$("html").height());
@@ -469,7 +471,7 @@ function handleImg(imgObj){
 }
 function doPay(){
     var shopCar=$.cookie("shopCar");
-    alert(window.location.search);
+
     if(shopCar!=null){
         shopCar=JSON.parse(shopCar);
         var arrayObj = new Array();
@@ -509,6 +511,7 @@ function doPay(){
 
 }
 function handlePay(){
+    alert(window.location.search.replace(/(.*param[=])([^&]+)(.*)/g,"$2"));
     if (typeof WeixinJSBridge == "undefined"){
         if( document.addEventListener ){
             document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
