@@ -120,7 +120,7 @@ public class WeixinOauthController {
             //TODO 这里根据state传递过来的参数page,跳转到对应页面
             if(json.containsKey("page")){
                 String page = json.getString("page");
-
+                String urlAppendParam=null;
                 if("redpack".equals(page)){
                     return InternalResourceViewResolver.REDIRECT_URL_PREFIX + "pages/manager/weixin/menu";
                 }
@@ -169,10 +169,12 @@ public class WeixinOauthController {
 
                         String[] params=json.getString("param").split("_");
                         Map cookieM=new HashMap();
+
                         cookieM.put("storeId",Integer.parseInt(params[0]));
                         cookieM.put("tableNumber",Integer.parseInt(params[1]));
                         cookieM.put("openId",ui.getUnionid());
-                        Tools.setCookie("shopToken", Base64Utils.encodeToString(JSONObject.toJSONString(cookieM).getBytes()));
+
+                        urlAppendParam=Base64Utils.encodeToString(JSONObject.toJSONString(cookieM).getBytes());
                     }catch (Exception e){
                         logger.error("WeixinOauthController->oauth->h5商城跳转失败",e);
 
@@ -188,6 +190,9 @@ public class WeixinOauthController {
                     StringBuilder url=new StringBuilder();
                     url.append(InternalResourceViewResolver.REDIRECT_URL_PREFIX );
                     url.append(jumpUrlValue);
+                    if(urlAppendParam!=null){
+                        url.append("?param="+urlAppendParam);
+                    }
                     //url.append("?token=");
                    // url.append(MyEncryptUtil.encry(StringUtils.isBlank(this.WXGlobals.getTestOpenid())?openid:this.WXGlobals.getTestOpenid()));
                    /*if(json.containsKey("param") && json.getString("param")!=null){

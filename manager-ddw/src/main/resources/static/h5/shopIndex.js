@@ -469,7 +469,7 @@ function handleImg(imgObj){
 }
 function doPay(){
     var shopCar=$.cookie("shopCar");
-    alert($.cookie("shopToken"));
+    alert(window.location.search);
     if(shopCar!=null){
         shopCar=JSON.parse(shopCar);
         var arrayObj = new Array();
