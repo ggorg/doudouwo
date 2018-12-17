@@ -7,6 +7,7 @@ import com.ddw.beans.TicketPO;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.GoodFriendPlayRoomStatusEnum;
 import com.ddw.enums.TableStatusEnum;
+import com.ddw.util.ApiConstant;
 import com.ddw.util.QrCodeCreateUtil;
 import com.gen.common.config.MainGlobals;
 import com.gen.common.services.CommonService;
@@ -42,8 +43,8 @@ public class GoodFriendPlayTableService extends CommonService {
     @Autowired
     private FileService fileService;
 
-    @Value("${qrCode.url}")
-    private String qrCodeUrl;
+    @Value("${wx.oauth.redirectUri}")
+    private String redirectUri;
 
 
     public Page findPage(Integer pageNo)throws Exception{
@@ -69,17 +70,13 @@ public class GoodFriendPlayTableService extends CommonService {
             search.put("id",id);
             search.put("storeId",po.getId());
             Map dataMap=this.commonObjectBySearchCondition("ddw_goodfriendplay_tables",search);
-            Map map=new HashMap();
-            map.put("tableNumber",dataMap.get("tableNumber"));
-            map.put("storeId",po.getId());
-            map.put("cmd","shop");
+
+            String jumpAuthUrl=CommonUtil.createOauthUrl(ApiConstant.WEI_XIN_PUBLIC_APP_ID,redirectUri,"shop",po.getId(),dataMap.get("tableNumber"));
 
             response.setContentType("image/jpeg");
-            StringBuilder builder=new StringBuilder();
-            builder.append(mainGlobals.getServiceUrl()).append(qrCodeUrl).append("?");
-            builder.append("DDW=").append(Base64Utils.encodeToString(JSONObject.toJSONString(map).getBytes()));
+
             os=response.getOutputStream();
-            QrCodeCreateUtil.createQrCode(builder.toString(),500,500,os,this.getClass().getClassLoader().getResourceAsStream("static/images/logo.png"),null);
+            QrCodeCreateUtil.createQrCode(jumpAuthUrl,500,500,os,this.getClass().getClassLoader().getResourceAsStream("static/images/logo.png"),null);
            // QrCodeCreateUtil.createQrCode(os, JSONObject.toJSONString(mainMap),1100,"jpeg");
 
         }catch (Exception e){

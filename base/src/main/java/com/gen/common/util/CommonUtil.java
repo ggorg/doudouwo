@@ -1,4 +1,4 @@
-package com.weixin.util;
+package com.gen.common.util;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.binary.Base32;

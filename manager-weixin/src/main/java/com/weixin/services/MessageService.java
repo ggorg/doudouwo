@@ -1,6 +1,7 @@
 package com.weixin.services;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gen.common.util.CommonUtil;
 import com.gen.common.util.Page;
 import com.gen.common.vo.ResponseVO;
 import com.weixin.config.WXGlobals;
@@ -8,7 +9,6 @@ import com.weixin.core.beans.message.resp.Article;
 import com.weixin.core.beans.message.resp.NewsMessage;
 import com.weixin.dao.MessageMapper;
 import com.weixin.entity.Message;
-import com.weixin.util.CommonUtil;
 import com.weixin.util.CustomMessage;
 import com.weixin.util.MessageUtil;
 import org.slf4j.Logger;
