@@ -1,6 +1,5 @@
 package com.ddw.util;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayFundTransToaccountTransferModel;
@@ -18,26 +17,18 @@ import com.alipay.api.response.AlipayTradeRefundResponse;
 import com.ddw.beans.RequestAliOrderVO;
 import com.ddw.beans.RequestWeiXinOrderVO;
 import com.ddw.config.DDWGlobals;
-import com.ddw.enums.OrderTypeEnum;
 import com.gen.common.util.HttpUtil;
 import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
-import com.thoughtworks.xstream.XStream;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.util.*;
 
 public class PayApiUtil {
@@ -81,7 +72,7 @@ public class PayApiUtil {
             String privateKey= IOUtils.toString(privateIs);
             String publicKey= IOUtils.toString(publicIs);
 
-            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER,PayApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
+            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER, ApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
             AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
             AlipayTradeQueryModel model=new AlipayTradeQueryModel();
             model.setOutTradeNo(orderNo);
@@ -138,7 +129,7 @@ public class PayApiUtil {
        // map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/refund/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/refund/execute");
         String reStr=wxSign(map);
         logger.info("reqeustWeiXinExitOrder->request->"+reStr);
-        String callBackStr= HttpUtil.sendHttpsWithCert(WEIXIN_REFUND,reStr,ddwGlobals.getWxCertPath(),PayApiConstant.WEI_XIN_PAY_MCH_ID);
+        String callBackStr= HttpUtil.sendHttpsWithCert(WEIXIN_REFUND,reStr,ddwGlobals.getWxCertPath(), ApiConstant.WEI_XIN_PAY_MCH_ID);
         logger.info("reqeustWeiXinExitOrder->response->"+callBackStr);
         Map callMap=Tools.xmlCastMap(callBackStr);
         return callMap;
@@ -153,7 +144,7 @@ public class PayApiUtil {
             String privateKey= IOUtils.toString(privateIs);
             String publicKey= IOUtils.toString(publicIs);
 
-            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER,PayApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
+            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER, ApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
             AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
             AlipayTradeRefundModel model=new AlipayTradeRefundModel();
             model.setOutTradeNo(orderNo);
@@ -184,7 +175,7 @@ public class PayApiUtil {
             publicIs= PayApiUtil.class.getClassLoader().getResourceAsStream("alipaysign/ali_public_key");
             String privateKey= IOUtils.toString(privateIs);
             String publicKey= IOUtils.toString(publicIs);
-            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER,PayApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
+            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER, ApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
             AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
             AlipayFundTransToaccountTransferModel  model=new AlipayFundTransToaccountTransferModel();
             model.setPayeeType("ALIPAY_LOGONID");
@@ -219,7 +210,7 @@ public class PayApiUtil {
             String privateKey= IOUtils.toString(privateIs);
             String publicKey= IOUtils.toString(publicIs);
 
-            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER,PayApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
+            AlipayClient alipayClient=new DefaultAlipayClient(ALIPAY_UNIFIEDORDER, ApiConstant.ALI_PAY_APP_ID,privateKey,"json","utf-8",publicKey,"RSA2");
             AlipayTradeAppPayModel model = new AlipayTradeAppPayModel();
             model.setBody(title);
             model.setSubject("支付宝"+title+cost+"元");
@@ -255,17 +246,17 @@ public class PayApiUtil {
         Document document= DocumentHelper.createDocument();
         Element rootXML=document.addElement("xml");
         TreeMap treeMap=new TreeMap(map);
-        treeMap.put("appid",PayApiConstant.WEI_XIN_PAY_APP_ID);
-        treeMap.put("mch_id",PayApiConstant.WEI_XIN_PAY_MCH_ID);
+        treeMap.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
+        treeMap.put("mch_id", ApiConstant.WEI_XIN_PAY_MCH_ID);
         treeMap.put("nonce_str",nonce_str);
-        treeMap.put("appid",PayApiConstant.WEI_XIN_PAY_APP_ID);
+        treeMap.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
         Set<String> keys=treeMap.keySet();
         StringBuilder params=new StringBuilder();
         for(String key:keys){
             params.append(key).append("=").append(treeMap.get(key)).append("&");
             rootXML.addElement(key).addCDATA(treeMap.get(key).toString());
         }
-        params.append("key=").append(PayApiConstant.WEI_XIN_PAY_KEY);
+        params.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
         rootXML.addElement("sign").addCDATA(DigestUtils.md5Hex(params.toString()).toUpperCase());
         return rootXML.asXML();
     }

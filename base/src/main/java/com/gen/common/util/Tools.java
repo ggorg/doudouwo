@@ -319,8 +319,8 @@ public class Tools {
 		HttpServletRequest request=attrs.getRequest();
 		try {
 
-			System.out.println("i am cookie:"+value);
-			Cookie cookie=new Cookie(key,MyEncryptUtil.encry(value));
+			Cookie cookie=new Cookie(key,value);
+			cookie.setPath("/");
 			response.addCookie(cookie);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -334,7 +334,7 @@ public class Tools {
 			if(cookies!=null && cookies.length>0){
 				for(Cookie c:cookies){
 					if(c.getName().equals(key)){
-						return MyEncryptUtil.getRealValue(c.getValue());
+						return c.getValue();
 
 
 					}

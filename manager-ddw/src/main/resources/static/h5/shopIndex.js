@@ -466,6 +466,57 @@ function handleImg(imgObj){
     }
     img.style.visibility="visible";
 
+}
+function doPay(){
+    var shopCar=$.cookie("shopCar");
 
+    if(shopCar!=null){
+        shopCar=JSON.parse(shopCar);
+        var arrayObj = new Array();
+        for(var a=0;a<shopCar.length;a++){
+            for(var j=0;j<shopCar[i].num;j++){
+                arrayObj.push(shopCar[i].code);
+            }
+        }
+        if(arrayObj.length>0){
+            $.ajax({
+                type: "POST",
+                url:"/ddwapp/paycenter/weixin/h5/pay/",
+                contentType: "application/json; charset=utf-8",
+                data:{codes:arrayObj,orderType:1,tableNo:"123123"},
+                dataType: "json",
+                success: function (jsonD, textStatus) {
+                    if(jsonD.retCode>0){
+                        WeixinJSBridge.invoke(
+                            'getBrandWCPayRequest', jsonD.data,
+                            function(res){
+                                alert(res);
+                                if(res.err_msg == "get_brand_wcpay_request:ok" ){
+                                    // 使用以上方式判断前端返回,微信团队郑重提示：
+                                    //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                                }
+                            });
+                    }
 
+                },
+                error: function (message) {
+                    $("#request-process-patent").html("提交数据失败！");
+                }
+            })
+        }
+
+    }
+
+}
+function handlePay(){
+    if (typeof WeixinJSBridge == "undefined"){
+        if( document.addEventListener ){
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+        }else if (document.attachEvent){
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+        }
+    }else{
+        doPay();
+    }
 }

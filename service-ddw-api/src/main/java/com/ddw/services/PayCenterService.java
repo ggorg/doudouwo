@@ -5,7 +5,7 @@ import com.ddw.beans.*;
 import com.ddw.config.DDWGlobals;
 import com.ddw.enums.*;
 import com.ddw.token.TokenUtil;
-import com.ddw.util.PayApiConstant;
+import com.ddw.util.ApiConstant;
 import com.ddw.util.PayApiUtil;
 import com.gen.common.beans.CommonChildBean;
 import com.gen.common.beans.CommonSearchBean;
@@ -888,8 +888,8 @@ public class PayCenterService extends BaseOrderService {
                     RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,orderPO.getDoCost(), Tools.getIpAddr());
                     if(vo!=null && "SUCCESS".equals(vo.getReturn_code()) && "SUCCESS".equals(vo.getResult_code())){
                         TreeMap treeMap=new TreeMap();
-                        treeMap.put("appid", PayApiConstant.WEI_XIN_PAY_APP_ID);
-                        treeMap.put("partnerid",PayApiConstant.WEI_XIN_PAY_MCH_ID);
+                        treeMap.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
+                        treeMap.put("partnerid", ApiConstant.WEI_XIN_PAY_MCH_ID);
                         treeMap.put("prepayid",vo.getPrepay_id());
                         treeMap.put("package","Sign=WXPay");
                         treeMap.put("noncestr", RandomStringUtils.randomAlphanumeric(20)+"");
@@ -899,7 +899,7 @@ public class PayCenterService extends BaseOrderService {
                         for(String key:keys){
                             builder.append(key).append("=").append(treeMap.get(key)).append("&");
                         }
-                        builder.append("key=").append(PayApiConstant.WEI_XIN_PAY_KEY);
+                        builder.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
                        // builder.deleteCharAt(builder.length()-1);
                         treeMap.put("sign", DigestUtils.md5Hex(builder.toString()).toUpperCase());
                         treeMap.put("packages",treeMap.get("package"));
@@ -911,6 +911,36 @@ public class PayCenterService extends BaseOrderService {
                         CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
                         TokenUtil.putOrderNo(token,orderNo);
                         return new ResponseApiVO(1,"成功",wxVo);
+                    }else{
+                        throw new GenException(-2,"调用微信支付接口失败",vo);
+                    }
+                }if(PayTypeEnum.PayType6.getCode().equals(payType)){
+                    /*RequestWeiXinOrderVO vo=new RequestWeiXinOrderVO();
+                    vo.setReturn_code("SUCCESS");
+                    vo.setResult_code("SUCCESS");
+                    vo.setPrepay_id(RandomStringUtils.randomAlphabetic(10));*/
+                    RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,orderPO.getDoCost(), Tools.getIpAddr());
+                    if(vo!=null && "SUCCESS".equals(vo.getReturn_code()) && "SUCCESS".equals(vo.getResult_code())){
+                        TreeMap treeMap=new TreeMap();
+                        treeMap.put("appId", ApiConstant.WEI_XIN_PAY_APP_ID);
+                        treeMap.put("package","prepay_id="+vo.getPrepay_id());
+                        treeMap.put("nonceStr", RandomStringUtils.randomAlphanumeric(20)+"");
+                        treeMap.put("timeStamp",new Date().getTime()/1000+"");
+                        treeMap.put("signType","MD5");
+                        Set<String> keys=treeMap.keySet();
+                        StringBuilder builder=new StringBuilder();
+                        for(String key:keys){
+                            builder.append(key).append("=").append(treeMap.get(key)).append("&");
+                        }
+                        builder.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
+                        // builder.deleteCharAt(builder.length()-1);
+                        treeMap.put("paySign", DigestUtils.md5Hex(builder.toString()).toUpperCase());
+
+                        treeMap.put("orderNo",orderNo);
+                        CacheUtil.put("pay","pre-pay-"+orderNo,orderCacheData);
+                        CacheUtil.put("pay","orderObject-"+orderNo,JSONObject.toJSONString(orderPO));
+                        TokenUtil.putOrderNo(token,orderNo);
+                        return new ResponseApiVO(1,"成功",treeMap);
                     }else{
                         throw new GenException(-2,"调用微信支付接口失败",vo);
                     }

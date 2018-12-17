@@ -55,7 +55,7 @@ public class LoginAuthApiUtil {
                 }
 
             }else if(dto.getRegisterType()==2){
-                data.put("oauth_consumer_key",PayApiConstant.QQ_APP_ID);
+                data.put("oauth_consumer_key", ApiConstant.QQ_APP_ID);
                 str=HttpUtil.doGet("https://graph.qq.com/user/get_user_info",data);
                 if(StringUtils.isNotBlank(str) && JSONObject.parseObject(str).getInteger("ret")==0){
                     JSONObject json=JSONObject.parseObject(str);
@@ -81,7 +81,7 @@ public class LoginAuthApiUtil {
     private static String QQ_GET_USER_INFO_URL="http://openapi.tencentyun.com/v3/user/get_info";
     public static ResponseApiVO qqOauth(LoginQQDTO dto)throws Exception{
         Map dtoMap= BeanToMapUtil.beanToMap(dto,true);
-        dtoMap.put("appid",PayApiConstant.QQ_APP_ID);
+        dtoMap.put("appid", ApiConstant.QQ_APP_ID);
         dtoMap.put("pf","qplus");
         dtoMap.put("sig",qqSign(dtoMap));
         String str=HttpUtil.doPost(QQ_GET_USER_INFO_URL,dto);
@@ -115,7 +115,7 @@ public class LoginAuthApiUtil {
             signBuild.append(key).append("=").append(treeMap.get(key)).append("&");
         }
         builder.append(URLEncoder.encode(signBuild.deleteCharAt(signBuild.length()-1).toString(),"UTF-8"));
-       return HMAC_SHA1.genHMAC(builder.toString(),PayApiConstant.QQ_APP_KEY+"&");
+       return HMAC_SHA1.genHMAC(builder.toString(), ApiConstant.QQ_APP_KEY+"&");
     }
     public static void main(String[] args)throws Exception{
 

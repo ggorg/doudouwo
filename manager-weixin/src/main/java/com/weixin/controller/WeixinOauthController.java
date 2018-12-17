@@ -3,6 +3,7 @@ package com.weixin.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.MyEncryptUtil;
+import com.gen.common.util.Tools;
 import com.weixin.config.WXGlobals;
 import com.weixin.core.pojo.AccessToken;
 import com.weixin.entity.Pubweixin;
@@ -13,18 +14,22 @@ import com.weixin.util.CommonUtil;
 import com.weixin.util.WeiXinTools;
 import com.weixin.util.WeixinUtil;
 import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 网页授权获取用户基本信息
@@ -142,10 +147,35 @@ public class WeixinOauthController {
                                     userInfoService.save(userInfoDTO);
                                 }
                             } catch (Exception e) {
-                                e.printStackTrace();
                                 logger.error("WeixinOauthController->oauth->老带新注册新用户",e);
                             }
                         }
+                    }
+                }else if("shop".equals(page)){
+                    try {
+
+                        if (userInfoService.countUser(ui.getUnionid())==0){
+                            //注册账号
+                            UserInfoDTO userInfoDTO = new UserInfoDTO();
+                            userInfoDTO.setHeadImgUrl(ui.getHeadimgurl());
+                            userInfoDTO.setNickName(ui.getNickname());
+                            userInfoDTO.setOpenid(ui.getUnionid());
+                            userInfoDTO.setRealOpenid(openid);
+                            userInfoDTO.setUnionID(ui.getUnionid());
+                            userInfoDTO.setUserName(ui.getNickname());
+                            userInfoDTO.setSex(Integer.valueOf(ui.getSex()));
+                            userInfoDTO.setRegisterType(1);
+                            userInfoService.save(userInfoDTO);
+                        }
+                        String[] params=json.getString("param").split("_");
+                        Map cookieM=new HashMap();
+                        cookieM.put("storeId",Integer.parseInt(params[0]));
+                        cookieM.put("tableNumber",Integer.parseInt(params[1]));
+                        cookieM.put("openId",ui.getUnionid());
+                        Tools.setCookie("shopToken", Base64Utils.encodeToString(JSONObject.toJSONString(cookieM).getBytes()));
+                    }catch (Exception e){
+                        logger.error("WeixinOauthController->oauth->h5商城跳转失败",e);
+
                     }
                 }
                 String jumpUrlValue= WXGlobals.getOauthJumUrlByKey(page);
@@ -158,8 +188,8 @@ public class WeixinOauthController {
                     StringBuilder url=new StringBuilder();
                     url.append(InternalResourceViewResolver.REDIRECT_URL_PREFIX );
                     url.append(jumpUrlValue);
-                    url.append("?token=");
-                    url.append(MyEncryptUtil.encry(StringUtils.isBlank(this.WXGlobals.getTestOpenid())?openid:this.WXGlobals.getTestOpenid()));
+                    //url.append("?token=");
+                   // url.append(MyEncryptUtil.encry(StringUtils.isBlank(this.WXGlobals.getTestOpenid())?openid:this.WXGlobals.getTestOpenid()));
                    if(json.containsKey("param") && json.getString("param")!=null){
                        url.append("&").append("param=").append(json.getString("param"));
                    }

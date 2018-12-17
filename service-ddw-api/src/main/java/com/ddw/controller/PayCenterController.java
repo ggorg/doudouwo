@@ -7,6 +7,7 @@ import com.ddw.services.ReviewService;
 import com.ddw.services.WithdrawService;
 import com.ddw.token.Idemp;
 import com.ddw.token.Token;
+import com.ddw.token.TokenUtil;
 import com.gen.common.exception.GenException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +15,7 @@ import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -126,6 +128,35 @@ public class PayCenterController {
 
 
             return new ResponseApiVO(-1,"微信支付失败",null);
+
+
+        }
+    }
+    @Idemp
+    @Token
+    @ApiOperation(value = "微信-h5支付",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/weixin/h5/pay/")
+    @ResponseBody
+    public ResponseApiVO<PayCenterWeixinPayVO> weixinH5Pay (@CookieValue(name="shopToken") String shopToken, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PayDTO args){
+        try {
+
+            logger.info("weixinH5Pay->request-：hopToken："+shopToken+", args:"+args);
+            TokenUtil.createToken(shopToken);
+
+           // ResponseApiVO vo=this.payCenterService.prePay(token ,PayTypeEnum.PayType6.getCode(),args);
+            logger.info("weixinH5Pay->response："+new String(Base64Utils.decodeFromString(shopToken)));
+
+            return new ResponseApiVO<>(-1,"失败",null);
+        }catch (Exception e){
+            if(e instanceof GenException){
+                logger.info("weixinPay->response："+((GenException)e).toString());
+                return new ResponseApiVO(-2,e.getMessage(),null);
+
+            }
+            logger.error("PayCenterController-weixinH5Pay-》微信-h5支付-》系统异常",e);
+
+
+            return new ResponseApiVO(-1,"微信-h5支付失败",null);
 
 
         }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.services.OldBringingNewService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.ddw.util.ApiConstant;
 import com.ddw.util.CommonUtil;
 import com.gen.common.vo.ResponseVO;
 import io.swagger.annotations.Api;
@@ -47,7 +48,7 @@ public class OldBringingNewController {
         try {
             JSONObject json = new JSONObject();
             String openid = TokenUtil.getUserObject(token).toString();
-            String shareUrl = CommonUtil.createOauthUrl(WXAPPID,OAUTHMAINURL,"obn",openid.substring(openid.length()-6,openid.length()));
+            String shareUrl = CommonUtil.createOauthUrl(ApiConstant.WEI_XIN_PUBLIC_APP_ID,OAUTHMAINURL,"obn",openid.substring(openid.length()-6,openid.length()));
             json.put("shareUrl",shareUrl);
             return new ResponseVO(1,"成功",json);
         }catch (Exception e){

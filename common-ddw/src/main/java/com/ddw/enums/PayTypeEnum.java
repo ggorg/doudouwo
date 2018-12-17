@@ -10,7 +10,8 @@ public enum PayTypeEnum implements Dictionary {
     PayType2("支付宝",2),
     PayType3("线下",3),
     PayType4("逗币",4),
-    PayType5("钱包余额",5);
+    PayType5("钱包余额",5),
+    PayType6("微信-h5支付",6);
 
     private String name;
     private Integer code;

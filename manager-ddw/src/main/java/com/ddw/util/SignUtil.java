@@ -1,14 +1,8 @@
 package com.ddw.util;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.ddw.beans.AliPayCallBackDTO;
-import com.ddw.beans.WeiXinPayCallBackDTO;
-import com.ddw.enums.OrderTypeEnum;
-import com.gen.common.util.BeanToMapUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.InputStream;
 import java.util.*;
@@ -23,8 +17,8 @@ public class SignUtil {
     }
     public static boolean wxPaySign(Map<String,String> dto){
         TreeMap treeMap=new TreeMap(dto);
-        //treeMap.put("appid",PayApiConstant.WEI_XIN_PAY_APP_ID);
-       // treeMap.put("mch_id",PayApiConstant.WEI_XIN_PAY_MCH_ID);
+        //treeMap.put("appid",ApiConstant.WEI_XIN_PAY_APP_ID);
+       // treeMap.put("mch_id",ApiConstant.WEI_XIN_PAY_MCH_ID);
         treeMap.remove("sign");
         Set<String> keys=treeMap.keySet();
         StringBuilder builder=new StringBuilder();
@@ -35,7 +29,7 @@ public class SignUtil {
 
 
         }
-        builder.append("key=").append(PayApiConstant.WEI_XIN_PAY_KEY);
+        builder.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
         String sign= DigestUtils.md5Hex(builder.toString()).toUpperCase();
         if(sign.equals(dto.get("sign"))){
             return true;
