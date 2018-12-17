@@ -25,7 +25,7 @@ public class PageController {
 
     private final Logger logger = Logger.getLogger(PageController.class);
 
-    @Value("{wx.oauth.redirectUri}")
+    @Value("${wx.oauth.redirectUri}")
     private String authUrl;
 
     @ApiOperation(value = "商城页面")
