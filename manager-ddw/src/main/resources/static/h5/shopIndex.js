@@ -469,7 +469,7 @@ function handleImg(imgObj){
 }
 function doPay(){
     var shopCar=$.cookie("shopCar");
-
+    alert($.cookie("shopToken"));
     if(shopCar!=null){
         shopCar=JSON.parse(shopCar);
         var arrayObj = new Array();
@@ -481,7 +481,7 @@ function doPay(){
         if(arrayObj.length>0){
             $.ajax({
                 type: "POST",
-                url:"/ddwapp/paycenter/weixin/h5/pay/",
+                url:"/ddwapp/paycenter/weixin/h5/pay",
                 contentType: "application/json; charset=utf-8",
                 data:{codes:arrayObj,orderType:1,tableNo:"123123"},
                 dataType: "json",
