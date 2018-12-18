@@ -266,7 +266,7 @@ public class PayApiUtil {
         Document document= DocumentHelper.createDocument();
         Element rootXML=document.addElement("xml");
         TreeMap treeMap=new TreeMap(map);
-        map.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
+        treeMap.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
         treeMap.put("mch_id", ApiConstant.WEI_XIN_PAY_MCH_ID);
         treeMap.put("nonce_str",nonce_str);
         Set<String> keys=treeMap.keySet();
