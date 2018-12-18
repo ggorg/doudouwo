@@ -162,9 +162,6 @@ public class PayCenterController {
             logger.error("PayCenterController-weixinH5Pay-》微信-h5支付-》系统异常",e);
 
 
-
-
-
         }
         return new ResponseApiVO(-1,"微信-h5支付失败",null);
     }

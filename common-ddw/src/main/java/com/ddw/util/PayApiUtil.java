@@ -102,14 +102,14 @@ public class PayApiUtil {
         }
         return null;
     }
-    public static RequestWeiXinOrderVO requestWeiXinOrder(String body,String orderNo,Integer cost,String ip)throws Exception{
+    public static RequestWeiXinOrderVO requestWeiXinOrder(String body,String orderNo,Integer cost,String ip,String tradeType)throws Exception{
         initDdwGlobals();
         Map<String,String> map=new HashMap();
         map.put("body",body);
         map.put("out_trade_no",orderNo);
         map.put("total_fee",cost+"");
         map.put("spbill_create_ip",ip);
-        map.put("trade_type","APP");
+        map.put("trade_type",tradeType);
         map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/pay/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/pay/execute");
 
         String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,wxSign(map));

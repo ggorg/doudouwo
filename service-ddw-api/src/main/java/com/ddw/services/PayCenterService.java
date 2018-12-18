@@ -885,7 +885,7 @@ public class PayCenterService extends BaseOrderService {
                     vo.setReturn_code("SUCCESS");
                     vo.setResult_code("SUCCESS");
                     vo.setPrepay_id(RandomStringUtils.randomAlphabetic(10));*/
-                    RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,orderPO.getDoCost(), Tools.getIpAddr());
+                    RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,orderPO.getDoCost(), Tools.getIpAddr(),"APP");
                     if(vo!=null && "SUCCESS".equals(vo.getReturn_code()) && "SUCCESS".equals(vo.getResult_code())){
                         TreeMap treeMap=new TreeMap();
                         treeMap.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
@@ -919,7 +919,7 @@ public class PayCenterService extends BaseOrderService {
                     vo.setReturn_code("SUCCESS");
                     vo.setResult_code("SUCCESS");
                     vo.setPrepay_id(RandomStringUtils.randomAlphabetic(10));*/
-                    RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,orderPO.getDoCost(), Tools.getIpAddr());
+                    RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrder("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,orderPO.getDoCost(), Tools.getIpAddr(),"JSAPI");
                     if(vo!=null && "SUCCESS".equals(vo.getReturn_code()) && "SUCCESS".equals(vo.getResult_code())){
                         TreeMap treeMap=new TreeMap();
                         treeMap.put("appId", ApiConstant.WEI_XIN_PAY_APP_ID);
