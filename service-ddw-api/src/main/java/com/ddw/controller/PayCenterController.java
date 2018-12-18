@@ -149,7 +149,7 @@ public class PayCenterController {
             ResponseApiVO vo=this.payCenterService.prePay(base64Token ,PayTypeEnum.PayType6.getCode(),args);
             logger.info("weixinH5Pay->response："+new String(Base64Utils.decodeFromString(shopToken)));
 
-            return new ResponseApiVO<>(-1,"失败",null);
+            return vo;
         }catch (Exception e){
             if(e instanceof GenException){
                 logger.info("weixinPay->response："+((GenException)e).toString());
