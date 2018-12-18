@@ -1,4 +1,4 @@
-var layer;
+var mylayer;
 var o=[];
 var t=[];
 var flag=true;
@@ -6,17 +6,20 @@ var vm_spec_pop;
 var vm_car;
 var lo;
 layui.use(['layer','form'],function(){
-    layer=layui.layer;
+    mylayer=layui.layer;
 
-    requestDataHandle();
+
 })
+window.onload=function(){
+    requestDataHandle();
+}
 
 function requestDataHandle(){
    if(window.location.search.match(/^[?]param[=]/)!=null){
        $.cookie("shopToken",window.location.search.replace(/(.*param[=])([^&]+)(.*)/g,"$2"),{path:"/"});
    }
 
-    var indexLoad=layer.load();
+    var indexLoad=mylayer.load();
     // alert( window.screen.height+","+$("html").height());
     var headH=$(".shop_head_style").height();
     var footH=$(".shop_foot_style").height();
@@ -45,7 +48,7 @@ function requestDataHandle(){
                 $(".content_option").addClass("content_option_white").removeClass("content_option_blue");
                 $(".displayStyle").removeClass("displayStyle");
                 $(".foot_btn").addClass("displayStyle");
-                var lo=layer.open({
+                var lo=mylayer.open({
                     id:"mydialog",
                     type: 1,
                     area: ["90%","450px"],
@@ -55,7 +58,7 @@ function requestDataHandle(){
                     content:$("#spec_pop") //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
 
                 });
-                layer.style(lo, {
+                mylayer.style(lo, {
                     "border-radius": '30px',
                 });
 
@@ -73,7 +76,7 @@ function requestDataHandle(){
                 $("#spec_pop").show();
 
                 $(".foot_cancel").click(function(){
-                    layer.close(lo);
+                    mylayer.close(lo);
                     $("#spec_pop").hide();
                 })
                 $(".content_option").each(function(){
@@ -132,7 +135,7 @@ function requestDataHandle(){
         })
         $(".shop_car").click(function(){
             //
-            lo=layer.open({
+            lo=mylayer.open({
                 id:"mycarlist",
                 type: 1,
                 area: "100%",
@@ -147,7 +150,7 @@ function requestDataHandle(){
             });
            // border-top-left-radius: 30px;
           //  border-top-right-radius: 30px;
-            layer.style(lo, {
+            mylayer.style(lo, {
                 "border-top-left-radius":"30px",
                 "border-top-right-radius":"30px",
                 position:"absolute",
@@ -172,7 +175,7 @@ function requestDataHandle(){
         handleGcodeNum();
         $("#shop_main").css("visibility","visible");
 
-        layer.close(indexLoad)
+        mylayer.close(indexLoad)
     },"JSON")
 }
 
@@ -288,7 +291,7 @@ function clearShopCar(){
     $(".car_show_num").hide().text("");
     $(".foot_style_price").attr("money",0).text("");
     $(".right_start").hide();
-    layer.close(lo);
+    mylayer.close(lo);
 
 }
 function getPriceByCookie(code){
@@ -432,7 +435,7 @@ function handleData(json){
     if(json.reCode==1){
 
     }else{
-        layer.msg(data.reMsg);
+        mylayer.msg(data.reMsg);
     }
 }
 function handleImg(imgObj){
@@ -498,7 +501,13 @@ function doPay(){
                                 }
                             });
                     }else{
-                        layer.msg(jsonD.msg);
+
+                        mylayer.msg(jsonD.reMsg,{
+                            style:"wegwe"
+                        });
+
+                        $(".layui-layer-content").css({"line-height":"45px","font-size":"2.1rem"})
+                        $(".layui-layer-hui").css("border-radius","15px")
                     }
 
                 },
@@ -512,6 +521,7 @@ function doPay(){
 
 }
 function handlePay(){
+
     if (typeof WeixinJSBridge == "undefined"){
         if( document.addEventListener ){
             document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);

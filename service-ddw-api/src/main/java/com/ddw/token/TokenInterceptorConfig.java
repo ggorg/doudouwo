@@ -20,6 +20,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.Map;
 
@@ -74,8 +75,14 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                         base64Token=map.get("token");
 
                     }else{
-                        JSONObject obj=JSONObject.parseObject(new String(Base64Utils.decodeFromString(cookenStr)));
-                        base64Token=obj.getString("t");
+                        try {
+                            JSONObject obj=JSONObject.parseObject(new String(Base64Utils.decodeFromString(URLDecoder.decode(cookenStr,"utf-8"))));
+                            base64Token=obj.getString("t");
+                        }catch (Exception e){
+                            toWriteResponseVo(response,-1000,"参数异常");
+                            return false;
+                        }
+
                     }
 
                     //logger.info("base64Token:"+base64Token);
@@ -144,5 +151,11 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
         }
 
 
+    }
+
+    public static void main(String[] args) throws Exception{
+        String cookenStr="eyJ0IjoiTXpjNU5ETXlPVFUzTWpJd01UZ3hNakU0TmpJNU16VXpNamd3TlRFeU1qRT0iLCJ0YWJsZU51bWJlciI6MX0=";
+        JSONObject obj=JSONObject.parseObject(new String(Base64Utils.decodeFromString(cookenStr)));
+        String base64Token=obj.getString("t");
     }
 }

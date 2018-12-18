@@ -1,5 +1,6 @@
 
 html, body,.shop_main{ margin:0; height:100%;font-family: 'Arial Negreta', 'Arial Normal', 'Arial'; overflow: hidden}
+
 .shop_main{
     visibility:hidden;
 
@@ -483,5 +484,11 @@ img{visibility: hidden}
     text-align: center;
     line-height: 50px;
     color: #D8D8D8;
+}
+.layui-layer-hui{
+
+    width: 300px;
+    height: 70px;
+
 }
 
