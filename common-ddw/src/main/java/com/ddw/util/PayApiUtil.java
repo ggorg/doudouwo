@@ -102,19 +102,36 @@ public class PayApiUtil {
         }
         return null;
     }
-    public static RequestWeiXinOrderVO requestWeiXinOrder(String body,String orderNo,Integer cost,String ip,String tradeType,String openId)throws Exception{
+    public static RequestWeiXinOrderVO requestWeiXinOrder(String body,String orderNo,Integer cost,String ip)throws Exception{
         initDdwGlobals();
         Map<String,String> map=new HashMap();
         map.put("body",body);
         map.put("out_trade_no",orderNo);
         map.put("total_fee",cost+"");
         map.put("spbill_create_ip",ip);
-        map.put("trade_type",tradeType);
+        map.put("trade_type","APP");
+        map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/pay/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/pay/execute");
+        map.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
+        String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,wxSign(map));
+        if(callBackStr!=null){
+            RequestWeiXinOrderVO vo= Tools.xmlCastObject(callBackStr,RequestWeiXinOrderVO.class);
+            return vo;
+        }
+        return null;
+    }
+    public static RequestWeiXinOrderVO requestWeiXinOrderByJsapi(String body,String orderNo,Integer cost,String ip,String openId)throws Exception{
+        initDdwGlobals();
+        Map<String,String> map=new HashMap();
+        map.put("body",body);
+        map.put("out_trade_no",orderNo);
+        map.put("total_fee",cost+"");
+        map.put("spbill_create_ip",ip);
+        map.put("trade_type","JSAPI");
         if(openId!=null){
             map.put("openid",openId);
         }
         map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/pay/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/pay/execute");
-
+        map.put("appid", ApiConstant.WEI_XIN_PUBLIC_APP_ID);
         String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,wxSign(map));
         if(callBackStr!=null){
             RequestWeiXinOrderVO vo= Tools.xmlCastObject(callBackStr,RequestWeiXinOrderVO.class);
@@ -249,10 +266,9 @@ public class PayApiUtil {
         Document document= DocumentHelper.createDocument();
         Element rootXML=document.addElement("xml");
         TreeMap treeMap=new TreeMap(map);
-        treeMap.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
+
         treeMap.put("mch_id", ApiConstant.WEI_XIN_PAY_MCH_ID);
         treeMap.put("nonce_str",nonce_str);
-        treeMap.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
         Set<String> keys=treeMap.keySet();
         StringBuilder params=new StringBuilder();
         for(String key:keys){

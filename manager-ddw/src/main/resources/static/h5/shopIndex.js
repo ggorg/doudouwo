@@ -492,25 +492,30 @@ function doPay(){
                     data:JSON.stringify({codes:arrayObj,orderType:1}),
                     dataType: "json",
                     success: function (jsonD, textStatus) {
-                        showMsg(jsonD.reMsg);
-                        mylayer.close(requestLoad);
+
+
                         if(jsonD.reCode>0){
                             WeixinJSBridge.invoke(
                                 'getBrandWCPayRequest', jsonD.data,
                                 function(res){
+                                    mylayer.close(requestLoad);
                                     if(res.err_msg == "get_brand_wcpay_request:ok" ){
                                         // 使用以上方式判断前端返回,微信团队郑重提示：
                                         //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                                        showMsg("支付成功");
+                                    }else{
+                                        showMsg("支付失败");
                                     }
-                                    showMsg(jsonD.reMsg);
                                 });
+                        }else{
+                            mylayer.close(requestLoad);
+                            showMsg(jsonD.reMsg);
                         }
 
                     },
                     error: function (message) {
-                        showMsg("提交数据失败"+message);
-                       // mylayer.close(requestLoad);
-                        $("#request-process-patent").html("提交数据失败！");
+                        showMsg("支付失败");
+                        mylayer.close(requestLoad);
                     }
                 })
 
