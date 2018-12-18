@@ -142,8 +142,8 @@ public class ReviewGoddessService extends CommonService {
 //        if(pageNum == null || pageSize == null){
 //            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
 //        }
-//        Integer storeId = TokenUtil.getStoreId(token);
-//        Integer userId = TokenUtil.getUserId(token);
+//        Integer storeId = BaseTokenUtil.getStoreId(token);
+//        Integer userId = BaseTokenUtil.getUserId(token);
 //        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
 //        Integer endRow = pageSize;
 //        List<AppIndexGoddessVO>AppIndexGoddessList = goddessMapper.getGoddessList(storeId,startRow,endRow);
@@ -193,7 +193,7 @@ public class ReviewGoddessService extends CommonService {
 //        if(pageNum == null || pageSize == null){
 //            return new ResponseVO(-2,"提交失败,pageNum或pageSize格式不对",null);
 //        }
-//        Integer storeId = TokenUtil.getStoreId(token);
+//        Integer storeId = BaseTokenUtil.getStoreId(token);
 //        Integer startRow = pageNum > 0 ? (pageNum - 1) * pageSize : 0;
 //        Integer endRow = pageSize;
 //        List<AppIndexGoddessVO>AppIndexGoddessList = goddessMapper.getGoddessList(storeId,startRow,endRow);

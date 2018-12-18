@@ -476,8 +476,8 @@ function doPay(){
         shopCar=JSON.parse(shopCar);
         var arrayObj = new Array();
         for(var a=0;a<shopCar.length;a++){
-            for(var j=0;j<shopCar[i].num;j++){
-                arrayObj.push(shopCar[i].code);
+            for(var j=0;j<shopCar[a].num;j++){
+                arrayObj.push(shopCar[a].code);
             }
         }
         if(arrayObj.length>0){
@@ -485,7 +485,7 @@ function doPay(){
                 type: "POST",
                 url:"/ddwapp/paycenter/weixin/h5/pay",
                 contentType: "application/json; charset=utf-8",
-                data:{codes:arrayObj,orderType:1,tableNo:"123123"},
+                data:{codes:arrayObj,orderType:1},
                 dataType: "json",
                 success: function (jsonD, textStatus) {
                     if(jsonD.retCode>0){
@@ -511,8 +511,8 @@ function doPay(){
 
 }
 function handlePay(){
-    alert(window.location.search.replace(/(.*param[=])([^&]+)(.*)/g,"$2"));
-    if (typeof WeixinJSBridge == "undefined"){
+    doPay();
+    /*if (typeof WeixinJSBridge == "undefined"){
         if( document.addEventListener ){
             document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
         }else if (document.attachEvent){
@@ -521,5 +521,5 @@ function handlePay(){
         }
     }else{
         doPay();
-    }
+    }*/
 }

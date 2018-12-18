@@ -285,7 +285,7 @@ public class GoodFriendPlayService extends CommonService {
             return new ResponseApiVO(-2,"小房不存在",null);
         }
         Integer status=(Integer) callMap.get("status");
-        //Integer roomId=TokenUtil.getRoomId(token);
+        //Integer roomId=BaseTokenUtil.getRoomId(token);
 
         if(GoodFriendPlayRoomStatusEnum.status1.getCode().equals(status)){
             return new ResponseApiVO(-2,"已经约玩开桌中",null);

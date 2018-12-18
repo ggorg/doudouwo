@@ -71,4 +71,7 @@ public class UserInfoService extends CommonService {
         return super.commonCountBySingleParam("ddw_userinfo","openid",openid);
     }
 
+    public Map getUser(String openid)throws Exception{
+        return this.commonObjectBySingleParam("ddw_userinfo","openid",openid);
+    }
 }

@@ -2,7 +2,7 @@
 <ehcache>
     <diskStore path="/data/cache/serviceapi"/>
     <cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-            properties="peerDiscovery=manual,rmiUrls=//127.0.0.1:9001/publicCache|//127.0.0.1:9001/stores|//127.0.0.1:9001/pay|//127.0.0.1:9001/review|//127.0.0.1:9001/publicCacheTimer" />
+            properties="peerDiscovery=manual,rmiUrls=//127.0.0.1:9001/publicCache|//127.0.0.1:9001/stores|//127.0.0.1:9001/pay|//127.0.0.1:9001/review|//127.0.0.1:9001/publicCacheTimer|//127.0.0.1:9001/tokenCache" />
     <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
             properties="hostName=127.0.0.1, port=9002,
@@ -38,6 +38,9 @@
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
         <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
     </cache>
-    <cache name="tokenCache"  maxElementsInMemory="2000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0"></cache>
+    <cache name="tokenCache"  maxElementsInMemory="2000" diskPersistent="true" overflowToDisk="true"  maxElementsOnDisk="0">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
+        <bootstrapCacheLoaderFactory class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory" />
+    </cache>
 
 </ehcache>

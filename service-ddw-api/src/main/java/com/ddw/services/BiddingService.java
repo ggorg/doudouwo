@@ -198,7 +198,7 @@ public class BiddingService extends CommonService {
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO cancelBidPayByGoddess(String token)throws Exception{
-        /*String streamId=TokenUtil.getStreamId(token);
+        /*String streamId=BaseTokenUtil.getStreamId(token);
         if(StringUtils.isBlank(streamId)){
             return new ResponseApiVO(-2,"取消失败",null);
         }
@@ -314,7 +314,7 @@ public class BiddingService extends CommonService {
     public ResponseApiVO makeSureFinishPay(String token)throws Exception{
 
 
-       /*String streamId=TokenUtil.getStreamId(token);
+       /*String streamId=BaseTokenUtil.getStreamId(token);
        if(StringUtils.isBlank(streamId)){
 
            return new ResponseApiVO(-2,"直播房间不存在",null);
@@ -360,7 +360,7 @@ public class BiddingService extends CommonService {
         baseDynService.saveBideDyn(bidMap,(Date)updateMap.get("endTime"));
         Map map=(Map) CacheUtil.get("pay","bidding-pay-"+ub);
        Integer earnestPrice=(Integer) map.get("earnestPrice");
-      // this.incomeService.commonIncome(TokenUtil.getUserId(token),earnestPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType4,(String)map.get("earnestOrderNo"));
+      // this.incomeService.commonIncome(BaseTokenUtil.getUserId(token),earnestPrice, IncomeTypeEnum.IncomeType1,OrderTypeEnum.OrderType4,(String)map.get("earnestOrderNo"));
 
         this.consumeRankingListService.save(luckyDogUserId,TokenUtil.getUserId(token),earnestPrice,IncomeTypeEnum.IncomeType1);
 
@@ -382,10 +382,10 @@ public class BiddingService extends CommonService {
      */
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseApiVO chooseBidding(String openId,String token)throws Exception{
-       // GoddessPO  gpo=this.goddessService.getAppointment(TokenUtil.getGroupId(token));
+       // GoddessPO  gpo=this.goddessService.getAppointment(BaseTokenUtil.getGroupId(token));
 
 
-      // LiveRadioPO po=this.liveRadioService.getLiveRadio(TokenUtil.getUserId(token),TokenUtil.getStoreId(token));
+      // LiveRadioPO po=this.liveRadioService.getLiveRadio(BaseTokenUtil.getUserId(token),BaseTokenUtil.getStoreId(token));
         /*Map bidMap=this.getCurrentBidMapNoBidEndTime(po.getGroupId());
         if(bidMap==null){
             return new ResponseApiVO(-2,"选择失败",null);
@@ -562,7 +562,7 @@ public class BiddingService extends CommonService {
             return new ResponseApiVO(3,"陪玩中，空闲时间约在"+this.getSurplusTimeStr(dataMap)+"后",voMap);
         }
         //获取缓存中的最高竞价
-        List<BiddingVO> list=(List)cacheService.get("groupId-"+TokenUtil.getBidCode()+groupId);
+        List<BiddingVO> list=(List)cacheService.get("groupId-"+BaseTokenUtil.getBidCode()+groupId);
         if(list==null || list.isEmpty()){
 
             Integer bidPrice=this.commonSingleFieldBySingleSearchParam("ddw_goddess","userId",Integer.parseInt(useridStr),"bidPrice",Integer.class);
@@ -814,7 +814,7 @@ public class BiddingService extends CommonService {
 
         }
        // IMApiUtil.sendGroupMsg(groupId,new ResponseVO(1,"成功",vo));
-        //liveRadioService.getLiveRadioByIdAndStoreId(TokenUtil.getStoreId(token))
+        //liveRadioService.getLiveRadioByIdAndStoreId(BaseTokenUtil.getStoreId(token))
        // this.commonSingleFieldBySingleSearchParam()
           return new ResponseApiVO(1,"成功",null);
     }
@@ -1130,7 +1130,7 @@ public class BiddingService extends CommonService {
         String userIdBidId=(String) CacheUtil.get("pay","bidding-success-"+groupId);
         Map paymap=(Map)CacheUtil.get("pay","bidding-pay-"+userIdBidId);
 
-        String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+TokenUtil.getUserId(token));
+        String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+BaseTokenUtil.getUserId(token));
         if(StringUtils.isNotBlank(retStr)){
             map.put("status", BiddingStatusEnum.Status7.getCode());
             map.put("statusMsg",BiddingStatusEnum.Status7.getName());
@@ -1196,7 +1196,7 @@ public class BiddingService extends CommonService {
 
     }
     public ResponseApiVO getCurrentAllBidding(String token)throws Exception{
-       /* String streamId=TokenUtil.getStreamId(token);
+       /* String streamId=BaseTokenUtil.getStreamId(token);
         if(streamId==null){
             return new ResponseApiVO(-2,"直播房间不存在",null);
         }*/

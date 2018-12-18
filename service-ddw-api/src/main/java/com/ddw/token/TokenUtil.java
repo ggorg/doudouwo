@@ -1,10 +1,9 @@
 package com.ddw.token;
 
 import com.ddw.beans.UserInfoVO;
+import com.ddw.util.BaseTokenUtil;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CacheUtil;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,40 +17,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class TokenUtil {
+public class TokenUtil extends BaseTokenUtil {
     private static final Logger logger = Logger.getLogger(TokenUtil.class);
 
-    public static String createToken(String openId){
-        String tokenStr= DateFormatUtils.format(new Date(),RandomStringUtils.randomNumeric(10)+"yyyyMMdd"+ RandomStringUtils.randomNumeric(10)+"HHmm");
-        String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
-        base64Token=base64Token.replace("+","-").replace("/","_");
-        Map map=new ConcurrentHashMap();
-        map.put("user",openId);
-        Cache cache=CacheUtil.createCache("tokenCache");
-        List<String> keys=cache.getKeys();
-        if(keys!=null && !keys.isEmpty()){
-            Map cacheMap=null;
-            Element element=null;
-            for(String key:keys){
-                element=cache.getQuiet(key);
-                cacheMap=(Map) element.getObjectValue();
-                if(openId.equals(cacheMap.get("user"))){
-                    map=new ConcurrentHashMap(cacheMap);
-                    cache.remove(key);
-                    break;
-                }
-            }
-        }
-
-        CacheUtil.put("tokenCache",base64Token,map);
-       // cs.set(base64Token,map);
-        return base64Token;
-    }
     public static void resetUserObject(String base64Token,Object userobj){
         Object obj=CacheUtil.get("tokenCache",base64Token);
         if(obj!=null){

@@ -30,7 +30,7 @@ public class AppStoresService extends CommonService {
             id=(Integer) m.get("id");
             if(id.equals(dto.getStoreId())){
                 TokenUtil.putStoreid(token,dto.getStoreId());
-                //TokenUtil.putStoreLongLat(token,m.get("dsLongitude")+","+m.get("dsLatitude"));
+                //BaseTokenUtil.putStoreLongLat(token,m.get("dsLongitude")+","+m.get("dsLatitude"));
                 return new ResponseApiVO(1,"成功",null);
             }
         }

@@ -1,5 +1,6 @@
 package com.ddw.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
 import com.ddw.enums.PayTypeEnum;
 import com.ddw.services.PayCenterService;
@@ -135,15 +136,17 @@ public class PayCenterController {
     @Idemp
     @Token
     @ApiOperation(value = "微信-h5支付",produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/weixin/h5/pay/")
+    @PostMapping("/weixin/h5/pay")
     @ResponseBody
     public ResponseApiVO<PayCenterWeixinPayVO> weixinH5Pay (@CookieValue(name="shopToken") String shopToken, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PayDTO args){
         try {
 
             logger.info("weixinH5Pay->request-：hopToken："+shopToken+", args:"+args);
-            TokenUtil.createToken(shopToken);
 
-           // ResponseApiVO vo=this.payCenterService.prePay(token ,PayTypeEnum.PayType6.getCode(),args);
+            JSONObject obj=JSONObject.parseObject(new String(Base64Utils.decodeFromString(shopToken)));
+            String base64Token=obj.getString("t");
+            args.setTableNo(obj.getString("tableNumber"));
+            ResponseApiVO vo=this.payCenterService.prePay(base64Token ,PayTypeEnum.PayType6.getCode(),args);
             logger.info("weixinH5Pay->response："+new String(Base64Utils.decodeFromString(shopToken)));
 
             return new ResponseApiVO<>(-1,"失败",null);

@@ -293,7 +293,7 @@ public class PracticeController {
                     }
                 }
             }
-//            if(reviewPracticeService.countPracticeOrder(TokenUtil.getUserId(token),practiceReleaseDTO.getGameId())>0){
+//            if(reviewPracticeService.countPracticeOrder(BaseTokenUtil.getUserId(token),practiceReleaseDTO.getGameId())>0){
 //                return new ResponseVO(-3,"请先结束订单再发布",null);
 //            }
             CacheUtil.delete("publicCache","appIndexPractice"+TokenUtil.getStoreId(token));

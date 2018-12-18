@@ -53,7 +53,7 @@ public class BiddingServiceTest {
          CacheUtil.put("pay","bidding-success-1_8_180516180728",useridBid);
         CacheUtil.put("pay","bidding-pay-"+useridBid,paymap);
 
-        //String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+TokenUtil.getUserId(token));
+        //String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+BaseTokenUtil.getUserId(token));
       //  System.out.println(this.biddingService.getBidOrderInfoByGoddess(token,"1_8_180516180728"));;
     }
     @Test

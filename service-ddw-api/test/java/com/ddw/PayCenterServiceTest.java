@@ -40,7 +40,7 @@ public class PayCenterServiceTest  {
         String token= TokenUtil.createToken("openid");
         TokenUtil.putStoreid(token,1);
         TokenUtil.putUseridAndName(token,26,"test123");
-        //TokenUtil.putStreamId(token,"23115_1_8_180516180728");
+        //BaseTokenUtil.putStreamId(token,"23115_1_8_180516180728");
 
         OrderPO po=new OrderPO();
         po.setDoCost(10000);

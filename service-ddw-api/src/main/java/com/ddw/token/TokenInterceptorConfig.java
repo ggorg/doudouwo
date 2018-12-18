@@ -9,6 +9,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -62,14 +63,21 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
             if(handler instanceof HandlerMethod){
                 HandlerMethod method = (HandlerMethod) handler;
                 if(method.hasMethodAnnotation(Token.class)){
-                   Map<String,String> map=(Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+                    String cookenStr=Tools.getCookie("shopToken");
+                    String base64Token=null;
+                    if(StringUtils.isBlank(cookenStr)){
+                        Map<String,String> map=(Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+                        if(map==null || !map.containsKey("token")){
+                            toWriteResponseVo(response,-1000,"参数异常");
+                            return false;
+                        }
+                        base64Token=map.get("token");
 
-                   if(map==null || !map.containsKey("token")){
-                       toWriteResponseVo(response,-1000,"参数异常");
-                       return false;
-                   }
+                    }else{
+                        JSONObject obj=JSONObject.parseObject(new String(Base64Utils.decodeFromString(cookenStr)));
+                        base64Token=obj.getString("t");
+                    }
 
-                   String base64Token=map.get("token");
                     //logger.info("base64Token:"+base64Token);
                    if(base64Token==null){
                        toWriteResponseVo(response,-1000,"token异常");

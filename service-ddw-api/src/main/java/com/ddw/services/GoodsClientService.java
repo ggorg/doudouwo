@@ -94,7 +94,7 @@ public class GoodsClientService extends CommonService {
         Integer gid=null;
         List goodsList=null;
         //Map goodsMap=null;
-        /*Integer gradeId=TokenUtil.getUseGrade(token);
+        /*Integer gradeId=BaseTokenUtil.getUseGrade(token);
         BigDecimal dicount=null;
 
         if(gradeId!=null){

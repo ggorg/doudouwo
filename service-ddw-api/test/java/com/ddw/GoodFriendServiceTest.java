@@ -29,7 +29,7 @@ public class GoodFriendServiceTest {
         CodeDTO dto=new CodeDTO();
         dto.setCode(44);
         this.goodFriendPlayService.join(token,dto);
-        //String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+TokenUtil.getUserId(token));
+        //String retStr=(String) CacheUtil.get("pay","bidding-finish-pay-"+BaseTokenUtil.getUserId(token));
       //  System.out.println(this.biddingService.getBidOrderInfoByGoddess(token,"1_8_180516180728"));;
     }
 

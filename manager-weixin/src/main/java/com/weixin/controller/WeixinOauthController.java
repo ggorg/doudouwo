@@ -1,9 +1,10 @@
 package com.weixin.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ddw.util.BaseTokenUtil;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CommonUtil;
-import com.gen.common.util.Tools;
+import com.gen.common.vo.ResponseVO;
 import com.weixin.config.WXGlobals;
 import com.weixin.core.pojo.AccessToken;
 import com.weixin.entity.Pubweixin;
@@ -13,6 +14,7 @@ import com.weixin.services.*;
 import com.weixin.util.WeiXinTools;
 import com.weixin.util.WeixinUtil;
 import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +155,9 @@ public class WeixinOauthController {
                 }else if("shop".equals(page)){
                     logger.info("h5商城{}",page);
                     try {
-                        if (userInfoService.countUser(ui.getUnionid())==0){
+                        Map userMap=userInfoService.getUser(ui.getUnionid());
+                        Integer userId=null;
+                        if (userMap==null || userMap.isEmpty() || userMap.size()==0){
                             //注册账号
                             UserInfoDTO userInfoDTO = new UserInfoDTO();
                             userInfoDTO.setHeadImgUrl(ui.getHeadimgurl());
@@ -164,17 +168,20 @@ public class WeixinOauthController {
                             userInfoDTO.setUserName(ui.getNickname());
                             userInfoDTO.setSex(Integer.valueOf(ui.getSex()));
                             userInfoDTO.setRegisterType(1);
-                            userInfoService.save(userInfoDTO);
+                           ResponseVO<Integer> res= userInfoService.save(userInfoDTO);
+                            userId=res.getData();
+                        }else{
+                            userId=(Integer) userMap.get("id");
                         }
 
                         String[] params=json.getString("param").split("_");
                         Map cookieM=new HashMap();
-
-                        cookieM.put("storeId",Integer.parseInt(params[0]));
+                        String base64Token=BaseTokenUtil.createToken(ui.getUnionid());
                         cookieM.put("tableNumber",Integer.parseInt(params[1]));
-                        cookieM.put("openId",ui.getUnionid());
+                        cookieM.put("t",base64Token);
+                        BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,Integer.parseInt(params[0]));
 
-                        urlAppendParam=Base64Utils.encodeToString(JSONObject.toJSONString(cookieM).getBytes());
+                        urlAppendParam= Base64Utils.encodeToString(JSONObject.toJSONString(cookieM).getBytes());
                     }catch (Exception e){
                         logger.error("WeixinOauthController->oauth->h5商城跳转失败",e);
 
