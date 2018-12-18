@@ -155,7 +155,7 @@ public class PayCenterController {
 
         }catch (Exception e){
             if(e instanceof GenException){
-                logger.info("weixinPay->response："+((GenException)e).toString());
+                logger.info("weixinH5Pay->response："+((GenException)e).toString());
                 return new ResponseApiVO(-2,e.getMessage(),null);
 
             }

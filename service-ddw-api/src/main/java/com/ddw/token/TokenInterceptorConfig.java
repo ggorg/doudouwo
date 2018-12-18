@@ -55,6 +55,7 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                     String name=method.getMethodAnnotation(Idemp.class).value();
                     String idempName=StringUtils.isBlank(name)?"idemp":name;
                     TokenUtil.putIdempotent(base64Token,idempName,null);
+                    logger.info("postHandle->idempName："+idempName);
                 }
 
             }
@@ -135,7 +136,10 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                                 TokenUtil.putIdempotent(base64Token,idempName, DateFormatUtils.format(new Date(),"yyyy-MM-dd HH:mm:ss"));
                                 return true;
                             }else{
-                                long v=System.currentTimeMillis()-DateUtils.parseDate(idempStr,"yyyy-MM-dd HH:mm:ss").getTime();
+                                long currentSeconds=System.currentTimeMillis();
+                                long idempTime=DateUtils.parseDate(idempStr,"yyyy-MM-dd HH:mm:ss").getTime();
+                                logger.info("preHandle->,currentSeconds："+System.currentTimeMillis()+"，idempTime："+idempTime);
+                                long v=currentSeconds-idempTime;
                                 if(v<30000){
                                     toWriteResponseVo(response,-21,"处理中，请耐性等待");
                                     return false;
