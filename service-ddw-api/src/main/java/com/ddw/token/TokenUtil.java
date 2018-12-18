@@ -183,6 +183,14 @@ public class TokenUtil extends BaseTokenUtil {
             return (String) map.get("orderNo");
         }
         return null;
+
+    }  public static String getRealOpenId(String base64Token){
+        Object obj=CacheUtil.get("tokenCache",base64Token);
+        if(obj!=null){
+            Map map=(Map)obj;
+            return (String) map.get("realOpenId");
+        }
+        return null;
     }
     public static Integer getUseGrade(String base64Token){
         Object obj=CacheUtil.get("tokenCache",base64Token);
