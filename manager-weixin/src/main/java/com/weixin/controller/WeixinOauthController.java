@@ -14,9 +14,12 @@ import com.weixin.entity.UserInfoDTO;
 import com.weixin.services.*;
 import com.weixin.util.WeiXinTools;
 import com.weixin.util.WeixinUtil;
+import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,8 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -182,7 +187,7 @@ public class WeixinOauthController {
                         cookieM.put("t",base64Token);
                         BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,Integer.parseInt(params[0]));
 
-                        urlAppendParam= TydicDES.encodeValue(JSONObject.toJSONString(cookieM));
+                        urlAppendParam= URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8");
                     }catch (Exception e){
                         logger.error("WeixinOauthController->oauth->h5商城跳转失败",e);
 
@@ -229,7 +234,7 @@ public class WeixinOauthController {
         return WeixinUtil.httpRequest(requestUrl, "GET", null);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)throws Exception {
         Base32 base32 = new Base32();
         String abc = "{\"appid\":\"wxac4072fc723524ff\",\"page\":\"myself-center\"}";
         JSONObject jsonObject = new JSONObject();
@@ -251,6 +256,18 @@ public class WeixinOauthController {
 
         byte[] debytes = base32.decode(abc);
         logger.info(new String(debytes));
+        //
+        //String base64Token=BaseTokenUtil.createToken("oGb9J03naSTqAXJWLvWIYafTRvts");
+ /*       String tokenStr= DateFormatUtils.format(new Date(), RandomStringUtils.randomNumeric(10)+"yyyyMMdd"+ RandomStringUtils.randomNumeric(10)+"HHmm");
+        String base64Token=Base64Utils.encodeToString(tokenStr.getBytes());
+        base64Token=base64Token.replace("+","-").replace("/","_");
+        Map cookieM=new HashMap();
+        cookieM.put("tableNumber","001");
+        cookieM.put("t",base64Token );
+        BaseTokenUtil.putUserIdAndStoreId(base64Token,140,1);
+
+
+        System.out.println(URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));*/
 
 
     }
