@@ -485,7 +485,7 @@ function doPay(){
         }
         if(arrayObj.length>0){
             $.post("/ddwapp/idempotent/h5/appl",null,function(dataStr){
-                alert(dataStr.retCode+","+dataStr.retCode>0);
+                alert(dataStr.retCode+","+(dataStr.retCode>0));
                 if(dataStr.retCode>0){
                     $.ajax({
                         type: "POST",
