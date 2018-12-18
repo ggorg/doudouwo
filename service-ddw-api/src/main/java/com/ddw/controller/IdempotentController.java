@@ -1,11 +1,13 @@
 package com.ddw.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.beans.WalletBalanceVO;
 import com.ddw.services.PayCenterService;
 import com.ddw.services.WalletService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.gen.common.util.ThreadLocalUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.log4j.Logger;
@@ -39,6 +41,26 @@ public class IdempotentController {
 
     }
 
+    @Token
+    @ApiOperation(value = "申请幂等令牌(h5)")
+    @PostMapping("/h5/appl")
+    @ResponseBody
+    public ResponseApiVO applByH5(){
+        try {
+            JSONObject jsonObj=(JSONObject) ThreadLocalUtil.get();
+            if(jsonObj!=null){
+                String base64Token=jsonObj.getString("t");
+                TokenUtil.putIdempotent(base64Token,"idemp","do");
+                return new ResponseApiVO(1,"申请成功",null);
+            }
+
+
+        }catch (Exception e){
+            logger.error("IdempotentController->appl-》申请幂等令牌-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"申请失败",null);
+
+    }
 
 
 }

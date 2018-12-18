@@ -10,6 +10,7 @@ import com.ddw.token.Idemp;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
 import com.gen.common.exception.GenException;
+import com.gen.common.util.ThreadLocalUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -138,18 +139,20 @@ public class PayCenterController {
     @ApiOperation(value = "微信-h5支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/weixin/h5/pay")
     @ResponseBody
-    public ResponseApiVO<PayCenterWeixinPayVO> weixinH5Pay (@CookieValue(name="shopToken") String shopToken, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PayDTO args){
+    public ResponseApiVO<PayCenterWeixinPayVO> weixinH5Pay ( @RequestBody @ApiParam(name="args",value="传入json格式",required=true)PayDTO args){
         try {
+            JSONObject jsonObj=(JSONObject)ThreadLocalUtil.get();
+            if(jsonObj!=null){
+                logger.info("weixinH5Pay->request-：jsonObj："+jsonObj+", args:"+args);
 
-            logger.info("weixinH5Pay->request-：hopToken："+shopToken+", args:"+args);
+                String base64Token=jsonObj.getString("t");
+                args.setTableNo(jsonObj.getString("tableNumber"));
+                ResponseApiVO vo=this.payCenterService.prePay(base64Token ,PayTypeEnum.PayType6.getCode(),args);
+                logger.info("weixinH5Pay->response："+vo);
 
-            JSONObject obj=JSONObject.parseObject(new String(Base64Utils.decodeFromString(shopToken)));
-            String base64Token=obj.getString("t");
-            args.setTableNo(obj.getString("tableNumber"));
-            ResponseApiVO vo=this.payCenterService.prePay(base64Token ,PayTypeEnum.PayType6.getCode(),args);
-            logger.info("weixinH5Pay->response："+new String(Base64Utils.decodeFromString(shopToken)));
+                return vo;
+            }
 
-            return vo;
         }catch (Exception e){
             if(e instanceof GenException){
                 logger.info("weixinPay->response："+((GenException)e).toString());
@@ -159,10 +162,11 @@ public class PayCenterController {
             logger.error("PayCenterController-weixinH5Pay-》微信-h5支付-》系统异常",e);
 
 
-            return new ResponseApiVO(-1,"微信-h5支付失败",null);
+
 
 
         }
+        return new ResponseApiVO(-1,"微信-h5支付失败",null);
     }
 
     @Idemp

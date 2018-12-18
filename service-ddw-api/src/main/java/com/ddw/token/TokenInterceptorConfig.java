@@ -2,7 +2,9 @@ package com.ddw.token;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.ResponseApiVO;
+import com.gen.common.util.ThreadLocalUtil;
 import com.gen.common.util.Tools;
+import com.gen.common.util.TydicDES;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -76,8 +78,10 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
 
                     }else{
                         try {
-                            JSONObject obj=JSONObject.parseObject(new String(Base64Utils.decodeFromString(URLDecoder.decode(cookenStr,"utf-8"))));
+                            JSONObject obj=JSONObject.parseObject(TydicDES.decodedecodeValue(URLDecoder.decode(cookenStr,"utf-8")));
+
                             base64Token=obj.getString("t");
+                            ThreadLocalUtil.set(obj);
                         }catch (Exception e){
                             toWriteResponseVo(response,-1000,"参数异常");
                             return false;

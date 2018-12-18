@@ -484,41 +484,50 @@ function doPay(){
             }
         }
         if(arrayObj.length>0){
-            $.ajax({
-                type: "POST",
-                url:"/ddwapp/paycenter/weixin/h5/pay",
-                contentType: "application/json; charset=utf-8",
-                data:{codes:arrayObj,orderType:1},
-                dataType: "json",
-                success: function (jsonD, textStatus) {
-                    if(jsonD.retCode>0){
-                        WeixinJSBridge.invoke(
-                            'getBrandWCPayRequest', jsonD.data,
-                            function(res){
-                                if(res.err_msg == "get_brand_wcpay_request:ok" ){
-                                    // 使用以上方式判断前端返回,微信团队郑重提示：
-                                    //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                                }
-                            });
-                    }else{
+            $.post("/ddwapp/idempotent/h5/appl",null,function(dataStr){
+                if(dataStr.retCode>0){
+                    $.ajax({
+                        type: "POST",
+                        url:"/ddwapp/paycenter/weixin/h5/pay",
+                        contentType: "application/json; charset=utf-8",
+                        data:{codes:arrayObj,orderType:1},
+                        dataType: "json",
+                        success: function (jsonD, textStatus) {
+                            if(jsonD.retCode>0){
+                                WeixinJSBridge.invoke(
+                                    'getBrandWCPayRequest', jsonD.data,
+                                    function(res){
+                                        if(res.err_msg == "get_brand_wcpay_request:ok" ){
+                                            // 使用以上方式判断前端返回,微信团队郑重提示：
+                                            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                                        }
+                                    });
+                            }else{
+                                showMsg(jsonD.reMsg);
 
-                        mylayer.msg(jsonD.reMsg,{
-                            style:"wegwe"
-                        });
+                            }
 
-                        $(".layui-layer-content").css({"line-height":"45px","font-size":"2.1rem"})
-                        $(".layui-layer-hui").css("border-radius","15px")
-                    }
-
-                },
-                error: function (message) {
-                    $("#request-process-patent").html("提交数据失败！");
+                        },
+                        error: function (message) {
+                            $("#request-process-patent").html("提交数据失败！");
+                        }
+                    })
+                }else{
+                    showMsg(dataStr.reMsg);
                 }
-            })
+
+            },"JSON")
+
         }
 
     }
 
+}
+function showMsg(msg){
+    mylayer.msg(msg);
+
+    $(".layui-layer-content").css({"line-height":"45px","font-size":"2.1rem"})
+    $(".layui-layer-hui").css("border-radius","15px")
 }
 function handlePay(){
 

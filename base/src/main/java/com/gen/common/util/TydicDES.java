@@ -1,4 +1,4 @@
-package com.weixin.util;
+package com.gen.common.util;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;

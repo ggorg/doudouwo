@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.util.BaseTokenUtil;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CommonUtil;
+import com.gen.common.util.TydicDES;
 import com.gen.common.vo.ResponseVO;
 import com.weixin.config.WXGlobals;
 import com.weixin.core.pojo.AccessToken;
@@ -181,7 +182,7 @@ public class WeixinOauthController {
                         cookieM.put("t",base64Token);
                         BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,Integer.parseInt(params[0]));
 
-                        urlAppendParam= Base64Utils.encodeToString(JSONObject.toJSONString(cookieM).getBytes());
+                        urlAppendParam= TydicDES.encodeValue(JSONObject.toJSONString(cookieM));
                     }catch (Exception e){
                         logger.error("WeixinOauthController->oauth->h5商城跳转失败",e);
 
