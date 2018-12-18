@@ -539,6 +539,6 @@ function handlePay(){
             document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
         }
     }else{
-        doPay();
+doPay();
     }
 }

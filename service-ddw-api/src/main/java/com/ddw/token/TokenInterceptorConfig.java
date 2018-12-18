@@ -78,7 +78,7 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
 
                     }else{
                         try {
-                            JSONObject obj=JSONObject.parseObject(TydicDES.decodedecodeValue(URLDecoder.decode(cookenStr,"utf-8")));
+                            JSONObject obj=JSONObject.parseObject(TydicDES.decodedecodeValue(URLDecoder.decode(URLDecoder.decode(cookenStr,"utf-8"),"utf-8")));
 
                             base64Token=obj.getString("t");
                             ThreadLocalUtil.set(obj);
@@ -158,8 +158,12 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
     }
 
     public static void main(String[] args) throws Exception{
-        String cookenStr="eyJ0IjoiTXpjNU5ETXlPVFUzTWpJd01UZ3hNakU0TmpJNU16VXpNamd3TlRFeU1qRT0iLCJ0YWJsZU51bWJlciI6MX0=";
-        JSONObject obj=JSONObject.parseObject(new String(Base64Utils.decodeFromString(cookenStr)));
-        String base64Token=obj.getString("t");
+
+
+        //String str="tuGlDe2Q3hRjjuKup3vO%2FTvEHotAFt59B%2FJI2Jy6eZbpFLh4HPjkkcaQkS7VefayAR%2Fe0%2F8A0%2FuW%0D%0A0m%2BHk7f0Mkz5zHqIQeNphSbSgJ5p2ak%3D";
+        String str="tuGlDe2Q3hRjjuKup3vO%252FTvEHotAFt59B%252FJI2Jy6eZbpFLh4HPjkkcaQkS7VefayAR%252Fe0%252F8A0%252FuW%250D%250A0m%252BHk7f0Mkz5zHqIQeNphSbSgJ5p2ak%253D";
+        JSONObject obj=JSONObject.parseObject(TydicDES.decodedecodeValue(URLDecoder.decode(URLDecoder.decode(str,"utf-8"),"utf-8")));
+        System.out.println(obj);
+
     }
 }
