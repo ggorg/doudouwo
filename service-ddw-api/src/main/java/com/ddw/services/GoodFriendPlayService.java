@@ -264,17 +264,12 @@ public class GoodFriendPlayService extends CommonService {
         return new ResponseApiVO(1,"成功",mapret);
     }
     public ResponseApiVO goIntoMyRoom(String token){
-       Integer userId=TokenUtil.getUserId(token);
-       Map search=new HashMap();
-       search.put("roomOwner",userId);
-       List<Map> list=this.commonList("ddw_goodfriendplay_room","createTime desc","t1.id roomCode",1,1,search);
-       if(list==null || list.isEmpty()){
-           return new ResponseApiVO(-2,"没有房间",null);
+
+       Map map= getCurrentRoom(token);
+       if(map==null){
+           return new ResponseApiVO(-2,"抱歉，没找到你所在的房间",null);
+
        }
-       Map map= list.get(0);
-       if(DisabledEnum.disabled1.getCode( ).equals(map.get("disabled"))){
-            return new ResponseApiVO(-2,"房间已被停用，请重新建一个",null);
-        }
 
         return new ResponseApiVO(1,"成功",map);
     }
@@ -559,16 +554,23 @@ public class GoodFriendPlayService extends CommonService {
         return null;
     }
     private boolean checkRoomMember(String token){
+        Map map=getCurrentRoom(token);
+        return map==null?false:true;
+    }
+    public Map getCurrentRoom(String token){
         Map search=new HashMap();
         search.put("disabled",DisabledEnum.disabled0.getCode());
         search.put("userId",TokenUtil.getUserId(token));
         Map roomS=new HashMap();
         roomS.put("status,<=",GoodFriendPlayRoomStatusEnum.status20.getCode());
         roomS.put("disabled",DisabledEnum.disabled0.getCode());
-        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room_member",null,"t1.userId",null,null,search,
+        CommonSearchBean csb=new CommonSearchBean("ddw_goodfriendplay_room_member",null,"ct0.id roomCode",null,null,search,
                 new CommonChildBean("ddw_goodfriendplay_room","id","roomId",roomS));
         List list=this.getCommonMapper().selectObjects(csb);
-        return list==null|| list.isEmpty()?false:true;
+        if(list==null || list.isEmpty() || list.size()==0){
+            return null;
+        }
+        return (Map)list.get(0);
     }
     public Map getTableById(String token,Integer tableCode )throws  Exception{
         Integer storeId= TokenUtil.getStoreId(token);

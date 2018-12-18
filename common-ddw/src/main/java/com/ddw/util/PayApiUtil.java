@@ -111,7 +111,7 @@ public class PayApiUtil {
         map.put("spbill_create_ip",ip);
         map.put("trade_type","APP");
         map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/pay/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/pay/execute");
-        map.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
+
         String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,wxSign(map));
         if(callBackStr!=null){
             RequestWeiXinOrderVO vo= Tools.xmlCastObject(callBackStr,RequestWeiXinOrderVO.class);
@@ -131,7 +131,7 @@ public class PayApiUtil {
             map.put("openid",openId);
         }
         map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/pay/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/pay/execute");
-        map.put("appid", ApiConstant.WEI_XIN_PUBLIC_APP_ID);
+
         String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,wxSign(map));
         if(callBackStr!=null){
             RequestWeiXinOrderVO vo= Tools.xmlCastObject(callBackStr,RequestWeiXinOrderVO.class);
@@ -266,7 +266,7 @@ public class PayApiUtil {
         Document document= DocumentHelper.createDocument();
         Element rootXML=document.addElement("xml");
         TreeMap treeMap=new TreeMap(map);
-
+        map.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
         treeMap.put("mch_id", ApiConstant.WEI_XIN_PAY_MCH_ID);
         treeMap.put("nonce_str",nonce_str);
         Set<String> keys=treeMap.keySet();
