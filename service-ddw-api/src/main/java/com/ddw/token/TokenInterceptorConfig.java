@@ -50,12 +50,21 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
             if(handler instanceof HandlerMethod){
                 HandlerMethod method = (HandlerMethod) handler;
                 if(method.hasMethodAnnotation(Token.class) && method.hasMethodAnnotation(Idemp.class)){
+
                     Map<String,String> map=(Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
-                    String base64Token=map.get("token");
+                    String base64Token=null;
+                    if(map!=null && map.containsKey("token")){
+                        base64Token=map.get("token");
+                    }else{
+                        JSONObject jsonObj=(JSONObject)ThreadLocalUtil.get();
+                        if(jsonObj!=null){
+                            base64Token=jsonObj.getString("t");
+                            ThreadLocalUtil.clear();
+                        }
+                    }
                     String name=method.getMethodAnnotation(Idemp.class).value();
                     String idempName=StringUtils.isBlank(name)?"idemp":name;
                     TokenUtil.putIdempotent(base64Token,idempName,null);
-                    logger.info("postHandle->idempName："+idempName);
                 }
 
             }
@@ -138,7 +147,6 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                             }else{
                                 long currentSeconds=System.currentTimeMillis();
                                 long idempTime=DateUtils.parseDate(idempStr,"yyyy-MM-dd HH:mm:ss").getTime();
-                                logger.info("preHandle->,currentSeconds："+System.currentTimeMillis()+"，idempTime："+idempTime);
                                 long v=currentSeconds-idempTime;
                                 if(v<30000){
                                     toWriteResponseVo(response,-21,"处理中，请耐性等待");

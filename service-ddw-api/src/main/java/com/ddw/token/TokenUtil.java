@@ -115,6 +115,7 @@ public class TokenUtil extends BaseTokenUtil {
             Map map=(Map)obj;
             if(StringUtils.isBlank(idempVal)){
                 map.remove(idempName);
+
             }else{
                 map.put(idempName,idempVal);
             }
