@@ -134,7 +134,7 @@ public class PayCenterController {
 
         }
     }
-    @Idemp
+    @Idemp("weixinH5Pay")
     @Token
     @ApiOperation(value = "微信-h5支付",produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/weixin/h5/pay")
