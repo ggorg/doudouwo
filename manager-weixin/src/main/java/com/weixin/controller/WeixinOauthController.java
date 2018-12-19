@@ -183,7 +183,7 @@ public class WeixinOauthController {
                         String[] params=json.getString("param").split("_");
                         Map cookieM=new HashMap();
                         String base64Token=BaseTokenUtil.createToken(ui.getUnionid());
-                        cookieM.put("tableNumber",Integer.parseInt(params[1]));
+                        cookieM.put("tableNumber",params[1]);
                         cookieM.put("t",base64Token);
                         BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,Integer.parseInt(params[0]),openid);
 

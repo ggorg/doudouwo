@@ -7,13 +7,13 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>餐饮shop</title>
 
-    <link type="text/css" rel="stylesheet" href="/layui/css/layui.css"/>
-    <link type="text/css" rel="stylesheet" href="shopIndex.css?v=11"/>
-    <script type="text/javascript" src="/layui/layui.js"></script>
+    <link type="text/css" rel="stylesheet" href="rs/layui_v2.4.5/css/layui.css"/>
+    <link type="text/css" rel="stylesheet" href="rs/shopIndex.css?v=12"/>
+    <script type="text/javascript" src="rs/layui_v2.4.5/layui.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/sysframe2/js/plugins/jquery.cookie.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
-    <script type="text/javascript" src="shopIndex.js?v=18"></script>
+    <script type="text/javascript" src="rs/shopIndex.js?v=18"></script>
 
 </head>
 <body>
@@ -30,6 +30,10 @@
         <div class="head_store_info">
             <h1>{{data.name}}</h1>
             <p>{{data.address}}</p>
+        </div>
+        <div class="head_order_list_menu" onclick="toOrderList()">
+            <i class="layui-icon layui-icon-spread-left" ></i>
+
         </div>
         <div class="head_bottom">
             {{data.desc}}
@@ -136,6 +140,37 @@
                 <div class="car_mid" >{{item.num}}</div>
 
                 <div class="car_start">-</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="shop_main_right" id="order_list">
+    <div class="main_right_top"><i class="layui-icon layui-icon-left" onclick="toMain()"></i></div>
+    <div class="main_right_content">
+        <div class="right_centent_item" v-for="(item,index) in list" >
+            <div class="right_content_top">
+                <span class="content_top_left">订单编号：{{item.orderNo}}</span>
+                <span  class="content_top_right">{{item.shipStatusName}}</span>
+            </div>
+            <div class="rignt_content_body">
+                <div class="content_body_pic">
+                    <img v-bind:src="item.headImg">
+                </div>
+                <div class="content_body_b">
+                    <div class="body_b_head">
+                        <div class="b_head_left">{{item.name}}</div>
+                        <div class="b_head_right">
+                            <span class="head_right_1">实付:</span>
+                            <span class="head_right_2">￥{{item.price/100}}</span>
+                        </div>
+
+                    </div>
+                    <div class="body_b_body">
+                        {{item.desc}}
+                    </div>
+                    <div class="body_b_foot">{{item.createTime}}</div>
+                </div>
             </div>
         </div>
 

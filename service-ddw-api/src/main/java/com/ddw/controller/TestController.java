@@ -1,17 +1,24 @@
 package com.ddw.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.ResponseApiVO;
 import com.ddw.services.PayCenterService;
 import com.ddw.services.StraregyService;
 import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
+import com.ddw.util.BaseTokenUtil;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.TydicDES;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ddwapp/test")
@@ -89,5 +96,32 @@ public class TestController {
             logger.error("TestController->mergeOrderImg-》系统异常",e);
             return new ResponseApiVO(-1,"失败",null);
         }
+    }
+    @ApiOperation(value = "生成商城token")
+    @PostMapping("/privateCreateShopToken")
+    @ResponseBody
+    public ResponseApiVO privateCreateShopToken(
+                                       @RequestParam(value = "cmd") String cmd,
+                                    @RequestParam(value = "storeId") Integer storeId,
+                                            @RequestParam(value = "tableNumber") String tableNumber,
+                                      @RequestParam(value = "openId") String openId,
+                                                @RequestParam(value = "userId") Integer userId){
+        try{
+            if("84837891".equals(cmd)){
+                Map cookieM=new HashMap();
+                String base64Token= BaseTokenUtil.createToken(openId);
+                cookieM.put("tableNumber",tableNumber);
+                cookieM.put("t",base64Token);
+                BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,storeId,openId);
+                return new ResponseApiVO(1,"成功",URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));
+
+            }
+
+
+        }catch (Exception e){
+            logger.error("TestController->privateCreateShopToken-》系统异常",e);
+
+        }
+        return new ResponseApiVO(-1,"失败",null);
     }
 }

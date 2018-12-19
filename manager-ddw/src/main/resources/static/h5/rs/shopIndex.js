@@ -12,18 +12,24 @@ layui.use(['layer','form'],function(){
 })
 window.onload=function(){
     requestDataHandle();
-}
 
+}
+function myLoad(){
+    return mylayer.load(3, {
+        shade: [0.4,'#fff']});
+}
 function requestDataHandle(){
    if(window.location.search.match(/^[?]param[=]/)!=null){
        $.cookie("shopToken",window.location.search.replace(/(.*param[=])([^&]+)(.*)/g,"$2"),{path:"/"});
    }
 
-    var indexLoad=mylayer.load();
+    var indexLoad=myLoad();
     // alert( window.screen.height+","+$("html").height());
     var headH=$(".shop_head_style").height();
     var footH=$(".shop_foot_style").height();
     $(".shop_body_style,.body_left,.body_right").css("height",$("html").height()-headH-footH);
+    $(".main_right_content").css("height",$("html").height()-$(".main_right_top").height());
+    $(".content_body_b").css("width",$("html").width()-$(".content_body_pic").width()-62);
     $.post("/ddwapp/goods/h5shoplist",{storeId:1},function(callBackData){
         handleData(callBackData);
 
@@ -155,7 +161,7 @@ function requestDataHandle(){
                 "border-top-right-radius":"30px",
                 position:"absolute",
                 top:"auto",
-                bottom:"120px"
+                bottom:"110px"
             });
             if(vm_car==null){
                 vm_car = new Vue({
@@ -173,12 +179,49 @@ function requestDataHandle(){
             $(".layui-layer-shade").css("z-index","90");
         })
         handleGcodeNum();
+        $("#shop_main").hide();
         $("#shop_main").css("visibility","visible");
+        $("#shop_main").fadeIn();
+
 
         mylayer.close(indexLoad)
     },"JSON")
 }
+function toOrderList(){
+    $("title").text("我的订单");
 
+
+    $("#order_list").show();
+    $("#order_list").animate({
+        left:"0px"
+    },400,function(){
+        $("#shop_main").hide();
+        var ml=myLoad();
+        $.post("/ddwapp/order/query/h5/list",{pageNo:1},function(cd){
+            mylayer.close(ml);
+            var vm = new Vue({
+                el:"#order_list",
+                data:cd.data
+            })
+
+            $(".main_right_content img").on("load",function(){
+                handleImg(this);
+            })
+            $(".main_right_content").css("visibility","visible");
+
+        },"JSON")
+    })
+
+}
+function toMain(){
+    $("title").text("餐饮shop");
+    $("#shop_main").show();
+    $("#order_list").animate({
+        left:"1200px"
+    },400,function(){
+        $("#order_list").hide();
+    })
+}
 function handleCooke(code,num,money,name,gcode){
     var shopCar=$.cookie("shopCar");
     if(shopCar!=null){
@@ -484,7 +527,7 @@ function doPay(){
             }
         }
         if(arrayObj.length>0){
-            var requestLoad=mylayer.load()
+            var requestLoad=myLoad();
                 $.ajax({
                     type: "POST",
                     url:"/ddwapp/paycenter/weixin/h5/pay",
@@ -492,7 +535,6 @@ function doPay(){
                     data:JSON.stringify({codes:arrayObj,orderType:1}),
                     dataType: "json",
                     success: function (jsonD, textStatus) {
-
 
                         if(jsonD.reCode>0){
                             WeixinJSBridge.invoke(

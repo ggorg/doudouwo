@@ -5,6 +5,13 @@ html, body,.shop_main{ margin:0; height:100%;font-family: 'Arial Negreta', 'Aria
     visibility:hidden;
 
 }
+
+.shop_main_filter{
+    -webkit-filter: blur(5px); /* Chrome, Opera */
+    -moz-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+}
 img{visibility: hidden}
 .shop_head_style,.shop_foot_style,.shop_body_style, .shop_head_style .head_top,.shop_head_style .head_bottom{
     width:100%;
@@ -38,7 +45,7 @@ img{visibility: hidden}
 
 .shop_foot_style{
     background:white;
-    height: 120px;
+    height: 110px;
     position:absolute ;
     bottom: 0;
     border-top:1px solid #EEEEEE;
@@ -50,7 +57,7 @@ img{visibility: hidden}
     font-size: 50px;
     height: 100%;
     margin-left: 150px;
-    line-height: 120px;
+    line-height: 110px;
 }
 .shop_foot_style .foot_style_pay{
     float: right;
@@ -59,7 +66,7 @@ img{visibility: hidden}
     background:  -webkit-gradient(linear, 0 0, 0 90%, from(#76EDE9), to(#2EC1FC));
     padding-left: 40px;
     padding-right:30px;
-    line-height: 120px;
+    line-height: 110px;
 }
 .shop_foot_style .foot_style_pay .layui-icon{
     font-size: 110px;
@@ -73,13 +80,13 @@ img{visibility: hidden}
 }
 .shop_car{
     position:absolute ;
-    bottom: 30px;
+    bottom: 20px;
     left:30px;
     border: 1px #53CDFC;
     width:120px;
     height: 120px;
     border-radius:120px ;
-    line-height: 120px;
+    line-height: 110px;
     text-align: center;
     background: #53CDFC;
     z-index: 305;
@@ -137,6 +144,22 @@ img{visibility: hidden}
     top:180px;
     left:270px;
 
+}
+.head_order_list_menu{
+    position: absolute;
+    top:20px;
+    right:20px;
+    background: #F3F3F3;
+    padding: 10px 10px 10px 10px;
+    -webkit-filter: opacity(50%); /* Chrome, Opera */
+
+    filter: opacity(50%);
+}
+.head_order_list_menu p{
+    font-size: 2rem;
+}
+.head_order_list_menu i{
+    font-size: 4rem;
 }
 .head_store_info p{
     font-size: 2.1rem;
@@ -490,5 +513,118 @@ img{visibility: hidden}
     width: 300px;
     height: 70px;
 
+}
+
+/**
+订单列表
+ */
+.shop_main_right{
+
+
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 1200px;
+    top:0px;
+    z-index: 400;
+    background: white;
+    display: none;
+
+
+}
+.shop_main_right .main_right_top{
+    height: 70px;
+    background: white;
+    font-size: 2.1rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(60,63,65,0.33);
+    line-height: 70px;
+}
+.main_right_top i{
+    float: left;
+    font-size: 3rem;
+}
+.shop_main_right .main_right_content{
+    -webkit-overflow-scrolling : touch;
+    overflow-y: auto;
+    visibility: hidden;
+}
+.main_right_content .right_content_top{
+    height:70px;
+    line-height: 70px;
+    font-size: 1.8rem;
+
+}
+.main_right_content .right_content_top .content_top_left{
+    float: left;margin-left: 20px;
+    color: #2F2F2F;;
+}
+.main_right_content .right_content_top .content_top_right{
+    float: right;margin-right: 20px;color: #2F2F2F;
+}
+.right_centent_item{
+    height: 289px;
+    width: 100%;
+    border-bottom: 1px solid rgba(60,63,65,0.33);
+}
+.rignt_content_body{
+
+
+    padding:0px 20px 20px 20px;
+}
+.rignt_content_body .content_body_pic{
+    width:200px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 20px;
+    float: left;
+    border: 1px solid rgba(60,63,65,0.33)
+}
+.rignt_content_body .content_body_b{
+    float: right;
+    height: 200px;
+    padding-left: 20px;
+}
+
+.content_body_b .body_b_head{
+    height: 40px;
+    width: 100%;
+
+}
+.body_b_head .b_head_left{
+     float:left;width: 70%;height: 100%;
+    line-height: 40px;
+    font-size: 1.9rem;
+    overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
+ }
+.body_b_head .b_head_right{
+    float:right;width: 30%;height: 100%;
+    line-height: 40px;
+
+    text-align: right;
+}
+.b_head_right .head_right_1{
+    font-size: 1.8rem;
+
+}
+.b_head_right .head_right_2{
+    color: #FF3C00;
+    font-size: 1.4rem;
+}
+.content_body_b .body_b_body{
+    height: 130px;
+    width: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling : touch;
+    word-wrap:break-word;
+    font-size: 1.5rem;
+    color: #7C7E7F;
+}
+.content_body_b .body_b_foot{
+    height: 30px;
+    width: 100%;
+    font-size: 1.5rem;
+    line-height: 40px;
+    color: rgba(0,0,0,0.41)
 }
 

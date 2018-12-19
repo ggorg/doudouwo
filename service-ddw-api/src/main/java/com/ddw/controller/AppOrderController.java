@@ -1,10 +1,14 @@
 package com.ddw.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ddw.beans.*;
+import com.ddw.enums.AppOrderTypeEnum;
+import com.ddw.enums.PayTypeEnum;
 import com.ddw.services.AppOrderService;
 import com.ddw.services.BiddingService;
 import com.ddw.token.Token;
 import com.ddw.token.TokenUtil;
+import com.gen.common.util.ThreadLocalUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -33,6 +37,27 @@ public class AppOrderController {
             return appOrderService.getOrderList(token,dto);
         }catch (Exception e){
             logger.error("AppOrderController-getOrderList-》查询订单列表-》系统异常",e);
+        }
+        return new ResponseApiVO(-1,"查询失败",null);
+
+    }
+    @Token
+    @ApiOperation(value = "查询订单列表(H5)",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/h5/list")
+    @ResponseBody
+    public ResponseApiVO<ListVO<OrderViewVO>> getH5OrderList(PageNoDTO dto){
+        try {
+            JSONObject jsonObj=(JSONObject) ThreadLocalUtil.get();
+            if(jsonObj!=null){
+                OrderViewDTO ovdto=new OrderViewDTO();
+                ovdto.setType(AppOrderTypeEnum.OrderType3.getCode());
+                ovdto.setPageNo(dto.getPageNo());
+                String base64Token=jsonObj.getString("t");
+                return appOrderService.getOrderList(base64Token,ovdto);
+            }
+
+        }catch (Exception e){
+            logger.error("AppOrderController-getH5OrderList-》查询订单列表(H5)-》系统异常",e);
         }
         return new ResponseApiVO(-1,"查询失败",null);
 
