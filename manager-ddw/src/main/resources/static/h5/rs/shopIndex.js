@@ -573,15 +573,14 @@ function showMsg(msg){
     $(".layui-layer-hui").css("border-radius","15px")
 }
 function handlePay(){
-
-    /*if (typeof WeixinJSBridge == "undefined"){
+    if (typeof WeixinJSBridge == "undefined"){
         if( document.addEventListener ){
             document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
         }else if (document.attachEvent){
             document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
             document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
         }
-    }*/
+    }
 doPay();
 
 }
