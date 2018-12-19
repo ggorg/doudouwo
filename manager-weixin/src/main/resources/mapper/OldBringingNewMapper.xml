@@ -40,9 +40,9 @@
         where newOpenid = #{newOpenid,jdbcType=VARCHAR}
     </select>
 
-    <select id="getOpenid" resultType="string">
+    <select id="getOpenid" resultType="java.util.HashMap">
         select
-        openid
+        openid,headImgUrl,nickName
         from ddw_userinfo
         where openid like concat('%',#{openid,jdbcType=VARCHAR}) limit 1
     </select>

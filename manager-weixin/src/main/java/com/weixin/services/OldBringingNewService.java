@@ -8,6 +8,8 @@ import com.weixin.entity.OldBringingNew;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 /**
  * 老带新Service
  * @author Jacky
@@ -48,7 +50,7 @@ public class OldBringingNewService extends CommonService{
      * @param openid 截取的后六位的openid
      * @return
      */
-    public String getOpenid(String openid){
+    public Map getOpenid(String openid){
         return oldBringingNewMapper.getOpenid(openid);
     }
 }

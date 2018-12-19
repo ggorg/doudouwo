@@ -14,12 +14,8 @@ import com.weixin.entity.UserInfoDTO;
 import com.weixin.services.*;
 import com.weixin.util.WeiXinTools;
 import com.weixin.util.WeixinUtil;
-import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +29,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,10 +130,13 @@ public class WeixinOauthController {
                 if("obn".equals(page)){
                     // 这里绑定老带新,然后跳转到下载APP页面
                     if(json.containsKey("param")){
-                        String oldOpenid = oldBringingNewService.getOpenid(json.get("param").toString());
-                        if(StringUtils.isNotBlank(oldOpenid)){
+                        Map oldUser = oldBringingNewService.getOpenid(json.get("param").toString());
+                        if(oldUser != null){
                             try {
                                 if (userInfoService.countUser(ui.getUnionid())==0){
+                                    String oldOpenid = oldUser.get("openid").toString();
+                                    String headImgUrl = oldUser.get("headImgUrl").toString();
+                                    String nickName = oldUser.get("nickName").toString();
                                     logger.info("绑定老带新oldOpenid:["+oldOpenid+"]openid:["+openid+"]");
                                     oldBringingNewService.save(oldOpenid,openid,ui.getNickname(),ui.getHeadimgurl());
                                     //注册账号
@@ -152,6 +150,12 @@ public class WeixinOauthController {
                                     userInfoDTO.setSex(Integer.valueOf(ui.getSex()));
                                     userInfoDTO.setRegisterType(1);
                                     userInfoService.save(userInfoDTO);
+
+                                    Map map=new HashMap();
+                                    map.put("headImgUrl",headImgUrl);
+                                    map.put("nickName",nickName);
+
+                                    urlAppendParam=Base64Utils.encodeToString(JSONObject.toJSONString(map).getBytes());
                                 }
                             } catch (Exception e) {
                                 logger.error("WeixinOauthController->oauth->老带新注册新用户",e);
