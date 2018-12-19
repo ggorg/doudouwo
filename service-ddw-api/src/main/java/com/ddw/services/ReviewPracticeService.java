@@ -709,16 +709,17 @@ public class ReviewPracticeService extends CommonService {
     @Transactional(propagation = Propagation.REQUIRED,rollbackFor = Exception.class)
     public ResponseVO endThePractice(Integer orderId,MultipartFile photograph)throws Exception{
         PracticeOrderPO practiceOrderPO = this.getOrder(orderId);
-        practiceOrderPO.setUpdateTime(new Date());
-
+        if(practiceOrderPO.getPayState() ==1){
+            return new ResponseVO(-2,"已支付订单,代练不允许结束",null);
+        }
         String ImgName1= DateFormatUtils.format(new Date(),"yyyyMMddHHmmssSSS")+"."+ FilenameUtils.getExtension( photograph.getOriginalFilename());
         FileInfoVo fileInfoVo1= UploadFileMoveUtil.move( photograph,mainGlobals.getRsDir(), ImgName1);
-        practiceOrderPO.setPicUrl(mainGlobals.getServiceUrl()+fileInfoVo1.getUrlPath());
         CommonBeanFiles f1=this.fileService.createCommonBeanFiles(fileInfoVo1);
         this.fileService.saveFile(f1);
 
-        Map updatePoMap= BeanToMapUtil.beanToMap(practiceOrderPO,true);
-        if(updatePoMap.containsKey("orderId"))updatePoMap.remove("orderId");
+        Map updatePoMap= new HashMap<>();
+        updatePoMap.put("picUrl",mainGlobals.getServiceUrl()+fileInfoVo1.getUrlPath());
+        updatePoMap.put("updateTime",new Date());
         ResponseVO responseVO = super.commonUpdateBySingleSearchParam("ddw_practice_order",updatePoMap,"id",orderId);
         //结算后,修改代练状态为关闭
         Map setParams = new HashMap<>();
