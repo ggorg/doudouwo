@@ -154,8 +154,6 @@ function requestDataHandle(){
                 content:$("#show_car_list") //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
 
             });
-           // border-top-left-radius: 30px;
-          //  border-top-right-radius: 30px;
             mylayer.style(lo, {
                 "border-top-left-radius":"30px",
                 "border-top-right-radius":"30px",
@@ -287,8 +285,8 @@ function toOrderList(){
     $("#order_list").show();
     $("#order_list").animate({
         left:"0px"
-    },400,function(){
-        $("#shop_main").hide();
+    },250,function(){
+        $("#shop_main").css("visibility","hidden");
         pageNo=1;
         requestOrderList();
     })
@@ -296,10 +294,10 @@ function toOrderList(){
 }
 function toMain(){
     $("title").text("餐饮shop");
-    $("#shop_main").show();
+    $("#shop_main").css("visibility","visible");
     $("#order_list").animate({
         left:"1200px"
-    },400,function(){
+    },250,function(){
         $("#order_list").hide();
     })
 }
@@ -366,11 +364,13 @@ function handleGcodeNum(gcode){
     }else{
         var shopCar=$.cookie("shopCar");
         var gn=0;
+
         if(shopCar!=null){
             shopCar=JSON.parse(shopCar);
             var obj=null;
             var countNum=0;
             var countPrice=0;
+
             for(var s=0;s<shopCar.length;s++){
                 var t=0;
                 if((obj=$("[cacheSpecGcode="+shopCar[s].gcode+"]")).length>0){
@@ -384,14 +384,19 @@ function handleGcodeNum(gcode){
                 }
                 obj.show();
                 t=t==""?0:parseInt(t);
-                obj.text(t+parseInt(shopCar[s].num));
+               // console.log(t+","+parseInt(shopCar[s].num));
+                obj.text(parseInt(shopCar[s].num));
                 countNum+=parseInt(shopCar[s].num);
                 countPrice+=parseInt(shopCar[s].money);
                 console.log(shopCar[s].money+",");
             }
             $("#car_show_num").show().text(countNum);
-            $("#foot_style_price").text("￥"+countPrice/100);
-            $("#foot_style_price").attr("money",countPrice);
+            $("#foot_style_price").attr("money",countPrice).text("￥"+countPrice/100)
+
+        }else{
+            $("#car_show_num").hide().text("");
+            $("#foot_style_price").attr("money",0).text("");
+
         }
     }
 }
@@ -430,6 +435,18 @@ function getPriceByCookie(code){
     }
     return 0;
 }
+function getUnitPriceByCookie(code){
+    var shopCar=$.cookie("shopCar");
+    if(shopCar!=null){
+        shopCar=JSON.parse(shopCar);
+        for(var s=0;s<shopCar.length;s++){
+            if(shopCar[s].code==code){
+                return shopCar[s].money/shopCar[s].num;
+            }
+        }
+    }
+    return 0;
+}
 function getNumByGcode(gcode){
     var shopCar=$.cookie("shopCar");
     var gn=0;
@@ -443,6 +460,50 @@ function getNumByGcode(gcode){
         }
     }
     return gn;
+}
+function carSub(obj){
+    var op=$(obj.parentNode);
+    var list_two=op.prev();
+    var car_mid=op.find(".car_mid");
+    var carCode=op.attr("carCode");
+    var carGcode=op.attr("carGcode");
+    var carPrice=getPriceByCookie(carCode);
+    var carUnitPrice=parseInt(op.attr("carUnitPrice"));
+    list_two.text((carPrice-carUnitPrice)/100+"元");
+    car_mid.text(parseInt(car_mid.text())-1);
+    handleCooke(carCode,car_mid.text(),carPrice-carUnitPrice,null,carGcode);
+    handleGcodeNum();
+    if(car_mid.text()==0){
+        //op.parent().remove();
+        var caObj=null;
+        if((caObj=$("[cachemidgcode='"+carGcode+"']"))!=null && caObj.length>0){
+            caObj.text("");
+            caObj.prev().hide();
+        }else if((caObj=$("[cacheSpecGcode='"+carGcode+"']"))!=null && caObj.length>0){
+            caObj.hide().text("");
+        }
+        var vcl=vm_car.list.length;
+        for(var v=0;v<vcl;v++){
+            if(vm_car.list[v].code==carCode){
+                vm_car.list.splice(v,1);
+                return;
+            }
+        }
+    }
+}
+function carAdd(obj){
+    var op=$(obj.parentNode);
+    var list_two=op.prev();
+    var car_mid=op.find(".car_mid");
+    var carCode=op.attr("carCode");
+    var carGcode=op.attr("carGcode");
+    var carPrice=getPriceByCookie(carCode);
+    var carUnitPrice=parseInt(op.attr("carUnitPrice"));
+    list_two.text((carPrice+carUnitPrice)/100+"元");
+    car_mid.text(parseInt(car_mid.text())+1);
+    handleCooke(carCode,car_mid.text(),carPrice+carUnitPrice,null,carGcode);
+    handleGcodeNum();
+
 }
 function popAdd(obj){
     var bo=$(".content_option_blue");
