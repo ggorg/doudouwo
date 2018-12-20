@@ -542,12 +542,12 @@ img{visibility: hidden}
 }
 .main_right_top i{
     float: left;
-    font-size: 3rem;
+    font-size: 2.5rem;
 }
 .shop_main_right .main_right_content{
     -webkit-overflow-scrolling : touch;
     overflow-y: auto;
-    visibility: hidden;
+
 }
 .main_right_content .right_content_top{
     height:70px;
@@ -566,6 +566,7 @@ img{visibility: hidden}
     height: 289px;
     width: 100%;
     border-bottom: 1px solid rgba(60,63,65,0.33);
+    visibility: hidden;
 }
 .rignt_content_body{
 

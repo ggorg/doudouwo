@@ -33,7 +33,7 @@ function requestDataHandle(){
     $.post("/ddwapp/goods/h5shoplist",{storeId:1},function(callBackData){
         handleData(callBackData);
 
-        $("img").on("load",function(){
+        $("#shop_main img").on("load",function(){
             handleImg(this);
         })
         handleOffset();
@@ -187,29 +187,110 @@ function requestDataHandle(){
         mylayer.close(indexLoad)
     },"JSON")
 }
+var orderListVm=null;
+var pageNo=1;
+var requestIng=true;
+var orderScrollTop=null;
+function requestOrderList(){
+
+    var ml=myLoad();
+    $.post("/ddwapp/order/query/h5/list",{pageNo:pageNo},function(cd){
+        mylayer.close(ml);
+        if(cd.reCode<0){
+            showMsg(cd.reMsg);
+            return ;
+        }
+        if(cd.reCode==2){
+            showMsg("没有更多数据了");
+            return ;
+        }
+        if(orderListVm==null){
+            orderListVm= new Vue({
+                el:"#order_list",
+                data:cd.data,
+                methods: {
+                    addItem: function (d) {
+                        this.list.push(d)
+                    }
+                },
+                created:function(){
+
+                    toSetOrderItem()
+                    pageNo++;
+
+                },
+                updated:function(){
+                    toSetOrderItem();
+                    requestIng=true;
+                }
+            })
+            $(".main_right_content").on(
+                " touchend",function(){
+                    if($(this).scrollTop()>=($(".right_centent_item").length*290-$(this).height()) ){
+                        requestIng=false;
+                        requestOrderList();
+
+                    }else if( $(this).scrollTop()<0){
+                        requestIng=false;
+                        pageNo=1;
+                        requestOrderList();
+                    }
+            })
+
+           /* $(".main_right_content").scroll(function(){
+                if(!requestIng){
+                    return ;
+                }
+                if($(this).scrollTop()>=($(".right_centent_item").length*290-$(this).height()) ){
+                    requestIng=false;
+                    requestOrderList();
+
+                }else if( $(this).scrollTop()<=0){
+                    showMsg(($(this).scrollTop()==0) +","+($(this).scrollTop()==""))
+                    requestIng=false;
+                    pageNo=1;
+                    requestOrderList();
+                }
+            })*/
+        }else{
+
+            if(pageNo==1){
+                orderListVm.list=cd.data.list;
+            }else{
+                for(var l=0;l<cd.data.list.length;l++){
+                    orderListVm.addItem(cd.data.list[l]);
+                }
+            }
+
+            pageNo++;
+
+
+
+        }
+
+
+
+
+
+    },"JSON")
+}
+function toSetOrderItem(){
+    /*$(".content_body_pic img").on("load",function(){
+        handleImg(this);
+
+    })*/
+    $(".right_centent_item").css("visibility","visible");
+
+}
 function toOrderList(){
     $("title").text("我的订单");
-
-
     $("#order_list").show();
     $("#order_list").animate({
         left:"0px"
     },400,function(){
         $("#shop_main").hide();
-        var ml=myLoad();
-        $.post("/ddwapp/order/query/h5/list",{pageNo:1},function(cd){
-            mylayer.close(ml);
-            var vm = new Vue({
-                el:"#order_list",
-                data:cd.data
-            })
-
-            $(".main_right_content img").on("load",function(){
-                handleImg(this);
-            })
-            $(".main_right_content").css("visibility","visible");
-
-        },"JSON")
+        pageNo=1;
+        requestOrderList();
     })
 
 }
@@ -488,6 +569,7 @@ function handleImg(imgObj){
     var logDivh=$(img.parentNode).height();
     var realWidth  = img.width;//获取图片实际宽度
     var realHeight  = img.height;//获取图片实际高度
+    console.log(logDivW+","+realWidth)
     if(realWidth>logDivW*2){
         realWidth=realWidth/2;
         img.width=realWidth;

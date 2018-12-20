@@ -8,12 +8,13 @@
     <title>餐饮shop</title>
 
     <link type="text/css" rel="stylesheet" href="rs/layui_v2.4.5/css/layui.css"/>
-    <link type="text/css" rel="stylesheet" href="rs/shopIndex.css?v=12"/>
+    <link type="text/css" rel="stylesheet" href="rs/shopIndex.css?v=13"/>
     <script type="text/javascript" src="rs/layui_v2.4.5/layui.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="rs/jquery.mobile.custom.min.js"></script>
     <script type="text/javascript" src="/sysframe2/js/plugins/jquery.cookie.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
-    <script type="text/javascript" src="rs/shopIndex.js?v=18"></script>
+    <script type="text/javascript" src="rs/shopIndex.js?v=19"></script>
 
 </head>
 <body>
@@ -146,7 +147,7 @@
     </div>
 </div>
 <div class="shop_main_right" id="order_list">
-    <div class="main_right_top"><i class="layui-icon layui-icon-left" onclick="toMain()"></i></div>
+    <div class="main_right_top"><i class="layui-icon layui-icon-left" onclick="toMain()">返回</i></div>
     <div class="main_right_content">
         <div class="right_centent_item" v-for="(item,index) in list" >
             <div class="right_content_top">
@@ -155,7 +156,7 @@
             </div>
             <div class="rignt_content_body">
                 <div class="content_body_pic">
-                    <img v-bind:src="item.headImg">
+                    <img v-bind:src="item.headImg" onload=" handleImg(this)">
                 </div>
                 <div class="content_body_b">
                     <div class="body_b_head">
