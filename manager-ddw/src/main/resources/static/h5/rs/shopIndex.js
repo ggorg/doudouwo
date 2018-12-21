@@ -638,6 +638,18 @@ function handleImg(imgObj){
         img.style.height="auto";
         realHeight=$(img).height();
 
+    }else if(realWidth>logDivW*2 && realHeight<logDivh*2){
+        realWidth=realWidth/2*logDivh*2/realHeight;
+        img.style.width=realWidth+"px";
+        img.style.height="auto";
+        realHeight=$(img).height();
+
+    }else if(realWidth>logDivW*2 && realHeight<logDivh){
+        realWidth=realWidth/2*logDivh/realHeight;
+        img.style.width=realWidth+"px";
+        img.style.height="auto";
+        realHeight=$(img).height();
+
     }else if(realWidth>logDivW  && realHeight<logDivh){
         //realHeight=realHeight/2;
         img.style.width=$(img).width()*logDivh/realHeight+"px";
