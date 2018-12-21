@@ -634,15 +634,15 @@ function handleImg(imgObj){
     console.log(logDivW+","+realWidth)
     if(realWidth>logDivW*2){
         realWidth=realWidth/2;
-        img.width=realWidth;
-        img.height="auto";
-        realHeight=$("img").height();
+        img.style.width=realWidth+"px";
+        img.style.height="auto";
+        realHeight=$(img).height();
     }
     if(realHeight>logDivh*2){
-        realHeight=realHeight/2;
-        img.height=realHeight;
-        img.width="auto";
-        realWidth=$("img").width();
+        //realHeight=realHeight/2;
+        img.style.width=$(img).width()*realHeight/logDivh+"px";
+        img.style.height="auto";
+        realWidth=$(img).width();
     }
     //让img的宽高相当于图片实际宽高的等比缩放，然后再偏移
 
@@ -654,9 +654,9 @@ function handleImg(imgObj){
         realHeight=$(img).height();
     }
     if(logDivh>realHeight){
-        realHeight=logDivh*1.2;
-        img.style.height=realHeight+"px";
-        img.style.width="auto";
+
+        img.style.height="auto";
+        img.style.width=$(img).width()*logDivh/realHeight+"px";
         realWidth=$(img).width();
     }
 
