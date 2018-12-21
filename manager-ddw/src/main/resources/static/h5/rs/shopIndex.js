@@ -635,12 +635,14 @@ function handleImg(imgObj){
     if(realWidth>logDivW*2){
         realWidth=realWidth/2;
         img.width=realWidth;
-        img.height=realHeight;
+        img.height="auto";
+        realHeight=$("img").height();
     }
     if(realHeight>logDivh*2){
         realHeight=realHeight/2;
         img.height=realHeight;
-        img.width=realWidth;
+        img.width="auto";
+        realWidth=$("img").width();
     }
     //让img的宽高相当于图片实际宽高的等比缩放，然后再偏移
 
