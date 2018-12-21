@@ -159,7 +159,7 @@ function requestDataHandle(){
                 "border-top-right-radius":"30px",
                 position:"absolute",
                 top:"auto",
-                bottom:"110px"
+                bottom:"90px"
             });
             if(vm_car==null){
                 vm_car = new Vue({

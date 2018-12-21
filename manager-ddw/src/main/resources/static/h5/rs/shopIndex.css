@@ -17,13 +17,13 @@ img{visibility: hidden}
     width:100%;
 }
 .shop_head_style{
-    height: 401px;
+    height: 351px;
     overflow:hidden;
 
 
 }
 .shop_head_style .head_top{
-    height: 331px;
+    height: 281px;
     width: 100%;
     border-bottom: 1px solid #D0D0D0;
     overflow: hidden;
@@ -35,7 +35,7 @@ img{visibility: hidden}
 }
 .shop_head_style .head_bottom{
     height:70px;
-    font-size:2.1rem;
+    font-size:2rem;
     color:#ff4927;
     font-weight: bold;
     line-height: 70px;
@@ -45,7 +45,7 @@ img{visibility: hidden}
 
 .shop_foot_style{
     background:white;
-    height: 110px;
+    height: 90px;
     position:absolute ;
     bottom: 0;
     border-top:1px solid #EEEEEE;
@@ -57,7 +57,7 @@ img{visibility: hidden}
     font-size: 50px;
     height: 100%;
     margin-left: 150px;
-    line-height: 110px;
+    line-height: 90px;
 }
 .shop_foot_style .foot_style_pay{
     float: right;
@@ -66,10 +66,10 @@ img{visibility: hidden}
     background:  -webkit-gradient(linear, 0 0, 0 90%, from(#76EDE9), to(#2EC1FC));
     padding-left: 40px;
     padding-right:30px;
-    line-height: 110px;
+    line-height: 90px;
 }
 .shop_foot_style .foot_style_pay .layui-icon{
-    font-size: 110px;
+    font-size: 90px;
     color: white;
     float: left;
 }
@@ -77,10 +77,11 @@ img{visibility: hidden}
     color: white;
     float: left;
     font-size:2.1rem;
+    line-height: 110px;
 }
 .shop_car{
     position:absolute ;
-    bottom: 20px;
+    bottom: 10px;
     left:30px;
     border: 1px #53CDFC;
     width:120px;
@@ -108,7 +109,7 @@ img{visibility: hidden}
     -webkit-overflow-scrolling : touch;
 }
 .body_left li{
-    font-size: 2.1rem;
+    font-size: 2rem;
     height: 100px;
     line-height: 100px;
     text-align: center;
@@ -129,7 +130,7 @@ img{visibility: hidden}
     border:1px solid rgba(60,63,65,0.17);
     position:absolute;
     left:40px;
-    top:160px;
+    top:110px;
     width: 210px;
     height: 210px;
     overflow: hidden;
@@ -141,7 +142,7 @@ img{visibility: hidden}
 }
 .head_store_info{
     position: absolute;
-    top:180px;
+    top:130px;
     left:270px;
 
 }
@@ -162,7 +163,7 @@ img{visibility: hidden}
     font-size: 4rem;
 }
 .head_store_info p{
-    font-size: 2.1rem;
+    font-size: 1.8rem;
     margin-top: 50px;
     color:white;
     font-weight: bold;
@@ -177,10 +178,12 @@ img{visibility: hidden}
 }
 .right_item .item_title{
     color:#2F2F2F;
-    margin-bottom:20px
+    margin-bottom:30px;
+    font-size: 2rem;
+    border-bottom: 1px dashed rgba(0,0,0,0.33);
 }
 .right_item .item_content{
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     height:172px;
     position: relative;
 
@@ -200,7 +203,7 @@ img{visibility: hidden}
     height: 100%;
 }
 .content_mid .mid_title{
-    font-size: 2rem;
+    font-size: 1.8rem;
     color:#2F2F2F
 }
 .content_mid .mid_sale{
@@ -280,11 +283,7 @@ img{visibility: hidden}
 .right_start,.right_mid{
     display: none;
 }
-.right_item .item_title{
-    font-size: 2.1rem;
-    border-bottom: 1px dashed rgba(0,0,0,0.33);
 
-}
 .car_show_num{
     position: absolute;top:-5px;right: 0px;color: white;width: 40px;height:40px;font-size: 20px;
 
