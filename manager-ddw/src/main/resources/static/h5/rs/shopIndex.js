@@ -646,16 +646,20 @@ function handleImg(imgObj){
 
 
     if(logDivW>realWidth){
-        img.style.width=logDivW+"px";
-    }else{
-        img.style.marginLeft = '-' + (realWidth-logDivW)/2 + 'px';
+        realWidth=logDivW*1.2;
+        img.style.width=realWidth+"px";
+        img.style.height="auto";
+        realHeight=$(img).height();
+    }
+    if(logDivh>realHeight){
+        realHeight=logDivh*1.2;
+        img.style.height=realHeight+"px";
+        img.style.width="auto";
+        realWidth=$(img).width();
     }
 
-    if(logDivh>realHeight){
-        img.style.height=logDivh+"px";
-    }else{
-        img.style.marginTop = '-' + (realHeight-logDivh)/2 + 'px';
-    }
+    img.style.marginLeft = '-' + (realWidth-logDivW)/2 + 'px';
+    img.style.marginTop = '-' + (realHeight-logDivh)/2 + 'px';
     img.style.visibility="visible";
 
 }
