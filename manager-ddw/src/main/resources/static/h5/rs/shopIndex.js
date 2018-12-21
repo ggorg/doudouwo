@@ -461,48 +461,49 @@ function getNumByGcode(gcode){
     }
     return gn;
 }
-function carSub(obj){
+function handleCarVue(obj,str){
     var op=$(obj.parentNode);
-    var list_two=op.prev();
-    var car_mid=op.find(".car_mid");
     var carCode=op.attr("carCode");
     var carGcode=op.attr("carGcode");
-    var carPrice=getPriceByCookie(carCode);
     var carUnitPrice=parseInt(op.attr("carUnitPrice"));
-    list_two.text((carPrice-carUnitPrice)/100+"元");
-    car_mid.text(parseInt(car_mid.text())-1);
-    handleCooke(carCode,car_mid.text(),carPrice-carUnitPrice,null,carGcode);
-    handleGcodeNum();
-    if(car_mid.text()==0){
-        //op.parent().remove();
-        var caObj=null;
-        if((caObj=$("[cachemidgcode='"+carGcode+"']"))!=null && caObj.length>0){
-            caObj.text("");
-            caObj.prev().hide();
-        }else if((caObj=$("[cacheSpecGcode='"+carGcode+"']"))!=null && caObj.length>0){
-            caObj.hide().text("");
-        }
-        var vcl=vm_car.list.length;
-        for(var v=0;v<vcl;v++){
-            if(vm_car.list[v].code==carCode){
-                vm_car.list.splice(v,1);
-                return;
+    var vcl=vm_car.list.length;
+    for(var v=0;v<vcl;v++){
+        if(vm_car.list[v].code==carCode){
+            var money=vm_car.list[v].money;
+            var num=vm_car.list[v].num;
+            if(str=="-" && num==1){
+                Vue.delete(vm_car.list,v);
+                handleCooke(carCode,0,money-carUnitPrice,null,carGcode);
+            }else{
+                var m=eval(money+str+carUnitPrice);
+                var n=eval(num+str+1);
+                Vue.set(vm_car.list[v],"money",m)
+                Vue.set(vm_car.list[v],"num",n)
+                handleCooke(carCode,n,m,null,carGcode);
             }
+            handleGcodeNum();
+            return;
         }
     }
 }
-function carAdd(obj){
+function carSub(obj){
     var op=$(obj.parentNode);
-    var list_two=op.prev();
-    var car_mid=op.find(".car_mid");
-    var carCode=op.attr("carCode");
     var carGcode=op.attr("carGcode");
-    var carPrice=getPriceByCookie(carCode);
-    var carUnitPrice=parseInt(op.attr("carUnitPrice"));
-    list_two.text((carPrice+carUnitPrice)/100+"元");
-    car_mid.text(parseInt(car_mid.text())+1);
-    handleCooke(carCode,car_mid.text(),carPrice+carUnitPrice,null,carGcode);
-    handleGcodeNum();
+
+
+    var caObj=null;
+    if((caObj=$("[cachemidgcode='"+carGcode+"']"))!=null && caObj.length>0){
+        caObj.text("");
+        caObj.prev().hide();
+    }else if((caObj=$("[cacheSpecGcode='"+carGcode+"']"))!=null && caObj.length>0){
+        caObj.hide().text("");
+    }
+    handleCarVue(obj,"-");
+
+}
+function carAdd(obj){
+
+    handleCarVue(obj,"+");
 
 }
 function popAdd(obj){
