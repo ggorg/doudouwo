@@ -370,7 +370,7 @@ function handleGcodeNum(gcode){
             var obj=null;
             var countNum=0;
             var countPrice=0;
-
+            var nums=[];
             for(var s=0;s<shopCar.length;s++){
                 var t=0;
                 if((obj=$("[cacheSpecGcode="+shopCar[s].gcode+"]")).length>0){
@@ -382,10 +382,16 @@ function handleGcodeNum(gcode){
                     t=obj.text();
                     obj.prev().show()
                 }
+                var numsValue=nums[shopCar[s].gcode];
+                if(numsValue==undefined || numsValue==null){
+                    nums[shopCar[s].gcode]=parseInt(shopCar[s].num);
+                }else{
+                    nums[shopCar[s].gcode]=numsValue+parseInt(shopCar[s].num);
+                }
                 obj.show();
                 t=t==""?0:parseInt(t);
                // console.log(t+","+parseInt(shopCar[s].num));
-                obj.text(parseInt(shopCar[s].num));
+                obj.text(nums[shopCar[s].gcode]);
                 countNum+=parseInt(shopCar[s].num);
                 countPrice+=parseInt(shopCar[s].money);
                 console.log(shopCar[s].money+",");
