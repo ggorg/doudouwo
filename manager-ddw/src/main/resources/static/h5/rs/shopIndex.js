@@ -189,82 +189,81 @@ var orderListVm=null;
 var pageNo=1;
 var requestIng=true;
 var orderScrollTop=null;
+var scrollFlag=false;
 function requestOrderList(){
 
     var ml=myLoad();
+    var sStart=new Date().getMilliseconds();
+
     $.post("/ddwapp/order/query/h5/list",{pageNo:pageNo},function(cd){
-        mylayer.close(ml);
-        if(cd.reCode<0){
-            showMsg(cd.reMsg);
-            return ;
-        }
-        if(cd.reCode==2){
-            showMsg("没有更多数据了");
-            return ;
-        }
-        if(orderListVm==null){
-            orderListVm= new Vue({
-                el:"#order_list",
-                data:cd.data,
-                methods: {
-                    addItem: function (d) {
-                        this.list.push(d)
-                    }
-                },
-                created:function(){
+        var sEnd=new Date().getMilliseconds();
 
-                    toSetOrderItem()
-                    pageNo++;
-
-                },
-                updated:function(){
-                    toSetOrderItem();
-                    requestIng=true;
-                }
-            })
-            $(".main_right_content").on(
-                " touchend",function(){
-                    if($(this).scrollTop()>=($(".right_centent_item").length*290-$(this).height()) ){
-                        requestIng=false;
-                        requestOrderList();
-
-                    }else if( $(this).scrollTop()<0){
-                        requestIng=false;
-                        pageNo=1;
-                        requestOrderList();
-                    }
-            })
-
-           /* $(".main_right_content").scroll(function(){
-                if(!requestIng){
-                    return ;
-                }
-                if($(this).scrollTop()>=($(".right_centent_item").length*290-$(this).height()) ){
-                    requestIng=false;
-                    requestOrderList();
-
-                }else if( $(this).scrollTop()<=0){
-                    showMsg(($(this).scrollTop()==0) +","+($(this).scrollTop()==""))
-                    requestIng=false;
-                    pageNo=1;
-                    requestOrderList();
-                }
-            })*/
-        }else{
-
-            if(pageNo==1){
-                orderListVm.list=cd.data.list;
-            }else{
-                for(var l=0;l<cd.data.list.length;l++){
-                    orderListVm.addItem(cd.data.list[l]);
-                }
+        window.setTimeout(function(){
+            mylayer.close(ml);
+            if(cd.reCode<0){
+                showMsg(cd.reMsg);
+                return ;
             }
+            if(cd.reCode==2){
+                showMsg("没有更多数据了");
+                return ;
+            }
+            if(orderListVm==null){
+                orderListVm= new Vue({
+                    el:"#order_list",
+                    data:cd.data,
+                    methods: {
+                        addItem: function (d) {
+                            this.list.push(d)
+                        }
+                    },
+                    created:function(){
 
-            pageNo++;
+                        toSetOrderItem()
+                        pageNo++;
+
+                    },
+                    updated:function(){
+                        toSetOrderItem();
+                        requestIng=true;
+                    }
+                })
+                $(".main_right_content").on({
+                    "scrollstart":function(){
+                        scrollFlag=true;
+                    },
+                    "touchend":function(){
+                        if(scrollFlag){
+                            if($(this).scrollTop()>=($(".right_centent_item").length*290-$(this).height()) ){
+                                scrollFlag=false;
+                                requestOrderList();
+
+                            }else if( $(this).scrollTop()<0){
+                                scrollFlag=false;
+                                pageNo=1;
+                                requestOrderList();
+                            }
+                        }
+
+                    }
+                })
 
 
+            }else{
 
-        }
+                if(pageNo==1){
+                    orderListVm.list=cd.data.list;
+                }else{
+                    for(var l=0;l<cd.data.list.length;l++){
+                        orderListVm.addItem(cd.data.list[l]);
+                    }
+                }
+
+                pageNo++;
+
+            }
+        },(sEnd-sStart)>500?0:(500-(sEnd-sStart)));
+
 
 
 
