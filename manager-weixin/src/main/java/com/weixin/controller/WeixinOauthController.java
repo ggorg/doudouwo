@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ddw.util.BaseTokenUtil;
 import com.gen.common.services.CacheService;
 import com.gen.common.util.CommonUtil;
+import com.gen.common.util.Tools;
 import com.gen.common.util.TydicDES;
 import com.gen.common.vo.ResponseVO;
 import com.weixin.config.WXGlobals;
@@ -190,8 +191,8 @@ public class WeixinOauthController {
                         cookieM.put("tableNumber",params[1]);
                         cookieM.put("t",base64Token);
                         BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,Integer.parseInt(params[0]),openid);
-
-                        urlAppendParam= URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8");
+                        Tools.setCookie("shopToken",URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));
+                       return WXGlobals.getOauthJumUrlByKey(page);
                     }catch (Exception e){
                         logger.error("WeixinOauthController->oauth->h5商城跳转失败",e);
 
@@ -200,9 +201,9 @@ public class WeixinOauthController {
                 String jumpUrlValue= WXGlobals.getOauthJumUrlByKey(page);
                 if(StringUtils.isNotBlank(jumpUrlValue)){
 
-                    AccessToken at=weixinInterfaceService.getTokenByAppid(appid);
+                   // AccessToken at=weixinInterfaceService.getTokenByAppid(appid);
                     logger.info("WeixinOauthController->oauth->配置文件url->url:{}",jumpUrlValue);
-                    WeiXinTools.initTicket(at.getTicket(),at.getAppid());
+                   // WeiXinTools.initTicket(at.getTicket(),at.getAppid());
                     logger.info("WeixinOauthController->oauth->跳转->page:{},openid:{}",page,openid);
                     StringBuilder url=new StringBuilder();
                     url.append(InternalResourceViewResolver.REDIRECT_URL_PREFIX );

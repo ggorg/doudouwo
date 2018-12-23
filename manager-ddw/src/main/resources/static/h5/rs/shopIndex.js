@@ -19,9 +19,9 @@ function myLoad(){
         shade: [0.4,'#fff']});
 }
 function requestDataHandle(){
-   if(window.location.search.match(/^[?]param[=]/)!=null){
+   /*if(window.location.search.match(/^[?]param[=]/)!=null){
        $.cookie("shopToken",window.location.search.replace(/(.*param[=])([^&]+)(.*)/g,"$2"),{path:"/"});
-   }
+   }*/
 
     var indexLoad=myLoad();
     // alert( window.screen.height+","+$("html").height());

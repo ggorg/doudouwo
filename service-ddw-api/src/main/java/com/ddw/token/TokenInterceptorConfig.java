@@ -77,6 +77,7 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
                 HandlerMethod method = (HandlerMethod) handler;
                 if(method.hasMethodAnnotation(Token.class)){
                     String cookenStr=Tools.getCookie("shopToken");
+                    logger.info("shopToken:"+cookenStr);
                     String base64Token=null;
                     if(StringUtils.isBlank(cookenStr)){
                         Map<String,String> map=(Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
@@ -88,7 +89,7 @@ public class TokenInterceptorConfig extends WebMvcConfigurerAdapter {
 
                     }else{
                         try {
-                            JSONObject obj=JSONObject.parseObject(TydicDES.decodedecodeValue(URLDecoder.decode(URLDecoder.decode(cookenStr,"utf-8"),"utf-8")));
+                            JSONObject obj=JSONObject.parseObject(TydicDES.decodedecodeValue(URLDecoder.decode(cookenStr,"utf-8")));
 
                             base64Token=obj.getString("t");
                             ThreadLocalUtil.set(obj);
