@@ -166,6 +166,13 @@ public class WeixinOauthController {
                 }else if("shop".equals(page)){
                     logger.info("h5商城{}",page);
                     try {
+                        String shopTokenStr=Tools.getCookie("shopToken");
+                        if(StringUtils.isBlank(ui.getUnionid()) && StringUtils.isNotBlank(shopTokenStr)){
+                            return WXGlobals.getOauthJumUrlByKey(page);
+                        }else if(StringUtils.isBlank(ui.getUnionid()) && StringUtils.isBlank(shopTokenStr)){
+                            return "/404";
+                        }
+
                         Map userMap=userInfoService.getUser(ui.getUnionid());
                         Integer userId=null;
                         if (userMap==null || userMap.isEmpty() || userMap.size()==0){
