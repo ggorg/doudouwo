@@ -932,7 +932,7 @@ public class PayCenterService extends BaseOrderService {
                         for(String key:keys){
                             builder.append(key).append("=").append(treeMap.get(key)).append("&");
                         }
-                        builder.append("key=").append(ApiConstant.WEI_XIN_PUBLIC_APP_ID);
+                        builder.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
                         // builder.deleteCharAt(builder.length()-1);
                         treeMap.put("paySign", DigestUtils.md5Hex(builder.toString()).toUpperCase());
 

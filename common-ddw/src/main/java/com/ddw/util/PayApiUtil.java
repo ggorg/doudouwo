@@ -275,21 +275,23 @@ public class PayApiUtil {
             params.append(key).append("=").append(treeMap.get(key)).append("&");
             rootXML.addElement(key).addCDATA(treeMap.get(key).toString());
         }
-        params.append("key=").append(treeMap.get("appid"));
-        logger.info(rootXML.asXML());
+        params.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
+
         rootXML.addElement("sign").addCDATA(DigestUtils.md5Hex(params.toString()).toUpperCase());
+        logger.info(rootXML.asXML()+","+params);
         return rootXML.asXML();
     }
     public static void main(String[] args)throws Exception {
        // PayApiUtil.requestAliPayOrder("公用事业","weg","124124124",2000,"0.0.0.0");
-      // RequestWeiXinOrderVO vo= PayApiUtil.requestWeiXinOrder("充值","123123123",1,"0.0.0.0");
-       // System.out.println(vo);
+       RequestWeiXinOrderVO vo= PayApiUtil.requestWeiXinOrder("充值","12312312938",1,"0.0.0.0");
+        System.out.println(vo);
       // System.out.println((double) 859/100);
 
         //System.out.println(       requestAliPayOrder(OrderTypeEnum.OrderType3.getName(),"123456789321321","0.01","127.0.0.1"));
         //System.out.println(aliPayOrderQuery("01201806061256390302000000000257"));
         //System.out.println(        requestAliExitOrder("01201806061256390302000000000257",1));
-        System.out.println(reqeustWeiXinExitOrder("01201806061250150301000000000256",RandomStringUtils.randomAlphabetic(20),1,1));
+        //System.out.println(reqeustWeiXinExitOrder("01201806061250150301000000000256",RandomStringUtils.randomAlphabetic(20),1,1));
+        System.out.println(requestWeiXinOrderByJsapi("测试","123123129386",1,"127.0.0.1","oGb9J03naSTqAXJWLvWIYafTRvts"));
     }
 
 }
