@@ -54,7 +54,26 @@ public class PayCenterController {
             return new ResponseApiVO(-1,"支付状态查询失败",null);
         }
     }
+    @Idemp("searchPayStatus")
+    @Token
+    @ApiOperation(value = "查询支付状态",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("/query/h5/paystatus")
+    @ResponseBody
+    public ResponseApiVO searchPayStatusByH5 (PayStatusDTO args){
+        try {
+            JSONObject jsonObj=(JSONObject)ThreadLocalUtil.get();
+            if(jsonObj!=null){
+                logger.info("searchPayStatusByH5->request-：jsonObj："+jsonObj+", args:"+args);
+                String base64Token=jsonObj.getString("t");
+                return searchPayStatus(base64Token,args);
+            }
 
+        }catch (Exception e){
+            logger.error("PayCenterController-searchPayStatusByH5-》支付状态查询-》系统异常",e);
+
+        }
+        return new ResponseApiVO(-1,"支付状态查询失败",null);
+    }
     @Idemp
     @Token
     @ApiOperation(value = "统一支付",produces = MediaType.APPLICATION_JSON_VALUE)

@@ -5,6 +5,7 @@ public interface ApiConstant {
     public static final String WEI_XIN_PAY_MCH_ID="1503574001";
     public static final String WEI_XIN_PAY_KEY="ddw20180509111500000000000000001";
     public static final String WEI_XIN_PUBLIC_APP_ID="wx77fedfebe36bb337";
+    public static final String WEI_XIN_PUBLIC_MCH_ID="1521815201";
 
     public static final String ALI_PAY_APP_ID="2018050602643844";
     public static final String WEI_XIN_APP_SECRET="4ac94dfa5bbdc424b7200676c26a8999";

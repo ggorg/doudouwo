@@ -922,7 +922,7 @@ public class PayCenterService extends BaseOrderService {
                     RequestWeiXinOrderVO vo=PayApiUtil.requestWeiXinOrderByJsapi("微信"+OrderTypeEnum.getName(orderType)+"-"+((double)orderPO.getDoCost()/100)+"元",orderNo,orderPO.getDoCost(), Tools.getIpAddr(),TokenUtil.getRealOpenId(token));
                     if(vo!=null && "SUCCESS".equals(vo.getReturn_code()) && "SUCCESS".equals(vo.getResult_code())){
                         TreeMap treeMap=new TreeMap();
-                        treeMap.put("appId", ApiConstant.WEI_XIN_PAY_APP_ID);
+                        treeMap.put("appId", ApiConstant.WEI_XIN_PUBLIC_APP_ID);
                         treeMap.put("package","prepay_id="+vo.getPrepay_id());
                         treeMap.put("nonceStr", RandomStringUtils.randomAlphanumeric(20)+"");
                         treeMap.put("timeStamp",new Date().getTime()/1000+"");
@@ -932,7 +932,7 @@ public class PayCenterService extends BaseOrderService {
                         for(String key:keys){
                             builder.append(key).append("=").append(treeMap.get(key)).append("&");
                         }
-                        builder.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
+                        builder.append("key=").append(ApiConstant.WEI_XIN_PUBLIC_APP_ID);
                         // builder.deleteCharAt(builder.length()-1);
                         treeMap.put("paySign", DigestUtils.md5Hex(builder.toString()).toUpperCase());
 
@@ -942,7 +942,7 @@ public class PayCenterService extends BaseOrderService {
                         TokenUtil.putOrderNo(token,orderNo);
                         return new ResponseApiVO(1,"成功",treeMap);
                     }else{
-                        throw new GenException(-2,"调用微信支付接口失败",vo);
+                        throw new GenException(-2,"调用微信jsapi支付接口失败",vo);
                     }
                 }else if(PayTypeEnum.PayType2.getCode().equals(payType)){
                     String dcost=(double)orderPO.getDoCost()/100+"";

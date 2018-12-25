@@ -699,17 +699,41 @@ function doPay(){
                     contentType: "application/json; charset=utf-8",
                     data:JSON.stringify({codes:arrayObj,orderType:1}),
                     dataType: "json",
+                    timeout:20000,
                     success: function (jsonD, textStatus) {
 
                         if(jsonD.reCode>0){
+                            var on=jsonD.data.orderNo;
+                            delete jsonD.data.orderNo;
                             WeixinJSBridge.invoke(
                                 'getBrandWCPayRequest', jsonD.data,
                                 function(res){
-                                    mylayer.close(requestLoad);
+
                                     if(res.err_msg == "get_brand_wcpay_request:ok" ){
                                         // 使用以上方式判断前端返回,微信团队郑重提示：
                                         //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                                        showMsg("支付成功");
+
+                                        $.ajax({
+                                            type:"post",
+                                            data:{orderNo:on},
+                                            dataType:"json",
+                                            url:"/ddwapp/paycenter/query/h5/paystatus",
+                                            timeout:20000,
+                                            success:function (callD, textStatus){
+                                                mylayer.close(requestLoad);
+                                                if(callD.reCode>0){
+                                                    showMsg("支付成功");
+                                                }else{
+                                                    showMsg(jsonD.reMsg);
+                                                }
+
+
+                                        }, error: function (message) {
+                                                mylayer.close(requestLoad);
+                                                showMsg("支付失败");
+
+                                        }
+                                        })
                                     }else{
                                         showMsg("支付失败");
                                     }
