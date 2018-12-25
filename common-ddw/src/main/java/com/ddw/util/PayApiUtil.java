@@ -276,6 +276,7 @@ public class PayApiUtil {
             rootXML.addElement(key).addCDATA(treeMap.get(key).toString());
         }
         params.append("key=").append(treeMap.get("appid"));
+        logger.info(rootXML.asXML());
         rootXML.addElement("sign").addCDATA(DigestUtils.md5Hex(params.toString()).toUpperCase());
         return rootXML.asXML();
     }
