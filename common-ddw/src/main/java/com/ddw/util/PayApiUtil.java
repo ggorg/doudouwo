@@ -275,7 +275,7 @@ public class PayApiUtil {
             params.append(key).append("=").append(treeMap.get(key)).append("&");
             rootXML.addElement(key).addCDATA(treeMap.get(key).toString());
         }
-        params.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
+        params.append("key=").append(treeMap.get("appid"));
         rootXML.addElement("sign").addCDATA(DigestUtils.md5Hex(params.toString()).toUpperCase());
         return rootXML.asXML();
     }
