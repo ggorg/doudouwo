@@ -5,6 +5,7 @@ var flag=true;
 var vm_spec_pop;
 var vm_car;
 var lo;
+var shopTitle="";
 layui.use(['layer','form'],function(){
     mylayer=layui.layer;
 
@@ -292,7 +293,7 @@ function toOrderList(){
 
 }
 function toMain(){
-    $("title").text("餐饮shop");
+    $("title").text(shopTitle);
     $("#shop_main").css("visibility","visible");
     $("#order_list").animate({
         left:"1200px"
@@ -623,9 +624,9 @@ function handleData(json){
         el:"#shop_main",
         data:json
     })
-    if(json.reCode==1){
-
-    }else{
+    shopTitle=json.data.name
+    $("#shopTitle").html(shopTitle);
+    if(json.reCode!=1){
         mylayer.msg(data.reMsg);
     }
 }

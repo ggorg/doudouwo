@@ -146,19 +146,43 @@ img{visibility: hidden}
 }
 .head_store_info{
     position: absolute;
-    top:130px;
+    top:180px;
     left:270px;
+    line-height: 50px;
 
 }
 .head_order_list_menu{
     position: absolute;
     top:20px;
-    right:20px;
-    background: #F3F3F3;
-    padding: 10px 10px 10px 10px;
-    -webkit-filter: opacity(50%); /* Chrome, Opera */
+    right:0px;
+    padding: 10px 20px 10px 0px;
+    overflow: hidden;
 
-    filter: opacity(50%);
+
+}
+.head_order_list_menu .list_menu_left{
+    width: 50px;
+    font-size: 1.8rem;
+    word-wrap: break-word;
+    text-align: center;
+    float: left;
+    z-index: 80;
+    border: 1px solid #A3A380;
+    color: #7C7E7F;
+    background: #F3F3F3;
+    border-radius: 5px;
+    position: relative;
+}
+.head_order_list_menu .list_menu_right{
+    float: left;
+    z-index: 79;
+    position: absolute;
+    top: 30px;
+    left: 34px;
+}
+.head_order_list_menu .list_menu_right i{
+    color:#3a3a3a;
+    font-size: 3rem;
 }
 .head_order_list_menu p{
     font-size: 2rem;
@@ -167,10 +191,18 @@ img{visibility: hidden}
     font-size: 4rem;
 }
 .head_store_info p{
-    font-size: 1.8rem;
-    margin-top: 50px;
-    color:white;
+
+
+    color:#ff4927;
     font-weight: bold;
+}
+.head_store_info .si_address{
+    color:white;
+    font-size: 1.8rem;
+}
+.head_store_info .si_desc{
+    color:#ff4927;
+    font-size: 2rem;
 }
 .head_store_info h1{
     font-size: 40px;

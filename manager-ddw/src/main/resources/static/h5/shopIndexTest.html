@@ -8,14 +8,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title id="shopTitle"></title>
 
-    <link type="text/css" rel="stylesheet" href="/ddw/h5/shop/rs/layui_v2.4.5/css/layui.css"/>
-    <link type="text/css" rel="stylesheet" href="/ddw/h5/shop/rs/shopIndex.css?v=16"/>
-    <script type="text/javascript" src="/ddw/h5/shop/rs/layui_v2.4.5/layui.js"></script>
+    <link type="text/css" rel="stylesheet" href="rs/layui_v2.4.5/css/layui.css"/>
+    <link type="text/css" rel="stylesheet" href="rs/shopIndex.css?v=15"/>
+    <script type="text/javascript" src="rs/layui_v2.4.5/layui.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/ddw/h5/shop/rs/jquery.mobile.custom.min.js"></script>
+    <script type="text/javascript" src="rs/jquery.mobile.custom.min.js"></script>
     <script type="text/javascript" src="/sysframe2/js/plugins/jquery.cookie.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
-    <script type="text/javascript" src="/ddw/h5/shop/rs/shopIndex.js?v=32"></script>
+    <script type="text/javascript" src="rs/shopIndex.js?v=31"></script>
+
 
 </head>
 <body>
@@ -23,7 +24,7 @@
 <div class="shop_main" id="shop_main" >
     <div class="shop_head_style">
         <div class="head_top">
-            <img id="topImg" v-bind:src="data.bannerUrl"/>
+            <img id="topImg" v-bind:src="'http://www.doudouwo.cn/rs/20181121171734100.jpeg'"/>
         </div>
 
         <div class="head_store_logo">
@@ -35,9 +36,9 @@
             <p class="si_desc">{{data.desc}}</p>
         </div>
         <div class="head_order_list_menu" onclick="toOrderList()">
-            <div class="list_menu_left">
-                我的订单
-            </div>
+           <div class="list_menu_left">
+              我的订单
+           </div>
             <div  class="list_menu_right">
                 <i class="layui-icon layui-icon-triangle-r"></i>
             </div>
