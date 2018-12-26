@@ -28,11 +28,22 @@ public class GoodsItemVO {
 
     @ApiModelProperty(name="monthSales",value="月销量",example="10")
     private Integer monthSales;
+    @ApiModelProperty(name="salesCountNum",value="总销量",example="10")
+    @JsonProperty("salesCountNum")
+    private Integer dgSalesNumber=0;
 
     @ApiModelProperty(name="likeNum",value="点赞",example="10")
     private Integer likeNum;
 
     private List products;
+
+    public Integer getDgSalesNumber() {
+        return dgSalesNumber;
+    }
+
+    public void setDgSalesNumber(Integer dgSalesNumber) {
+        this.dgSalesNumber = dgSalesNumber;
+    }
 
     public List getProducts() {
         return products;

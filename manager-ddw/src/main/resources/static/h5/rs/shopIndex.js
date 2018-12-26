@@ -723,6 +723,7 @@ function doPay(){
                                                 mylayer.close(requestLoad);
                                                 if(callD.reCode>0){
                                                     showMsg("支付成功");
+                                                    clearShopCar();
                                                 }else{
                                                     showMsg(jsonD.reMsg);
                                                 }
@@ -735,6 +736,7 @@ function doPay(){
                                         }
                                         })
                                     }else{
+                                        mylayer.close(requestLoad);
                                         showMsg("支付失败");
                                     }
                                 });
