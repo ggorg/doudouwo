@@ -20,6 +20,10 @@ import com.ddw.config.DDWGlobals;
 import com.gen.common.util.HttpUtil;
 import com.gen.common.util.Tools;
 import com.gen.common.vo.ResponseVO;
+import com.github.wxpay.sdk.WXPay;
+import com.github.wxpay.sdk.WXPayConfig;
+import com.github.wxpay.sdk.WXPayUtil;
+import com.tls.sigcheck.tls_sigcheck;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -91,7 +95,7 @@ public class PayApiUtil {
         }
         return new ResponseVO(-2,"失败",null);
     }
-    public static RequestWeiXinOrderVO weiXinOrderQuery(String orderNo){
+    public static RequestWeiXinOrderVO weiXinOrderQuery(String orderNo)throws Exception{
         //
         Map map=new HashMap();
         map.put("out_trade_no",orderNo);
@@ -112,7 +116,7 @@ public class PayApiUtil {
         map.put("trade_type","APP");
         map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/pay/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/pay/execute");
         map.put("appid", ApiConstant.WEI_XIN_PAY_APP_ID);
-        map.put("mch_id", ApiConstant.WEI_XIN_PAY_MCH_ID);
+        //map.put("mch_id", ApiConstant.WEI_XIN_PAY_MCH_ID);
         String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,wxSign(map));
         if(callBackStr!=null){
             RequestWeiXinOrderVO vo= Tools.xmlCastObject(callBackStr,RequestWeiXinOrderVO.class);
@@ -120,6 +124,7 @@ public class PayApiUtil {
         }
         return null;
     }
+
     public static RequestWeiXinOrderVO requestWeiXinOrderByJsapi(String body,String orderNo,Integer cost,String ip,String openId)throws Exception{
         initDdwGlobals();
         Map<String,String> map=new HashMap();
@@ -130,17 +135,19 @@ public class PayApiUtil {
         map.put("trade_type","JSAPI");
         map.put("openid",openId);
 
+
         map.put("notify_url",ddwGlobals==null?"http://cnwork.wicp.net:40431/manager/weixin/pay/execute":ddwGlobals.getCallBackHost()+"/manager/weixin/pay/execute");
         map.put("appid", ApiConstant.WEI_XIN_PUBLIC_APP_ID);
-        map.put("mch_id", ApiConstant.WEI_XIN_PUBLIC_MCH_ID);
+
         String callBackStr= HttpUtil.sendHtpps(WEIXIN_UNIFIEDORDER,wxSign(map));
+        //String callBackStr= HttpUtil.sendHttpsWithCert(WEIXIN_UNIFIEDORDER,wxSign(map),ddwGlobals.getWxCertPath(), ApiConstant.WEI_XIN_PAY_MCH_ID);
         if(callBackStr!=null){
             RequestWeiXinOrderVO vo= Tools.xmlCastObject(callBackStr,RequestWeiXinOrderVO.class);
             return vo;
         }
         return null;
     }
-    public static Map reqeustWeiXinExitOrder(String orderNo,String exitOrderNo,Integer orderCost,Integer exitCost){
+    public static Map reqeustWeiXinExitOrder(String orderNo,String exitOrderNo,Integer orderCost,Integer exitCost)throws Exception{
         initDdwGlobals();
         Map map=new HashMap();
         map.put("out_trade_no",orderNo);
@@ -262,27 +269,35 @@ public class PayApiUtil {
 
         return null;
     }
-    public static String wxSign(Map map){
+    public static String wxSign(Map map)throws Exception{
         String nonce_str= RandomStringUtils.randomAlphanumeric(20);
         Document document= DocumentHelper.createDocument();
         Element rootXML=document.addElement("xml");
         TreeMap treeMap=new TreeMap(map);
 
         treeMap.put("nonce_str",nonce_str);
+        treeMap.put("sign_type","MD5");
+        treeMap.put("mch_id", ApiConstant.WEI_XIN_PAY_MCH_ID);
         Set<String> keys=treeMap.keySet();
         StringBuilder params=new StringBuilder();
         for(String key:keys){
             params.append(key).append("=").append(treeMap.get(key)).append("&");
-            rootXML.addElement(key).addCDATA(treeMap.get(key).toString());
+            rootXML.addElement(key).addText(treeMap.get(key).toString());
         }
         params.append("key=").append(ApiConstant.WEI_XIN_PAY_KEY);
 
-        rootXML.addElement("sign").addCDATA(DigestUtils.md5Hex(params.toString()).toUpperCase());
+        rootXML.addElement("sign").addText(DigestUtils.md5Hex(params.toString()).toUpperCase());
+        //rootXML.addElement("sign").addText(WXPayUtil.HMACSHA256(params.toString(),ApiConstant.WEI_XIN_PAY_KEY).toUpperCase());
         logger.info(rootXML.asXML()+","+params);
         return rootXML.asXML();
     }
     public static void main(String[] args)throws Exception {
        // PayApiUtil.requestAliPayOrder("公用事业","weg","124124124",2000,"0.0.0.0");
+        Properties pro=new Properties();
+        pro.load(tls_sigcheck.class.getClassLoader().getResourceAsStream("application-dev.properties"));
+       ddwGlobals=new DDWGlobals();
+       ddwGlobals.setWxCertPath(pro.getProperty("wx.cert.path"));
+        setDdwGlobals(ddwGlobals);
        RequestWeiXinOrderVO vo= PayApiUtil.requestWeiXinOrder("充值","12312312938",1,"0.0.0.0");
         System.out.println(vo);
       // System.out.println((double) 859/100);
@@ -291,7 +306,11 @@ public class PayApiUtil {
         //System.out.println(aliPayOrderQuery("01201806061256390302000000000257"));
         //System.out.println(        requestAliExitOrder("01201806061256390302000000000257",1));
         //System.out.println(reqeustWeiXinExitOrder("01201806061250150301000000000256",RandomStringUtils.randomAlphabetic(20),1,1));
-        System.out.println(requestWeiXinOrderByJsapi("测试","123123129386",1,"127.0.0.1","oGb9J03naSTqAXJWLvWIYafTRvts"));
+
+        System.out.println(requestWeiXinOrderByJsapi("test","123123129386",1,"127.0.0.1","oGb9J03naSTqAXJWLvWIYafTRvts"));
+
+
     }
+
 
 }
