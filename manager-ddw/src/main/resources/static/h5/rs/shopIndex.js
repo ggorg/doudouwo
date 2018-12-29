@@ -579,6 +579,21 @@ function getNumByGcode(gcode){
     }
     return gn;
 }
+function handleInfoNumAndPrice(pcode,carRet){
+    //infopcode
+   var sd= $("#shop_good_info").css("display");
+   if(sd=="block"){
+       var crs=carRet.split("-");
+       var pObjN=$("[infopcode='"+pcode+"'] div");
+       if(crs[0]==0){
+           pObjN.hide();
+           $("#shop_good_info .info_3_right_sure").removeClass("displayStyle");
+           $("#shop_good_info .info_3_right_btn").removeClass("displayFlex").addClass("displayStyle");
+       }
+       pObjN.text(crs[0]);
+       $("#shop_good_info .info_3_right_mid").text("￥"+(parseInt(crs[1])/100));
+   }
+}
 function handleCarVue(obj,str){
     var op=$(obj.parentNode);
     var carCode=op.attr("carCode");
@@ -589,18 +604,22 @@ function handleCarVue(obj,str){
         if(vm_car.list[v].code==carCode){
             var money=vm_car.list[v].money;
             var num=vm_car.list[v].num;
+            var m=0;
+            var n=0;
             if(str=="-" && num==1){
                 Vue.delete(vm_car.list,v);
-                handleCooke(carCode,0,money-carUnitPrice,null,carGcode);
+                n=0;
+                m=money-carUnitPrice
+                handleCooke(carCode,n,m,null,carGcode);
             }else{
-                var m=eval(money+str+carUnitPrice);
-                var n=eval(num+str+1);
+                m=eval(money+str+carUnitPrice);
+                n=eval(num+str+1);
                 Vue.set(vm_car.list[v],"money",m)
                 Vue.set(vm_car.list[v],"num",n)
                 handleCooke(carCode,n,m,null,carGcode);
             }
             handleGcodeNum();
-            return;
+            return n+"-"+m;
         }
     }
 }
@@ -616,13 +635,13 @@ function carSub(obj){
     }else if((caObj=$("[cacheSpecGcode='"+carGcode+"']"))!=null && caObj.length>0){
         caObj.hide().text("");
     }
-    handleCarVue(obj,"-");
 
+    handleInfoNumAndPrice(op.attr("carCode"),handleCarVue(obj,"-"));
 }
 function carAdd(obj){
 
-    handleCarVue(obj,"+");
 
+    handleInfoNumAndPrice($(obj.parentNode).attr("carCode"),handleCarVue(obj,"+"));
 }
 function popAdd(id){
     var bo=$("#"+id+" .content_option_blue");
@@ -799,10 +818,11 @@ function handleImg(imgObj){
         img.style.height="auto";
         realHeight=$(img).height();
     }else if(logDivW>realWidth && logDivh<realHeight){
-        realWidth=realWidth*realHeight/logDivh;
+        realWidth=realWidth*(logDivW/realWidth);
         img.style.width=realWidth+"px";
         img.style.height="auto";
         realHeight=$(img).height();
+
     }
     //让img的宽高相当于图片实际宽高的等比缩放，然后再偏移
 

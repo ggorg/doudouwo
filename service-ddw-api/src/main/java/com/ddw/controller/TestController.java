@@ -114,7 +114,7 @@ public class TestController {
                 cookieM.put("tableNumber",tableNumber);
                 cookieM.put("t",base64Token);
                 BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,storeId,openId,"test");
-                Tools.setCookie("cStoreId",storeId+"");
+                Tools.setCookie("storeId",storeId+"");
                 Tools.setCookie("shopToken",URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));
                 return new ResponseApiVO(1,"成功",URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));
 
