@@ -229,4 +229,28 @@ public class UserInfo {
     public void setTagid_list(String tagid_list) {
         this.tagid_list = tagid_list;
     }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "subscribe='" + subscribe + '\'' +
+                ", openid='" + openid + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", sex='" + sex + '\'' +
+                ", language='" + language + '\'' +
+                ", city='" + city + '\'' +
+                ", province='" + province + '\'' +
+                ", country='" + country + '\'' +
+                ", headimgurl='" + headimgurl + '\'' +
+                ", subscribe_time=" + subscribe_time +
+                ", unionid='" + unionid + '\'' +
+                ", remark='" + remark + '\'' +
+                ", groupid='" + groupid + '\'' +
+                ", fakeid='" + fakeid + '\'' +
+                ", appid='" + appid + '\'' +
+                ", tagid_list='" + tagid_list + '\'' +
+                ", create_date=" + create_date +
+                ", update_date=" + update_date +
+                '}';
+    }
 }

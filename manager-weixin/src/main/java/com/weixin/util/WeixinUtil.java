@@ -135,6 +135,7 @@ public class WeixinUtil {
 	public UserInfo parseJsonToUserInfo(JSONObject jsonObject, String openid, String appid) {
 		UserInfo user = new UserInfo();
 		try {
+
 			user.setOpenid(openid);
 			user.setAppid(appid);
 			if(jsonObject.containsKey("city")){
@@ -176,6 +177,7 @@ public class WeixinUtil {
 			if(jsonObject.containsKey("tagid_list")){
 				user.setTagid_list(jsonObject.getString("tagid_list").replace("[","").replace("]",""));
 			}
+			logger.info("微信授权用户信息："+jsonObject.toJSONString()+"，user："+user);
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		}
