@@ -112,7 +112,7 @@ public class TestController {
                 String base64Token= BaseTokenUtil.createToken(openId);
                 cookieM.put("tableNumber",tableNumber);
                 cookieM.put("t",base64Token);
-                BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,storeId,openId);
+                BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,storeId,openId,"test");
                 return new ResponseApiVO(1,"成功",URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));
 
             }
