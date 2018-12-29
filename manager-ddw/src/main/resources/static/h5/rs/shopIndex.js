@@ -30,12 +30,17 @@ function requestDataHandle(){
     var footH=$(".shop_foot_style").height();
     $(".shop_body_style,.body_left,.body_right").css("height",$("html").height()-headH-footH);
     $(".main_right_content").css("height",$("html").height()-$(".main_right_top").height());
+    $(".good_info_content").css("height",$("html").height()-footH-$(".good_info_top").height())
     $(".content_body_b").css("width",$("html").width()-$(".content_body_pic").width()-62);
     $.post("/ddwapp/goods/h5shoplist",{storeId:1},function(callBackData){
         handleData(callBackData);
 
         $("#shop_main img").on("load",function(){
             handleImg(this);
+        })
+        $(".item_content .content_left").click(function(){
+
+            requestGoodInfo($(this));
         })
         handleOffset();
         $(".right_end,.right_spec").on("click",function(){
@@ -53,7 +58,7 @@ function requestDataHandle(){
 
             }else{
                 $(".content_option").addClass("content_option_white").removeClass("content_option_blue");
-                $(".displayStyle").removeClass("displayStyle");
+                $("#spec_pop .displayStyle").removeClass("displayStyle");
                 $(".foot_btn").addClass("displayStyle");
                 var lo=mylayer.open({
                     id:"mydialog",
@@ -142,6 +147,13 @@ function requestDataHandle(){
         })
         $(".shop_car").click(function(){
             //
+            if(lo!=null){
+                mylayer.close(lo);
+                lo=null;
+                return;
+            }
+            var zindex= $(".layui-layer").css("z-index");
+
             lo=mylayer.open({
                 id:"mycarlist",
                 type: 1,
@@ -150,10 +162,13 @@ function requestDataHandle(){
                 closeBtn:false,
                 shadeClose:true,
                 offset: 'b',
-                zIndex:91,
+                shade:zindex==null|| zindex==undefined?0.3:[0.01, 'white'],
+                zIndex:zindex==null|| zindex==undefined?91:(parseInt(zindex)+2),
                 anim:2,
-                content:$("#show_car_list") //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
-
+                content:$("#show_car_list"), //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                end : function(){
+                    lo=null;
+                }
             });
             mylayer.style(lo, {
                 "border-top-left-radius":"30px",
@@ -175,7 +190,10 @@ function requestDataHandle(){
 
 
             $("#show_car_list").show();
-            $(".layui-layer-shade").css("z-index","90");
+            if(zindex==undefined){
+                $(".layui-layer-shade").css("z-index",zindex==null|| zindex==undefined?"90":(parseInt(zindex)+1));
+
+            }
         })
         handleGcodeNum();
         $("#shop_main").hide();
@@ -191,6 +209,93 @@ var pageNo=1;
 var requestIng=true;
 var orderScrollTop=null;
 var scrollFlag=false;
+var goodInfoVm=null;
+function closeGoodInfo(){
+    $("#shop_good_info").css({"top":"1200px","visibility":"hidden","display":"none"}).find(".content_option_blue").removeClass("content_option_blue").addClass("noSelect");
+    $("#shop_good_info .info_3_right_sure").removeClass("displayStyle");
+    $("#shop_good_info .info_3_right_btn").removeClass("displayFlex").addClass("displayStyle").find(".info_3_right_mid").text(0);
+    $("#shop_good_info .good_info_5_div div").hide().text("0");
+    $(".right_start").hide();
+    $(".right_mid").hide().text("0");
+    handleGcodeNum();
+}
+function requestGoodInfo(obj){
+    var gcode=obj.parent().find("[gcode]").attr("gcode");
+
+    var ml=myLoad();
+    $.post("/ddwapp/goods/h5info",{storeId:1,code:gcode},function(gdata){
+        console.log(JSON.stringify(gdata))
+        mylayer.close(ml);
+        if(gdata.reCode>0){
+            gdata.data.gcode=gcode;
+            if(goodInfoVm==null){
+
+                goodInfoVm= new Vue({
+                    el: "#shop_good_info",
+                    data: gdata,
+                    methods:{
+                        gselect:function(event){
+                            var o=$(event.target);
+                            if(!o.hasClass("good_info_5_div"))return;
+                            Vue.set(this.data,"selected",parseInt(o.attr("pIndex")));
+                            o.parent().find(".content_option_blue").removeClass("content_option_blue").addClass("noSelect");
+                            o.addClass("content_option_blue").removeClass("noSelect");
+                            var jsonData=JSON.parse(o.attr("datas"));
+                            var n=getPriceByCookie(jsonData.code);
+                            if(n>0){
+                                $("#shop_good_info .info_3_right_sure").addClass("displayStyle");
+                                $("#shop_good_info .info_3_right_btn").removeClass("displayStyle").addClass("displayFlex").find(".info_3_right_mid").text("￥"+n/100);
+                            }else{
+                                $("#shop_good_info .info_3_right_sure").removeClass("displayStyle");
+                                $("#shop_good_info .info_3_right_btn").removeClass("displayFlex").addClass("displayStyle").find(".info_3_right_mid").text("");
+                            }
+                            //this.data.selected=$(event.target).attr("infoPcode");
+                        }
+                    }
+                })
+            }else{
+                goodInfoVm.data=gdata.data;
+            }
+            $("#shop_good_info img").on("load",function(){
+                handleImg(this);
+            })
+            $("#shop_good_info [gcode]").each(function(sdata){
+                var infoPcode=$(this).attr("infoPcode");
+                var n=getNumByCookie(infoPcode);
+                if(n>0){
+                    $(this).find("div").show().text(n);
+                }
+            })
+            /*var mo=mylayer.open({
+                id:"goodinfo",
+                type: 1,
+                area: "100%",
+                title:false,
+                closeBtn:false,
+                shadeClose:true,
+                offset: 'b',
+                zIndex:91,
+                anim:2,
+                content:$("#shop_good_info") //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+
+            });
+            mylayer.style(mo, {
+                "border-top-left-radius":"30px",
+                "border-top-right-radius":"30px",
+                position:"absolute",
+                top:"0px"
+            });
+            $(".layui-layer-shade").css("z-index","90");*/
+
+            $("#shop_good_info").show().css("visibility","visible");
+            $("#shop_good_info").animate({
+                top:"0px"
+            },150)
+        }
+
+    },"JSON")
+
+}
 function requestOrderList(){
 
     var ml=myLoad();
@@ -343,12 +448,16 @@ function handleCooke(code,num,money,name,gcode){
     console.log(JSON.stringify(shopCar));
     $.cookie("shopCar",shopCar.length>0?JSON.stringify(shopCar):null,{path:"/"});
 }
-function joinShopCar(obj){
-    var obs=$(".content_option_blue");
+function joinShopCar(id,obj,info){
+    var obs=$("#"+id+" .content_option_blue");
     if(obs!=null && obs.length>0){
-        $(".displayStyle").removeClass("displayStyle");
+        var objP=$("#"+id).find(".displayStyle");
+        objP.removeClass("displayStyle");
+        if(info!=undefined){
+            objP.addClass("displayFlex");
+        }
         $(obj).addClass("displayStyle");
-        popAdd();
+        popAdd(id);
     }
 }
 function handleGcodeNum(gcode){
@@ -426,6 +535,9 @@ function clearShopCar(){
     $(".car_show_num").hide().text("");
     $(".foot_style_price").attr("money",0).text("");
     $(".right_start").hide();
+    $(".good_info_5_div").removeClass("content_option_blue").addClass("noSelect").find("div").hide().text("");
+    $("#shop_good_info .info_3_right_sure").removeClass("displayStyle");
+    $("#shop_good_info .info_3_right_btn").removeClass("displayFlex").addClass("displayStyle").find(".info_3_right_mid").text("");
     mylayer.close(lo);
 
 }
@@ -512,13 +624,21 @@ function carAdd(obj){
     handleCarVue(obj,"+");
 
 }
-function popAdd(obj){
-    var bo=$(".content_option_blue");
-    var nstr=commonMidAdd(JSON.parse(bo.attr("datas")),bo.next(),bo.attr("title"),bo.attr("gcode"),true);
+function popAdd(id){
+    var bo=$("#"+id+" .content_option_blue");
+    var bn=bo.next();
+    var sm;
+    if(bn.hasClass("content_option_num")){
+        sm=bo.parents("#mydialog").find(".sure_mid");
+    }else{
+        bn=bo.find("div");
+        sm=bo.parents("#shop_good_info").find(".info_3_right_mid");
+    }
+    var nstr=commonMidAdd(JSON.parse(bo.attr("datas")),bn,bo.attr("title"),bo.attr("gcode"),true);
     var ns=nstr.split("-");
     //alert(parseInt(ns[1])*parseInt(ns[0])/100);
-    bo.next().show();
-    $(".sure_mid").text("￥"+parseInt(ns[1])*parseInt(ns[0])/100);
+    bn.show();
+    sm.text("￥"+parseInt(ns[1])*parseInt(ns[0])/100);
     handleGcodeNum(bo.attr("gcode"));
 }
 function commonMidSub(dsObj,midObj){
@@ -559,18 +679,30 @@ function commonMidAdd(dsObj,midObj,title,gcode,flag){
     return midObj.text()+"-"+price;
 
 }
-function popSubs(obj){
-    var bo=$(".content_option_blue");
-    var sm=$(".sure_mid");
+function popSubs(id){
+    var bo=$("#"+id+" .content_option_blue");
     var bn=bo.next();
-    if(bn.text()==1){
-        $(".foot_sure").removeClass("displayStyle");
-        $(".foot_btn").addClass("displayStyle");
-        bn.hide();
+    var sm;
+    if(bn.hasClass("content_option_num")){
+        sm=bo.parents("#mydialog").find(".sure_mid");
+        if(bn.text()==1){
+            $(".foot_sure").removeClass("displayStyle");
+            $(".foot_btn").addClass("displayStyle");
+            bn.hide();
+        }
+    }else{
+        bn=bo.find("div");
+        sm=bo.parents("#shop_good_info").find(".info_3_right_mid");
+        if(bn.text()==1){
+          $("#shop_good_info .info_3_right_sure").removeClass("displayStyle");
+          $("#shop_good_info .info_3_right_btn").removeClass("displayFlex").addClass("displayStyle").find(".info_3_right_mid").text("");
+            bn.hide();
+        }
     }
+
     var nstr=commonMidSub(JSON.parse(bo.attr("datas")),bn);
     var ns=nstr.split("-");
-    $(".sure_mid").text("￥"+parseInt(ns[1])*parseInt(ns[0])/100);
+    sm.text("￥"+parseInt(ns[1])*parseInt(ns[0])/100);
 
     handleGcodeNum(bo.attr("gcode"));
 
@@ -621,7 +753,7 @@ function handleOffset(){
 }
 function handleData(json){
     var vm = new Vue({
-        el:"#shop_main",
+        el:"#vumMain",
         data:json
     })
     shopTitle=json.data.name
@@ -725,6 +857,10 @@ function doPay(){
                                                 if(callD.reCode>0){
                                                     showMsg("支付成功");
                                                     clearShopCar();
+                                                    if($("#shop_good_info").css('display')=="block"){
+                                                        closeGoodInfo();
+                                                    }
+                                                    $(".head_order_list_menu").click();
                                                 }else{
                                                     showMsg(jsonD.reMsg);
                                                 }

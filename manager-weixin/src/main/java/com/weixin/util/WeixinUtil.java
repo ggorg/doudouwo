@@ -156,8 +156,8 @@ public class WeixinUtil {
 				user.setSex(jsonObject.getString("sex"));
 			}
 			if(jsonObject.containsKey("nickname")){
-				user.setNickname(EmojiUtil.resolveToByteFromEmoji(jsonObject.getString("nickname")));
-//                user.setNickname(jsonObject.getString("nickname"));
+				//user.setNickname(EmojiUtil.resolveToByteFromEmoji(jsonObject.getString("nickname")));
+              user.setNickname(jsonObject.getString("nickname"));
 			}
 			if(jsonObject.containsKey("subscribe")){
 				user.setSubscribe(jsonObject.getString("subscribe"));

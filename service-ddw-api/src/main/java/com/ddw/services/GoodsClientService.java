@@ -249,11 +249,11 @@ public class GoodsClientService extends CommonService {
         //Map menusMap=
     }
 
-    public ResponseApiVO getInfo(String token,CodeDTO dto)throws Exception{
+    public ResponseApiVO getInfo(Integer storeId,CodeDTO dto)throws Exception{
         if(dto.getCode()==null ||dto.getCode()<0){
             return new ResponseApiVO(-2,"参数异常",null);
         }
-        Integer storeId=TokenUtil.getStoreId(token);
+
         if(storeId==null){
             return new ResponseApiVO(-2,"请选择门店",null);
         }
@@ -269,8 +269,10 @@ public class GoodsClientService extends CommonService {
         search.put("storeId",storeId);
         search.put("dghGoodsId",dto.getCode());
         search.put("dghStatus", GoodsStatusEnum.goodsStatus1.getCode());
+        search.put("disabled", DisabledEnum.disabled0.getCode());
         gvo.setPruduct(new ArrayList());
-        List<Map> list=this.commonObjectsBySearchCondition("ddw_goods_product",search);
+
+        List<Map> list=this.commonList("ddw_goods_product","dghCost asc",null,null,search);
         GoodsInfoProductVO vo=null;
         for(Map m:list){
             vo=new GoodsInfoProductVO();

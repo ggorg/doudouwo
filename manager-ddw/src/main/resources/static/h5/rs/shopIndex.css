@@ -5,6 +5,9 @@ html, body,.shop_main{ margin:0; height:100%;font-family: 'Arial Negreta', 'Aria
     visibility:hidden;
 
 }
+.displayFlex{
+    display: flex;
+}
 
 .shop_main_filter{
     -webkit-filter: blur(5px); /* Chrome, Opera */
@@ -261,6 +264,7 @@ img{visibility: hidden}
     margin-right:20px;
     position: absolute;
     bottom: 0px;
+
 }
 .content_right div{
     float: left;
@@ -280,12 +284,13 @@ img{visibility: hidden}
 .right_start, .right_end{
     font-size: 50px;
     border-radius:30px ;
-    border:2px solid #D8D8D8;
+
     width:50px;
     height: 50px;
     text-align: center;
     line-height: 50px;
-    color:#D8D8D8
+    color:white;
+    background: #53CDFC;
 
 }
 .right_spec{
@@ -294,9 +299,10 @@ img{visibility: hidden}
     text-align: center;
     font-size: 1.7rem;
     line-height: 50px;
-    color:#7C7E7F;
+    color:white;
     border-radius:10px ;
-    border:1px solid #D8D8D8;
+
+    background: #53CDFC;
    /* background: #53CDFC;
     color: white;*/
 
@@ -664,3 +670,169 @@ img{visibility: hidden}
     color: rgba(0,0,0,0.41)
 }
 
+/**
+商品详情
+ */
+.shop_good_info{
+
+    position: absolute;
+
+    width: 100%;
+
+    background: white;
+
+    overflow: hidden;
+
+    visibility: hidden;
+    display: none;
+    top:1200px;
+    left:0px;
+    z-index: 82;
+
+}
+
+.shop_good_info .good_info_top{
+    height: 300px;
+    overflow: hidden;
+    background: green;
+    box-shadow: 0px 2px 7px #888888;
+    position: relative;
+}
+.info_top_hide{
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+.info_top_hide .layui-icon{
+    font-size: 4rem;
+    color:#535353
+}
+.good_info_content{
+    display:flex;
+    flex-direction: column;
+
+    overflow-y: auto;
+    -webkit-overflow-scrolling : touch;
+}
+.good_info_item{
+    margin: 30px 30px 0px 30px;
+
+}
+.shop_good_info .good_info_1{
+    font-size: 2.5rem;
+    color: #363636;
+}
+.shop_good_info .good_info_2{
+    font-size: 1.7rem;
+    color: #7C7E7F;
+}
+.shop_good_info .good_info_3{
+
+
+}
+.info_3_left{
+    float: left;
+    color: #FF3C00;
+    padding-top: 5px;
+    height: 100%;
+}
+.info_3_right_sure{
+    font-size: 2.3rem;
+    color: white;
+    background: #53CDFC;
+    padding: 4px 15px 4px 15px;
+    border-radius: 15px;
+  }
+.info_3_right{
+    float: right;
+
+}
+.info_3_right_btn{
+
+    position: relative;
+    top: 8px;
+    overflow: hidden;
+}
+.info_3_right_btn div{
+    flex-direction: column;
+
+    height: 100%;
+}
+.info_3_right_mid{
+    height: 50px;
+    line-height: 54px;
+    color: #FF3C00;
+    font-size: 2.1rem;
+    padding:0px 15px 0px 15px;
+}
+.info_3_right_btn .info_3_right_start,.info_3_right_btn .info_3_right_end{
+    font-size: 50px;
+    border-radius: 30px;
+
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    color: white;
+    background: #53CDFC;
+}
+.info_3_price{
+    font-size: 2.5rem;
+}
+.info_3_unde{
+    font-size: 1.5rem;
+    text-decoration:line-through;
+    color: #717171;
+
+}
+.shop_good_info .good_info_4{
+    font-size: 2.1rem;
+    color: #535353;
+}
+.shop_good_info .good_info_5{
+    font-size: 2.1rem;
+    display: flex;
+
+}
+.good_info_5 .noSelect{
+    border:1px solid #808080;
+    color: #535353;
+
+}
+
+.good_info_5 .good_info_5_div{
+    padding:15px 15px 15px 15px;
+    border-radius: 10px;
+    margin-right: 30px;
+    position: relative;
+}
+.good_info_5_div div{
+    position: absolute;
+    left: -20px;
+    top: -20px;
+    border-radius: 50%;
+    background: #ff4927;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    text-align: center;
+    line-height: 40px;
+    color: white;
+    display: none;
+}
+.shop_good_info .good_info_6{
+    font-size: 2.1rem;
+    color: #535353;
+
+}
+.shop_good_info .good_info_7{
+    font-size: 1.9rem;
+    color: #7C7E7F;
+
+
+}
+.good_info_line{
+    font-size: 1px;
+    border-bottom: 1px dashed #808080;
+    margin: 30px 30px 0px 30px;
+}

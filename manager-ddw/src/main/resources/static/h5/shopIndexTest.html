@@ -22,6 +22,7 @@
 <body>
 
 <div class="shop_main" id="shop_main" >
+    <div id="vumMain">
     <div class="shop_head_style">
         <div class="head_top">
             <img id="topImg" v-bind:src="'http://www.doudouwo.cn/rs/20181121171734100.jpeg'"/>
@@ -88,6 +89,7 @@
         </div>
 
     </div>
+    </div>
     <div class="shop_foot_style">
 
         <div class="foot_style_price" id="foot_style_price" money="0"></div>
@@ -102,6 +104,64 @@
     <div class="shop_car">
         <div id="car_show_num" class="car_show_num" ></div>
         <i class="layui-icon" >&#xe657;</i>
+    </div>
+    <div class="shop_good_info" id="shop_good_info">
+        <div class="good_info_top">
+            <div class="info_top_hide" onclick="closeGoodInfo()">
+                <i class="layui-icon layui-icon-close-fill"></i>
+            </div>
+            <img v-bind:src="data.imgUrl"/>
+        </div>
+        <div class="good_info_content">
+            <div class="good_info_item good_info_1">
+                {{data.name}}
+            </div>
+            <div class="good_info_item good_info_2">
+                总售量:{{data.salesCountNum}}
+            </div>
+            <div class="good_info_item good_info_3" >
+                <div class="info_3_left">
+                <template v-if="data.selected==undefined">
+                    <span class="info_3_price">￥{{(data.pruduct[0].actPrice==null?data.pruduct[0].price:data.pruduct[0].actPrice)/100}}</span>
+                    <span  v-if="data.pruduct.length>1"  class="info_3_price">~￥{{(data.pruduct[data.pruduct.length-1].actPrice==null?data.pruduct[data.pruduct.length-1].price:data.pruduct[data.pruduct.length-1].actPrice)/100}}</span>
+                    <span  v-if="data.pruduct.length==1 && data.pruduct[0].actPrice!=null"  class="info_3_unde">￥{{data.pruduct[0].price/100}}</span>
+                </template>
+                <template v-else>
+                    <span class="info_3_price">￥{{(data.pruduct[data.selected].actPrice==null?data.pruduct[data.selected].price:data.pruduct[data.selected].actPrice)/100}}</span>
+                    <span v-if="data.pruduct[data.selected].actPrice!=null" class="info_3_unde">￥{{data.pruduct[data.selected].price/100}}</span>
+                </template>
+                </div>
+                <div class="info_3_right">
+                    <div class="info_3_right_sure " onclick="joinShopCar('shop_good_info',this,'info')"><span>+</span><span>加入购物车</span></div>
+                    <div class="displayStyle info_3_right_btn ">
+                        <div class=" info_3_right_start" onclick="popSubs('shop_good_info')">-</div>
+                        <div class="info_3_right_mid"></div>
+                        <div class=" info_3_right_end" onclick="popAdd('shop_good_info')">+</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class=" good_info_line"></div>
+
+            <div class="good_info_item good_info_4">
+                规格
+            </div>
+            <div class="good_info_item good_info_5" >
+                <div v-for="(obj,index) in data.pruduct" v-on:click="gselect" class="good_info_5_div noSelect" v-bind:infoPcode="obj.code" v-bind:pIndex="index" v-bind:gcode="data.gcode" v-bind:title="data.name" v-bind:datas="JSON.stringify(obj)">
+                    {{obj.name}}
+                    <div class="displayStyle"></div>
+                </div>
+
+            </div>
+            <div class=" good_info_line"></div>
+            <div class="good_info_item good_info_6">
+                详情
+            </div>
+            <div class="good_info_item good_info_7">
+                {{data.desc}}
+            </div>
+        </div>
+
     </div>
 </div>
 <div class="spec_pop" id="spec_pop">
@@ -127,11 +187,11 @@
     </div>
     <div class="pop_foot">
         <div class="foot_cancel">取消</div>
-        <div class="foot_sure " onclick="joinShopCar(this)">加入购物车</div>
+        <div class="foot_sure " onclick="joinShopCar('spec_pop',this)">加入购物车</div>
         <div class="foot_btn displayStyle ">
-            <div class="sure_start" onclick="popSubs(this)">-</div>
+            <div class="sure_start" onclick="popSubs('spec_pop')">-</div>
             <div class="sure_mid"></div>
-            <div class="sure_end" onclick="popAdd(this)">+</div>
+            <div class="sure_end" onclick="popAdd('spec_pop')">+</div>
         </div>
     </div>
 
@@ -154,6 +214,7 @@
 
     </div>
 </div>
+
 <div class="shop_main_right" id="order_list">
     <div class="main_right_top"><i class="layui-icon layui-icon-left" onclick="toMain()">返回</i></div>
     <div class="main_right_content">

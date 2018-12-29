@@ -220,12 +220,14 @@
             <artifactId>org.apache.servicemix.bundles.not-yet-commons-ssl</artifactId>
             <version>0.3.11_1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
-<!--        <dependency>
+        <!--
+        https://mvnrepository.com/artifact/org.ehcache/ehcache -->
+<!--    <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>3.4.0</version>
-        </dependency>-->
+        </dependency>
+        -->
 
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

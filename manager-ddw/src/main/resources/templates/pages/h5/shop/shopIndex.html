@@ -9,83 +9,85 @@
     <title id="shopTitle"></title>
 
     <link type="text/css" rel="stylesheet" href="/ddw/h5/shop/rs/layui_v2.4.5/css/layui.css"/>
-    <link type="text/css" rel="stylesheet" href="/ddw/h5/shop/rs/shopIndex.css?v=16"/>
+    <link type="text/css" rel="stylesheet" href="/ddw/h5/shop/rs/shopIndex.css?v=17"/>
     <script type="text/javascript" src="/ddw/h5/shop/rs/layui_v2.4.5/layui.js"></script>
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/ddw/h5/shop/rs/jquery.mobile.custom.min.js"></script>
     <script type="text/javascript" src="/sysframe2/js/plugins/jquery.cookie.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.min.js"></script>
-    <script type="text/javascript" src="/ddw/h5/shop/rs/shopIndex.js?v=32"></script>
+    <script type="text/javascript" src="/ddw/h5/shop/rs/shopIndex.js?v=33"></script>
 
 </head>
 <body>
 
 <div class="shop_main" id="shop_main" >
-    <div class="shop_head_style">
-        <div class="head_top">
-            <img id="topImg" v-bind:src="data.bannerUrl"/>
-        </div>
-
-        <div class="head_store_logo">
-            <img id="headImg" v-bind:src="data.headUrl"/>
-        </div>
-        <div class="head_store_info">
-
-            <p class="si_address">{{data.address}}</p>
-            <p class="si_desc">{{data.desc}}</p>
-        </div>
-        <div class="head_order_list_menu" onclick="toOrderList()">
-            <div class="list_menu_left">
-                我的订单
-            </div>
-            <div  class="list_menu_right">
-                <i class="layui-icon layui-icon-triangle-r"></i>
+    <div id="vumMain">
+        <div class="shop_head_style">
+            <div class="head_top">
+                <img id="topImg" v-bind:src="'http://www.doudouwo.cn/rs/20181121171734100.jpeg'"/>
             </div>
 
-        </div>
-        <div class="head_bottom">
-            &nbsp;
-        </div>
-    </div>
-    <div class="shop_body_style">
-        <div class="body_left" >
-            <ul>
-                <li v-for="(item,index) in data.list"  v-bind:id="'left_item_'+index" v-bind:class="index==0?'white_style':''">{{item.name}}</li>
+            <div class="head_store_logo">
+                <img id="headImg" v-bind:src="data.headUrl"/>
+            </div>
+            <div class="head_store_info">
 
-            </ul>
-        </div>
-        <div class="body_right" >
-            <div class="right_item" v-for="(item,index) in data.list"  v-bind:id="'right_item_'+index">
-                <div class="item_title" >
-                    {{item.name}}
+                <p class="si_address">{{data.address}}</p>
+                <p class="si_desc">{{data.desc}}</p>
+            </div>
+            <div class="head_order_list_menu" onclick="toOrderList()">
+                <div class="list_menu_left">
+                    我的订单
                 </div>
-                <div class="item_content" v-for="obj in item.list">
-                    <div class="content_left">
-                        <img v-bind:src="obj.imgUrl">
-                    </div>
-                    <div class="content_mid">
-                        <p class="mid_title">{{obj.name}}</p>
-                        <p class="mid_sale">总销量：{{obj.salesCountNum}}</p>
-                        <p class="mid_price" >{{(obj.products[0].actPrice==null?obj.products[0].price:obj.products[0].actPrice)/100}}元{{obj.products.length>1?"起":""}}</p>
-                    </div>
-                    <div class="content_right" v-if="obj.products.length>1">
+                <div  class="list_menu_right">
+                    <i class="layui-icon layui-icon-triangle-r"></i>
+                </div>
 
-                        <div class="right_spec" v-bind:datas="JSON.stringify(obj.products)" v-bind:title="obj.name" v-bind:gcode="obj.code">选择规格</div>
-                        <div class="right_spec_num" v-bind:cacheSpecGcode="obj.code">
+            </div>
+            <div class="head_bottom">
+                &nbsp;
+            </div>
+        </div>
+        <div class="shop_body_style">
+            <div class="body_left" >
+                <ul>
+                    <li v-for="(item,index) in data.list"  v-bind:id="'left_item_'+index" v-bind:class="index==0?'white_style':''">{{item.name}}</li>
 
+                </ul>
+            </div>
+            <div class="body_right" >
+                <div class="right_item" v-for="(item,index) in data.list"  v-bind:id="'right_item_'+index">
+                    <div class="item_title" >
+                        {{item.name}}
+                    </div>
+                    <div class="item_content" v-for="obj in item.list">
+                        <div class="content_left">
+                            <img v-bind:src="obj.imgUrl">
+                        </div>
+                        <div class="content_mid">
+                            <p class="mid_title">{{obj.name}}</p>
+                            <p class="mid_sale">总销量：{{obj.salesCountNum}}</p>
+                            <p class="mid_price" >{{(obj.products[0].actPrice==null?obj.products[0].price:obj.products[0].actPrice)/100}}元{{obj.products.length>1?"起":""}}</p>
+                        </div>
+                        <div class="content_right" v-if="obj.products.length>1">
+
+                            <div class="right_spec" v-bind:datas="JSON.stringify(obj.products)" v-bind:title="obj.name" v-bind:gcode="obj.code">选择规格</div>
+                            <div class="right_spec_num" v-bind:cacheSpecGcode="obj.code">
+
+                            </div>
+                        </div>
+                        <div class="content_right" v-else >
+                            <div class="right_start">-</div>
+                            <div class="right_mid" v-bind:cacheMidGcode="obj.code"></div>
+                            <div class="right_end" v-bind:datas="JSON.stringify(obj.products)" v-bind:title="obj.name" v-bind:gcode="obj.code">+</div>
                         </div>
                     </div>
-                    <div class="content_right" v-else >
-                        <div class="right_start">-</div>
-                        <div class="right_mid" v-bind:cacheMidGcode="obj.code"></div>
-                        <div class="right_end" v-bind:datas="JSON.stringify(obj.products)" v-bind:title="obj.name" v-bind:gcode="obj.code">+</div>
-                    </div>
+
                 </div>
 
             </div>
 
         </div>
-
     </div>
     <div class="shop_foot_style">
 
@@ -101,6 +103,64 @@
     <div class="shop_car">
         <div id="car_show_num" class="car_show_num" ></div>
         <i class="layui-icon" >&#xe657;</i>
+    </div>
+    <div class="shop_good_info" id="shop_good_info">
+        <div class="good_info_top">
+            <div class="info_top_hide" onclick="closeGoodInfo()">
+                <i class="layui-icon layui-icon-close-fill"></i>
+            </div>
+            <img v-bind:src="data.imgUrl"/>
+        </div>
+        <div class="good_info_content">
+            <div class="good_info_item good_info_1">
+                {{data.name}}
+            </div>
+            <div class="good_info_item good_info_2">
+                总售量:{{data.salesCountNum}}
+            </div>
+            <div class="good_info_item good_info_3" >
+                <div class="info_3_left">
+                    <template v-if="data.selected==undefined">
+                        <span class="info_3_price">￥{{(data.pruduct[0].actPrice==null?data.pruduct[0].price:data.pruduct[0].actPrice)/100}}</span>
+                        <span  v-if="data.pruduct.length>1"  class="info_3_price">~￥{{(data.pruduct[data.pruduct.length-1].actPrice==null?data.pruduct[data.pruduct.length-1].price:data.pruduct[data.pruduct.length-1].actPrice)/100}}</span>
+                        <span  v-if="data.pruduct.length==1 && data.pruduct[0].actPrice!=null"  class="info_3_unde">￥{{data.pruduct[0].price/100}}</span>
+                    </template>
+                    <template v-else>
+                        <span class="info_3_price">￥{{(data.pruduct[data.selected].actPrice==null?data.pruduct[data.selected].price:data.pruduct[data.selected].actPrice)/100}}</span>
+                        <span v-if="data.pruduct[data.selected].actPrice!=null" class="info_3_unde">￥{{data.pruduct[data.selected].price/100}}</span>
+                    </template>
+                </div>
+                <div class="info_3_right">
+                    <div class="info_3_right_sure " onclick="joinShopCar('shop_good_info',this,'info')"><span>+</span><span>加入购物车</span></div>
+                    <div class="displayStyle info_3_right_btn ">
+                        <div class=" info_3_right_start" onclick="popSubs('shop_good_info')">-</div>
+                        <div class="info_3_right_mid"></div>
+                        <div class=" info_3_right_end" onclick="popAdd('shop_good_info')">+</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class=" good_info_line"></div>
+
+            <div class="good_info_item good_info_4">
+                规格
+            </div>
+            <div class="good_info_item good_info_5" >
+                <div v-for="(obj,index) in data.pruduct" v-on:click="gselect" class="good_info_5_div noSelect" v-bind:infoPcode="obj.code" v-bind:pIndex="index" v-bind:gcode="data.gcode" v-bind:title="data.name" v-bind:datas="JSON.stringify(obj)">
+                    {{obj.name}}
+                    <div class="displayStyle"></div>
+                </div>
+
+            </div>
+            <div class=" good_info_line"></div>
+            <div class="good_info_item good_info_6">
+                详情
+            </div>
+            <div class="good_info_item good_info_7">
+                {{data.desc}}
+            </div>
+        </div>
+
     </div>
 </div>
 <div class="spec_pop" id="spec_pop">
@@ -126,11 +186,11 @@
     </div>
     <div class="pop_foot">
         <div class="foot_cancel">取消</div>
-        <div class="foot_sure " onclick="joinShopCar(this)">加入购物车</div>
+        <div class="foot_sure " onclick="joinShopCar('spec_pop',this)">加入购物车</div>
         <div class="foot_btn displayStyle ">
-            <div class="sure_start" onclick="popSubs(this)">-</div>
+            <div class="sure_start" onclick="popSubs('spec_pop')">-</div>
             <div class="sure_mid"></div>
-            <div class="sure_end" onclick="popAdd(this)">+</div>
+            <div class="sure_end" onclick="popAdd('spec_pop')">+</div>
         </div>
     </div>
 
@@ -153,6 +213,7 @@
 
     </div>
 </div>
+
 <div class="shop_main_right" id="order_list">
     <div class="main_right_top"><i class="layui-icon layui-icon-left" onclick="toMain()">返回</i></div>
     <div class="main_right_content">

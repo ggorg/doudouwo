@@ -48,11 +48,28 @@ public class GoodsContoller {
 
     @ApiOperation(value = "商品列表(h5)")
     @PostMapping("/h5shoplist")
-    public ResponseApiVO<GoodsListVO> toGoodsH5List(@RequestParam(value = "storeId") @ApiParam(name = "storeId",value="门店ID", required = false) Integer storeId){
+    public ResponseApiVO<GoodsListVO> toGoodsH5List(@RequestParam(value = "storeId") @ApiParam(name = "storeId",value="门店ID", required = false) Integer storeId,
+                                                    @CookieValue(value="storeId") Integer cStoreId){
         try {
-            return this.goodsClientService.goodsIndex(storeId, GoodsPlatePosEnum.GoodsPlatePos2);
+            return this.goodsClientService.goodsIndex(cStoreId!=null?cStoreId:storeId, GoodsPlatePosEnum.GoodsPlatePos2);
         }catch (Exception e){
             logger.error("GoodsContoller->toGoodsList-商列表-》异常",e);
+        }
+        return new ResponseApiVO(-1,"失败",null);
+    }
+
+
+    @ApiOperation(value = "商品详情(h5)")
+    @PostMapping("/h5info")
+    public ResponseApiVO<GoodsInfoVO<GoodsInfoProductVO>> toGoodsH5Info(@RequestParam(value = "storeId") @ApiParam(name = "storeId",value="门店ID", required = false) Integer storeId,
+                                                                        @RequestParam(value = "code") @ApiParam(name = "code",value="商品ID", required = false) Integer code,
+    @CookieValue(value="storeId") Integer cStoreId){
+        try {
+            CodeDTO dto=new CodeDTO();
+            dto.setCode(code);
+            return this.goodsClientService.getInfo(cStoreId!=null?cStoreId:storeId,dto);
+        }catch (Exception e){
+            logger.error("GoodsContoller->toGoodsH5Info-商品详情(h5)-》异常",e);
         }
         return new ResponseApiVO(-1,"失败",null);
     }
@@ -61,7 +78,7 @@ public class GoodsContoller {
     @PostMapping("/info/{token}")
     public ResponseApiVO<GoodsInfoVO<GoodsInfoProductVO>> toGoodsInfo(@PathVariable String token, @RequestBody @ApiParam(name="args",value="传入json格式",required=true)CodeDTO args){
         try {
-            return this.goodsClientService.getInfo(token,args);
+            return this.goodsClientService.getInfo( TokenUtil.getStoreId(token),args);
         }catch (Exception e){
             logger.error("GoodsContoller->toGoodsInfo-商品详情-》异常",e);
         }
