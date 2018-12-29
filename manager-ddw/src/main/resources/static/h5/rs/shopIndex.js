@@ -584,14 +584,18 @@ function handleInfoNumAndPrice(pcode,carRet){
    var sd= $("#shop_good_info").css("display");
    if(sd=="block"){
        var crs=carRet.split("-");
-       var pObjN=$("[infopcode='"+pcode+"'] div");
+       var pObj=$("[infopcode='"+pcode+"']");
+       var pObjN=pObj.find("div");
        if(crs[0]==0){
            pObjN.hide();
            $("#shop_good_info .info_3_right_sure").removeClass("displayStyle");
            $("#shop_good_info .info_3_right_btn").removeClass("displayFlex").addClass("displayStyle");
        }
        pObjN.text(crs[0]);
-       $("#shop_good_info .info_3_right_mid").text("￥"+(parseInt(crs[1])/100));
+       if(pObj.hasClass("content_option_blue")){
+           $("#shop_good_info .info_3_right_mid").text("￥"+(parseInt(crs[1])/100));
+       }
+
    }
 }
 function handleCarVue(obj,str){
