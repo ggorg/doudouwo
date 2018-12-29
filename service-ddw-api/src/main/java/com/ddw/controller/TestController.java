@@ -8,6 +8,7 @@ import com.ddw.services.UserInfoService;
 import com.ddw.token.Token;
 import com.ddw.util.BaseTokenUtil;
 import com.gen.common.util.CacheUtil;
+import com.gen.common.util.Tools;
 import com.gen.common.util.TydicDES;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -113,6 +114,8 @@ public class TestController {
                 cookieM.put("tableNumber",tableNumber);
                 cookieM.put("t",base64Token);
                 BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,storeId,openId,"test");
+                Tools.setCookie("cStoreId",storeId+"");
+                Tools.setCookie("shopToken",URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));
                 return new ResponseApiVO(1,"成功",URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));
 
             }
