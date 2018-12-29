@@ -588,12 +588,16 @@ function handleInfoNumAndPrice(pcode,carRet){
        var pObjN=pObj.find("div");
        if(crs[0]==0){
            pObjN.hide();
-           $("#shop_good_info .info_3_right_sure").removeClass("displayStyle");
-           $("#shop_good_info .info_3_right_btn").removeClass("displayFlex").addClass("displayStyle");
+
        }
        pObjN.text(crs[0]);
        if(pObj.hasClass("content_option_blue")){
            $("#shop_good_info .info_3_right_mid").text("￥"+(parseInt(crs[1])/100));
+           if(crs[0]==0){
+               $("#shop_good_info .info_3_right_sure").removeClass("displayStyle");
+               $("#shop_good_info .info_3_right_btn").removeClass("displayFlex").addClass("displayStyle");
+           }
+
        }
 
    }
