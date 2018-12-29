@@ -197,7 +197,7 @@ public class WeixinOauthController {
                             String base64Token=BaseTokenUtil.createToken(ui.getUnionid());
                             cookieM.put("tableNumber",params[1]);
                             cookieM.put("t",base64Token);
-                            BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,Integer.parseInt(params[0]),openid);
+                            BaseTokenUtil.putUserIdAndStoreId(base64Token,userId,Integer.parseInt(params[0]),openid,ui.getNickname());
                             Tools.setCookie("shopToken",URLEncoder.encode(TydicDES.encodeValue(JSONObject.toJSONString(cookieM)),"utf-8"));
                             Tools.setCookie("storeId",params[0]);
                             return WXGlobals.getOauthJumUrlByKey(page);

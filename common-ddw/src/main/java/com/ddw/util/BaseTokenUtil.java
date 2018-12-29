@@ -42,13 +42,14 @@ public class BaseTokenUtil {
        // cs.set(base64Token,map);
         return base64Token;
     }
-    public static void putUserIdAndStoreId(String token,Integer userId,Integer storeId,String realOpenId){
+    public static void putUserIdAndStoreId(String token,Integer userId,Integer storeId,String realOpenId,String name){
         Object obj=CacheUtil.get("tokenCache",token);
         if(obj!=null){
             Map map=(Map)obj;
             map.put("userId",userId);
             map.put("storeId",storeId);
             map.put("realOpenId",realOpenId);
+            map.put("name",name);
             CacheUtil.put("tokenCache",token,map);
         }
     }
